@@ -8,7 +8,7 @@ function setup() {
     focusPoint = cameraZ - focusDist;
     cameraPos = createVector(windowWidth / 2, windowHeight / 2, cameraZ);
 
-    web = new Web(100);
+    web = new Web(60);
 
     frameRate(1);
 
@@ -33,16 +33,16 @@ function setup() {
 }
 
 function draw() {
-    background(color(0, 0, 0));
-
-    let n = 0;
-
-    for (let i = 0; i < web.n; i++) {
-        let page = web.pages[i];
-        let dz = noise(n += 0.01) * 100;
-        page.moveInZ(dz);
-    }
-    web.render();
+    // Too slow
+    //    background(color(0, 0, 0));
+    //    let n = 0;
+    //
+    //    for (let i = 0; i < web.n; i++) {
+    //        let page = web.pages[i];
+    //        let dz = noise(n += 0.01) * 100;
+    //        page.moveInZ(dz);
+    //    }
+    //    web.render();
 }
 
 class Web {
@@ -54,44 +54,28 @@ class Web {
         let zRange = [-focusPoint * 2, focusPoint * 2];
 
         for (let i = 0; i < this.n; i++) {
-            let x = random(windowWidth);
-            let y = random(windowHeight);
+            this.pages.push(new Page());
+        }
 
-            // Sample from a gaussian distribution
-            let std = 4;
-            let gauss = - Math.floor(Math.abs(randomGaussian(0, std)));
-            let z = gauss * focusPoint + (focusPoint);
+        // Add some connections
+        for(let i = 0; i < 10; i++) {
+            for(let j = this.n - 1; j > this.n - 20; j--) {
+                let page1 = this.pages[i];
+                let page2 = this.pages[j];
+                page1.addEdgeBetween(page2);
+            }
+        }
 
-            // Change the size of the square based on the depth
-            let scale = 10 * gauss;
-            let width = 100 + scale;
-            let height = 100 + scale;
+        // Set min / max Z depth
+        this.minDist = Infinity;
+        this.maxDist = - Infinity;
+        for (let struct of this.pages) {
+            if(struct.minDist < this.minDist) {
+                this.minDist = struct.minDist;
+            }
 
-            // Make a square
-            let edges = [];
-            let p1 = createVector(x, y, z);
-            let p2 = createVector(x + width, y, z);
-            let p3 = createVector(x + width, y + height, z);
-            let p4 = createVector(x, y + height, z)
-            edges[0] = [p1, p2];
-            edges[1] = [p2, p3];
-            edges[2] = [p3, p4];
-            edges[3] = [p4, p1];
-
-            // Make a focusable square
-            this.pages.push(new FocusStructure(edges));
-
-            // Set min / max Z depth
-            this.minDist = Infinity;
-            this.maxDist = - Infinity;
-            for (let struct of this.pages) {
-
-                if(struct.minDist < this.minDist) {
-                    this.minDist = struct.minDist;
-                }
-                if(struct.maxDist > this.maxDist) {
-                    this.maxDist = struct.maxDist;
-                }
+            if(struct.maxDist > this.maxDist) {
+                this.maxDist = struct.maxDist;
             }
         }
     }
@@ -99,12 +83,55 @@ class Web {
     render() {
         let i = 0;
         for (let p of this.pages) {
-//        Change the color of each page if you want
-//            let c = colors[i += 1];
-//            stroke(c)
             p.render();
         }
     }
+}
 
+class Page extends FocusStructure {
+    constructor() {
 
+        // Determine the edge locations
+        let x = random(windowWidth);
+        let y = random(windowHeight);
+
+        // Sample from a gaussian distribution
+        let std = 2;
+        let gauss = - Math.floor(Math.abs(randomGaussian(0, std)));
+//        let gauss = - (Math.abs(randomGaussian(0, std)));
+        let z = gauss * focusPoint + (focusPoint);
+
+        // Change the size of the square based on the depth
+        let scale = 10 * gauss;
+        let width = 100 + scale;
+        let height = 100 + scale;
+
+        // Make a square
+        let edges = [];
+        let p1 = createVector(x, y, z);
+        let p2 = createVector(x + width, y, z);
+        let p3 = createVector(x + width, y + height, z);
+        let p4 = createVector(x, y + height, z)
+        edges[0] = [p1, p2];
+        edges[1] = [p2, p3];
+        edges[2] = [p3, p4];
+        edges[3] = [p4, p1];
+
+        // Instantiate the FocusStructure parent.
+        super(edges)
+
+        this.outEdges = []
+    }
+
+    render() {
+//        super.render()
+        for (let e of this.outEdges) {
+            e.render();
+        }
+    }
+
+    addEdgeBetween(page) {
+        let edge = new FocusLine(this.x, this.y, this.z, page.x, page.y, page.z);
+        this.outEdges.push(edge);
+    }
 }

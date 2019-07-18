@@ -18,6 +18,9 @@ let sampleFactor = 20; // This number is multiplied by the size of each line to 
 class FocusStructure {
     constructor(edges) {
         this.lines = [];
+        this.x = edges[0][0].x;
+        this.y = edges[0][0].y;
+        this.z = edges[0][0].z;
 
         // Some constants for logging
         let numLines = edges.length;
