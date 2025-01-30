@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Instrument Study I</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden; /* This can be used to remove scrollbars if needed. */
+      }
+
+      #canvas-container {
+          position: relative;
+          width: 100%;
+          height: 100vh; /* Set the height to 100% of the viewport height */
+      }
+
+      .p5-canvas {
+          position: absolute;
+          width: 100%;
+          height: 100%; /* Set the canvas dimensions to 100% of the container */
+      }
+
+      /* Make the background black */
+      html, body {
+        background-color: #000;
+      }
+
+      /* Make the text white and background black */
+      textarea {
+        color: #fff;
+        background-color: #000;
+        width: 100%; /* Make textareas fill the available space */
+        height: 80%; /* Make textareas fill the available space */
+        border: none; /* Remove textarea border */
+        /* make the background of the scroll bar black */
+        scrollbar-color: #000 #000;
+        scrollbar-width: thin;
+      }
+
+      /* Style for the side-by-side text areas */
+      #textboxes {
+        display: flex; /* Use flexbox to align elements side by side */
+        justify-content: space-between; /* Space them evenly */
+        padding: 5px; /* Add some padding for spacing */
+        /* width: 100%; Make the text areas fill the available space */
+      }
+
+      .text {
+        display: fixed;
+        padding: 20px;
+        width: 25%;
+      }
+
+      /* Style for the submit button */
+      .submit_button {
+        width: 100%; /* Make the button fill the available space */
+        height: 20%;
+        margin: 0px;
+        margin-bottom: 20px;
+        /* make the border and text white */
+        color: #fff;
+        background-color: #000;
+        border: 1px solid #fff;
+        padding: 10px;
+        cursor: pointer; /* Change cursor on hover */
+      }
+      .submit_button:hover {
+        background-color: #fff;
+        color: #000;
+      }
+
+
+      ::-webkit-scrollbar { width: 8px; height: 3px;}
+      ::-webkit-scrollbar-button {  background-color: #666; }
+      ::-webkit-scrollbar-track {  background-color: #646464;}
+      ::-webkit-scrollbar-track-piece { background-color: #000;}
+      ::-webkit-scrollbar-thumb { height: 50px; background-color: #666; border-radius: 3px;}
+      ::-webkit-scrollbar-corner { background-color: black;}
+      ::-webkit-resizer { background-color: black;}
+
+    </style>
+    <!-- https://github.com/spencermountain/compromise -->
+    <script type="text/javascript" src="../lib/compromise.js"></script> 
+    <script type="text/javascript" src="../lib/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/addons/p5.sound.min.js"></script>
+  </head>
+  <body>
+  <div id="textboxes">
+    <div class="text" id="free">
+      <textarea id="corpus1" rows="10" cols="50" placeholder="cut up text here"></textarea>
+      <button class="submit_button" id="submit1" onclick="submitCallback(1)">&#x2702;</button>
+    </div>
+    <div class="text" id="free2">
+      <textarea id="corpus2" rows="10" cols="50" placeholder="cut up text here"></textarea>
+      <button class="submit_button" id="submit2" onclick="submitCallback(2)">&#x2702;</button>
+    </div>
+    <div class="text" id="free3">
+      <textarea id="corpus3" rows="10" cols="50" placeholder="cut up text here"></textarea>
+      <button class="submit_button" id="submit3" onclick="submitCallback(3)">&#x2702;</button>
+    </div>
+    <div class="text" id="fixed">
+      <textarea class="realization" id="corpus4" rows="10" cols="50" oninput="realizationEditCallback(this.value)"></textarea>
+      <button class="submit_button" id="submit3" onclick="submitCallback(4)">&#x2702;</button>
+    </div>
+  </div>
+
+    <div id="canvas-container">
+      
+    </div>
+    <script type="text/javascript" src="../js/instrument_study_2.js"></script>
+
+  </body>
+</html>
+
+

@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: rgb(10, 10, 10);
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .controls {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(10, 10, 10, 0.8);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            color: #f1eaea;
+            font-size: 12px;
+            z-index: 1000;
+        }
+
+        /* New container for coordinated positioning */
+        .editor-container {
+            position: relative;
+            width: 80%;
+            height: 80vh;
+            margin: 10%;
+        }
+
+        .text-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgb(10, 10, 10);
+            overflow: hidden;
+            border-width: 1px;
+            border-style: solid;
+            border-color: rgba(255, 255, 255, 0.451);
+        }
+
+        .text-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .text-input {
+            background: none;
+            border: none;
+            font-family: monospace;
+            font-size: 25px;
+            width: 100%;
+            height: 100%;
+            padding: 5%;
+            outline: none;
+            box-sizing: border-box;
+            color: white;
+        }
+
+        .glass-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: rgba(255, 255, 255, 0.01);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            border: 1px solid rgba(255, 255, 255, 0.37);
+        }
+
+        /* Control points layer now positioned relative to container */
+        .control-points-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .control-point {
+            cursor: move;
+            fill: white;
+            /* Large invisible stroke for hit area */
+            stroke: rgba(255, 255, 255, 0);
+            stroke-width: 20;
+            pointer-events: auto;
+        }
+
+        .blur-control {
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .blur-control label {
+            min-width: 100px;
+            font-size: 11px;
+        }
+        
+        .shortcut-hint {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        input[type="range"] {
+            width: 100px;
+            -webkit-appearance: none;
+            background: transparent;
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.451);
+            border: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            border: 1px solid rgba(255, 255, 255, 0.451);
+            height: 12px;
+            width: 12px;
+            border-radius: 50%;
+            background: rgb(10, 10, 10);
+            margin-top: -5px;
+            cursor: pointer;
+        }
+
+         /* New styles for text sources panel */
+         .text-sources-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.9);
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.451);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            color: #f1eaea;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .text-sources-panel.hidden {
+            transform: translateY(100%);
+        }
+
+        .toggle-panel-btn {
+            position: absolute;
+            top: -30px;
+            right: 20px;
+            padding: 5px 15px;
+            background: rgba(10, 10, 10, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.451);
+            border-bottom: none;
+            border-radius: 4px 4px 0 0;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+
+        .toggle-panel-btn:hover {
+            background: rgba(20, 20, 20, 0.9);
+        }
+
+        .source-inputs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .source-input {
+            width: calc(25% - 20px);
+        }
+
+        .source-input textarea {
+            background-color: black;
+            outline: none;
+            color: white;
+            width: 100%;
+        }
+
+        .add-source-btn {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.451);
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s;
+            align-self: flex-start;
+        }
+
+        .add-source-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Adjust editor container to account for panel */
+        .editor-container {
+            margin-bottom: 180px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="controls">
+        <div class="blur-control">
+            <label>Blur: </label>
+            <span id="blurValue">2</span>
+            <input type="range" id="blurAmount" min="0" max="10" value="2" step="0.25">
+        </div>
+        <div class="blur-control">
+            <label>Font Size: </label>
+            <span id="fontValue">25</span>
+            <input type="range" id="fontSize" min="12" max="72" value="25" step="1">
+        </div>
+    </div>
+
+    <div class="editor-container">
+        <div class="text-wrapper">
+            <div class="text-layer pane" id="topLayer">
+                <textarea class="text-input top-text"></textarea>
+                <div class="glass-overlay"></div>
+            </div>
+            <!-- <div class="text-layer" id="midLayer">
+                <textarea class="text-input bottom-text"></textarea>
+            </div> -->
+            <div class="text-layer" id="bottomLayer">
+                <textarea class="text-input bottom-text"></textarea>
+            </div>
+        </div>
+        
+        <div class="control-points-layer">
+            <svg width="100%" height="100%">
+                <path id="clipPath" fill="none" stroke="rgba(255, 255, 255, 0.3)" stroke-width="1"/>
+                <rect class="control-point" id="point1" width="4" height="4" x="-3" y="-3" />
+                <rect class="control-point" id="point2" width="4" height="4" x="-3" y="-3" />
+                <rect class="control-point" id="point3" width="4" height="4" x="-3" y="-3" />
+            </svg>
+        </div>
+    </div>
+  
+    <div class="text-sources-panel">
+        <button class="toggle-panel-btn">Sources</button>
+        
+        <div class="source-inputs">
+            <div class="source-input">
+                <div class="radio-controls">
+                    <div class="radio-control">
+                        <input type="radio" name="frontSource" value="1" class="source-radio" checked>
+                        <label>F</label>
+                    </div>
+                    <div class="radio-control">
+                        <input type="radio" name="backSource" value="1" class="source-radio" checked>
+                        <label>B</label>
+                    </div>
+                </div>
+                <textarea id="source1"></textarea>
+            </div>
+            <div class="source-input">
+                <div class="radio-controls">
+                    <div class="radio-control">
+                        <input type="radio" name="frontSource" value="2" class="source-radio">
+                        <label>F</label>
+                    </div>
+                    <div class="radio-control">
+                        <input type="radio" name="backSource" value="2" class="source-radio">
+                        <label>B</label>
+                    </div>
+                </div>
+                <textarea id="source2"></textarea>
+            </div>
+            <div class="source-input">
+                <div class="radio-controls">
+                    <div class="radio-control">
+                        <input type="radio" name="frontSource" value="3" class="source-radio">
+                        <label>F</label>
+                    </div>
+                    <div class="radio-control">
+                        <input type="radio" name="backSource" value="3" class="source-radio">
+                        <label>B</label>
+                    </div>
+                </div>
+                <textarea id="source3"></textarea>
+            </div>
+            <div class="source-input">
+                <div class="radio-controls">
+                    <div class="radio-control">
+                        <input type="radio" name="frontSource" value="4" class="source-radio">
+                        <label>F</label>
+                    </div>
+                    <div class="radio-control">
+                        <input type="radio" name="backSource" value="4" class="source-radio">
+                        <label>B</label>
+                    </div>
+                </div>
+                <textarea id="source4"></textarea>
+            </div>
+        </div>
+        <button class="add-source-btn">+ Add Source</button>
+    </div>
+ 
+    <script>
+
+        const texts = [
+        `as freedom is a breakfastfood
+or truth can live with right and wrong
+or molehills are from mountains made
+—long enough and just so long
+will being pay the rent of seem
+and genius please the talentgang
+and water most encourage flame
+
+as hatracks into peachtrees grow
+or hopes dance best on bald men’s hair
+and every finger is a toe
+and any courage is a fear
+—long enough and just so long
+will the impure think all things pure
+and hornets wail by children stung`,
+        `or as the seeing are the blind
+and robins never welcome spring
+nor flatfolk prove their world is round
+nor dingsters die at break of dong
+and common’s rare and millstones float
+—long enough and just so long
+tomorrow will not be too late
+
+worms are the words but joy’s the voice
+down shall go which and up come who
+breasts will be breasts thighs will be thighs
+deeds cannot dream what dreams can do
+—time is a tree(this life one leaf)
+but love is the sky and i am for you
+just so long and long enough`,
+        `i carry your heart with me(i carry it in
+my heart)i am never without it(anywhere
+i go you go,my dear;and whatever is done
+by only me is your doing,my darling)
+                                                      i fear
+no fate(for you are my fate,my sweet)i want
+no world(for beautiful you are my world,my true)
+and it’s you are whatever a moon has always meant
+and whatever a sun will always sing is you
+
+here is the deepest secret nobody knows
+(here is the root of the root and the bud of the bud
+and the sky of the sky of a tree called life;which grows
+higher than soul can hope or mind can hide)
+and this is the wonder that's keeping the stars apart
+
+i carry your heart(i carry it in my heart)`,
+        `Buffalo Bill ’s
+defunct
+               who used to
+               ride a watersmooth-silver
+                                                                  stallion
+and break onetwothreefourfive pigeonsjustlikethat
+                                                                                                     Jesus
+
+he was a handsome man 
+                                                  and what i want to know is
+how do you like your blue-eyed boy
+Mister Death
+`
+        ].sort(() => Math.random() - 0.5);
+
+        const topText = document.querySelector('.top-text');
+        const bottomText = document.querySelector('.bottom-text');
+        const blurSlider = document.getElementById('blurAmount');
+        const blurValue = document.getElementById('blurValue');
+        const topLayer = document.getElementById('topLayer');
+        const bottomLayer = document.getElementById('bottomLayer');
+        const glassOverlay = document.querySelector('.glass-overlay');
+        const svg = document.querySelector('svg');
+
+        // Control points
+        const point1 = document.getElementById('point1');
+        const point2 = document.getElementById('point2');
+        const point3 = document.getElementById('point3');
+
+        // Initial positions (in percentages)
+        let points = {
+            point1: { x: 8, y: 0 },
+            point2: { x: 49, y: 0 },
+            point3: { x: 92, y: 50 }
+        };
+
+        function updatePoints() {
+            const width = svg.clientWidth;
+            const height = svg.clientHeight;
+
+            // Update rectangle positions
+            point1.setAttribute('x', (width * points.point1.x / 100) - 3);
+            point1.setAttribute('y', (height * points.point1.y / 100) - 3);
+            point2.setAttribute('x', (width * points.point2.x / 100) - 3);
+            point2.setAttribute('y', (height * points.point2.y / 100) - 3);
+            point3.setAttribute('x', (width * points.point3.x / 100) - 3);
+            point3.setAttribute('y', (height * points.point3.y / 100) - 3);
+
+            // Update clip paths
+            const topPathData = `M 0 0 L ${width} 0 L ${width} 0 L ${width * points.point2.x/100} 0 L ${width * points.point3.x/100} ${height * points.point3.y/100} L ${width * points.point1.x/100} 0 L 0 0`;
+            document.getElementById('clipPath').setAttribute('d', topPathData);
+            
+            const topClipPath = `polygon(0% 0%, 100% 0%, 100% 0%, ${points.point2.x}% 0%, ${points.point3.x}% ${points.point3.y}%, ${points.point1.x}% 0%, 0% 0%)`;
+            topLayer.style.clipPath = topClipPath;
+            glassOverlay.style.clipPath = topClipPath;
+
+            const bottomClipPath = `polygon(0% 0%, ${points.point1.x}% 0%, ${points.point3.x}% ${points.point3.y}%, ${points.point2.x}% 0%, 100% 0%, 100% 100%, 0% 100%)`;
+            bottomLayer.style.clipPath = bottomClipPath;
+        }
+
+        function updateBlur() {
+            const blur = blurSlider.value;
+            blurValue.textContent = blur;
+            glassOverlay.style.backdropFilter = `blur(${blur}px)`;
+        }
+
+        // Dragging functionality
+        let draggedElement = null;
+
+        function startDragging(e) {
+            draggedElement = e.target;
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', stopDragging);
+        }
+
+        function drag(e) {
+            if (!draggedElement) return;
+
+            const rect = svg.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // Convert to percentages
+            const xPercent = (x / rect.width) * 100;
+            const yPercent = (y / rect.height) * 100;
+
+            // Update point position
+            const pointId = draggedElement.id;
+            if (pointId === 'point3') {
+                points[pointId] = { x: xPercent, y: yPercent };
+            } else {
+                // Points 1 and 2 can only move horizontally
+                points[pointId] = { x: xPercent, y: 0 };
+            }
+
+            updatePoints();
+        }
+
+        function stopDragging() {
+            draggedElement = null;
+            document.removeEventListener('mousemove', drag);
+            document.removeEventListener('mouseup', stopDragging);
+        }
+
+        // Font size control
+        const fontSlider = document.getElementById('fontSize');
+        const fontValue = document.getElementById('fontValue');
+
+        function updateFontSize() {
+            const size = fontSlider.value;
+            fontValue.textContent = size;
+            topText.style.fontSize = `${size}px`;
+            bottomText.style.fontSize = `${size}px`;
+        }
+
+
+        // Event listeners
+        bottomText.addEventListener('input', () => {
+            topText.value = bottomText.value;
+        });
+
+        point1.addEventListener('mousedown', startDragging);
+        point2.addEventListener('mousedown', startDragging);
+        point3.addEventListener('mousedown', startDragging);
+        blurSlider.addEventListener('input', updateBlur);
+        fontSlider.addEventListener('input', updateFontSize);
+        
+        // Initialize
+        updatePoints();
+        updateBlur();
+
+        // Handle window resize
+        window.addEventListener('resize', updatePoints);
+
+        // New script for text sources functionality
+        const addSourceBtn = document.querySelector('.add-source-btn');
+        const sourceInputs = document.querySelector('.source-inputs');
+
+        // Toggle panel functionality
+        const togglePanelBtn = document.querySelector('.toggle-panel-btn');
+        const sourcesPanel = document.querySelector('.text-sources-panel');
+        
+        togglePanelBtn.addEventListener('click', () => {
+            sourcesPanel.classList.toggle('hidden');
+            // togglePanelBtn.textContent = sourcesPanel.classList.contains('hidden') ? 'Show Sources' : 'Hide Sources';
+        });
+
+        // Update source functionality
+        function updateActiveSource(type) {
+            const radioName = type === 'front' ? 'frontSource' : 'backSource';
+            const selectedRadio = document.querySelector(`input[name="${radioName}"]:checked`);
+            const sourceId = selectedRadio.closest('.source-input').querySelector('textarea').id;
+            const sourceText = document.getElementById(sourceId).value;
+            
+            if (type === 'front') {
+                topText.value = sourceText;
+            } else {
+                bottomText.value = sourceText;
+            }
+        }
+
+        let t = 0;
+        document.querySelectorAll('.source-input textarea').forEach(textArea => {
+            textArea.innerHTML = texts[t++];
+        })
+        updateActiveSource('back');
+        updateActiveSource('front'); 
+
+        // Add radio change listeners
+        document.querySelectorAll('input[name="frontSource"]').forEach(radio => {
+            radio.addEventListener('change', () => updateActiveSource('front'));
+        });
+
+        document.querySelectorAll('input[name="backSource"]').forEach(radio => {
+            radio.addEventListener('change', () => updateActiveSource('back'));
+        });
+
+        // Modify add source functionality
+        let sourceCount = 4;
+        addSourceBtn.addEventListener('click', () => {
+            sourceCount++;
+            const newFrontSource = document.createElement('div');
+            newFrontSource.className = 'source-input';
+            newFrontSource.innerHTML = `
+                <label>Source ${sourceCount}</label>
+                <input type="radio" name="frontSource" value="${sourceCount}" class="source-radio">
+                <textarea id="source${sourceCount}"></textarea>
+            `;
+            document.getElementById('frontSourceInputs').appendChild(newFrontSource);
+
+            const newBackSource = document.createElement('div');
+            newBackSource.className = 'source-input';
+            newBackSource.innerHTML = `
+                <label>Source ${sourceCount + 1}</label>
+                <input type="radio" name="backSource" value="${sourceCount + 1}" class="source-radio">
+                <textarea id="source${sourceCount + 1}"></textarea>
+            `;
+            document.getElementById('backSourceInputs').appendChild(newBackSource);
+
+            // Add change listeners to new radio buttons
+            newFrontSource.querySelector('input[type="radio"]').addEventListener('change', () => updateActiveSource('front'));
+            newBackSource.querySelector('input[type="radio"]').addEventListener('change', () => updateActiveSource('back'));
+
+            sourceCount++;
+        });
+    </script>
+</body>
+</html>

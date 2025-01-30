@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: #f5f5f5;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .slider-group {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slider-group label {
+            min-width: 140px;
+        }
+
+        input[type="range"] {
+            width: 200px;
+        }
+
+        .text-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .text-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .text-input {
+            background: none;
+            border: none;
+            font-family: monospace;
+            font-size: 72px;
+            font-weight: bold;
+            text-align: center;
+            resize: none;
+            width: 80%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            outline: none;
+        }
+
+        .top-text {
+            color: #dc2626;
+        }
+
+        .bottom-text {
+            color: #1a365d;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <div class="slider-group">
+            <label>Left Top Point: </label>
+            <input type="range" id="leftTopX" min="0" max="100" value="8">
+            <span id="leftTopXValue">8%</span>
+        </div>
+        <div class="slider-group">
+            <label>Right Top Point: </label>
+            <input type="range" id="rightTopX" min="0" max="100" value="49">
+            <span id="rightTopXValue">49%</span>
+        </div>
+        <div class="slider-group">
+            <label>Bottom Point: </label>
+            <input type="range" id="bottomX" min="0" max="100" value="92">
+            <span id="bottomXValue">92%</span>
+        </div>
+    </div>
+
+    <div class="text-wrapper">
+        <div class="text-layer" id="topLayer">
+            <textarea class="text-input top-text" rows="1">RAPTURE</textarea>
+        </div>
+        <div class="text-layer" id="bottomLayer">
+            <textarea class="text-input bottom-text" rows="1">RAPTARE</textarea>
+        </div>
+    </div>
+
+    <script>
+        const topText = document.querySelector('.top-text');
+        const bottomText = document.querySelector('.bottom-text');
+        const leftTopXSlider = document.getElementById('leftTopX');
+        const rightTopXSlider = document.getElementById('rightTopX');
+        const bottomXSlider = document.getElementById('bottomX');
+        const leftTopXValue = document.getElementById('leftTopXValue');
+        const rightTopXValue = document.getElementById('rightTopXValue');
+        const bottomXValue = document.getElementById('bottomXValue');
+        const topLayer = document.getElementById('topLayer');
+        const bottomLayer = document.getElementById('bottomLayer');
+
+        function updateClipPaths() {
+            const leftX = leftTopXSlider.value;
+            const rightX = rightTopXSlider.value;
+            const bottomX = bottomXSlider.value;
+
+            // Update value displays
+            leftTopXValue.textContent = `${leftX}%`;
+            rightTopXValue.textContent = `${rightX}%`;
+            bottomXValue.textContent = `${bottomX}%`;
+
+            // Update clip paths
+            topLayer.style.clipPath = `polygon(0% 0%, 100% 0%, 100% 0%, ${rightX}% 0%, ${bottomX}% 100%, ${leftX}% 0%, 0% 0%)`;
+            bottomLayer.style.clipPath = `polygon(0% 0%, ${leftX}% 0%, ${bottomX}% 100%, ${rightX}% 0%, 100% 0%, 100% 100%, 0% 100%)`;
+        }
+
+        // Updates the bottom text when top text changes
+        topText.addEventListener('input', function() {
+            this.value = this.value.toUpperCase();
+            if (this.value.includes('\n')) {
+                this.value = this.value.replace(/\n/g, '');
+            }
+            // Replace E's with A's in bottom text
+            bottomText.value = this.value.replace(/E/g, 'A');
+        });
+
+        // Updates the top text when bottom text changes
+        bottomText.addEventListener('input', function() {
+            this.value = this.value.toUpperCase();
+            if (this.value.includes('\n')) {
+                this.value = this.value.replace(/\n/g, '');
+            }
+            // Replace A's with E's in top text
+            topText.value = this.value.replace(/A/g, 'E');
+        });
+
+        leftTopXSlider.addEventListener('input', updateClipPaths);
+        rightTopXSlider.addEventListener('input', updateClipPaths);
+        bottomXSlider.addEventListener('input', updateClipPaths);
+
+        // Initial update
+        updateClipPaths();
+    </script>
+</body>
+</html>

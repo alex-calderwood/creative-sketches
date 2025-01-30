@@ -1,0 +1,6 @@
+.vscode/
+*/.vscode/
+passphrase.txt
+*.pem
+*/.idea/
+.DS_Store

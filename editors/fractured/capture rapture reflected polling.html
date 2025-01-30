@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: #f5f5f5;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .slider-group {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slider-group label {
+            min-width: 140px;
+        }
+
+        input[type="range"] {
+            width: 200px;
+        }
+
+        .text-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .text-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .text-input {
+            background: none;
+            border: none;
+            font-family: monospace;
+            font-size: 72px;
+            font-weight: bold;
+            text-align: center;
+            resize: none;
+            width: 80%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            outline: none;
+        }
+
+        .top-text {
+            color: #dc2626;
+        }
+
+        .bottom-text {
+            color: #1a365d;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <div class="slider-group">
+            <label>Left Top Point: </label>
+            <input type="range" id="leftTopX" min="0" max="100" value="8">
+            <span id="leftTopXValue">8%</span>
+        </div>
+        <div class="slider-group">
+            <label>Right Top Point: </label>
+            <input type="range" id="rightTopX" min="0" max="100" value="49">
+            <span id="rightTopXValue">49%</span>
+        </div>
+        <div class="slider-group">
+            <label>Bottom Point: </label>
+            <input type="range" id="bottomX" min="0" max="100" value="92">
+            <span id="bottomXValue">92%</span>
+        </div>
+    </div>
+
+    <div class="text-wrapper">
+        <div class="text-layer" id="topLayer">
+            <textarea class="text-input top-text" rows="1">RAPTURE</textarea>
+        </div>
+        <div class="text-layer" id="bottomLayer">
+            <textarea class="text-input bottom-text" rows="1">RAPTARE</textarea>
+        </div>
+    </div>
+
+    <script>
+        const topText = document.querySelector('.top-text');
+        const bottomText = document.querySelector('.bottom-text');
+        const leftTopXSlider = document.getElementById('leftTopX');
+        const rightTopXSlider = document.getElementById('rightTopX');
+        const bottomXSlider = document.getElementById('bottomX');
+        const leftTopXValue = document.getElementById('leftTopXValue');
+        const rightTopXValue = document.getElementById('rightTopXValue');
+        const bottomXValue = document.getElementById('bottomXValue');
+        const topLayer = document.getElementById('topLayer');
+        const bottomLayer = document.getElementById('bottomLayer');
+
+        let lastBottomValue = bottomText.value;
+
+        function updateClipPaths() {
+            const leftX = leftTopXSlider.value;
+            const rightX = rightTopXSlider.value;
+            const bottomX = bottomXSlider.value;
+
+            leftTopXValue.textContent = `${leftX}%`;
+            rightTopXValue.textContent = `${rightX}%`;
+            bottomXValue.textContent = `${bottomX}%`;
+
+            topLayer.style.clipPath = `polygon(0% 0%, 100% 0%, 100% 0%, ${rightX}% 0%, ${bottomX}% 100%, ${leftX}% 0%, 0% 0%)`;
+            bottomLayer.style.clipPath = `polygon(0% 0%, ${leftX}% 0%, ${bottomX}% 100%, ${rightX}% 0%, 100% 0%, 100% 100%, 0% 100%)`;
+        }
+
+        function checkForChanges() {
+            const currentBottomValue = bottomText.value;
+            if (currentBottomValue !== lastBottomValue) {
+                topText.value = currentBottomValue.toUpperCase();
+                lastBottomValue = currentBottomValue;
+            }
+        }
+
+        function animateBottomPoint() {
+            const time = (Date.now() % 5000) / 5000; // 0 to 1 over 5 seconds
+            const value = Math.round(50 + Math.sin(time * Math.PI * 2) * 40); // Oscillate between ~10 and ~90
+            bottomXSlider.value = value;
+            updateClipPaths();
+            requestAnimationFrame(animateBottomPoint);
+        }
+
+        setInterval(checkForChanges, 50);
+
+        leftTopXSlider.addEventListener('input', updateClipPaths);
+        rightTopXSlider.addEventListener('input', updateClipPaths);
+        bottomXSlider.addEventListener('input', updateClipPaths);
+
+        // Initial updates
+        updateClipPaths();
+        animateBottomPoint();
+    </script>
+</body>
+</html>
