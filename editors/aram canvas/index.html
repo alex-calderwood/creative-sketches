@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Text Sketch</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            background: white;
+        }
+
+        canvas {
+            display: block;
+            touch-action: none;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // Original sketch code
+        class CanvasSketch {
+            constructor() {
+                // Initialize variables
+                this.u = 56;
+                this.v = 40;
+                this.screen = [];
+                this.seed = false;
+                this.overlayWords = [];
+                this.frame = 0;
+                this.showCursor = true;
+                this.emit = true;
+                this.movingWords = [];
+                this.curU = this.u / 2;
+                this.curV = this.v / 4;
+                this.canvas = null;
+                this.ctx = null;
+                this.charWidth = 0;
+                this.charHeight = 0;
+                
+                // Grammar rules
+                this.grammar = [
+                    {
+                        id: 'go',
+                        children: [{
+                            id: 'runner'
+                        }],
+                    },
+                    {
+                        id: 'start',
+                        children: [{
+                            id: 'runner'
+                        }],
+                    },
+                    {
+                        id: 'runner',
+                        delete: 'stop',
+                        children: [{
+                            id: 'ran'
+                        }]
+                    },
+                ];
+
+                // Default poem
+                this.poems = [
+                    {
+                        text: "cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloudcloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloudcloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloudcloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud cloud",
+                        period: 60,
+                        orientation: 'CENTER',
+                        ghost: 0,
+                    }
+                ];
+                this.poem = this.poems[0];
+                
+                // Bind methods
+                this.draw = this.draw.bind(this);
+                this.handleKeyPress = this.handleKeyPress.bind(this);
+                this.handleMousePress = this.handleMousePress.bind(this);
+            }
+
+            // Helper function for modulo that works with negative numbers
+            mod(n, m) {
+                return ((n % m) + m) % m;
+            }
+
+            // Helper to get random element from array
+            random(arr) {
+                return arr[Math.floor(Math.random() * arr.length)];
+            }
+
+            doResize() {
+              this.canvas.width = window.innerWidth;
+              this.canvas.height = window.innerHeight;
+
+              // Calculate character dimensions
+              this.fontSize = this.canvas.height / this.u; 
+              const metrics = this.ctx.measureText('m');
+              this.charWidth = metrics.width;
+              this.charHeight = this.fontSize;
+
+              this.u = Math.floor(this.canvas.width / this.charWidth);
+              this.v = Math.floor(this.canvas.height / this.charHeight);
+           
+              console.log({
+                w: window.innerWidth,
+                h: window.innerHeight,
+                u: this.u,
+                v: this.v,
+              })
+
+              this.screen = Array(this.u).fill().map(() => Array(this.v).fill(' '));
+
+              // calculate font based on u, v screen
+              this.ctx.font = `${this.fontSize}px monospace`;
+            }
+
+            // Initialize the canvas and setup initial state
+            init() {
+                // Create canvas
+                this.canvas = document.createElement('canvas');
+                this.ctx = this.canvas.getContext('2d');
+                
+                document.body.appendChild(this.canvas);
+                
+                this.doResize();
+
+                // Add event listeners
+                document.addEventListener('keydown', this.handleKeyPress);
+                this.canvas.addEventListener('mousedown', this.handleMousePress);
+
+                // Handle window resize
+                window.addEventListener('resize', () => {
+                    this.doResize();
+                });
+
+                // Start animation loop
+                requestAnimationFrame(this.draw);
+            }
+
+            // Convert overlay words to grid
+            toOverlay(overlayWords) {
+                let overlay = Array(this.u).fill().map(() => Array(this.v).fill(' '));
+                
+                for(let word of overlayWords) {
+                    for (let c = 0; c < word.text.length; c++) {
+                        overlay[this.mod(word.x + c, this.u)][this.mod(word.y, this.v)] = word.text[c];
+                    }
+                }
+                
+                return overlay;
+            }
+
+            // Process the grammar rules and update overlay words
+            enliven() {
+                let emitted = false;
+                for(let rule of this.grammar) {
+                    const word = rule.text || rule.id;
+                    for(let j = 0; j < this.v; j++) {
+                        for(let i = 0; i < this.u; i++) {
+                            if (i + word.length <= this.u) {
+                                let slice = '';
+                                for (let k = 0; k < word.length; k++) {
+                                    slice += this.screen[i + k][j];
+                                }
+
+                                if (slice === word && this.emit !== false) {
+                                    if (rule.children != null) {
+                                        const child = this.random(rule.children);
+                                        this.overlayWords.push({
+                                            text: child.id,
+                                            x: i,
+                                            y: j,
+                                            z: 1
+                                        });
+                                    }
+                                    emitted = true;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                if (emitted) {
+                    this.emit = false;
+                }
+            }
+
+            // Handle keyboard input
+            handleKeyPress(event) {
+                const { key, keyCode } = event;
+                
+                // Handle arrow keys
+                switch(keyCode) {
+                    case 37: // Left
+                      this.curU = this.mod(this.curU - 1, this.u);    
+                      break;
+                    case 39: // Right
+                        this.curU = this.mod(this.curU + 1, this.u);
+                        break;
+                    case 38: // Up
+                        this.curV = this.mod(this.curV - 1, this.v);
+                        break;
+                    case 40: // Down
+                    case 13: // Enter
+                        this.curV = this.mod(this.curV + 1, this.v);
+                        break;
+                    case 8: // Backspace
+                        this.curU = this.mod(this.curU - 1, this.u);
+                        this.screen[this.curU][this.curV] = " ";
+                        break;
+                }
+
+                // Handle regular character input
+                if (key.length === 1) {
+                    this.screen[this.curU][this.curV] = key;
+                    this.curU = this.mod(this.curU + 1, this.u);
+                  }
+
+                event.preventDefault();
+            }
+
+            // Handle mouse input
+            handleMousePress(event) {
+                const rect = this.canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                
+                this.curU = Math.floor(x / this.charWidth);
+                this.curV = Math.floor(y / this.charHeight);
+            }
+
+            // Main drawing function
+            draw() {
+                // Clear canvas
+                this.ctx.fillStyle = 'white';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Process grammar rules
+                this.enliven();
+                let overlay = this.toOverlay(this.overlayWords);
+                
+                // Draw characters
+                this.ctx.fillStyle = 'black';
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'top';
+                
+                for (let j = 0; j < this.v; j++) {
+                    for(let i = 0; i < this.u; i++) {
+                        const char = overlay[i][j] !== ' ' ? overlay[i][j] : this.screen[i][j];
+                        this.ctx.fillText(
+                            char,
+                            i * this.charWidth + this.charWidth / 2,
+                            j * this.charHeight
+                        );
+                    }
+                }
+                
+                // Update overlay words positions
+                if (this.frame % 10 === 0) {
+                    for(let word of this.overlayWords) {
+                        word.x = word.x + this.random([-1]);
+                    }
+                }
+                
+                // Draw cursor
+                const spd = 100;
+                if (this.showCursor && this.frame % spd < spd/2) {
+                    this.ctx.fillStyle = 'rgb(100, 100, 100)';
+                    this.ctx.fillRect(
+                        this.curU * this.charWidth,
+                        this.curV * this.charHeight,
+                        this.charWidth,
+                        this.charHeight
+                    );
+                }
+                
+                // Reset emit flag periodically
+                if (this.frame % 200 === 0) {
+                    this.emit = true;
+                }
+                
+                this.frame++;
+                requestAnimationFrame(this.draw);
+            }
+        }
+
+        // Initialize the sketch when the page loads
+        window.addEventListener('load', () => {
+            const sketch = new CanvasSketch();
+            sketch.init();
+        });
+    </script>
+</body>
+</html>
