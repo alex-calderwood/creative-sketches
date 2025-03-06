@@ -1,0 +1,85 @@
+:root {
+    --drawer-width: 25vw;
+    --drawer-height: 25vh;
+    --transition-speed: 0.3s;
+}
+
+/* Layout */
+.drawer-layout {
+    display: flex;
+    transition: transform var(--transition-speed) ease;
+    min-height: 100vh;
+}
+
+.drawer-content {
+    width: 100%;
+    transition: width var(--transition-speed) ease, 
+                margin var(--transition-speed) ease;
+}
+
+/* Drawers */
+.drawer {
+    transition: transform var(--transition-speed) ease;
+    z-index: 100;
+}
+
+/* Left drawer */
+.left-drawer {
+    position: fixed;
+    top: 0;
+    left: calc(-1 * var(--drawer-width));
+    width: var(--drawer-width);
+    height: 100%;
+}
+
+.drawer-layout.left-open {
+    transform: translateX(var(--drawer-width));
+}
+
+.drawer-layout.left-open .drawer-content {
+    width: calc(100% - var(--drawer-width));
+}
+
+/* Right drawer */
+.right-drawer {
+    position: fixed;
+    top: 0;
+    right: calc(-1 * var(--drawer-width));
+    width: var(--drawer-width);
+    height: 100%;
+}
+
+.drawer-layout.right-open .right-drawer {
+    transform: translateX(calc(-1 * var(--drawer-width)));
+}
+
+.drawer-layout.right-open .drawer-content {
+    width: calc(100% - var(--drawer-width));
+    margin-right: var(--drawer-width);
+}
+
+/* Top drawer */
+.top-drawer {
+    position: fixed;
+    top: calc(-1 * var(--drawer-height));
+    left: 0;
+    width: 100%;
+    height: var(--drawer-height);
+}
+
+.drawer-layout.top-open .top-drawer {
+    transform: translateY(var(--drawer-height));
+}
+
+/* Bottom drawer */
+.bottom-drawer {
+    position: fixed;
+    bottom: calc(-1 * var(--drawer-height));
+    left: 0;
+    width: 100%;
+    height: var(--drawer-height);
+}
+
+.drawer-layout.bottom-open .bottom-drawer {
+    transform: translateY(calc(-1 * var(--drawer-height)));
+}

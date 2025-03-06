@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drawer Navigation</title>
+    <link rel="stylesheet" href="drawer.css">
+</head>
+<body>
+    <div class="drawer-layout">
+        <!-- Top Drawer -->
+        <div class="drawer top-drawer">
+            Top Drawer Content
+        </div>
+
+        <!-- Left Drawer -->
+        <div class="drawer left-drawer">
+            Left Drawer Content
+        </div>
+
+        <!-- Right Drawer -->
+        <div class="drawer right-drawer">
+            Right Drawer Content
+        </div>
+
+        <!-- Bottom Drawer -->
+        <div class="drawer bottom-drawer">
+            Text Sources
+            <div id="fileBrowserContainer"></div>
+
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="drawer-content">
+            <button onclick="toggleDrawer('bottom')">Bottom</button>
+        </div>
+    </div>
+
+    <script>
+        // Load and initialize file browser
+        async function initializeFileBrowser() {
+            try {
+                const response = await fetch('file-browser.html');
+                const content = await response.text();
+                
+                // Insert the HTML
+                document.getElementById('fileBrowserContainer').innerHTML = content;
+                
+                // Execute any scripts in the content
+                const scripts = document.getElementById('fileBrowserContainer').getElementsByTagName('script');
+                for (let script of scripts) {
+                    const newScript = document.createElement('script');
+                    newScript.textContent = script.textContent;
+                    script.parentNode.replaceChild(newScript, script);
+                }
+            } catch (error) {
+                console.error('Error loading file browser:', error);
+            }
+        }
+
+        async function initializeFractured() {
+            try {
+                const response = await fetch('fractured.html');
+                const content = await response.text();
+                document.getElementById('drawer-content').innerHTML = content;
+            } catch (error) {
+                console.error('Error loading fractured:', error);
+            }
+        }
+
+        // Initialize when the page loads
+        window.addEventListener('load', initializeFileBrowser);
+    </script>
+    <script src="drawer.js"></script>
+</body>
+</html> 
