@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Browser</title>
+    <link rel="stylesheet" href="file-browser.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: rgb(10, 10, 10);
+            color: #f1eaea;
+            font-family: monospace;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div id="fileBrowserMount"></div>
+    <script src="file-browser.js"></script>
+    <script>
+        // Initialize the file browser
+        const fileBrowser = new FileBrowser('fileBrowserMount');
+    </script>
+</body>
+</html>

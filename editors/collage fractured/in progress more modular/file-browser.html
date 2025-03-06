@@ -1,0 +1,22 @@
+<div class="file-browser-container">
+    <div class="file-list">
+        <div class="breadcrumb" id="currentPath">Path: /</div>
+        <div id="fileList"></div>
+        <div class="selection-controls">
+            <button id="selectButton" class="select-btn" disabled>Select Document</button>
+            <div class="selected-doc" id="selectedDocument"></div>
+        </div>
+        <div class="processing-options">
+            <label><input type="checkbox" id="markdownOpt"> Process as Markdown (hide title)</label>
+            <label><input type="checkbox" id="htmlOpt"> Process as HTML (inner content only)</label>
+            <label><input type="checkbox" id="linebreakOpt">Remove duplicate line breaks</label>
+            <label><input type="checkbox" id="allLinebreakOpt">Normalize spaces</label>
+        </div>
+    </div>
+    <div class="content-viewer">
+        <h2 id="contentTitle"></h2>
+        <div id="fileContent"></div>
+    </div>
+</div>
+
+
