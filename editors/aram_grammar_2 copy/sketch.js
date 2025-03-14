@@ -1,3 +1,4 @@
+console.log('sketch.js loaded');
 let [u, v] = [56, 40];
 let screen;
 let seed = false;
@@ -153,7 +154,6 @@ function toOverlay(overlayWords) {
   
   return overlay;
 }
-
 
 function enliven() {
   let emitted = false;

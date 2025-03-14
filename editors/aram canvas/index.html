@@ -146,6 +146,8 @@
             // Convert overlay words to grid
             toOverlay(overlayWords) {
                 let overlay = Array(this.u).fill().map(() => Array(this.v).fill(' '));
+
+                window.overlayWords = overlayWords;
                 
                 for(let word of overlayWords) {
                     for (let c = 0; c < word.text.length; c++) {
@@ -181,6 +183,12 @@
                                     }
                                     emitted = true;
                                 }
+                                // else if(slice === rule.delete) {
+                                //   // delete tehw word in the overlay
+                                //   let d = overlayWords.filter((i, x) => {x.length == 1})
+                                // }
+                                // console.log({slice, d: rule.delete})
+
                             }
                         }
                     }
@@ -262,7 +270,7 @@
                 }
                 
                 // Update overlay words positions
-                if (this.frame % 10 === 0) {
+                if (this.frame % 30 === 0) {
                     for(let word of this.overlayWords) {
                         word.x = word.x + this.random([-1]);
                     }
@@ -271,7 +279,7 @@
                 // Draw cursor
                 const spd = 100;
                 if (this.showCursor && this.frame % spd < spd/2) {
-                    this.ctx.fillStyle = 'rgb(100, 100, 100)';
+                    this.ctx.fillStyle = 'black';
                     this.ctx.fillRect(
                         this.curU * this.charWidth,
                         this.curV * this.charHeight,
