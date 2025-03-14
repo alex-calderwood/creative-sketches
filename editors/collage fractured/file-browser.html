@@ -1,3 +1,20 @@
+<!DOCTYPE html>
+<!--
+    File Browser with Content Selection
+    
+    Usage:
+    1. Navigate the file browser and select a document to view
+    2. Apply any desired processing options (markdown, HTML, linebreaks)
+    3. Click "Select Document" button
+    4. Access the processed content via the `selectedContent` variable, which will contain
+       the final transformed text of the selected document
+    
+    Example:
+    ```js
+    // After user selects a document:
+    console.log(selectedContent) // => processed text content of the selected document
+    ```
+-->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -281,6 +298,11 @@
             selectButton.onclick = () => {
                 document.getElementById('selectedDocument').textContent = path;
                 selectedContent = currentContent;
+                // Dispatch custom event with selected content
+                const event = new CustomEvent('contentSelected', { 
+                    detail: { content: currentContent }
+                });
+                document.dispatchEvent(event);
             }; 
 
             // Store the original content for reprocessing

@@ -7,14 +7,20 @@
 /* Layout */
 .drawer-layout {
     display: flex;
+    position: relative;
     transition: transform var(--transition-speed) ease;
     min-height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
 }
 
 .drawer-content {
+    flex: 1;
+    min-width: 0; /* Prevents flex item from overflowing */
     width: 100%;
     transition: width var(--transition-speed) ease, 
                 margin var(--transition-speed) ease;
+    position: relative;
 }
 
 /* Drawers */

@@ -1,0 +1,98 @@
+body {
+  font-family: "Times New Roman", Times, serif;
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #7b8eb5;
+}
+
+#editor-container {
+  position: relative;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
+  border: 1px solid #8f8f8f;
+  background-color: white;
+  /* Changed from 100vh to add some spacing */
+  height: 95vh;
+  margin: 5vh 0px 10px 0px;
+}
+
+#editor {
+  width: 100%;
+  padding: 20px 60px;
+  min-height: 150px;
+  box-sizing: border-box;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 12pt;
+  line-height: 24px;
+  border: none;
+  outline: none;
+  overflow: auto;
+  background-color: transparent;
+  display:inline-block
+}
+
+/* a bit of a violent shake */
+.shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+  20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+
+.spell-error {
+  text-decoration: wavy underline;
+  text-decoration-color: red;
+}
+
+/* For improved performance with many elements */
+.overlay {
+  position: absolute;
+  pointer-events: none;
+  z-index: 100;
+  top: 0;
+  left: 0;
+}
+
+.spell-error-mark {
+  position: absolute;
+  height: 3px;
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 4" height="4" width="20"><path d="M 0 3.5 Q 5 0.5, 10 3.5, 15 0.5, 20 3.5" stroke="red" fill="none"/></svg>');
+  background-repeat: repeat-x;
+}
+
+/* For browsers that don't support wavy text-decoration */
+@supports not (text-decoration-style: wavy) {
+  .spell-error {
+    background: linear-gradient(to bottom, transparent 60%, red 60%, red 65%, transparent 65%);
+    background-size: 6px 4px;
+    background-repeat: repeat-x;
+    background-position: bottom;
+  }
+}
+
+/* Styles for the misspellings counter - 90's style */
+#mistakes-container {
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  margin: 0 auto;
+  z-index: 1000;
+}
+
+#mistakes {
+  display: inline-block;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 5px 15px;
+  border: 2px solid #000;
+  background: #c0c0c0; /* Classic Windows gray */
+  box-shadow: 3px 3px 0px #000;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #000;
+}

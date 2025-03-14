@@ -254,7 +254,7 @@ def main():
             break
             
         # Check for checkpoint creation
-        elif key.lower() == 'c':
+        elif key.lower() == 'c' or key.lower() == '.':
             # Don't allow removing the first checkpoint (index 0)
             if prev == 0:
                 continue
@@ -281,12 +281,12 @@ def main():
         elif key.lower() == 'f':
             succeeded = False
             failed = True
-            do_continue = True
+            # do_continue = True
 
         elif key.lower() == 's':
             succeeded = True
             failed = False
-            do_continue = True
+            # do_continue = True
         
         # Handle arrow keys
         elif key == DOWN_ARROW:
@@ -309,20 +309,19 @@ def main():
                 checkpoint_index += 1
                 index = checkpoints[checkpoint_index]
 
+        if succeeded:
+            if prev in to_memorize:
+                to_memorize.remove(prev)
+                memorized.add(prev)
+        elif failed:
+            if prev in memorized:
+                memorized.remove(prev)
+                to_memorize.add(prev)
+
         if do_continue:
-            if index < total_lines: # Check if we can move forward
-                if succeeded:
-                    if index in to_memorize:
-                        to_memorize.remove(index)
-                        memorized.add(index)
-                    index += 1
-                elif failed:
-                    if index in memorized:
-                        memorized.remove(index)
-                        to_memorize.add(index)
-                    index += 1
-                else:
-                    index += 1
+            # Check if we can move forward
+            if index < total_lines: 
+               index += 1
 
             if index == total_lines and len(to_memorize) == 0: # win
                 # All memorized! Enter endless mode

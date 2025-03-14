@@ -149,81 +149,18 @@
             cursor: pointer;
         }
 
-         /* New styles for text sources panel */
-         .text-sources-panel {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(10, 10, 10, 0.9);
-            padding: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.451);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            color: #f1eaea;
-            transition: transform 0.3s ease-in-out;
-        }
-
-        .text-sources-panel.hidden {
-            transform: translateY(100%);
-        }
-
-        .toggle-panel-btn {
-            position: absolute;
-            top: -30px;
-            right: 20px;
-            padding: 5px 15px;
-            background: rgba(10, 10, 10, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.451);
-            border-bottom: none;
-            border-radius: 4px 4px 0 0;
-            color: white;
-            cursor: pointer;
-            font-size: 12px;
-            transition: background 0.2s;
-        }
-
-        .toggle-panel-btn:hover {
-            background: rgba(20, 20, 20, 0.9);
-        }
-
-        .source-inputs {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .source-input {
-            width: calc(25% - 20px);
-        }
-
-        .source-input textarea {
-            background-color: black;
-            outline: none;
-            color: white;
-            width: 100%;
-        }
-
+        /* Remove text sources panel styles */
+        .text-sources-panel,
+        .toggle-panel-btn,
+        .source-inputs,
+        .source-input,
         .add-source-btn {
-            padding: 8px 16px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.451);
-            border-radius: 4px;
-            color: white;
-            cursor: pointer;
-            font-size: 12px;
-            transition: background 0.2s;
-            align-self: flex-start;
+            display: none;
         }
 
-        .add-source-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        /* Adjust editor container to account for panel */
+        /* Remove the margin adjustment for the panel */
         .editor-container {
-            margin-bottom: 180px;
+            margin-bottom: 10%;
         }
     </style>
 </head>
@@ -266,66 +203,6 @@
         </div>
     </div>
   
-    <div class="text-sources-panel">
-        <button class="toggle-panel-btn">Sources</button>
-        
-        <div class="source-inputs">
-            <div class="source-input">
-                <div class="radio-controls">
-                    <div class="radio-control">
-                        <input type="radio" name="frontSource" value="1" class="source-radio" checked>
-                        <label>F</label>
-                    </div>
-                    <div class="radio-control">
-                        <input type="radio" name="backSource" value="1" class="source-radio" checked>
-                        <label>B</label>
-                    </div>
-                </div>
-                <textarea id="source1"></textarea>
-            </div>
-            <div class="source-input">
-                <div class="radio-controls">
-                    <div class="radio-control">
-                        <input type="radio" name="frontSource" value="2" class="source-radio">
-                        <label>F</label>
-                    </div>
-                    <div class="radio-control">
-                        <input type="radio" name="backSource" value="2" class="source-radio">
-                        <label>B</label>
-                    </div>
-                </div>
-                <textarea id="source2"></textarea>
-            </div>
-            <div class="source-input">
-                <div class="radio-controls">
-                    <div class="radio-control">
-                        <input type="radio" name="frontSource" value="3" class="source-radio">
-                        <label>F</label>
-                    </div>
-                    <div class="radio-control">
-                        <input type="radio" name="backSource" value="3" class="source-radio">
-                        <label>B</label>
-                    </div>
-                </div>
-                <textarea id="source3"></textarea>
-            </div>
-            <div class="source-input">
-                <div class="radio-controls">
-                    <div class="radio-control">
-                        <input type="radio" name="frontSource" value="4" class="source-radio">
-                        <label>F</label>
-                    </div>
-                    <div class="radio-control">
-                        <input type="radio" name="backSource" value="4" class="source-radio">
-                        <label>B</label>
-                    </div>
-                </div>
-                <textarea id="source4"></textarea>
-            </div>
-        </div>
-        <button class="add-source-btn">+ Add Source</button>
-    </div>
- 
     <script>
 
         const texts = [
@@ -338,7 +215,7 @@ and genius please the talentgang
 and water most encourage flame
 
 as hatracks into peachtrees grow
-or hopes dance best on bald men’s hair
+or hopes dance best on bald men's hair
 and every finger is a toe
 and any courage is a fear
 —long enough and just so long
@@ -348,11 +225,11 @@ and hornets wail by children stung`,
 and robins never welcome spring
 nor flatfolk prove their world is round
 nor dingsters die at break of dong
-and common’s rare and millstones float
+and common's rare and millstones float
 —long enough and just so long
 tomorrow will not be too late
 
-worms are the words but joy’s the voice
+worms are the words but joy's the voice
 down shall go which and up come who
 breasts will be breasts thighs will be thighs
 deeds cannot dream what dreams can do
@@ -366,7 +243,7 @@ by only me is your doing,my darling)
                                                       i fear
 no fate(for you are my fate,my sweet)i want
 no world(for beautiful you are my world,my true)
-and it’s you are whatever a moon has always meant
+and it's you are whatever a moon has always meant
 and whatever a sun will always sing is you
 
 here is the deepest secret nobody knows
@@ -376,7 +253,7 @@ higher than soul can hope or mind can hide)
 and this is the wonder that's keeping the stars apart
 
 i carry your heart(i carry it in my heart)`,
-        `Buffalo Bill ’s
+        `Buffalo Bill 's
 defunct
                who used to
                ride a watersmooth-silver
@@ -503,84 +380,19 @@ Mister Death
         blurSlider.addEventListener('input', updateBlur);
         fontSlider.addEventListener('input', updateFontSize);
         
+        // Listen for content selection
+        document.addEventListener('contentSelected', (event) => {
+            const content = event.detail.content;
+            bottomText.value = content;
+            topText.value = content;
+        });
+
         // Initialize
         updatePoints();
         updateBlur();
 
         // Handle window resize
         window.addEventListener('resize', updatePoints);
-
-        // New script for text sources functionality
-        const addSourceBtn = document.querySelector('.add-source-btn');
-        const sourceInputs = document.querySelector('.source-inputs');
-
-        // Toggle panel functionality
-        const togglePanelBtn = document.querySelector('.toggle-panel-btn');
-        const sourcesPanel = document.querySelector('.text-sources-panel');
-        
-        togglePanelBtn.addEventListener('click', () => {
-            sourcesPanel.classList.toggle('hidden');
-            // togglePanelBtn.textContent = sourcesPanel.classList.contains('hidden') ? 'Show Sources' : 'Hide Sources';
-        });
-
-        // Update source functionality
-        function updateActiveSource(type) {
-            const radioName = type === 'front' ? 'frontSource' : 'backSource';
-            const selectedRadio = document.querySelector(`input[name="${radioName}"]:checked`);
-            const sourceId = selectedRadio.closest('.source-input').querySelector('textarea').id;
-            const sourceText = document.getElementById(sourceId).value;
-            
-            if (type === 'front') {
-                topText.value = sourceText;
-            } else {
-                bottomText.value = sourceText;
-            }
-        }
-
-        let t = 0;
-        document.querySelectorAll('.source-input textarea').forEach(textArea => {
-            textArea.innerHTML = texts[t++];
-        })
-        updateActiveSource('back');
-        updateActiveSource('front'); 
-
-        // Add radio change listeners
-        document.querySelectorAll('input[name="frontSource"]').forEach(radio => {
-            radio.addEventListener('change', () => updateActiveSource('front'));
-        });
-
-        document.querySelectorAll('input[name="backSource"]').forEach(radio => {
-            radio.addEventListener('change', () => updateActiveSource('back'));
-        });
-
-        // Modify add source functionality
-        let sourceCount = 4;
-        addSourceBtn.addEventListener('click', () => {
-            sourceCount++;
-            const newFrontSource = document.createElement('div');
-            newFrontSource.className = 'source-input';
-            newFrontSource.innerHTML = `
-                <label>Source ${sourceCount}</label>
-                <input type="radio" name="frontSource" value="${sourceCount}" class="source-radio">
-                <textarea id="source${sourceCount}"></textarea>
-            `;
-            document.getElementById('frontSourceInputs').appendChild(newFrontSource);
-
-            const newBackSource = document.createElement('div');
-            newBackSource.className = 'source-input';
-            newBackSource.innerHTML = `
-                <label>Source ${sourceCount + 1}</label>
-                <input type="radio" name="backSource" value="${sourceCount + 1}" class="source-radio">
-                <textarea id="source${sourceCount + 1}"></textarea>
-            `;
-            document.getElementById('backSourceInputs').appendChild(newBackSource);
-
-            // Add change listeners to new radio buttons
-            newFrontSource.querySelector('input[type="radio"]').addEventListener('change', () => updateActiveSource('front'));
-            newBackSource.querySelector('input[type="radio"]').addEventListener('change', () => updateActiveSource('back'));
-
-            sourceCount++;
-        });
     </script>
 </body>
 </html>
