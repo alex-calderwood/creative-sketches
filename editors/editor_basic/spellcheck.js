@@ -7,14 +7,21 @@ class SpellChecker {
       };
       
       this.targetElement = null;
-      this.misspellings = [];     
+      this.textState = {
+        misspellings: [],
+        wordCount: 0,
+      }
       this.isChecking = false;    
       this.checkNeeded = false;
       this.eventTarget = new EventTarget();
     }
 
     numMistakes() {
-      return this.misspellings.length;
+      return this.textState.misspellings.length;
+    }
+
+    wordCount() {
+      return this.textState.wordCount;
     }
 
     // Set the element to check for spelling
@@ -28,12 +35,11 @@ class SpellChecker {
       
       // Set new element and initialize
       this.targetElement = element;
-      this.misspellings = [];
+      this.textState.misspellings = [];
       
       // Set up event listeners for content changes
       element.addEventListener('input', this.handleInput.bind(this));
       
-      // Initial check
       this.checkSpelling();
       
       return this;
@@ -69,18 +75,16 @@ class SpellChecker {
     async performSpellCheck() {
       if (!this.targetElement) return;
       
-      const text = this.targetElement.textContent || '';
-      
-      // Find incorrectly spelled words
-      const words = this.extractWords(text);
-      const currentMisspellings = this.findMisspelledRanges(words);
-      
-      // detect changes
-      const newMisspellings = this.findNewMisspellings(this.misspellings, currentMisspellings);
-      
-      this.misspellings = currentMisspellings;
-      
-      if (newMisspellings.length > 0) { this.emitMisspellingsChanged(newMisspellings); }
+      let tokens = iterateContentEditableWords(this.targetElement);
+      const currentMisspellings = this.getMispellings(tokens);
+      const prevMisspellings = this.textState.misspellings;
+
+      const newMisspellings = this.findNewMisspellings(this.textState.misspellings, currentMisspellings);
+      this.textState.misspellings = currentMisspellings;
+      this.textState.wordCount = tokens.length;
+
+      if (currentMisspellings.length != prevMisspellings.length) { this.emitMisspellingsChanged(newMisspellings); }
+      this.emitWordCountChanged(tokens.length);
       
       this.markup(currentMisspellings);
     }
@@ -92,154 +96,56 @@ class SpellChecker {
       }
     }
 
-    extractWords(text) {
-      // Split by non-word characters but keep track of positions
-      const wordRegex = /\b[a-z']+\b/gi;
-      const words = [];
-      let match;
-      
-      while ((match = wordRegex.exec(text)) !== null) {
-        words.push({
-          word: match[0],
-          start: match.index,
-          end: match.index + match[0].length
-        });
-      }
-      
-      return words;
-    }
-
-    // Find ranges of misspelled words
-    findMisspelledRanges(words) {
-      const misspelledRanges = [];
-      
-      words.forEach(({ word, start, end }) => {
-        // Skip small words (like 'a', 'I')
-        if (word.length <= 1) return;
-        
-        // Check if the word is in our dictionary
-        if (!this.isWordCorrect(word)) {
-            let bad = { word, start, end }
-            misspelledRanges.push(bad);
-        }
-      });
-      
+    getMispellings(words) {
+      const misspelledRanges = words.filter(word => !this.isWordCorrect(word.text));
       return misspelledRanges;
     }
 
     // Check if a word is spelled correctly
     isWordCorrect(word) {
-      // Normalize the word
       const normalizedWord = word.toLowerCase();
       return !normalizedWord.includes('e');
     }
 
-    markup(misspelledRanges) {
+    markup(mispelledTokens) {
       if (!this.targetElement) return;
       
-      let overlay = this.targetElement.nextElementSibling;
-      
-      // Create overlay if it doesn't exist
-      if (!overlay || !overlay.classList.contains('overlay')) {
-        overlay = document.createElement('div');
-        overlay.classList.add('overlay');
-        
-        // Insert after the element
-        this.targetElement.parentNode.insertBefore(overlay, this.targetElement.nextSibling);
-      }
-      
-      // Clear existing marks
+      let overlay = document.getElementById("overlay");
       overlay.innerHTML = '';
       
-      // Position the overlay right on top of the input
-      const rect = this.targetElement.getBoundingClientRect();
-      overlay.style.width = `${rect.width}px`;
-      overlay.style.height = `${rect.height}px`;
-      
-      // Add squiggle for each misspelled word
-      misspelledRanges.forEach(range => {
-        const textNode = this.findTextNodeAtPosition(range.start);
-        if (!textNode) return;
-        
-        const rangeObj = document.createRange();
-        const startOffset = range.start - this.getTextNodeOffset(textNode);
-        const endOffset = startOffset + range.word.length;
-        console.log("spell-> setting offset", {word: range.word, rangeObj, startOffset, endOffset, textNode})
-        
-        rangeObj.setStart(textNode, startOffset);
-        rangeObj.setEnd(textNode, endOffset);
-        
-        const wordRect = rangeObj.getBoundingClientRect();
-        const elementRect = this.targetElement.getBoundingClientRect();
-        
-        // Create squiggle element
+      let editorRect = this.targetElement.getBoundingClientRect();
+      overlay.style.width = `${editorRect.width}px`;
+      overlay.style.height = `${editorRect.height}px`;
+
+      mispelledTokens.forEach(misspelled => {
         const squiggle = document.createElement('div');
         squiggle.classList.add('spell-error-mark');
-        squiggle.style.left = `${wordRect.left - elementRect.left}px`;
-        squiggle.style.top = `${wordRect.bottom - elementRect.top}px`; // Position at bottom of text
-        squiggle.style.width = `${wordRect.width}px`;
+        squiggle.style.left = `${misspelled.rect.left - editorRect.left}px`;
+        squiggle.style.top = `${misspelled.rect.bottom - editorRect.top}px`; // Position at bottom of text
+        squiggle.style.width = `${misspelled.rect.width}px`;
 
-        const onTopWord = document.createElement('div');
-        onTopWord.classList.add('on-top-word')
+        const overlayWord = document.createElement('div');
+        overlayWord.classList.add('overlay-word');
+        overlayWord.textContent = misspelled.text
+        overlayWord.style.left = `${misspelled.rect.left - editorRect.left}px`;
+        overlayWord.style.top = `${misspelled.rect.top - editorRect.top}px`; // Position at bottom of text
+        
         
         overlay.appendChild(squiggle);
+        overlay.appendChild(overlayWord);
       });
-    }
-    
-    // Helper function to find the text node at a given position
-    findTextNodeAtPosition(position) {
-      if (!this.targetElement) return null;
-      
-      const walker = document.createTreeWalker(this.targetElement, NodeFilter.SHOW_TEXT, null, false);
-      let currentNode = walker.nextNode();
-      let currentPosition = 0;
-      
-      while (currentNode) {
-        const nodeLength = currentNode.nodeValue.length;
-        
-        if (position >= currentPosition && position < currentPosition + nodeLength) {
-          return currentNode;
-        }
-        
-        currentPosition += nodeLength;
-        currentNode = walker.nextNode();
-      }
-      
-      return null;
-    }
-    
-    // Helper function to get the offset of a text node within the element
-    getTextNodeOffset(targetNode) {
-      if (!this.targetElement) return 0;
-      
-      const walker = document.createTreeWalker(this.targetElement, NodeFilter.SHOW_TEXT, null, false);
-      let currentNode = walker.nextNode();
-      let offset = 0;
-      
-      while (currentNode && currentNode !== targetNode) {
-        offset += currentNode.nodeValue.length;
-        currentNode = walker.nextNode();
-      }
-      
-      return offset;
     }
 
     // Find new misspellings that weren't in the previous set
     findNewMisspellings(previous, current) {
+      const hash = (item) => {return `${item.text}-${item.startIndex}-${item.endIndex}`}
       // Create a simple hash of each previous misspelling for comparison
-      const previousHashes = previous.map(item => `${item.word}-${item.start}-${item.end}`);
+      const previousHashes = previous.map(hash);
       
       // Filter current misspellings to only those not in previous
       return current.filter(item => {
-        const hash = `${item.word}-${item.start}-${item.end}`;
-        return !previousHashes.includes(hash);
+        return !previousHashes.includes(hash(item));
       });
-    }
-
-    // Add event listener for misspelling changes
-    onMisspellingsChanged(callback) {
-      this.eventTarget.addEventListener('misspellingsChanged', callback);
-      return this;
     }
 
     // Emit misspellings changed event
@@ -247,7 +153,19 @@ class SpellChecker {
       const event = new CustomEvent('misspellingsChanged', {
         detail: {
           element: this.targetElement,
-          misspellings: misspellings
+          misspellings: misspellings,
+          newMistake: misspellings.length > 0,
+        }
+      });
+      this.eventTarget.dispatchEvent(event);
+    }
+
+    // Add this new method to emit word count events
+    emitWordCountChanged(count) {
+      const event = new CustomEvent('wordCountChanged', {
+        detail: {
+          element: this.targetElement,
+          count: count
         }
       });
       this.eventTarget.dispatchEvent(event);
@@ -263,4 +181,36 @@ class SpellChecker {
 const editor = document.querySelector('#editor');
 if (editor) {
   demoSpellChecker.setElement(editor);
+}
+
+
+/**
+ * Unused
+ * 
+ * Extracts the text content from a contenteditable element, preserving explicit line breaks.
+ *
+ * It needed to be this complex for when we were doing rich text, but now the <br> and <div> stuff isn't used.
+ * 
+ * This function clones the provided element to avoid altering the original content. It then
+ * replaces <br> tags and the beginnings of <div> tags with newline characters to preserve
+ * the visual representation of line breaks. The function does not modify <span> tags, as they
+ * are not typically associated with line breaks. The modified content is then returned as a
+ * single string with preserved line breaks.
+ *
+ * @param {HTMLElement} element - The contenteditable element from which to extract text.
+ * @returns {string} The text content of the element with \n characters in place of <br> and <div> tags.
+*/
+function getTextWithWhitespace(element) {
+  let clone = element.cloneNode(true);
+
+  // Replace <br> tags with \n
+  clone.querySelectorAll('br').forEach(br => br.replaceWith('\n'));
+
+  // Replace block elements like <div> with \n and maintain their content
+  clone.querySelectorAll('div').forEach(div => {
+    div.replaceWith('\n', ...div.childNodes);
+  });
+
+  // Extract the textContent from the cloned element
+  return clone.textContent;
 }

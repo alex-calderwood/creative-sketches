@@ -9,16 +9,23 @@
 </head>
 <body>
   
+  <div id="prompt" class="prompt word">
+    Write a correct poem.
+  </div>
+
   <div id="editor-container" class="editor-container">
     <div id="editor" class="editor" spellcheck="false" contenteditable="true">The fyre did gyre and gimble in the burn</div>
+    <div id="overlay" class="overlay"></div>
   </div>
   
   <div id="mistakes-container">
-    <div id="mistakes"></div>
+    <div id="mistakes" class="word count"></div>
+    <div id="word-count" class="word count"></div>
   </div>
   
+  <script src="textIterator.js"></script>
   <script src="spellcheck.js"></script>
-  <script src="misspellings-counter.js"></script>
+  <script src="events.js"></script>
   
 </body>
 </html>
