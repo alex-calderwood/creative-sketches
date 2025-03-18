@@ -5,29 +5,49 @@ body {
   background-color: #7b8eb5;
 }
 
+.prompt {
+  text-align: left;  /* MS Word 95 headers were typically left-aligned */
+  margin-top: 10px;
+  padding: 2px 6px;
+  font-size: 14pt;
+  font-weight: bold;
+}
+
+.word {
+  font-family: "Microsoft Sans Serif", "Segoe UI", "Arial", sans-serif;
+  background-color: #c0c0c0;  /* Classic Win95 gray */
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff; /* Classic Win95 beveled edge */
+  box-shadow: 1px 1px 0 0 #11045a;
+  color: #0c0b5f;
+}
+
 #editor-container {
   position: relative;
-  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
   border: 1px solid #8f8f8f;
   background-color: white;
   /* Changed from 100vh to add some spacing */
-  height: 95vh;
-  margin: 5vh 0px 10px 0px;
+  height: 85vh;
+  margin: 5vh 0px;
 }
 
 #editor {
   width: 100%;
-  padding: 20px 60px;
-  min-height: 150px;
+  height: 100%;
+  padding: 60px 60px;
   box-sizing: border-box;
   font-family: "Times New Roman", Times, serif;
   font-size: 12pt;
   line-height: 24px;
-  border: none;
   outline: none;
   overflow: auto;
   background-color: transparent;
-  display:inline-block
+  display:inline-block;
+
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff; /* Classic Win95 beveled edge */
+  box-shadow: 1px 1px 0 0 #11045a;
+  color: black;
 }
 
 /* a bit of a violent shake */
@@ -53,6 +73,11 @@ body {
   z-index: 100;
   top: 0;
   left: 0;
+}
+
+.overlay-word {
+  position: absolute;
+  color: red;
 }
 
 .spell-error-mark {
@@ -81,18 +106,71 @@ body {
   text-align: center;
   margin: 0 auto;
   z-index: 1000;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }
 
-#mistakes {
-  display: inline-block;
+.count {
+  width: 20%;
+  /* display: inline-block;
   font-family: "Courier New", Courier, monospace;
   font-size: 14px;
   font-weight: bold;
   padding: 5px 15px;
   border: 2px solid #000;
-  background: #c0c0c0; /* Classic Windows gray */
+  background: #c0c0c0;
   box-shadow: 3px 3px 0px #000;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #000;
+  color: #000; */
+}
+
+.complete {
+  position: relative;
+  animation: letterRain 2s ease-out forwards;
+}
+
+@keyframes letterRain {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Add a slight delay to each letter to create a cascading effect */
+.complete > * {
+  animation: letterDrop 1s ease-out forwards;
+  opacity: 0;
+}
+
+/* Create random delays for letters */
+.complete > *:nth-child(3n) {
+  animation-delay: 0.2s;
+}
+
+.complete > *:nth-child(3n+1) {
+  animation-delay: 0.4s;
+}
+
+.complete > *:nth-child(3n+2) {
+  animation-delay: 0.6s;
+}
+
+@keyframes letterDrop {
+  0% {
+    transform: translateY(0px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(-100%);
+    opacity: 1;
+  }
 }
