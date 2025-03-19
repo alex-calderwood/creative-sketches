@@ -1,0 +1,176 @@
+body {
+  font-family: "Times New Roman", Times, serif;
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #7b8eb5;
+}
+
+.prompt {
+  text-align: left;  /* MS Word 95 headers were typically left-aligned */
+  margin-top: 10px;
+  padding: 2px 6px;
+  font-size: 14pt;
+  font-weight: bold;
+}
+
+.word {
+  font-family: "Microsoft Sans Serif", "Segoe UI", "Arial", sans-serif;
+  background-color: #c0c0c0;  /* Classic Win95 gray */
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff; /* Classic Win95 beveled edge */
+  box-shadow: 1px 1px 0 0 #11045a;
+  color: #0c0b5f;
+}
+
+#editor-container {
+  position: relative;
+  border: 1px solid #8f8f8f;
+  background-color: white;
+  /* Changed from 100vh to add some spacing */
+  height: 85vh;
+  margin: 5vh 0px;
+}
+
+#editor {
+  width: 100%;
+  height: 100%;
+  padding: 60px 60px;
+  box-sizing: border-box;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 12pt;
+  line-height: 24px;
+  outline: none;
+  overflow: auto;
+  background-color: transparent;
+  display:inline-block;
+
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff; /* Classic Win95 beveled edge */
+  box-shadow: 1px 1px 0 0 #11045a;
+  color: black;
+}
+
+/* a bit of a violent shake */
+.shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+  20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+
+.spell-error {
+  text-decoration: wavy underline;
+  text-decoration-color: red;
+}
+
+/* For improved performance with many elements */
+.overlay {
+  position: absolute;
+  pointer-events: none;
+  z-index: 100;
+  top: 0;
+  left: 0;
+}
+
+.overlay-word {
+  position: absolute;
+  color: red;
+}
+
+.spell-error-mark {
+  position: absolute;
+  height: 6px;
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 4" height="4" width="20"><path d="M 0 3.5 Q 5 0.5, 10 3.5, 15 0.5, 20 3.5" stroke="red" fill="none"/></svg>');
+  background-repeat: repeat-x;
+}
+
+/* For browsers that don't support wavy text-decoration */
+@supports not (text-decoration-style: wavy) {
+  .spell-error {
+    background: linear-gradient(to bottom, transparent 60%, red 60%, red 65%, transparent 65%);
+    background-size: 6px 4px;
+    background-repeat: repeat-x;
+    background-position: bottom;
+  }
+}
+
+/* Styles for the misspellings counter - 90's style */
+#mistakes-container {
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  margin: 0 auto;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.count {
+  width: 20%;
+  /* display: inline-block;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 5px 15px;
+  border: 2px solid #000;
+  background: #c0c0c0;
+  box-shadow: 3px 3px 0px #000;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #000; */
+}
+
+.complete {
+  position: relative;
+  animation: letterRain 2s ease-out forwards;
+}
+
+@keyframes letterRain {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Add a slight delay to each letter to create a cascading effect */
+.complete > * {
+  animation: letterDrop 1s ease-out forwards;
+  opacity: 0;
+}
+
+/* Create random delays for letters */
+.complete > *:nth-child(3n) {
+  animation-delay: 0.2s;
+}
+
+.complete > *:nth-child(3n+1) {
+  animation-delay: 0.4s;
+}
+
+.complete > *:nth-child(3n+2) {
+  animation-delay: 0.6s;
+}
+
+@keyframes letterDrop {
+  0% {
+    transform: translateY(0px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(-100%);
+    opacity: 1;
+  }
+}

@@ -82,7 +82,7 @@ body {
 
 .spell-error-mark {
   position: absolute;
-  height: 3px;
+  height: 6px;
   background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 4" height="4" width="20"><path d="M 0 3.5 Q 5 0.5, 10 3.5, 15 0.5, 20 3.5" stroke="red" fill="none"/></svg>');
   background-repeat: repeat-x;
 }
