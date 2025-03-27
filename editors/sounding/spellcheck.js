@@ -1,3 +1,5 @@
+let speaker = new Speaker();
+
 class SpellChecker {
     constructor(options = {}) {
       this.options = {
@@ -48,6 +50,7 @@ class SpellChecker {
 
     handleInput(event) {
       this.checkNeeded = true;
+      this.event = event; // log the most recent event
       
       // If not already checking, start the check process
       if (!this.isChecking) {
@@ -83,11 +86,8 @@ class SpellChecker {
       this.textState.tokens = tokens;
       this.textState.wordCount = tokens.length;
 
-      console.log({tokens, newTokens})
-      
       const [correctWords, currentMisspellings] = this.getMispellings(tokens);
       const prevMisspellings = this.textState.misspellings;
-
 
       const newMisspellings = this.findNewTokens(this.textState.misspellings, currentMisspellings);
       this.textState.misspellings = currentMisspellings;
@@ -95,12 +95,21 @@ class SpellChecker {
       // if (currentMisspellings.length != prevMisspellings.length) { this.emitMisspellingsChanged(newMisspellings); }
       // this.emitWordCountChanged(tokens.length);
       
-      this.markup(currentMisspellings, correctWords);
+      // this.markup(currentMisspellings, correctWords);
 
-      let words = newTokens.map(t => t.text);
+      let mostRecent = tokens.length > 0 ? [tokens[tokens.length -1]] : [];
+      let others = tokens.slice(0, tokens.length - 1);
+      console.log({mostRecent, others})
+      this.mistakeMarkup(mostRecent, others);
+      // console.log(this.event)
+      if (this.event?.data == ' ' || this.event?.inputType == 'insertLineBreak' ) {
+        let words = "It is not dreamlike to say: " + mostRecent.map(t => t.text) + "!";
+        // let words = others.map(t => t.text);
 
-      console.log("speaking", {words, tokens})
-      speak(words, 0, 1.2, 1.1);
+        // console.log("speaking", {words, tokens})
+        speak(words, 0, 1.2, 1.1);
+        // speaker.speak(words);
+      }
     }
 
     checkSpelling() {
@@ -122,7 +131,7 @@ class SpellChecker {
       return !normalizedWord.includes('e');
     }
 
-    markup(mispelledTokens, correctTokens) {
+    mistakeMarkup(mispelledTokens, correctTokens) {
       if (!this.targetElement) return;
       
       let overlay = document.getElementById("overlay");
