@@ -38,21 +38,25 @@ console.log('Discovered projects within editors directory:', projects);
 
 // Create a simple index page that lists all projects
 app.get('/', (req, res) => {
-  let html = '<html><head><title>Creative Sketches Editor Projects</title>';
-  html += '<style>body{font-family:sans-serif;max-width:800px;margin:0 auto;padding:20px;} ';
-  html += 'h1{color:#333;} ul{list-style-type:none;padding:0;} ';
-  html += 'li{margin:10px 0;padding:10px;border-radius:5px;background:#f5f5f5;} ';
-  html += 'a{color:#0066cc;text-decoration:none;font-size:18px;} ';
-  html += 'a:hover{text-decoration:underline;}</style></head><body>';
-  html += '<h1>Creative Sketches Editor Projects</h1><ul>';
+  // Read the index.html template
+  const indexPath = path.join(__dirname, 'index.html');
   
-  projects.forEach(project => {
-    html += `<li><a href="/editors/${project}/">${project}</a></li>`;
+  fs.readFile(indexPath, 'utf8', (err, data) => {
+    if (err) {
+      console.error('Error reading index.html:', err);
+      return res.status(500).send('Error loading index page');
+    }
+    
+    // Replace the projects array placeholder with actual projects
+    const updatedHtml = data.replace(
+      'const projects = [];',
+      `const projects = ${JSON.stringify(projects)};`
+    );
+    
+    res.send(updatedHtml);
   });
-  
-  html += '</ul></body></html>';
-  res.send(html);
 });
+
 
 // Also serve the editors index at /editors for direct access
 app.get('/editors', (req, res) => {
