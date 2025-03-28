@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Writer's Project</title>
+    <style>
+        body {
+            margin: 0 auto;
+            margin: 30px;
+        }
+        h1 {
+            text-align: center;
+            font-weight: 300;
+            font-size: 0.7rem;
+            margin-bottom: 30px;
+        }
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 100px);
+            gap: 25px;
+        }
+        .project-card {
+            background: white;
+            height: 141px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+        .project-card:hover {
+            transform: translateY(-5px) rotate(540deg);
+            box-shadow:  -8px -8px 12px rgba(0,0,0,0.15);
+        }
+        .project-name {
+            flex-grow: 1;
+            display: flex;
+            padding: 20px;
+            font-size: 0.6rem;
+            color: #2c3e50;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+    </style>
+</head>
+<body>
+    <h1>The Writer's Project (Work in Progress)</h1>
+    
+    <div class="projects-grid" id="projects-container">
+        <!-- Project cards will be inserted here by JavaScript -->
+    </div>
+
+    <script>
+        // This will be replaced with the actual projects array by the server
+        const projects = [];
+        
+        // Generate project cards
+        const container = document.getElementById('projects-container');
+        
+        projects.forEach(project => {
+            const card = document.createElement('a');
+            card.href = `/editors/${project}/`;
+            card.className = 'project-card';
+            
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'project-name';
+            nameDiv.textContent = project;
+            
+            card.appendChild(nameDiv);
+            
+            container.appendChild(card);
+        });
+    </script>
+</body>
+</html>
