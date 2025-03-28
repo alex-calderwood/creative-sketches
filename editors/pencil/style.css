@@ -1,3 +1,17 @@
+@font-face {
+  font-family: 'Corethan';
+  src: url('fonts/Corethan.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Corethan Extra Bold';
+  src: url('fonts/Corethan Extra Bold.otf') format('opentype');
+  font-weight:bolder;
+  font-style: bolder;
+}
+
 body {
   font-family: "Times New Roman", Times, serif;
   background-color: #7b8eb5;
@@ -50,8 +64,8 @@ body {
   height: 100%;
   padding: 60px 60px;
   box-sizing: border-box;
-  font-family: "Times New Roman", Times, serif;
-  font-size: 12pt;
+  font-family: 'Corethan Extra Bold', sans-serif;
+  font-size: 18pt;
   line-height: 24px;
   outline: none;
   overflow: auto;
@@ -62,12 +76,14 @@ body {
   border: 2px solid;
   border-color: #ffffff #808080 #808080 #ffffff; /* Classic Win95 beveled edge */
   box-shadow: 1px 1px 0 0 #11045a;
-  color: transparent;
+  color: rgba(100, 100, 100, 0.4);
 }
 
 .overlay {
   position: absolute;
   pointer-events: none;
+  font-family: 'Corethan Extra Bold', sans-serif;
+  font-size: 18pt;
   z-index: 100;
   top: 0;
   left: 0;
@@ -83,7 +99,8 @@ body {
 .overlay-word-pencil {
   position: absolute;
   /* color: gray; */
-  color: rgba(100, 100, 100, 0.4)
+  /* color: rgba(100, 100, 100, 0.27); */ /* works with Times*/
+ color: rgba(100, 100, 100, 0.35);
 }
 
 .delayed-overlay-word {
