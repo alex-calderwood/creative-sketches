@@ -9,6 +9,7 @@ COPY package.json package-lock.json ./
 RUN npm install
 
 # Copy server script
+COPY index.html ./
 COPY server.js ./
 
 # Copy the editors directory
