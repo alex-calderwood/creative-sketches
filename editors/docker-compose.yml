@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  editors-server:
+    build: .
+    container_name: editors-server
+    restart: unless-stopped
+    ports:
+      - "3008:3008"
+    # Add any volumes or environment variables needed
+    # volumes:
+    #   - ./data:/app/data
+    # environment:
+    #   - NODE_ENV=production
