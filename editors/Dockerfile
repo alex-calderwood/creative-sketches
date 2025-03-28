@@ -27,7 +27,7 @@ RUN for dir in $PROJECT_DIRS; do \
       fi \
     done && \
     rm -rf /tmp/*
-th
+
 # Debug - list what's in the container
 RUN ls -la
 
