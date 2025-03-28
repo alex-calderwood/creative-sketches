@@ -80,11 +80,21 @@ class Editor {
     async performSpellCheck() {
       if (!this.targetElement) return;
 
+      const prevTokens = this.textState.tokens;
       let tokens = iterateContentEditableWords(this.targetElement);
 
-      const prevTokens = this.textState.tokens;
-      const [newTokens, oldTokens] = this.findNewTokens(prevTokens, tokens);
+      // const newAtAllHash = (item) => {return `${item.rect.left}-${item.rect.top}-${item.text}-${item.startIndex}-${item.endIndex}`}
+      const newLocationHash = (item) => {return `${item.rect.left}-${item.rect.top}}`}
+      
+      const [newTokens, oldTokens] = this.findNewTokens(prevTokens, tokens, newLocationHash);
       this.textState.tokens = tokens;
+
+      const newAndTextHash = (item) => {return `${item.rect.left}-${item.rect.top}-${item.text}`}
+      const updatedTokens = this.findNewCharacters(prevTokens, tokens, newAndTextHash);
+
+      console.log('updated', updatedTokens);
+
+      const allNewTokens = newTokens.concat(updatedTokens);
       this.textState.wordCount = tokens.length;
 
       // const [correctWords, currentMisspellings] = this.getMispellings(tokens);
@@ -100,12 +110,8 @@ class Editor {
       // let mostRecent = tokens.length > 0 ? [tokens[tokens.length -1]] : [];
       // let others = tokens.slice(0, tokens.length - 1);
       // this.mistakeMarkup(mostRecent, others);
-      this.delayedMarkup(oldTokens, newTokens);
+      this.delayedMarkup(oldTokens, allNewTokens);
 
-      console.log('hi', tokens.map(t => `${t.text}-${t.text.length}`))
-      console.log(this.targetElement.innerHTML)
-
-      // console.log(this.event)
     }
 
     checkSpelling() {
@@ -202,8 +208,9 @@ class Editor {
     }
 
     // Find new tokens that weren't in the previous set
-    findNewTokens(previous, current) {
-      const hash = (item) => {return `${item.rect.left}-${item.rect.top}-${item.text}-${item.startIndex}-${item.endIndex}`}
+    findNewTokens(previous, current, hash) {
+      // const hash = (item) => {return `${item.rect.left}-${item.rect.top}-${item.startIndex}`}
+
       // Create a simple hash of each previous misspelling for comparison
       const previousHashes = previous.map(hash);
       
@@ -212,11 +219,33 @@ class Editor {
       const oldTokens = current.filter(item => previousHashes.includes(hash(item)));
 
       console.log('prev hashes', previousHashes);
-      console.log('new hashes', current.map(hash))
-
-      console.log({newTokens, oldTokens, previous, current})
+      console.log('new', newTokens.map(hash))
+      // console.log({newTokens, oldTokens, previous, current})
 
       return [newTokens, oldTokens];
+    }
+
+    findNewCharacters(prevTokens, newTokens) {
+      const locationHash = (item) => {return `${item.rect.left}-${item.rect.top}`}
+      const textHash = (item) => {return `${item?.text}`}
+
+      const lookup = {};
+      prevTokens.forEach(token => {
+        lookup[locationHash(token)] = token;
+      });
+
+      let updatedTokens = [];
+      
+      newTokens.forEach(token => {
+        const original = lookup[locationHash(token)];
+        console.log(`${original?.text} -> ${token?.text}`, token);
+        if (original != null && token != null && textHash(original) != textHash(token)) {
+          const diffs = diffTokens(original, token);
+          updatedTokens = updatedTokens.concat(diffs);
+        }
+      });
+
+        return updatedTokens;
     }
 
     // Emit misspellings changed event

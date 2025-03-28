@@ -91,3 +91,63 @@ function iterateContentEditableWords(editableElement, options = {}) {
     
     return words;
   }
+
+
+  /**
+ * Compares two tokens and returns only the differences with positioning data.
+ * Uses the diff library to identify changed segments, ignoring unchanged text.
+ * Returns added segments from the new token and their positions.
+ */
+function diffTokens(oldToken, newToken) {
+  // Get the text differences using JsDiff
+  const textDiffs = Diff.diffChars(oldToken.text, newToken.text);
+  
+  // Result array - only contains differences
+  const diffResult = [];
+  
+  // Track current position in the node, starting from the token's start position
+  let currentIndex = newToken.startIndex;
+  
+  // Process each part of the diff
+  textDiffs.forEach(part => {
+    const { added, removed, value } = part;
+    
+    // If this part is added (present in new token but not in old token)
+    if (added && value.length > 0) {
+      const partStartIndex = currentIndex;
+      const partEndIndex = currentIndex + value.length;
+      
+      // Create a DOM range for this part to get precise rect
+      const range = document.createRange();
+      range.setStart(newToken.node, partStartIndex);
+      range.setEnd(newToken.node, partEndIndex);
+      const rect = range.getBoundingClientRect();
+      
+      diffResult.push({
+        text: value,
+        rect: {
+          top: rect.top,
+          right: rect.right,
+          bottom: rect.bottom,
+          left: rect.left,
+          width: rect.width,
+          height: rect.height,
+          absoluteTop: rect.top + window.scrollY,
+          absoluteLeft: rect.left + window.scrollX
+        },
+        element: newToken.element,
+        node: newToken.node,
+        fragileNodeIndex: newToken.fragileNodeIndex,
+        startIndex: partStartIndex,
+        endIndex: partEndIndex
+      });
+    }
+    
+    // Move index past this part (if it's in the new token)
+    if (!removed) {
+      currentIndex += value.length;
+    }
+  });
+  
+  return diffResult;
+}
