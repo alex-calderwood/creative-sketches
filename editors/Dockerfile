@@ -31,6 +31,6 @@ th
 # Debug - list what's in the container
 RUN ls -la
 
-EXPOSE 3000
+EXPOSE 3008 
 
 CMD ["node", "server.js"]
