@@ -11,10 +11,10 @@ RUN npm install
 # Copy server configuration
 COPY server.js projects.json ./
 
-# Define directories to copy (one per line for better readability)
-ENV PROJECT_DIRS="corrEct"
-                #   other-project \
-                #   another-dir"
+# directories to copy
+ENV PROJECT_DIRS="corrEct delay dream-delay sounding"
+
+# TODO move things into an 'public' folder and just copy that
 
 # Copy all directories in the list using a shell loop
 COPY . /tmp/
@@ -27,10 +27,9 @@ RUN for dir in $PROJECT_DIRS; do \
       fi \
     done && \
     rm -rf /tmp/*
-
+th
 # Debug - list what's in the container
 RUN ls -la
-RUN ls -la corrEct || echo "corrEct directory not found"
 
 EXPOSE 3000
 
