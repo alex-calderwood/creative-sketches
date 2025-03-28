@@ -103,7 +103,7 @@ class SpellChecker {
       this.mistakeMarkup(mostRecent, others);
       // console.log(this.event)
       if (this.event?.data == ' ' || this.event?.inputType == 'insertLineBreak' ) {
-        let words = "It is not dreamlike to say: " + mostRecent.map(t => t.text) + "!";
+        let words = "You would not say: '" + mostRecent.map(t => t.text) + "' in a dream!";
         // let words = others.map(t => t.text);
 
         // console.log("speaking", {words, tokens})
