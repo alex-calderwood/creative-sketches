@@ -1,3 +1,5 @@
+# The Writer's Project Editors
+
 # Build
 
 docker build -t editors .
