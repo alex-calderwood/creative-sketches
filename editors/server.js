@@ -5,7 +5,7 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3008;
 
 // Load projects from config file
 let projects = [];
