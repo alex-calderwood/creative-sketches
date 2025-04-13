@@ -8,7 +8,7 @@ const app = express();
 const port = process.env.PORT || 3008;
 
 // Discover all project directories within the editors subdirectory
-function getProjectDirectories() {
+function getProjets() {
   const editorsDir = path.join(__dirname, 'editors');
   
   // Check if editors directory exists
@@ -28,12 +28,19 @@ function getProjectDirectories() {
   });
   
   console.log('Found projects in editors directory:', projectDirs);
-  return projectDirs;
+
+  const projects = projectDirs.map((dir) => {
+    return {
+      url: dir,
+      name: dir
+    }
+  })
+  return projects;
 }
 
 // Get project directories
 // Get all project directories within the editors folder
-const projects = getProjectDirectories();
+const projects = getProjets();
 console.log('Discovered projects within editors directory:', projects);
 
 // Create a simple index page that lists all projects
@@ -65,7 +72,7 @@ app.get('/editors', (req, res) => {
 
 // Set up static serving for each project directory
 projects.forEach(project => {
-  const projectPath = path.join(__dirname, 'editors', project);
+  const projectPath = path.join(__dirname, 'editors', project.url);
   
   // Create a router for this project
   const projectRouter = express.Router();
@@ -77,12 +84,12 @@ projects.forEach(project => {
   projectRouter.use(serveStatic(projectPath));
   
   // Mount the router at the project path with 'editors' prefix
-  app.use(`/editors/${project}`, projectRouter);
+  app.use(`/editors/${project.url}`, projectRouter);
   
-  console.log(`Serving ${project} at /editors/${project} from ${projectPath}`);
+  console.log(`Serving ${project.name} at /editors/${project.url} from ${projectPath}`);
 });
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
-  console.log(`Available projects: ${projects.join(', ')}`);
+  console.log(`Available projects: ${projects.map(p => p.name).join(', ')}`);
 });

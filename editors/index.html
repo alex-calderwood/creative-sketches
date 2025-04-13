@@ -62,13 +62,15 @@
         const container = document.getElementById('projects-container');
         
         projects.forEach(project => {
+            let url = project.url;
+            let name = project.name;
             const card = document.createElement('a');
-            card.href = `/editors/${project}/`;
+            card.href = `/editors/${url}/`;
             card.className = 'project-card';
             
             const nameDiv = document.createElement('div');
             nameDiv.className = 'project-name';
-            nameDiv.textContent = project;
+            nameDiv.textContent = name;
             
             card.appendChild(nameDiv);
             
