@@ -19,6 +19,6 @@ COPY editors/ ./editors/
 RUN ls -la
 RUN ls -la editors/
 
-EXPOSE 3008 
+EXPOSE 3008
 
 CMD ["node", "server.js"]
