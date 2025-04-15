@@ -65,7 +65,7 @@ body {
   padding: 60px 60px;
   box-sizing: border-box;
   /* font-family: 'Corethan Extra Bold', sans-serif; */
-  font-family: "Microsoft Sans Serif", "Segoe UI", "Arial", sans-serif;
+  font-family: "Times New Roman", Times, serif;
   font-size: 18pt;
   line-height: 24px;
   outline: none;
@@ -84,7 +84,7 @@ body {
   position: absolute;
   pointer-events: none;
   /* font-family: 'Corethan Extra Bold', sans-serif; */
-  font-family: "Microsoft Sans Serif", "Segoe UI", "Arial", sans-serif;
+  font-family: "Times New Roman", Times, serif;
   font-size: 18pt;
   z-index: 100;
   top: 0;
