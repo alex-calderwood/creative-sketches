@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spellchecker Demo</title>
+  <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+  <div class="prompt-container">
+    <div id="prompt" class="prompt">
+      Write a poem about a dream. Do not make mistakes.
+    </div>
+  </div>
+
+
+  <div id="editor-container" class="editor-container">
+    <div id="editor" class="editor" spellcheck="false" contenteditable="true"></div>
+    <div id="overlay" class="overlay"></div>
+  </div>
+  
+  <div id="mistakes-container">
+    <div id="mistakes" class=" count"></div>
+    <div id="word-count" class=" count"></div>
+    <div id="submit" class="wait-until-complete"><buttom onclick="onComplete()">Submit</buttom></div>
+  </div>
+
+  <div id="settings" class="wait-until-complete">
+    <form onsubmit="changeLetter(event)">
+      <input id="letter" type="text" value="e">
+      <button type="submit">Change Letter</button>
+    </form>
+  </div>
+  
+  <script src="textIterator.js"></script>
+  <script src="spellcheck.js"></script>
+  <script src="events.js"></script>
+  
+</body>
+</html>
