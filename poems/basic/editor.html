@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Text Animation Editor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        #editor-container {
+            position: relative;
+            flex: 1;
+            cursor: crosshair;
+        }
+        .text-element {
+            position: absolute;
+            cursor: move;
+            user-select: none;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            padding: 5px;
+        }
+        .text-element.selected {
+            outline: 2px solid #00ff00;
+        }
+        #edit-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #333;
+            padding: 20px;
+            border-radius: 5px;
+            display: none;
+            z-index: 1000;
+        }
+        .property-control {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: white;
+        }
+        input[type="text"],
+        input[type="range"] {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        button {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        button:hover {
+            background: #444;
+        }
+        #text-input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            background: #222;
+            color: white;
+            border: 1px solid #333;
+        }
+        #json-preview {
+            background: #111;
+            padding: 20px;
+            margin: 20px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre;
+            overflow: auto;
+            max-height: 200px;
+        }
+        #save-section {
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #333;
+        }
+        #save-button {
+            background: #4CAF50;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        #save-button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div id="editor-container"></div>
+    
+    <div id="edit-popup">
+        <div class="property-control">
+            <label>Text:</label>
+            <input type="text" id="text-input" placeholder="Enter text...">
+        </div>
+        <div class="property-control">
+            <label>Delay (ms): <span id="delay-value">0</span></label>
+            <input type="range" id="delay" min="0" max="3000" value="0">
+        </div>
+        <div class="property-control">
+            <label>Duration (ms): <span id="duration-value">1000</span></label>
+            <input type="range" id="duration" min="500" max="2000" value="1000">
+        </div>
+        <button id="save-text">Save</button>
+        <button id="delete-text">Delete</button>
+    </div>
+
+    <div id="json-preview"></div>
+    
+    <div id="save-section">
+        <button id="save-button">Save Configuration</button>
+    </div>
+
+    <script>
+        class TextEditor {
+            constructor() {
+                this.texts = [];
+                this.selectedText = null;
+                this.isDragging = false;
+                this.dragOffset = { x: 0, y: 0 };
+                this.popup = document.getElementById('edit-popup');
+                this.container = document.getElementById('editor-container');
+                this.jsonPreview = document.getElementById('json-preview');
+                
+                this.loadExistingConfig();
+                this.setupEventListeners();
+                this.updateJsonPreview();
+            }
+
+            async loadExistingConfig() {
+                try {
+                    const response = await fetch('config.json');
+                    if (response.ok) {
+                        const config = await response.json();
+                        config.letters.forEach(letter => {
+                            const element = document.createElement('div');
+                            element.className = 'text-element';
+                            element.textContent = letter.text;
+                            element.style.left = `${letter.x}px`;
+                            element.style.top = `${letter.y}px`;
+                            
+                            const textObj = {
+                                text: letter.text,
+                                x: letter.x,
+                                y: letter.y,
+                                delay: letter.delay,
+                                duration: letter.duration,
+                                element: element
+                            };
+                            
+                            this.texts.push(textObj);
+                            this.container.appendChild(element);
+                            
+                            element.addEventListener('mousedown', (e) => {
+                                this.selectedText = textObj;
+                                this.isDragging = true;
+                                this.dragOffset = {
+                                    x: e.clientX - textObj.x,
+                                    y: e.clientY - textObj.y
+                                };
+                                this.updateTextSelection();
+                            });
+                        });
+                    }
+                } catch (error) {
+                    console.log('No existing config found or error loading config.json');
+                }
+            }
+
+            setupEventListeners() {
+                this.container.addEventListener('click', this.handleClick.bind(this));
+                this.container.addEventListener('mousemove', this.handleMouseMove.bind(this));
+                this.container.addEventListener('mouseup', this.handleMouseUp.bind(this));
+                
+                document.getElementById('save-text').addEventListener('click', this.saveText.bind(this));
+                document.getElementById('delete-text').addEventListener('click', this.deleteText.bind(this));
+                document.getElementById('save-button').addEventListener('click', this.saveConfig.bind(this));
+                
+                document.getElementById('delay').addEventListener('input', (e) => {
+                    if (this.selectedText) {
+                        this.selectedText.delay = parseInt(e.target.value);
+                        document.getElementById('delay-value').textContent = e.target.value;
+                        this.updateJsonPreview();
+                    }
+                });
+
+                document.getElementById('duration').addEventListener('input', (e) => {
+                    if (this.selectedText) {
+                        this.selectedText.duration = parseInt(e.target.value);
+                        document.getElementById('duration-value').textContent = e.target.value;
+                        this.updateJsonPreview();
+                    }
+                });
+            }
+
+            handleClick(e) {
+                if (e.target === this.container) {
+                    this.showPopup(e.clientX, e.clientY);
+                    this.selectedText = null;
+                } else if (e.target.classList.contains('text-element')) {
+                    this.selectedText = this.texts.find(t => t.element === e.target);
+                    this.showPopup(e.clientX, e.clientY);
+                    this.updatePopup();
+                }
+            }
+
+            handleMouseMove(e) {
+                if (this.isDragging && this.selectedText) {
+                    this.selectedText.x = e.clientX - this.dragOffset.x;
+                    this.selectedText.y = e.clientY - this.dragOffset.y;
+                    this.updateTextPosition();
+                    this.updateJsonPreview();
+                }
+            }
+
+            handleMouseUp() {
+                this.isDragging = false;
+            }
+
+            showPopup(x, y) {
+                this.popup.style.display = 'block';
+                this.popup.style.left = `${x}px`;
+                this.popup.style.top = `${y}px`;
+            }
+
+            hidePopup() {
+                this.popup.style.display = 'none';
+            }
+
+            updatePopup() {
+                if (this.selectedText) {
+                    document.getElementById('text-input').value = this.selectedText.text;
+                    document.getElementById('delay').value = this.selectedText.delay;
+                    document.getElementById('duration').value = this.selectedText.duration;
+                    document.getElementById('delay-value').textContent = this.selectedText.delay;
+                    document.getElementById('duration-value').textContent = this.selectedText.duration;
+                } else {
+                    document.getElementById('text-input').value = '';
+                    document.getElementById('delay').value = '0';
+                    document.getElementById('duration').value = '1000';
+                }
+            }
+
+            saveText() {
+                const text = document.getElementById('text-input').value;
+                if (!text) return;
+
+                if (this.selectedText) {
+                    this.selectedText.text = text;
+                    this.selectedText.element.textContent = text;
+                } else {
+                    const element = document.createElement('div');
+                    element.className = 'text-element';
+                    element.textContent = text;
+                    element.style.left = `${this.popup.offsetLeft}px`;
+                    element.style.top = `${this.popup.offsetTop}px`;
+                    
+                    const textObj = {
+                        text: text,
+                        x: this.popup.offsetLeft,
+                        y: this.popup.offsetTop,
+                        delay: parseInt(document.getElementById('delay').value),
+                        duration: parseInt(document.getElementById('duration').value),
+                        element: element
+                    };
+                    
+                    this.texts.push(textObj);
+                    this.container.appendChild(element);
+                    
+                    element.addEventListener('mousedown', (e) => {
+                        this.selectedText = textObj;
+                        this.isDragging = true;
+                        this.dragOffset = {
+                            x: e.clientX - textObj.x,
+                            y: e.clientY - textObj.y
+                        };
+                        this.updateTextSelection();
+                    });
+                }
+                
+                this.hidePopup();
+                this.updateTextSelection();
+                this.updateJsonPreview();
+            }
+
+            deleteText() {
+                if (this.selectedText) {
+                    this.container.removeChild(this.selectedText.element);
+                    this.texts = this.texts.filter(t => t !== this.selectedText);
+                    this.selectedText = null;
+                    this.hidePopup();
+                    this.updateJsonPreview();
+                }
+            }
+
+            updateTextPosition() {
+                if (this.selectedText) {
+                    this.selectedText.element.style.left = `${this.selectedText.x}px`;
+                    this.selectedText.element.style.top = `${this.selectedText.y}px`;
+                }
+            }
+
+            updateTextSelection() {
+                this.texts.forEach(t => {
+                    t.element.classList.toggle('selected', t === this.selectedText);
+                });
+            }
+
+            getConfig() {
+                return {
+                    letters: this.texts.map(t => ({
+                        text: t.text,
+                        x: t.x,
+                        y: t.y,
+                        delay: t.delay,
+                        duration: t.duration,
+                        originX: 0.5,
+                        originY: 0.5
+                    }))
+                };
+            }
+
+            updateJsonPreview() {
+                this.jsonPreview.textContent = JSON.stringify(this.getConfig(), null, 4);
+            }
+
+            saveConfig() {
+                const config = this.getConfig();
+                const blob = new Blob([JSON.stringify(config, null, 4)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'config.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                // Show a brief success message
+                const successMsg = document.createElement('div');
+                successMsg.textContent = 'Configuration saved to config.json';
+                successMsg.style.position = 'fixed';
+                successMsg.style.bottom = '20px';
+                successMsg.style.left = '50%';
+                successMsg.style.transform = 'translateX(-50%)';
+                successMsg.style.background = '#4CAF50';
+                successMsg.style.color = 'white';
+                successMsg.style.padding = '10px 20px';
+                successMsg.style.borderRadius = '5px';
+                successMsg.style.zIndex = '1000';
+                document.body.appendChild(successMsg);
+                
+                // Remove the message after 2 seconds
+                setTimeout(() => {
+                    document.body.removeChild(successMsg);
+                }, 2000);
+            }
+        }
+
+        // Initialize the editor
+        new TextEditor();
+    </script>
+</body>
+</html>

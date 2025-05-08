@@ -1,0 +1,22 @@
+{
+    "letters": [
+        {
+            "text": "w",
+            "x": 259,
+            "y": 194,
+            "delay": 0,
+            "duration": 1000,
+            "originX": 0.5,
+            "originY": 0.5
+        },
+        {
+            "text": "e",
+            "x": 327,
+            "y": 214,
+            "delay": 0,
+            "duration": 1000,
+            "originX": 0.5,
+            "originY": 0.5
+        }
+    ]
+}

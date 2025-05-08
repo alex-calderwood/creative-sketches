@@ -1,0 +1,30 @@
+{
+    "letters": [
+        { "text": "W", "x": 50, "y": 80, "delay": 0, "originX": 0.5, "originY": 0.5, "duration": 1000 },
+        { "text": "e", "x": 100, "y": 120, "delay": 100, "originX": 0.5, "originY": 0.5, "duration": 1000 },
+        { "text": "l", "x": 150, "y": 70, "delay": 200, "originX": 0.5, "originY": 0.5, "duration": 1000 },
+        { "text": "c", "x": 200, "y": 130, "delay": 300, "originX": 0.5, "originY": 0.5, "duration": 1000 },
+        { "text": "o", "x": 250, "y": 60, "delay": 400, "originX": 0.5, "originY": 0.5, "duration": 1000 },
+        { "text": "m", "x": 300, "y": 140, "delay": 500, "originX": 0.5, "originY": 0.5, "duration": 1000 },
+        { "text": "e", "x": 350, "y": 50, "delay": 600, "originX": 0.5, "originY": 0.5, "duration": 1000 },
+        { "text": " ", "x": 400, "y": 150, "delay": 700, "originX": 0.5, "originY": 0.5, "duration": 1000 },
+        { "text": "t", "x": 450, "y": 40, "delay": 800, "originX": 0.5, "originY": 0.5, "duration": 1000 },
+        { "text": "o", "x": 500, "y": 160, "delay": 900, "originX": 0.5, "originY": 0.5, "duration": 1000 },
+        { "text": " ", "x": 550, "y": 30, "delay": 1000, "originX": 0.5, "originY": 0.5, "duration": 1000 },
+        { "text": "t", "x": 600, "y": 170, "delay": 1100, "originX": 0.5, "originY": 0.5, "duration": 1000 },
+        { "text": "h", "x": 650, "y": 20, "delay": 1200, "originX": 0.5, "originY": 0.5, "duration": 1000 },
+        { "text": "e", "x": 700, "y": 180, "delay": 1300, "originX": 0.5, "originY": 0.5, "duration": 1000 },
+        { "text": " ", "x": 750, "y": 10, "delay": 1400, "originX": 0.5, "originY": 0.5, "duration": 1000 },
+        { "text": "c", "x": 50, "y": 200, "delay": 1500, "originX": 0.5, "originY": 0.5, "duration": 1000 },
+        { "text": "a", "x": 100, "y": 220, "delay": 1600, "originX": 0.5, "originY": 0.5, "duration": 1000 },
+        { "text": "b", "x": 150, "y": 230, "delay": 1700, "originX": 0.5, "originY": 0.5, "duration": 1000 },
+        { "text": "a", "x": 200, "y": 240, "delay": 1800, "originX": 0.5, "originY": 0.5, "duration": 1000 },
+        { "text": "r", "x": 250, "y": 250, "delay": 1900, "originX": 0.5, "originY": 0.5, "duration": 1000 },
+        { "text": "e", "x": 300, "y": 240, "delay": 2000, "originX": 0.5, "originY": 0.5, "duration": 1000 },
+        { "text": "t", "x": 350, "y": 230, "delay": 2100, "originX": 0.5, "originY": 0.5, "duration": 1000 },
+        { "text": "z", "x": 400, "y": 220, "delay": 2200, "originX": 0.5, "originY": 0.5, "duration": 1000 },
+        { "text": "a", "x": 450, "y": 210, "delay": 2300, "originX": 0.5, "originY": 0.5, "duration": 1000 },
+        { "text": "r", "x": 500, "y": 200, "delay": 2400, "originX": 0.5, "originY": 0.5, "duration": 1000 },
+        { "text": "a", "x": 550, "y": 190, "delay": 2500, "originX": 0.5, "originY": 0.5, "duration": 1000 }
+    ]
+} 
