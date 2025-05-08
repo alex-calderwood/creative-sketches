@@ -1,0 +1,54 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: black;
+}
+
+#container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+
+/* Add a slight delay to each letter to create a cascading effect */
+.complete > * {
+  animation: letterDrop 1s ease-out forwards;
+  opacity: 0;
+}
+
+/* Create random delays for letters */
+.complete > *:nth-child(3n) {
+  animation-delay: 0.2s;
+}
+
+.complete > *:nth-child(3n+1) {
+  animation-delay: 0.4s;
+}
+
+.complete > *:nth-child(3n+2) {
+  animation-delay: 0.6s;
+}
+
+@keyframes letterDrop {
+  0% {
+    transform: translateY(0px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(-100%);
+    opacity: 1;
+  }
+}
+
+.letter {
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: white;
+  background-color: black;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
