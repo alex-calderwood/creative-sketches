@@ -7,39 +7,120 @@
     <style>
         body {
             margin: 0 auto;
-            margin: 30px;
+            margin: 2rem;
+            background-image: url('/editors/wooden.avif');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
         }
         h1 {
             text-align: center;
             font-weight: 300;
             font-size: 0.7rem;
-            margin-bottom: 30px;
+            margin-bottom: 2rem;
         }
         .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, 100px);
-            gap: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
         }
         .project-card {
             background: white;
-            height: 141px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
-            transition: transform 0.3s, box-shadow 0.3s;
+            height: 16rem;
+            width: 10rem;
+            box-shadow: 
+                0 2px 4px rgba(0,0,0,0.05),
+                0 4px 8px rgba(0,0,0,0.05),
+                0 8px 16px rgba(0,0,0,0.05),
+                0 16px 32px rgba(0,0,0,0.05),
+                inset 0 0 0 1px rgba(0,0,0,0.05);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
             overflow: hidden;
             position: relative;
+            border-radius: 1px;
+            background-image: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,0.95));
+            transform-origin: center center;
+            transform-style: preserve-3d;
         }
+
+        @keyframes liftCard {
+            0% {
+                transform: translateY(0) scale(1) rotateX(0) rotateY(0) rotateZ(0deg);
+                box-shadow: 
+                    0 2px 4px rgba(0,0,0,0.05),
+                    0 4px 8px rgba(0,0,0,0.05),
+                    0 8px 16px rgba(0,0,0,0.05),
+                    0 16px 32px rgba(0,0,0,0.05),
+                    inset 0 0 0 1px rgba(0,0,0,0.05);
+            }
+            44% {
+                transform: translateY(-5rem) scale(2) rotateX(0deg) rotateY(20deg) rotateZ(-20deg);
+                box-shadow: 
+                    0 4px 8px rgba(0,0,0,0.08),
+                    0 8px 16px rgba(0,0,0,0.08),
+                    0 16px 32px rgba(0,0,0,0.08),
+                    0 24px 48px rgba(0,0,0,0.08),
+                    inset 0 0 0 1px rgba(0,0,0,0.06);
+            }
+            /* 60% {
+                transform: translateY(10rem) scale(2) rotateX(0deg) rotateY(20deg) rotateZ(5deg);
+                box-shadow: 
+                    0 4px 8px rgba(0,0,0,0.08),
+                    0 8px 16px rgba(0,0,0,0.08),
+                    0 16px 32px rgba(0,0,0,0.08),
+                    0 24px 48px rgba(0,0,0,0.08),
+                    inset 0 0 0 1px rgba(0,0,0,0.06);
+            } */
+            100% {
+                transform: translateY(10rem) scale(2) rotateX(10deg) rotateY(5deg);
+                box-shadow: 
+                    0 4px 8px rgba(0,0,0,0.1),
+                    0 8px 16px rgba(0,0,0,0.1),
+                    0 16px 32px rgba(0,0,0,0.1),
+                    0 32px 64px rgba(0,0,0,0.1),
+                    inset 0 0 0 1px rgba(0,0,0,0.08);
+            }
+        }
+
         .project-card:hover {
-            transform: translateY(-5px) rotate(540deg);
-            box-shadow:  -8px -8px 12px rgba(0,0,0,0.15);
+            z-index: 100;
+            animation: liftCard 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
         .project-name {
-            flex-grow: 1;
-            display: flex;
-            padding: 20px;
+            padding: 0.6rem;
             font-size: 0.6rem;
             color: #2c3e50;
+        }
+        .project-description {
+            padding: 0 0.6rem 0.6rem;
+            font-size: 0.5rem;
+            color: #666;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        .project-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+        .project-content {
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.9);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
         a {
             text-decoration: none;
@@ -68,12 +149,35 @@
             card.href = `/editors/${url}/`;
             card.className = 'project-card';
             
+            // Add random rotation and offset
+            const rotation = (Math.random() - 0.5) * 4;
+            const offsetX = (Math.random() - 0.5) * 10; 
+            const offsetY = (Math.random() - 0.5) * 10; 
+            card.style.transform = `rotate(${rotation}deg) translate(${offsetX}px, ${offsetY}px)`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'project-content';
+            
             const nameDiv = document.createElement('div');
             nameDiv.className = 'project-name';
             nameDiv.textContent = name;
             
-            card.appendChild(nameDiv);
+            const descriptionDiv = document.createElement('div');
+            descriptionDiv.className = 'project-description';
+            descriptionDiv.innerHTML = project.description || '';
+
             
+            contentDiv.appendChild(nameDiv);
+            contentDiv.appendChild(descriptionDiv);
+            
+            if (project.image) {
+                const image = document.createElement('img');
+                image.className = 'project-image';
+                image.src = project.image;
+                card.appendChild(image);
+            }
+            
+            card.appendChild(contentDiv);
             container.appendChild(card);
         });
     </script>
