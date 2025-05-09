@@ -7,6 +7,7 @@ const fs = require('fs');
 const app = express();
 const port = process.env.PORT || 3008;
 
+
 // Discover all project directories within the editors subdirectory
 function getProjets() {
   const editorsDir = path.join(__dirname, 'editors');
@@ -14,7 +15,7 @@ function getProjets() {
   // Check if editors directory exists
   if (!fs.existsSync(editorsDir)) {
     console.error('Error: editors directory not found at', editorsDir);
-    return [];
+    return Promise.resolve([]);
   }
   
   // Get all items in the editors directory
@@ -27,23 +28,67 @@ function getProjets() {
     return fs.statSync(fullPath).isDirectory() && !exclusions.includes(item);
   });
   
-  console.log('Found projects in editors directory:', projectDirs);
+  console.log('Project names:', projectDirs);
 
-  const projects = projectDirs.map((dir) => {
-    return {
+  // Create an array of promises for reading about.json files
+  const projectPromises = projectDirs.map(dir => {
+    const aboutPath = path.join(editorsDir, dir, 'about.json');
+    const defaultAbout = {
       url: dir,
       name: dir
-    }
-  })
-  return projects;
+    };
+
+    return new Promise((resolve) => {
+      fs.readFile(aboutPath, 'utf8', (err, data) => {
+        if (err) {
+          console.log(`Error reading about.json for ${dir}:`, err);
+          resolve(defaultAbout);
+          return;
+        }
+        try {
+          const aboutData = JSON.parse(data);
+          resolve({
+            url: dir,
+            name: aboutData.name || dir,
+            description: aboutData.description
+          });
+        } catch (e) {
+          console.log(`Error parsing about.json for ${dir}:`, e);
+          resolve(defaultAbout);
+        }
+      });
+    });
+  });
+
+  return Promise.all(projectPromises);
 }
 
 // Get project directories
-// Get all project directories within the editors folder
-const projects = getProjets();
-console.log('Discovered projects within editors directory:', projects);
+let projects = [];
+getProjets().then(projectList => {
+  projects = projectList;
+  console.log('Discovered projects within editors directory:', projects);
 
-// Create a simple index page that lists all projects
+  // Set up static serving for each project directory
+  projects.forEach(project => {
+    const projectPath = path.join(__dirname, 'editors', project.url);
+    // Create a router for this project
+    const projectRouter = express.Router();
+    
+    // Apply history API fallback for SPAs if needed
+    projectRouter.use(history());
+    
+    // Serve static files
+    projectRouter.use(serveStatic(projectPath));
+    
+    // Mount the router at the project path with 'editors' prefix
+    app.use(`/editors/${project.url}`, projectRouter);
+    
+    console.log(`Serving ${project.name} at /editors/${project.url} from ${projectPath}`);
+  });
+});
+
+// Project Directory
 app.get('/', (req, res) => {
   // Read the index.html template
   const indexPath = path.join(__dirname, 'index.html');
@@ -68,25 +113,6 @@ app.get('/', (req, res) => {
 // Also serve the editors index at /editors for direct access
 app.get('/editors', (req, res) => {
   res.redirect('/');
-});
-
-// Set up static serving for each project directory
-projects.forEach(project => {
-  const projectPath = path.join(__dirname, 'editors', project.url);
-  
-  // Create a router for this project
-  const projectRouter = express.Router();
-  
-  // Apply history API fallback for SPAs if needed
-  projectRouter.use(history());
-  
-  // Serve static files
-  projectRouter.use(serveStatic(projectPath));
-  
-  // Mount the router at the project path with 'editors' prefix
-  app.use(`/editors/${project.url}`, projectRouter);
-  
-  console.log(`Serving ${project.name} at /editors/${project.url} from ${projectPath}`);
 });
 
 app.listen(port, () => {
