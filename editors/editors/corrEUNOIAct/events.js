@@ -1,7 +1,7 @@
 const mistakesElement = document.getElementById('mistakes');
 const wordCount = document.getElementById('word-count');
 
-const WORD_GOAL = 50;
+const WORD_GOAL = 22;
 
 onMistake(demoSpellChecker.numMistakes());
 onWordCount(0);
