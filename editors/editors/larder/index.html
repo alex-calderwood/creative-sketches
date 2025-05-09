@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Larder</title>
+  <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+  <!-- prompt moved below -->
+
+  <div id="editor-container" class="editor-container">
+    <div id="editor" class="editor" spellcheck="false"></div>
+    <div id="overlay" class="overlay"></div>
+  </div>
+  
+  <div id="new-sentence-container">
+    <div id="prompt" class="prompt word">
+      Write a sentence that fits naturally between the existing sentences. 
+      
+      Use the arrow buttons to choose where your sentence will go. 
+
+      Please only submit after another sentence has been added.
+    </div>
+    <div id="new-sentence-view">
+      <div id="new-sentence">
+        <input id="new-sentence-input" contenteditable="true" placeholder="Type your sentence here…"></input>
+      </div>
+      <button id="new-sentence-button" onclick="onSubmit()">Submit</button>
+      <button id="gap-arrow-left" class="arrow-btn">◀</button>
+      <button id="gap-arrow-right" class="arrow-btn">▶</button>
+    </div>
+    <div id="thank-you-message" style="display:none; margin:32px 0 16px 0; font-size:1.1em; text-align:center;">
+      <div style="font-size:1.1em; margin-bottom: 8px;">
+        Nice. Come back tomorrow to add another sentence.
+      </div>
+    </div>
+  </div>
+  
+  <script src="textIterator.js"></script>
+  <script src="main.js"></script>
+  <script src="events.js"></script>
+  
+</body>
+</html>
