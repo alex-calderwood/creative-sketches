@@ -1,0 +1,38 @@
+body {
+  /*Trykker */
+  font-family: "Trykker","Garamond", "Times New Roman", Times, serif; 
+  background-color: #7b8eb5;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+#grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: white;
+  cursor: text;
+}
+
+#grid div {
+  font-family: "Trykker","Garamond", "Times New Roman", Times, serif;
+  font-size: 20pt;
+  line-height: 20px;
+  outline: none;
+  background-color: transparent;
+  caret-color: black;
+}
+
+.editable-element {
+  position: absolute;
+  min-width: 10px;
+  min-height: 20px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+}

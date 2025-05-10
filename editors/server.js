@@ -8,7 +8,7 @@ const app = express();
 const port = process.env.PORT || 3008;
 
 // Discover all project directories within the editors subdirectory
-function getProjets() {
+function getProjects() {
   const editorsDir = path.join(__dirname, 'editors');
   
   // Check if editors directory exists
@@ -27,7 +27,7 @@ function getProjets() {
     return fs.statSync(fullPath).isDirectory() && !exclusions.includes(item);
   });
   
-  console.log('Project names:', projectDirs);
+  // console.log('Project names:', projectDirs);
 
   // Create an array of promises for reading about.json files
   const projectPromises = projectDirs.map(dir => {
@@ -40,7 +40,6 @@ function getProjets() {
     return new Promise((resolve) => {
       fs.readFile(aboutPath, 'utf8', (err, data) => {
         if (err) {
-          console.log(`Error reading about.json for ${dir}:`, err);
           resolve(defaultAbout);
           return;
         }
@@ -52,7 +51,6 @@ function getProjets() {
             description: aboutData.description
           });
         } catch (e) {
-          console.log(`Error parsing about.json for ${dir}:`, e);
           resolve(defaultAbout);
         }
       });
@@ -64,9 +62,8 @@ function getProjets() {
 
 // Get project directories
 let projects = [];
-getProjets().then(projectList => {
+getProjects().then(projectList => {
   projects = projectList;
-  console.log('Discovered projects within editors directory:', projects);
 
   // Set up static serving for each project directory
   // First serve static files from the editors directory itself
@@ -86,7 +83,7 @@ getProjets().then(projectList => {
     // Mount the router at the project path with 'editors' prefix
     app.use(`/editors/${project.url}`, projectRouter);
     
-    console.log(`Serving ${project.name} at /editors/${project.url} from ${projectPath}`);
+    // console.log(`Serving ${project.name} at /editors/${project.url} from ${projectPath}`);
   });
 
   // Serve wooden.avif specifically
