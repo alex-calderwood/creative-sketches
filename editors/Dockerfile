@@ -12,8 +12,12 @@ RUN npm install
 COPY index.html ./
 COPY server.js ./
 
+
 # Copy the editors directory
 COPY editors/ ./editors/
+
+# Copy the assets directory
+COPY assets/ ./assets/
 
 # Debug - list what's in the container
 RUN ls -la
