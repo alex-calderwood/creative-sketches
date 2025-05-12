@@ -95,8 +95,8 @@ getProjects().then(projectList => {
   });
 
   //serve everything in assets
-  app.use('/assets', serveStatic(path.join(__dirname, 'assets')));
-  
+  app.use('/editors/assets', serveStatic(path.join(__dirname, 'assets')));
+
 });
 
 // Project Directory
