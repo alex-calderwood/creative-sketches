@@ -5,7 +5,7 @@ const charHeight = 30; // Approximate height of a line (20pt font + some padding
 const charWidth = Math.floor(charHeight * 0.6); // Monospace width is typically 60% of height
 
 // Load all audio samples
-const assetsFolder = '../../assets/rain';
+const assetsFolder = '../assets/rain';
 const audioSamples = [];
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
