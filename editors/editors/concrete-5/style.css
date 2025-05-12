@@ -1,0 +1,71 @@
+:root {
+  --background: #2d3952;
+  --text: #c7c7c7;
+}
+
+body {
+  /*Trykker */
+  font-family: "Trykker","Garamond", "Times New Roman", Times, serif; 
+  background-color: var(--background);
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+#grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--background);
+  cursor: text;
+}
+
+#grid div {
+  font-family: "Trykker","Garamond", "Times New Roman", Times, serif;
+  font-size: 20pt;
+  line-height: 20px;
+  outline: none;
+  background-color: transparent;
+  caret-color: var(--text);
+}
+
+.editable-element {
+  position: absolute;
+  min-width: 10px;
+  min-height: 20px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  /* color: var(--text); */
+  color: transparent;
+
+}
+
+
+@keyframes rain {
+  from {
+    transform: translateY(0);
+    color: var(--text);
+  }
+  97% {
+    transform: translateY(var(--distance));
+    color: var(--text);
+  }
+  98% {
+    color: transparent;
+  }
+  to {
+    transform: translateY(calc(var(--distance) * 0.70));
+    color: transparent;
+  }
+}
+
+.rain {
+  animation: rain var(--duration) cubic-bezier(0.32, 0, 0.67, 0) forwards;
+  position: absolute;
+  color: var(--text);
+}
