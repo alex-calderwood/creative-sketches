@@ -93,6 +93,10 @@ getProjects().then(projectList => {
     console.log('File exists:', fs.existsSync(filePath));
     res.sendFile(filePath);
   });
+
+  //serve everything in assets
+  app.use('/assets', serveStatic(path.join(__dirname, 'assets')));
+  
 });
 
 // Project Directory
