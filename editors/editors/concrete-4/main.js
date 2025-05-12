@@ -165,6 +165,8 @@ function rainElement(element) {
   grid.appendChild(newElement);
 
   // Play sound after duration
+  const cssChange = 0.95;
+
   if (duration > 0) {
     setTimeout(() => {
       if (audioSamples.length > 0) {
@@ -175,7 +177,7 @@ function rainElement(element) {
         source.start();
         // console.log(`Playing rain${randomIndex + 1}.wav`);
       }
-    }, duration * 1000 * 0.9); // Convert seconds to milliseconds // 0.9 = where in the ccs animation it plays
+    }, duration * 1000 * cssChange); // Convert seconds to milliseconds // 0.9 = where in the ccs animation it plays
   }
 
   return currentText.length;

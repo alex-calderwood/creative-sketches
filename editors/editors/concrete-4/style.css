@@ -51,12 +51,14 @@ body {
   20% {
     color:  var(--text);
   }
-  90% {
+  95% {
     transform: translateY(var(--distance));
     color:  var(--text);
+    font-size: 20pt;
   }
   to {
-    transform: translateY(var(--distance));
+    transform: translateY(calc(var(--distance) * 0.90));
+    line-height: 1pt;
     color: transparent;
   }
 }
