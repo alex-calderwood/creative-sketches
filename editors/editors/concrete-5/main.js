@@ -31,7 +31,6 @@ async function loadAllAudioFiles() {
 // Load all audio files
 loadAllAudioFiles();
 
-// a getwidth of text function
 function getTextWidth(element, startIndex, endIndex) {
   const text = element.textContent.slice(startIndex, endIndex);
   const canvas = document.createElement('canvas');

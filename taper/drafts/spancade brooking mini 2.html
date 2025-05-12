@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<body onload=s() onkeydown=k(event) style=margin:0;background:#000;overflow:hidden>
+<div id=o style="position:relative;width:100vw;height:100vh;transform:perspective(5em)rotateX(1deg);animation:a.05s infinite">
+<div id=w></div><div id=g></div></div>
+<style>#o div div{color:#b5ffb5;text-shadow:0 0 5px #83fe83;position:absolute;white-space:pre}#g div{opacity:.4}@keyframes a{0%{filter:brightness(.8)}to{filter:brightness(1)}}</style>
+<script>D=document;f=30;i=x=y=0;w=D.getElementById`w`;g=D.getElementById`g`;
+t=`the issue poet types a line of poetry and sits back satisfied in awe`.split` `
+t2=`that invisible God describes the dream in wakefulness but exclaims seriously attached for becoming`.split` `
+t3=`an ulterior being finds in presences of substance for appearing subtly grand while interrobanging`.split` `
+t4=`for unabridged eagerness appears at residence if considering while feeling somewhat spooky inside writers`.split` `
+n=0;p=t[0];S=0;
+m=_=>{h=D.createElement`div`;h.style=`font:${f}px monospace;position:absolute;visibility:hidden`;h.innerText="M";D.body.appendChild(h);c=h.offsetWidth;D.body.removeChild(h);return c}
+function s(){c=m();X=innerWidth;Y=innerHeight;x=X/2;y=Y/2}
+function k(e){if(![37,38,39,40].includes(e.keyCode))return;if(!S){S=1;r();b();return}
+q=p;c=m();l=e.keyCode;
+n=l==37?3:l==39?1:l==38?0:2;
+p=l==37?t4[++i%t4.length]:l==39?t2[++i%t2.length]:l==38?t[++i%t.length]:t3[++i%t3.length];
+x+=l==37?-c*p.length:l==39?c*q.length:0;
+y+=l==38?-f:l==40?f:0;
+r();b();e.preventDefault()}
+function r(){[...p].map((t,j)=>{d=D.createElement`div`;d.style=`font:${f}px monospace;left:${x+j*c}px;top:${y}px`;d.innerText=t;w.appendChild(d)})}
+function b(){g.innerHTML="";[[0,-f,t],[p.length*c,0,t2],[0,f,t3],[-t4[(i+1)%t4.length].length*c,0,t4]].map(([dx,dy,t])=>{d=D.createElement`div`;d.style=`font:${f}px monospace;left:${x+dx}px;top:${y+dy}px`;d.innerText=t[(i+1)%t.length];g.appendChild(d)})}</script>
+</body>

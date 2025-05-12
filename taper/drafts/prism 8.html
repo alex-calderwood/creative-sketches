@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+
+<div class="sh" id="c0"><div class="tl"><div class="e" id="bn"></div></div></div>
+<div class="sh" id="c1"><div class="tl"><div class="e" id="bs"></div></div></div>
+<div class="sh" id="c2"><div class="tl"><div class="e" id="ba"></div></div></div>
+
+<svg id="pyramid" style="position: absolute; z-index: 5; pointer-events: none; width: 100vw; height: 100vh;">
+    <polygon class="face-front" points="" fill="rgba(255, 255, 255, 0)" stroke="clear"/>
+    <polygon class="face-right" points="" fill="rgba(255, 255, 255, 0)" stroke="clear"/>
+    <polygon class="face-back" points="" fill="rgba(255, 255, 255, 0)" stroke="clear"/>
+    <polygon class="face-left" points="" fill="rgba(255, 255, 255, 0)" stroke="clear"/>
+</svg>
+
+<script>
+
+const rotationX = 15;
+const rotationY = -25;
+
+const p=[["world","the image performs the", "the prism permutes the"],["word","the image performs the", "the prism permutes the"], ["legible", "faces make", "faces made"], ["expanded", "I expected to see the world", "excited to see the word"]],
+[w,f,z]=p[~~(Math.random()*p.length)]
+l = [...w].map((_,i)=>w.slice(w.length-i-1)).concat([...w].map((_,i)=>w.slice(0,w.length-i-1))).join(' ')
+bn.innerText = l
+bs.innerText = f
+ba.innerText = z
+n = ~~(4000/w.length)
+bs.style.transform = `rotate(30deg)`
+ba.style.transform = `rotate(${rotationY/3}deg)`
+
+// Add tracking for the first face
+const face = document.querySelector('.face');
+const pyramid = document.querySelector('#pyramid');
+
+const baseSize = 500;
+const height = 500;
+const vertices = { // Define the pyramid vertices in 3D space
+    top: { x: 0, y: -height/2, z: 0 },
+    frontLeft: { x: -baseSize/2, y: height/2, z: baseSize/2 },
+    frontRight: { x: baseSize/2, y: height/2, z: baseSize/2 },
+    backLeft: { x: -baseSize/2, y: height/2, z: -baseSize/2 },
+    backRight: { x: baseSize/2, y: height/2, z: -baseSize/2 }
+};
+
+
+const faces = [
+        {
+            points: [vertices.top, vertices.frontLeft, vertices.frontRight],
+            element: pyramid.querySelector('.face-front')
+        },
+        {
+            points: [vertices.top, vertices.frontRight, vertices.backRight],
+            element: pyramid.querySelector('.face-right')
+        },
+        {
+            points: [vertices.top, vertices.backRight, vertices.backLeft],
+            element: pyramid.querySelector('.face-back')
+        },
+        {
+            points: [vertices.top, vertices.backLeft, vertices.frontLeft],
+            element: pyramid.querySelector('.face-left')
+        }
+    ];
+
+function degreesToRadians(degrees) {
+    return degrees * Math.PI / 180;
+}
+
+function transformPoint(p, transforms) {
+    transforms.forEach(transform => {
+        const rad = degreesToRadians(transform.angle);
+        const cos = Math.cos(rad);
+        const sin = Math.sin(rad);
+        
+        let newPoint = { ...p };
+        
+        if (transform.axis === 'x') {
+            newPoint.y = p.y * cos - p.z * sin;
+            newPoint.z = p.y * sin + p.z * cos;
+        } else if (transform.axis === 'y') {
+            newPoint.x = p.x * cos + p.z * sin;
+            newPoint.z = -p.x * sin + p.z * cos;
+        }
+        
+        p = newPoint;
+    });
+    
+    return p;
+}
+
+let x = 0;
+let y = 0;
+
+document.addEventListener('mousemove', (e) => {
+    x = e.pageX;
+    y = e.pageY;
+});
+
+
+function updateClipPath(faceIndex, cssProperty) {
+    const face = faces[faceIndex];
+    const clipPoints = face.points.map(p => {
+        const transformed = transformPoint(p, [
+            { axis: 'y', angle: rotationY },
+            { axis: 'x', angle: rotationX }
+        ]);
+        return `${transformed.x + x}px ${transformed.y + y}px`;
+    }).join(',');
+
+    document.documentElement.style.setProperty(cssProperty, clipPoints);
+}
+
+function updatePyramid() {
+    faces.forEach(face => {
+        const transformedPoints = face.points.map(point => {
+            return transformPoint(point, [ // Apply all transformations in sequence
+                { axis: 'x', angle: rotationX },
+                { axis: 'y', angle: rotationY }
+            ]);
+        });
+
+        // Convert to SVG points string with mouse position offset
+        const pointsString = transformedPoints
+            .map(p => `${p.x + x},${p.y + y}`)
+            .join(' ');
+            
+        face.element.setAttribute('points', pointsString);
+    });
+
+
+    // Update the clip path using CSS custom property
+    updateClipPath(3, '--cp1');
+    updateClipPath(2, '--cp2');
+    // updateClipPath(3, '--cp3');
+
+    requestAnimationFrame(updatePyramid);
+}
+
+updatePyramid();
+const style = document.createElement('style');
+const css = `
+.tl {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.e {
+    font-family: monospace;
+    color: #d07d09;
+    text-align: center;
+}
+.sh {
+    position: absolute;
+    width: 100%;
+    height: 100vh;
+    z-index: 1;
+}
+#c0 {
+    background: #d07d09;
+    * {
+        color: #975c09;
+        font-size: 25px; 
+    }
+}
+#c1 {
+    background: rgb(64, 17, 106);
+    clip-path: polygon(var(--cp1));
+}
+#c2 {
+    background: rgb(102,31,163);
+    clip-path: polygon(var(--cp2));
+}
+#c3 {
+    background: rgb(75, 15, 129);
+    text-align: center;
+    width: 100%;
+    filter: blur(2px);
+    clip-path: polygon(var(--cp3));
+}
+#ba { font-size: 25px; }
+#bs { font-size: 25px; color:#975c09 }
+#hi { font-size: 25px; }
+body { margin: 0; cursor: none; }
+
+.pyramid {
+    position: absolute;
+}
+
+.face:nth-child(1) {
+    background: rgba(255, 200, 200, 0.0); /* Red tint */
+}
+
+.face:nth-child(2) {
+    background: rgba(200, 255, 200, 0.6); /* Green tint */
+}
+
+.face:nth-child(3) {
+    background: rgba(200, 200, 255, 0.3); /* Blue tint */
+}
+
+.face:nth-child(4) {
+    background: rgba(255, 255, 200, 0.0); /* Yellow tint */
+}
+`;
+
+// Append the CSS string to the style element
+style.appendChild(document.createTextNode(css));
+
+// Append the style element to the document head
+document.head.appendChild(style);
+
+</script>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        #word-container {
+            font-family: 'Courier New', Courier, monospace;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+        }
+        .char {
+            display: inline-block;
+            padding: 0.1em;
+            transition: color 0.5s;
+        }
+        .word-line {
+            transition: transform 0.5s ease-in-out;
+        }
+        .red-text {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="word-container"></div>
+
+    <script>
+        const words = [
+            'apologetically',
+            'astronomically',
+            'anesthetically',
+            'altruistically',
+            'asymptotically',
+            'asymmetrically',
+            'scholastically',
+            'scientifically',
+            'sociologically',
+            'systematically',
+            'telepathically',
+            'ultrasonically',
+            'geographically',
+            'electronically'
+        ];
+
+        function getCharRatio() {
+            // Create a fresh measurement div outside our container
+            const measure = document.createElement('div');
+            measure.style.fontFamily = getComputedStyle(container).fontFamily;
+            measure.style.fontSize = '100px';  // consistent base size
+            measure.style.padding = '0.1em';
+            measure.style.display = 'inline-block';
+            measure.style.position = 'absolute';
+            measure.style.left = '-9999px';  // off screen
+            measure.textContent = 'M';
+            
+            document.body.appendChild(measure);
+            const rect = measure.getBoundingClientRect();
+            
+            console.log('Character measurements:');
+            console.log('Width:', rect.width);
+            console.log('Height:', rect.height);
+            console.log('Ratio (w/h):', rect.width / rect.height);
+            
+            document.body.removeChild(measure);
+            return rect.width / rect.height;  // Return direct ratio, not inverse
+        }
+
+        function resizeWords() {
+            const size = Math.min(window.innerWidth, window.innerHeight) * 0.6;
+            const cellSize = size / 14;
+            const charRatio = getCharRatio();
+            const fontSize = cellSize / charRatio;  // Divide by ratio instead of multiply
+            
+            console.log('Sizing:');
+            console.log('Cell size target:', cellSize);
+            console.log('Char ratio:', charRatio);
+            console.log('Font size:', fontSize);
+            
+            container.style.fontSize = fontSize + 'px';
+            container.style.lineHeight = cellSize + 'px';
+        }
+
+        const container = document.getElementById('word-container');
+        words.forEach(word => {
+            const div = document.createElement('div');
+            div.className = 'word-line';  // Add class for animation
+            [...word].forEach(char => {
+                const span = document.createElement('span');
+                span.className = 'char';
+                span.textContent = char;
+                div.appendChild(span);
+            });
+            container.appendChild(div);
+        });
+
+        // Add new function for swapping lines
+        function swapRandomLines() {
+            const lines = Array.from(container.getElementsByClassName('word-line'));
+            const index1 = Math.floor(Math.random() * lines.length);
+            let index2;
+            do {
+                index2 = Math.floor(Math.random() * lines.length);
+            } while (index2 === index1);
+
+            // Get the actual elements based on current DOM order
+            const line1 = lines[index1];
+            const line2 = lines[index2];
+            
+            // Calculate positions based on current DOM positions
+            const rect1 = line1.getBoundingClientRect();
+            const rect2 = line2.getBoundingClientRect();
+            const deltaY = rect2.top - rect1.top;
+
+            // Remove previous red class from any line
+            lines.forEach(line => line.classList.remove('red-text'));
+            
+            // Add red color to first line
+            line1.classList.add('red-text');
+
+            // Delay the swap animation
+            setTimeout(() => {
+                // Animate swap
+                line1.style.transform = `translateY(${deltaY}px)`;
+                line2.style.transform = `translateY(${-deltaY}px)`;
+
+                // Reset positions after animation
+                setTimeout(() => {
+                    // Remove transforms before DOM manipulation
+                    line1.style.transform = '';
+                    line2.style.transform = '';
+
+                    // Simply swap the nodes in DOM order
+                    if (index1 < index2) {
+                        container.insertBefore(line2, line1);
+                        container.insertBefore(line1, lines[index2 + 1]);
+                    } else {
+                        container.insertBefore(line1, line2);
+                        container.insertBefore(line2, lines[index1 + 1]);
+                    }
+                }, 500);
+            }, 500);
+        }
+
+        // Add button or trigger the swap every few seconds
+        setInterval(swapRandomLines, 3000);  // Swap every 3 seconds
+
+        window.addEventListener('resize', resizeWords);
+        resizeWords();
+    </script>
+</body>
+</html>
+

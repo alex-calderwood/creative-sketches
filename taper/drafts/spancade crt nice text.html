@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<body onload=s() onkeydown=k(event) style=margin:0;background:#000;overflow:hidden>
+<div id=o style="position:relative;width:100vw;height:100vh;transform:perspective(5em)rotateX(1deg);animation:a.05s infinite"></div>
+<style>#o div{color:#b5ffb5;text-shadow:0 0 5px #83fe83}@keyframes a{0%{filter:brightness(.8)}50%{filter:brightness(1)}}</style>
+<script>f=30;
+w=0;
+x=0;
+y=0;
+// t="We shall not cease from exploration And the end of all our exploring Will be to arrive where we started And know the place for the first time. Through the unknown, remembered gate When the last of earth left to discover Is that which was the beginning; At the source of the longest river The voice of the hidden waterfall And the children in the apple-tree Not known, because not looked for But heard, half-heard, in the stillness Between two waves of the sea. Quick now, here, now, always— A condition of complete simplicity (Costing not less than everything) And all shall be well and All manner of thing shall be well When the tongues of flames are in-folded Into the crowned knot of fire And the fire and the rose are one.".split(" ");
+// t=`10:30 a.m. in Choteau, Montana is the best time to look for snow geese in the barley fields. That's what Dave says. He picks us up in his old Chevy truck, the one with 375k miles and a \"check engine\" light that's been glowing on the dash for over a decade. Dave is eighty-four now—a nasal tube looped beneath his trucker hat, a portable oxygen concentrator humming in the front seat—but the way my grandma looks at him, you'd think they were both nineteen. See those? Dave points out the window toward a row of silver grain silos. Last week, the wind lifted one straight into the air, blew it across the field, and crumpled it like a tin can. He says two semi-trucks blew clean over on the highway. Says they've gotta repaint the side of the church cause the wind sandblasted it with tiny stones. But this morning there's not even a breeze, and so far, no geese..`.split(" ");
+// t=`I propose thinking about the digital poem, paraphrasing William Carlos Williams, as a machine to organize time.... The materiality of digital text increases the writer’s sense that writing is not merely the fashioning of a verbal abstraction but a concrete act of making, a production that involves manual manipulation, proprioceptive projection, kinesthetic involvement, and other physical senses. M. D. Coverley highlights this aspect of electronic writing when she asks us to consider the print poet who types a line of poetry and sits back, satisfied. (N. Katherine Hayles, 2006, p. 4)`.split(" ");
+t=`King Carlos turns his coat for better fees and sleeves are wrapped round horns of buffalo that tinned hornedbeef we stored smells more like cheese so stink the rotting skins from long ago I stille can call to mind those hours of eyse the gauchos waving flags bravissimo we chill like nudists put on ice to freeze to pass the time we stage a little show From Salta to the pole is quite a trot you mix with that you'll find you've had your lot drinking mate turns you Argentine Those Latin states spin like a weathercock baroque ears find that Spanish is a shock unless the bell is quiet and charltenteen`.split(" ")
+p=t[0];
+started=0;
+m=d=>{h=document.createElement("div");
+h.style=`font-size:${f}px;font-family:monospace;white-space:pre;position:absolute;visibility:hidden`;
+h.textContent="M";
+d.appendChild(h);
+c=h.offsetWidth;
+d.removeChild(h);
+return c};
+function s(){c=m(document.body);
+X=Math.floor(innerWidth/c)*c;
+Y=Math.floor(innerHeight/f)*f;
+x=X/2;
+y=Y/2;
+o.innerHTML="";
+g=document.createElement("div");
+g.style=`position:absolute;left:${x}px;top:${y-f}px;font-size:${f}px;
+font-family:monospace;
+white-space:pre`;
+g.textContent="  ^  ";
+o.appendChild(g);
+g=document.createElement("div");
+g.style=`position:absolute;left:${x}px;top:${y}px;font-size:${f}px;font-family:monospace;white-space:pre`;
+g.textContent="< v >";
+o.appendChild(g)}
+function r()
+{c=m(document.body);X=Math.floor(innerWidth/c)*c;Y=Math.floor(innerHeight/f)*f;
+for(i=0;i<p.length;i++){d=document.createElement("div");
+d.style=`position:absolute;left:${((((x+i*c)%X)+X)%X)}px;top:${((y%Y+Y)%Y)}px;font-size:${f}px;font-family:monospace;white-space:pre`;
+d.textContent=p[i];
+o.appendChild(d)}}
+function k(e)
+{if(![37,38,39,40].includes(e.keyCode))return;if(!started){started=1;o.innerHTML="";r();return}
+q=p;
+p=t[++w%t.length];
+c=m(document.body);
+switch(e.keyCode)
+{case 37:x-=c*p.length; break; case 39:x+=c*q.length; break; case 38:y-=f; break; case 40:y+=f}
+r();
+e.preventDefault()}onresize=s</script>
+</body>

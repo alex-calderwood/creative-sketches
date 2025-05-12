@@ -1,0 +1,39 @@
+<html>
+<body style="height:14vh;margin:14;overflow-x:hidden; ">
+<form onsubmit="f();return false">
+<label></label><input name=i>
+<button>Submit</button>
+</form>
+<div id=poem style="font:10px 'Courier New';display:flex;flex-direction:column;align-items:center;text-align:center;justify-content:center;height:86vh;white-space:nowrap;"></div>
+<script>
+let i=0
+function f(){
+    const d=document,
+          poem=d.getElementById('poem'),
+          line=d.createElement('div'),
+          inp=d.querySelector('input'),
+          petarch=[0,1,1,0,0,1,1,0,2,3,4,2,3,4],
+          shakespeare=[0,1,0,1,2,3,2,3,4,5,4,5,6,6]
+    // d.querySelectorAll('.l').forEach(e=>e.style.display='none')
+    let w=inp.value
+    inp.value=''
+    //prism effect
+    line.textContent=[...w].map((_,i)=>w.slice(w.length-i-1)).concat([...w].map((_,i)=>w.slice(0,w.length-i-1))).join(' ') 
+    poem.appendChild(line)
+    line.style.display='inline-block'
+    let s=innerHeight/line.offsetWidth*10
+    line.style.cssText=`font-size:${s}px;line-height:1`
+    line.className='l'
+    let adj = ["mother's","father's","first","last","dream"][petarch[i]]
+    let noun = ["maiden name","family name","favorite food","job","security question","friend","dream"][shakespeare[i]]
+    d.querySelector('label').innerHTML=`Please enter your ${adj} ${noun}:`
+    if(i++==14){
+        d.querySelector('form').remove()
+        d.querySelectorAll('.l').forEach(e=>e.style.display='block')
+    }
+    poem.style.transform=`scale(${Math.min(1,innerHeight/[...poem.children].reduce((s,d)=>s+d.offsetHeight,0))})`
+}
+f()
+</script>
+</body>
+</html>

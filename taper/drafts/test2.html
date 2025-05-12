@@ -1,0 +1,37 @@
+
+<div id=o><div id=w></div><div id=g></div></div>
+<style>#o div div{color:#b5ffb9;position:absolute;white-space:pre}#g div{opacity:.3}
+@keyframes a{0%{filter:brightness(.7)}to{filter:brightness(1)}}
+body{margin:0;background:#000}
+#o{position:relative;animation:a.05s infinite;transform:perspective(7em)rotateX(3deg);width:80vw;height:80vh;margin:auto}</style>
+<script>
+ways=[//of knowing
+"systematical",
+"scientifical","electronical","arithmetical","asymptotical","experimental","geographical","astronomical","linguistical","philological","ultrasonical","anesthetical",
+"presumptuous","unquestionab","unsuccessful",
+"understandab","altruistical","intellectual","apologetical",
+"monolithical","overwhelming","simultaneously","insufficient",
+"metaphysical","cabalistical","telepathical",
+"pantological",
+"alphabetical","entertaining","outspreading",
+"asymmetrical","providential","unmethodical",
+"pataphysical"].map(w=>' '+w+'ly');
+W=44;
+D=document;C=_=>D.createElement`div`;o=D.getElementById`o`;
+f=(o.clientWidth/W*1.6)|0;c=o.clientWidth/W;
+i=x=y=0;w=D.getElementById`w`;g=D.getElementById`g`;
+P=e=>e.preventDefault();H=o.clientHeight/f|0;p=S=0;R=Math.random;
+up=ways[R()*34|0],rt=ways[R()*34|0],dn=ways[R()*34|0],lt=ways[R()*34|0];p=up[0];S=0;E=e=>e.innerHTML="";
+//ctrls
+s=_=>{x=0;y=0;E(w);d=C();d.style=`font:${f}px monospace;left:${c*W/2}px;top:${f*H/2}px`;d.innerText="  ^  \n< v >";w.append(d)};
+k=e=>{//onkey
+if(![37,38,39,40].includes(e.keyCode))return;if(!S){S=1;w.innerHTML="";r();b();return}
+l=e.keyCode;[T,dx,dy]=l==37?[lt,-1,0]:l==39?[rt,1,0]:l==38?[up,0,-1]:[dn,0,1];
+p=T[++i%T.length];x+=c*dx;y+=f*dy;//cur
+x=(x+W*c)%(W*c);y=(y+H*f)%(H*f);//pos
+r();b();P(e)
+};//rndr
+r=_=>[...p].map((t,j)=>{d=C();d.style=`font:${f}px monospace;left:${x+j*c}px;top:${y}px`;d.innerText=t;w.append(d)});
+//bkgrd
+b=_=>{E(g);[[0,-f,up],[p.length*c,0,rt],[0,f,dn],[-lt[(i+1)%lt.length].length*c,0,lt]].map(
+([dx,dy,t])=>{d=C();d.style=`font:${f}px monospace;left:${x+dx}px;top:${y+dy}px`;d.innerText=t[(i+1)%t.length];g.append(d)})}</script>

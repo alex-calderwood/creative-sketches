@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Title (Taper #14)</title>
+
+<!-- “Title” Copyright (C) 2024 Author
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright 
+notice and this notice are preserved. This file is offered as-is,
+without any warranty.
+
+This is from Taper #14: Sonnets, Spring 2025:
+
+https://taper.badquar.to/14/title_of_your_work.html
+
+... your creative statement here ...
+
+*** BEGIN TEMPLATE INSTRUCTIONS ***
+* All poem code goes between the closing header and closing body tags
+below, and must not exceed 2KB (2048 bytes).
+* Without removing any template punctuation, insert your author name,
+poem title, and poem filename throughout the template, making sure your
+text, capitalization, and punctuation is consistent across the file.
+* Insert your creative statement above, wrapped to 72 characters, and 
+using typographical quotes “” and apostrophes ‘’.
+* Do not modify the template in any other way.
+*** END TEMPLATE INSTRUCTIONS ***
+
+-->
+
+<style>
+	body { margin:0 ; overflow:hidden }
+	a { color:#eee ; text-decoration:none }
+	header { margin:0 ; padding:0 ; background-color:#444 ; color:#bbb ;
+		position:relative ; z-index:1000 }
+	header > h1 { margin:0 ; font-size:12px ; font-family:sans-serif ;
+		border-bottom:1px #999 solid ; padding:5px 10px ; line-height:17px }
+</style>
+</head>
+<body>
+<header id="nav">
+	<h1>
+		<a href="prev.html">&lt;&lt;</a> &nbsp; 
+		<a href="index.html">Taper #14 :
+		TBA</a> : Spring 2025 &nbsp; 
+		<a href="next.html">&gt;&gt;</a><br>
+		<a href="title_of_your_work.html">“Title”</a> by
+		<a href="about.html#authorlastname">Author</a>
+	</h1>
+</header>
+
+<!DOCTYPE html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: #f5f5f5;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        input[type="range"] {
+            width: 400px;
+        }
+
+        .text-wrapper {
+            position: relative;
+            width: 800px;
+            height: 200px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .text-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .editable-text {
+            background: none;
+            border: none;
+            font-family: monospace;
+            font-size: 72px;
+            font-weight: bold;
+            color: #dc2626;
+            text-align: center;
+            resize: none;
+            width: 800px;
+            outline: none;
+        }
+
+        .fixed-text {
+            font-family: monospace;
+            font-size: 72px;
+            font-weight: bold;
+            color: #1a365d;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    </div>
+    <div class="text-wrapper">
+        <div class="text-layer" id="topLayer">
+            <textarea class="editable-text" id="top" rows="1"></textarea>
+        </div>
+        <div class="text-layer" id="bottomLayer">
+            <div class="fixed-text" id="bottom"></div>
+        </div>
+    </div>
+
+
+    <script>
+        let words = [
+          ["RUPTURE", "RAPTURE"],
+          ["CAPTURE", "RAPTURE"],
+          ["BELIEFS ", "LIES"],
+          ["NEVER ", " EVER"],  
+        ]
+
+        const textarea = document.querySelector('.editable-text');
+        const topLayer = document.getElementById('topLayer');
+        const bottomLayer = document.getElementById('bottomLayer');
+
+        const t = document.getElementById('top');
+        const b = document.getElementById('bottom');
+
+        // let w = words.length - 1;
+        let w = 2;
+        t.innerText = words[w][0];
+        b.innerText = words[w][1];
+        
+        let r = Math.random();
+
+        function updateClipPaths(e) {
+            // let m=e=>e.clientX/innerWidth;
+            // let t=_=>performance.now()%5e3/5e3;
+
+
+            // let x = e.clientX / innerWidth;
+            let y = (performance.now() % 5e3) / 5e3;
+            let j = (((performance.now()/300)|0)%10)/10;
+            let z = 0.5 + 0.5 * Math.sin(performance.now() / 1000);
+
+            let i = r;
+
+            // let rightX = x * 100;
+            let rightX = 1 * 100;
+            let leftX = 0 * 100;
+            let bottomX = i * 100;
+
+            topLayer.style.clipPath = `polygon(0% 0%, 100% 0%, 100% 0%, ${rightX}% 0%, ${bottomX}% 100%, ${leftX}% 0%, 0% 0%)`;
+            bottomLayer.style.clipPath = `polygon(0% 0%, ${leftX}% 0%, ${bottomX}% 100%, ${rightX}% 0%, 100% 0%, 100% 100%, 0% 100%)`;
+        }
+
+        // Event listeners
+        textarea.addEventListener('input', function() {
+            this.value = this.value.toUpperCase();
+            if (this.value.includes('\n')) {
+                this.value = this.value.replace(/\n/g, '');
+            }
+        });
+
+        // Initial update
+        // updateClipPaths();
+        setInterval(updateClipPaths, 16);
+        // window.addEventListener('mousemove', updateClipPaths);
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<body onload=s() onkeydown=k(event) style=margin:0;background:#000;overflow:hidden>
+<div id=o style="position:relative;width:100vw;height:100vh;transform:perspective(5em)rotateX(1deg);animation:a.05s infinite">
+<div id=w></div><div id=g></div></div>
+<style>#o div div{color:#b5ffb5;text-shadow:0 0 5px #83fe83}#g div{opacity:.4}@keyframes a{0%{filter:brightness(.8)}50%{filter:brightness(1)}}</style>
+<script>f=30;i=0;x=0;y=0;
+d=document;
+w=document.getElementById('w');
+g=document.getElementById('g');
+t=`the issue poet types a line of poetry and sits back satisfied in awe`.split(" ")
+t2=`that invisible God describes the dream in wakefulness but exclaims seriously attached for becoming`.split(" ")
+t3=`an ulterior being finds in presences of substance for appearing subtly grand while interrobanging`.split(" ")
+t4=`for unabridged eagerness appears at residence if considering while feeling somewhat spooky inside writers`.split(" ")
+texts=[t,t2,t3,t4];n=0;p=t[0];S=0;
+m=d=>{h=document.createElement("div");
+h.style=`font-size:${f}px;font-family:monospace;white-space:pre;position:absolute;visibility:hidden`;
+h.textContent="M";d.appendChild(h);c=h.offsetWidth;d.removeChild(h);return c}
+function s(){c=m(document.body);X=Math.floor(innerWidth/c)*c;Y=Math.floor(innerHeight/f)*f;x=X/2;y=Y/2;
+w.innerHTML="";g.innerHTML="";
+d=document.createElement("div");
+d.style=`position:absolute;left:${x}px;top:${y-f}px;font-size:${f}px;font-family:monospace;white-space:pre`;
+d.textContent="  ^  ";w.appendChild(d);
+d=document.createElement("div");
+d.style=`position:absolute;left:${x}px;top:${y}px;font-size:${f}px;font-family:monospace;white-space:pre`;
+d.textContent="< v >";w.appendChild(d)}
+function r(){c=m(document.body);X=Math.floor(innerWidth/c)*c;Y=Math.floor(innerHeight/f)*f;
+for(j=0;j<p.length;j++){d=document.createElement("div");
+d.style=`position:absolute;left:${((((x+j*c)%X)+X)%X)}px;top:${((y%Y+Y)%Y)}px;font-size:${f}px;font-family:monospace;white-space:pre`;
+d.textContent=p[j];w.appendChild(d)}}
+function a(){g.innerHTML="";
+[[0,-f,t],[p.length*c,0,t2],[0,f,t3],[-t4[(i+1)%t4.length].length*c,0,t4]].map(([dx,dy,t])=>{
+d=document.createElement("div");
+d.style=`position:absolute;left:${((((x+dx)%X)+X)%X)}px;top:${((((y+dy)%Y)+Y)%Y)}px;font-size:${f}px;font-family:monospace;white-space:pre`;
+d.textContent=t[(i+1)%t.length];g.appendChild(d)})}
+function k(e){if(![37,38,39,40].includes(e.keyCode))return;if(!S){S=1;w.innerHTML="";r();a();return}
+q=p;
+switch(e.keyCode){case 37:n=3;p=t4[++i%t4.length];break;
+case 39:n=1;p=t2[++i%t2.length];break;
+case 38:n=0;p=t[++i%t.length];break;
+case 40:n=2;p=t3[++i%t3.length];break}
+c=m(document.body);
+switch(e.keyCode){case 37:x-=c*p.length;break;case 39:x+=c*q.length;break;case 38:y-=f;break;case 40:y+=f}
+r();a();
+e.preventDefault()}onresize=s</script>
+</body>

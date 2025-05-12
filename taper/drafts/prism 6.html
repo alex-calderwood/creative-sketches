@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<style>
+.tl{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.e{font-family:monospace;color:#d07d09;text-align:center}
+.sh{
+    position:absolute;
+    width:100%;
+    height:100vh;
+    background:rgb(194,150,30);
+    clip-path:polygon(var(--p));
+    cursor:none;
+    --p:50% 0,100% 100%,0 100%,50% 0;
+    z-index: 1;
+}
+.sh.in{
+    --d:-20px;
+    clip-path: polygon(evenodd,var(--d) var(--d),calc(100% + 20px) var(--d),calc(100% + 20px) calc(100% + 20px),var(--d) calc(100% + 20px),var(--d) var(--d),var(--p))
+}
+#c1{
+    filter: blur(1px);
+    z-index: 2;
+}
+#c2{
+    background:rgb(102,31,163);
+    z-index: 2;
+    /* filter: blur(1px); */
+}
+#c3{
+    background:rgba(78, 17, 132);
+    z-index: 3;
+    /* wrap text */
+    text-overflow: ellipsis;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-all;
+    white-space: normal;
+    text-align: center;
+    width: 100%;
+    filter: blur(7px);
+}
+#fr{font-size:16px; color:rgba(78, 17, 132); rotate: 180deg;}
+#ba{font-size:25px; transform: rotate(-12.5deg);}
+#hi{font-size:25px; transform: rotate(12.5deg);}
+/* #hi{font-size:25px; perspective: 1em; transform: rotate(192.5deg);} */
+body{margin:0}
+</style>
+<div class="sh in" id="c1"><div class="tl"><div class="e" id="fr"></div></div></div>
+<div class="sh" id="c2"><div class="tl"><div class="e" id="ba"></div></div></div>
+<div class="sh" id="c3"><div class="tl"><div class="e" id="hi"></div></div></div>
+<script>
+const p=[["life","life"],["living things","living things"],["sun","son"],["rotation", "creation"],['love', 'love'], ['wild', 'wild'], ['it', 'it'], ['orthographic', 'orthographic', 'dei']],
+[f,w]=p[~~(Math.random()*p.length)]
+addEventListener('mousemove',e=>{
+    let r=c1.getBoundingClientRect(),
+    x=(e.clientX-r.left)/r.width*100,
+    y=(e.clientY-r.top)/r.height*100,
+    s=67,o=1
+    // fr.innerText=f
+    // ba.innerText=[...w].map((_,i)=>w.slice(w.length-i-1)).concat([...w].map((_,i)=>w.slice(0,w.length-i-1))).join(' ')
+    fr.innerText=f
+    ba.innerText=[...w].map((_,i)=>w.slice(w.length-i-1)).concat([...w].map((_,i)=>w.slice(0,w.length-i-1))).join(' ')
+    
+    n=~~(4000/w.length)
+    console.log(n, w.length)
+    // hi.innerText=new Array(n).fill(w[0]).join('').concat(w).concat(new Array(n).fill(w[w.length-1]).join(''))
+    hi.innerText=[...w].map((_,i)=>Array(n).fill(w[i]).join('')).join('')
+    // Calculate points
+    let leftPoint = `${x-.5*s}% ${y-o}%`,           // Left point
+        topPoint = `${x}% ${y-.866*s-o}%`,          // Top point
+        rightPoint = `${x+.5*s}% ${y-o}%`,          // Right point
+        bottomThirdPoint = `${x-.5*s + s/3}% ${y-o}%`  // Point on bottom line
+
+
+    x=((e.clientX)-(r.width/2))/6,
+    y=((e.clientY)-(r.height/2))/6,
+    hi.style.transform = `translate(${x}px, ${y}px) rotate(12.5deg)`
+    ba.style.transform = `translate(${x}px, ${y}px) rotate(-12.5deg)`
+    console.log(hi.style.transform)
+
+    // Set main shape for first two triangles
+    let mainShape = `${leftPoint},${topPoint},${rightPoint}`
+    document.querySelectorAll('.sh').forEach(h=>{
+        if(h.id === 'c3') {
+            // Make sure to close the path by returning to the first point
+            h.style.setProperty('--p', `${leftPoint},${topPoint},${bottomThirdPoint},${leftPoint}`)
+        } else {
+            // Also close the main shape
+            h.style.setProperty('--p', `${mainShape},${leftPoint}`)
+        }
+    })
+})
+</script>

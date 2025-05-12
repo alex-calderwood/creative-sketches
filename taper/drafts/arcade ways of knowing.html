@@ -1,0 +1,25 @@
+<!-- statement has to do with making decisions that affect your ability to make meaning.  14^4-3 possibilities 4 every 14 words, (38413) possibilitie
+ this is the beginning of a set of projects about editors about the act of composition rather than the output-->
+ <!DOCTYPE html>
+ <body onload=s() onkeydown=k(event) style=margin:0;background:#000;overflow:hidden>
+ <div id=o style="position:relative;animation:a.05s infinite;">
+ <div id=w></div><div id=g></div></div>
+ <style>#o div div{color:#b5ffb5;text-shadow:0 0 5px #83fe83;position:absolute;white-space:pre}#g div{opacity:.4}@keyframes a{0%{filter:brightness(.8)}to{filter:brightness(1)}}</style>
+ // ... existing HTML and style ...
+<script>D=document;C=_=>D.createElement`div`;f=30;i=x=y=0;w=D.getElementById`w`;g=D.getElementById`g`;
+A=e=>D.body.appendChild(e);P=e=>e.preventDefault();W=innerWidth;H=innerHeight;
+var t,t2,t3,t4,p,S;
+R=Math.random;
+x=[" apologetically"," astronomically"," anesthetically"," altruistically"," asymptotically"," asymmetrically"," scholastically"," scientifically"," pataphysically"," systematically"," telepathically"," ultrasonically"," geographically"," electronically"];
+t=x[~~(R()*14)],t2=x[~~(R()*14)],t3=x[~~(R()*14)],t4=x[~~(R()*14)]
+p=t[0];S=0;
+m=_=>{h=C();h.style=`font:${f}px monospace;position:absolute;visibility:hidden`;h.innerText="M";A(h);c=h.offsetWidth;D.body.removeChild(h);return c}
+s=_=>{c=m();x=W*.2;y=H*.2;w.innerHTML="";d=C();d.style=`font:${f}px monospace;left:${x}px;top:${y-f}px`;d.innerText="  ^  \n< v >";w.appendChild(d)}
+k=e=>{if(![37,38,39,40].includes(e.keyCode))return;if(!S){S=1;w.innerHTML="";r();b();return}
+q=p;c=m();l=e.keyCode;[T,dx,dy]=l==37?[t4,-1,0]:l==39?[t2,1,0]:l==38?[t,0,-1]:[t3,0,1];
+p=T[++i%T.length];x+=c*(dx<0?p:q).length*dx;y+=f*dy;
+x=(x-W*.1+W*.8)%(W*.8)+W*.1;
+y=(y-H*.1+H*.8)%(H*.8)+H*.1;
+r();b();P(e)}
+r=_=>[...p].map((t,j)=>{d=C();d.style=`font:${f}px monospace;left:${x+j*c}px;top:${y}px`;d.innerText=t;w.appendChild(d)})
+b=_=>{g.innerHTML="";[[0,-f,t],[p.length*c,0,t2],[0,f,t3],[-t4[(i+1)%t4.length].length*c,0,t4]].map(([dx,dy,t])=>{d=C();d.style=`font:${f}px monospace;left:${x+dx}px;top:${y+dy}px`;d.innerText=t[(i+1)%t.length];g.appendChild(d)})}</script></body>

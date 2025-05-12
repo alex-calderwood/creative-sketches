@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+body{margin:0;padding:0;background:#000;color:#fff;font:14px monospace;display:flex;justify-content:center;align-items:center;height:100vh}
+span{position:absolute;opacity:0;animation:fade 14s infinite}
+@keyframes fade{0%,100%{opacity:1}50%{opacity:0}}
+</style>
+</head>
+<body>
+<script>
+const L=[
+ "14 illusions unravel",
+ "14 silent wings in dusk",
+ "14 sighs in the void",
+ "14 flickers of memory",
+ "14 heartbeats in unison",
+ "14 dreams balancing on a whisper",
+ "14 edges of the unseen horizon",
+ "14 eyes open to a single star",
+ "14 silhouettes dancing on the threshold",
+ "14 years condensed in a hum",
+ "14 voices merging in digital hush",
+ "14 moments echoing in code",
+ "14 cycles reborn in verse",
+ "14 bones of ephemeral verse"
+];
+let i=0,s=document.createElement("span");
+document.body.appendChild(s);
+(function r(){
+  s.textContent=L[i++%14];
+  setTimeout(r,4000);
+})();
+</script>
+</body>
+</html>

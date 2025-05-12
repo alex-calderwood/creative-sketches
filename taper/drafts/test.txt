@@ -1,0 +1,45 @@
+
+<div class="q" id="i"><div class="m"><div class="e" id="a"></div><div id="d">▲</div></div></div>
+<div class="q" id="j"><div class="m"><div class="e" id="b"></div></div></div>
+<div class="q" id="k"><div class="m"><div class="e" id="c"></div></div></div>
+<script>t=x=y=0
+s=1
+dx=100
+dy=200
+T=[["a prism","the world","the word"],["sight","to lose","to loose"],["all", "extracted", "overlaid"],["visions","melismatic","prismatic"],["rarefied","reordered","left deeply"],["garble", "to long for", "a wash in"],["sense", "streaming", "aching"],["nonsense", "make","sense with"],["chaos", "make more","finding"],["patterns","missing","invisible"],["unseen", "", ""],["radiance", "madness", "playing"],["brilliance", "lustor", "dazzle"],["", "hidden", "language"]]
+D=document
+W=window
+M=Math.abs
+B=()=>{[w,f,z]=T[t];a.innerText=w;d.className='g'}
+P=f=>[...f].map((_,i)=>f.slice(-i-1)).concat([...f].map((_,i)=>f.slice(0,~i))).join(' ')
+F=()=>{t=(t+1)
+d.classList.remove('g')
+b.innerText=P(f)
+c.innerText=P(z)}
+B()
+F()
+onmousemove=e=>{
+x=e.pageX;y=e.pageY-50
+at=M(x-W.innerWidth/2)<dx&M(y-W.innerHeight/2)<dy
+far=M(W.innerWidth-x)<dy|x<dy
+if(s&at)B(),s=0
+if(far&!s)s=1,F()
+if(far)s=1
+}
+
+p={'--v':[[0,-241],[332,272],[-120,327]], '--u':[[0,-241],[-120,327],[-332,210]]}
+;(u=()=>{for(const[k,v]of Object.entries(p))
+D.documentElement.style.setProperty(k,v.map(([x1,y1])=>`${x1+x}px ${y1+y}px`).join(','));requestAnimationFrame(u)})()
+D.head.appendChild(D.createElement('style')).textContent=`.m{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.e{text-align:center}
+#d{position:absolute;right:50px;bottom:50%;color:#661fa3}
+.g{text-shadow: 0 0 30px pink;}
+.q{font:40px monospace;position:absolute;width:100%;height:100vh;z-index:1}
+#i{background:#d07d09}
+#j{background:#40116a;clip-path:polygon(var(--u))}
+#k{background:#661fa3;clip-path:polygon(var(--v))}
+#a,#b{color:#784704}
+#b{font:24px monospace;transform:rotate(29deg)}
+#c{color:#d07d09;font-size:24px;transform:rotate(-7deg)}
+body{margin:0;cursor:none;}`
+</script>

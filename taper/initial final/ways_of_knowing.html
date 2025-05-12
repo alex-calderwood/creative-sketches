@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Ways of Knowing (Taper #14)</title>
+
+<!-- “Ways of Knowing” Copyright (C) 2024 Alex Calderwood
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright 
+notice and this notice are preserved. This file is offered as-is,
+without any warranty.
+
+This is from Taper #14: Sonnets, Spring 2025:
+
+https://taper.badquar.to/14/ways_of_knowing.html
+
+Inspired by Queneau’s line by line writing experience, “Ways of Knowing”
+tasks the player-writer-reader with producing single-word sonnets 
+on a character-by character basis. Every reload maps a random 
+14-character word to each arrow key. The player is tasked with 
+navigating their epistemological sonnet by iteratively choosing 
+which character to select.
+
+I've found the texts created by selecting from the base words to 
+form potent and quirky neologisms, and the resulting spatial 
+cosntruction to have a different meaning as as a concrete poem than
+that I intended during composition
+ 
+“Ways of Knowing” is part of a larger project exploring text editors 
+that peek into or comment on the aesthetics of composition. How might 
+the experience of writing be targetted as a poetic end in and of 
+itself? How can we provoke writer-players to confront the limited 
+plane of authorship afforded by their material circumstances?
+
+*** BEGIN TEMPLATE INSTRUCTIONS ***
+* All poem code goes between the closing header and closing body tags
+below, and must not exceed 2KB (2048 bytes).
+* Without removing any template punctuation, insert your author name,
+poem title, and poem filename throughout the template, making sure your
+text, capitalization, and punctuation is consistent across the file.
+* Insert your creative statement above, wrapped to 72 characters, and 
+using typographical quotes “” and apostrophes ‘’.
+* Do not modify the template in any other way.
+*** END TEMPLATE INSTRUCTIONS ***
+
+-->
+
+<style>
+	body { margin:0 ; overflow:hidden }
+	a { color:#eee ; text-decoration:none }
+	header { margin:0 ; padding:0 ; background-color:#444 ; color:#bbb ;
+		position:relative ; z-index:1000 }
+	header > h1 { margin:0 ; font-size:12px ; font-family:sans-serif ;
+		border-bottom:1px #999 solid ; padding:5px 10px ; line-height:17px }
+</style>
+</head>
+<body onload=s() onkeydown=k(event)>
+<header id="nav">
+	<h1>
+		<a href="prev.html">&lt;&lt;</a> &nbsp; 
+		<a href="index.html">Taper #14 :
+		TBA</a> : Spring 2025 &nbsp; 
+		<a href="next.html">&gt;&gt;</a><br>
+		<a href="ways_of_knowing.html">“Ways of Knowing”</a> by
+		<a href="about.html#calderwood">Alex Calderwood</a>
+	</h1>
+</header>
+<div id=o><div id=w></div><div id=g></div></div>
+<script>
+ways=[//of knowing
+"systematical",
+"scientifical","electronical","arithmetical","asymptotical","experimental","geographical","astronomical","linguistical","philological","ultrasonical","anesthetical",
+"presumptuous","unquestionab","unsuccessful",
+"understandab","altruistical","intellectual","apologetical",
+"monolithical","overwhelming","simultaneous","insufficient",
+"metaphysical","cabalistical","telepathical",
+"pantological",
+"alphabetical","entertaining","outspreading",
+"asymmetrical","providential","unmethodical",
+"pataphysical"].map(w=>' '+w+'ly');
+W=44;
+D=document;C=_=>D.createElement`div`;o=D.getElementById`o`;z=D.createElement`style`;
+z.textContent='#o div div{color:#b3ffb7;position:absolute;white-space:pre}#g div{opacity:.3}@keyframes a{0%{filter:brightness(.7)}to{filter:brightness(1)}}body{background:#000}#o{position:relative;animation:a.05s infinite;transform:perspective(7em)rotateX(3deg);width:80vw;height:80vh;margin:auto}';D.head.append(z);
+f=(o.clientWidth/W*1.6)|0;c=o.clientWidth/W;
+i=x=y=0;w=D.getElementById`w`;g=D.getElementById`g`;
+P=e=>e.preventDefault();H=o.clientHeight/f|0;p=S=0;R=Math.random;
+up=ways[R()*34|0],rt=ways[R()*34|0],dn=ways[R()*34|0],lt=ways[R()*34|0];p=up[0];S=0;E=e=>e.innerHTML="";
+//ctrls
+s=_=>{x=0;y=0;E(w);d=C();d.style=`font:${f}px monospace;left:${c*W/2}px;top:${f*H/2}px`;d.innerText="  ^  \n< v >";w.append(d)};
+k=e=>{//onkey
+if(![37,38,39,40].includes(e.keyCode))return;if(!S){S=1;w.innerHTML="";r();b();return}
+l=e.keyCode;[T,dx,dy]=l==37?[lt,-1,0]:l==39?[rt,1,0]:l==38?[up,0,-1]:[dn,0,1];
+p=T[++i%T.length];x+=c*dx;y+=f*dy;
+x=(x+W*c)%(W*c);y=(y+H*f)%(H*f);
+r();b();P(e)
+};
+r=_=>[...p].map((t,j)=>{d=C();d.style=`font:${f}px monospace;left:${x+j*c}px;top:${y}px`;d.innerText=t;w.append(d)});
+b=_=>{E(g);[[0,-f,up],[p.length*c,0,rt],[0,f,dn],[-lt[(i+1)%lt.length].length*c,0,lt]].map(
+([dx,dy,t])=>{d=C();d.style=`font:${f}px monospace;left:${x+dx}px;top:${y+dy}px`;d.innerText=t[(i+1)%t.length];g.append(d)})}</script></body>
+</html>

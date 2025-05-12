@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<body onload=s() onkeydown=k(event) style=margin:0;background:#000;overflow:hidden>
+<div id=o style="position:relative;width:100vw;height:100vh;transform:perspective(5em)rotateX(1deg);animation:a.05s infinite"></div>
+<style>#o div{color:#25de25;text-shadow:0 0 2px #25de25}@keyframes a{0%{filter:brightness(.8)}50%{filter:brightness(1)}}</style>
+<script>f=30;
+w=0;
+x=0;
+y=0;
+t="riverrun, past Eve and Adam's, from swerve of shore to bend of bay, brings us by a commodius vicus of recirculation back to Howth Castle and Environs. My leaves have drifted from me. All. But one clings still. I'll bear it on me. To remind me of. Lff! So soft this morning, ours. Yes. Carry me along, taddy, like you done through the toy fair!".split(" ");
+p=t[0];
+started=0;
+m=d=>{h=document.createElement("div");
+h.style=`font-size:${f}px;font-family:monospace;white-space:pre;position:absolute;visibility:hidden`;
+h.textContent="M";
+d.appendChild(h);
+c=h.offsetWidth;
+d.removeChild(h);
+return c};
+function s(){c=m(document.body);
+X=Math.floor(innerWidth/c)*c;
+Y=Math.floor(innerHeight/f)*f;
+x=X/2;
+y=Y/2;
+o.innerHTML="";
+g=document.createElement("div");
+g.style=`position:absolute;left:${x}px;top:${y-f}px;font-size:${f}px;
+font-family:monospace;
+white-space:pre`;
+g.textContent="  ^  ";
+o.appendChild(g);
+g=document.createElement("div");
+g.style=`position:absolute;left:${x}px;top:${y}px;font-size:${f}px;font-family:monospace;white-space:pre`;
+g.textContent="< v >";
+o.appendChild(g)}function r(){c=m(document.body);
+X=Math.floor(innerWidth/c)*c;
+Y=Math.floor(innerHeight/f)*f;
+for(i=0;
+i<p.length;
+i++){d=document.createElement("div");
+d.style=`position:absolute;left:${((((x+i*c)%X)+X)%X)}px;top:${((y%Y+Y)%Y)}px;font-size:${f}px;font-family:monospace;white-space:pre`;
+d.textContent=p[i];
+o.appendChild(d)}}function k(e){if(![37,38,39,40].includes(e.keyCode))return;
+if(!started){started=1;
+o.innerHTML="";
+r();
+return}q=p;
+p=t[++w%t.length];
+c=m(document.body);
+switch(e.keyCode){case 37:x-=c*p.length;
+break;
+case 39:x+=c*q.length;
+break;
+case 38:y-=f;
+break;
+case 40:y+=f}r();
+e.preventDefault()}onresize=s</script>
+</body>

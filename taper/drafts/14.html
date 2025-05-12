@@ -1,0 +1,56 @@
+<html>
+<body style="min-height:14vh;margin:14;display:grid;place-items:center;">
+<script>
+const words = "riverrun, past Eve and Adam's, from swerve of shore to bend of bay, brings".split(' ');
+let w = 0;
+[...Array(14)].forEach((_, i) => {
+    let x = window.innerWidth / 2;
+    let y = window.innerHeight / 2;
+    const b = document.createElement('button');
+    b.innerText = `${i+1} Hz`;
+    b.style.cssText = `aspect-ratio:1;position:absolute;transform:rotate(${i*25.7}deg) translate(45vh)`;
+    let currentIndex = 0;
+    b.onclick = () => {
+        const context = new AudioContext();
+        const osc = context.createOscillator();
+        const processor = context.createScriptProcessor(1024, 1, 1);
+        let lastSample = 0;
+        let word = words[w++];
+        
+        processor.onaudioprocess = (e) => {
+            const data = e.inputBuffer.getChannelData(0);
+            for(let j = 0; j < data.length; j++) {
+                if(lastSample <= 0 && data[j] > 0) {
+                    // b.style.background = "#141414"
+                    // b.style.color = 'white';
+                    b.style.maxWidth = '200px';
+                    // let word = words[currentIndex % words.length];
+                    // let word = words[i];
+                    b.innerText = (word + " ").repeat((currentIndex + 1) % 14);
+                    currentIndex++;
+                    let e = document.createElement('div');
+                    e.innerText = word;
+                    let dist = 14 * 8;
+                    x = x % window.innerWidth + Math.random() * dist - dist/2;
+                    y = y % window.innerHeight + Math.random() * dist - dist/2; 
+                    e.style.cssText = `
+                        position: absolute;
+                        left: ${x}px;
+                        top: ${y}px;
+                    `;
+                    document.body.appendChild(e);
+                }
+                lastSample = data[j];
+            }
+        };
+        osc.frequency.value = i + 1;
+        osc.connect(processor);
+        osc.connect(context.destination);
+        processor.connect(context.destination);
+        osc.start();
+    }
+    document.body.appendChild(b);
+});
+</script>
+</body>
+</html>
