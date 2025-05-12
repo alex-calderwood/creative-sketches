@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<div class="q" id="i"><div class="m"><div class="e" id="a"></div></div></div>
+<div class="q" id="j"><div class="m"><div class="e" id="b"></div></div></div>
+<div class="q" id="k"><div class="m"><div class="e" id="c"></div></div></div>
+<script>
+t=0
+T=[["light","let","out"],["soon", "see", "sea"],["prisms","the world through","the word through"],["vivid","as though","it is"],
+["visions","melismatic","prismatic"],["mysterious","things reordered","left deeply"], ["all", "eventually extracted", "or overlaid"],
+["garble", "to long for", "a wash in refracted"],["sense", "streaming", "awaking"],["nonsense", "make","sense with"],["chaos", "expect more","don't look for"],
+["pattern","stitching","reams\nrubbed\nseems"],["gnarled", "waves", "in\nthis\nmetaphor"],["meta", "met in", "we"]]
+D=document
+W=window
+M=Math.abs
+re=()=>{
+[w,f,z]=T[t]
+a.innerText=[...w].map((_,i)=>w.slice(w.length-i-1)).concat([...w].map((_,i)=>w.slice(0,w.length-i-1))).join(' ')
+b.innerText=f
+c.innerText=z
+b.style.transform='rotate(29deg)'
+c.style.transform='rotate(-7deg)'
+t=(t+1)%14
+}
+re()
+mid=1
+x=y=lx=ly=0
+d=W.innerWidth/4
+addEventListener('mousemove',e=>{
+x=e.pageX;y=e.pageY
+near=M(x-W.innerWidth/2)>d || M(y-W.innerHeight/2)>d
+if(mid && !near){mid=0}
+if(!mid && near){mid=1;re()}
+})
+p={'--v':[[0,-241],[332,272],[-120,327]], '--u':[[0,-241],[-120,327],[-332,210]]}
+
+;(u=()=>{for(const[k,v]of Object.entries(p))
+D.documentElement.style.setProperty(k,v.map(([x1,y1])=>`${x1+x}px ${y1+y}px`).join(','));requestAnimationFrame(u)})()
+
+D.head.appendChild(D.createElement('style')).textContent=`.m{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.e{font-family:monospace;text-align:center;font-size:80px}
+.q{position:absolute;width:100%;height:100vh;z-index:1}
+#i{background:#d07d09}
+#j{background:#40116a;clip-path:polygon(var(--u))}
+#k{background:#661fa3;clip-path:polygon(var(--v))}
+#a,#b{color:#784704}
+#c{color:#d07d09}
+body{margin:0;cursor:none}`
+</script>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        #word-container {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 2vw;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+    </style>
+</head>
+<body>
+    <div id="word-container"></div>
+
+    <script>
+        const words = [
+            'apologetically',
+            'astronomically',
+            'anesthetically',
+            'altruistically',
+            'asymptotically',
+            'asymmetrically',
+            'scholastically',
+            'scientifically',
+            'sociologically',
+            'systematically',
+            'telepathically',
+            'ultrasonically',
+            'geographically',
+            'electronically'
+        ];
+        const container = document.getElementById('word-container');
+        const d = window.innerWidth / 50;
+
+        // Create grid of characters
+        words.forEach((word, y) => {
+            const div = document.createElement('div');
+            div.style.height = d + 'px';
+            div.style.position = 'relative';
+            
+            [...word].forEach((char, x) => {
+                const span = document.createElement('span');
+                span.textContent = char;
+                span.id = `char_${x}_${y}`;
+                span.style.position = 'absolute';
+                span.style.left = ((x - word.length/2) * d) + 'px';
+                span.style.width = d + 'px';
+                span.style.textAlign = 'center';
+                span.style.display = 'inline-block';
+                div.appendChild(span);
+            });
+            
+            container.appendChild(div);
+        });
+
+        const selectSpans = (i, j, u, v) => Array.from({ length: (Math.max(j, v) - Math.min(j, v) + 1) }, (_, y) => 
+        Array.from({ length: (Math.max(i, u) - Math.min(i, u) + 1) }, (_, x) => 
+            document.getElementById(`char_${x + Math.min(i, u)}_${y + Math.min(j, v)}`)
+        )).flat();
+        let selectedSpans = selectSpans(0, 0, 7, 13);
+
+        selectedSpans.forEach(span => {
+            // span.style.position = 'absolute';
+            // span.style.color = 'red';
+            let offset = 0;
+            
+            function animate() {
+                offset = (offset + 0.5) % (window.innerHeight);
+                span.style.top = offset + 'px';
+                requestAnimationFrame(animate);
+            }
+            
+            // Add random delay to each span's animation start
+            setTimeout(() => animate(), 0);
+        });
+
+        selectedSpans = selectSpans(8, 0, 13, 12);
+        selectedSpans.forEach(span => {
+            // hide them
+            span.style.display = 'none';
+        });
+</script>
+</body>
+</html>
+

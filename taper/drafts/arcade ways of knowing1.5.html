@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<body onload=s() onkeydown=k(event) style=margin:0;background:#000;overflow:hidden>
+<div id=o style="position:relative;animation:a.05s infinite;">
+<div id=w></div><div id=g></div></div>
+<style>#o div div{color:#b5ffb5;text-shadow:0 0 5px #83fe83;position:absolute;white-space:pre}#g div{opacity:.4}@keyframes a{0%{filter:brightness(.8)}to{filter:brightness(1)}}</style>
+<script>D=document;C=_=>D.createElement`div`;f=30;i=x=y=0;w=D.getElementById`w`;g=D.getElementById`g`;
+A=e=>D.body.appendChild(e);P=e=>e.preventDefault();W=innerWidth;H=innerHeight;
+M=.8;N=.1;
+t=t2=t3=t4=p=S=0;R=Math.random;
+x=[" systematically",
+" scientifically"," electronically"," arithmetically"," asymptotically"," experimentally"," geographically"," astronomically"," linguistically"," philologically"," ultrasonically"," anesthetically",
+" presumptuously"," monolithically"," unquestionably"," professionally"," unsuccessfully",
+" outspreadingly"," alphabetically"," simultaneously"," telepathically"," pantologically",
+" understandably"," altruistically"," intellectually"," overwhelmingly"," insufficiently"," apologetically",
+" metaphysically"," cabalistically"," entertainingly",
+" unmethodically"," asymmetrically"," providentially"," pataphysically"];
+t=x[~~(R()*34)],t2=x[~~(R()*34)],t3=x[~~(R()*34)],t4=x[~~(R()*34)];
+p=t[0];S=0;
+m=_=>{h=C();h.style=`font:${f}px monospace;position:absolute;visibility:hidden`;h.innerText="M";A(h);c=h.offsetWidth;D.body.removeChild(h);return c}
+s=_=>{c=m();x=W*N;y=H*N;w.innerHTML="";d=C();d.style=`font:${f}px monospace;left:${x}px;top:${y-f}px`;d.innerText="  ^  \n< v >";w.appendChild(d)}
+k=e=>{if(![37,38,39,40].includes(e.keyCode))return;if(!S){S=1;w.innerHTML="";r();b();return}
+q=p;c=m();l=e.keyCode;[T,dx,dy]=l==37?[t4,-1,0]:l==39?[t2,1,0]:l==38?[t,0,-1]:[t3,0,1];
+p=T[++i%T.length];x+=c*(dx<0?p:q).length*dx;y+=f*dy;
+x=(x-W*N+W*M)%(W*M)+W*N;
+y=(y-H*N+H*M)%(H*M)+H*N;
+r();b();P(e)}
+r=_=>[...p].map((t,j)=>{d=C();d.style=`font:${f}px monospace;left:${x+j*c}px;top:${y}px`;d.innerText=t;w.appendChild(d)})
+b=_=>{g.innerHTML="";[[0,-f,t],[p.length*c,0,t2],[0,f,t3],[-t4[(i+1)%t4.length].length*c,0,t4]].map(([dx,dy,t])=>{d=C();d.style=`font:${f}px monospace;left:${x+dx}px;top:${y+dy}px`;d.innerText=t[(i+1)%t.length];g.appendChild(d)})}</script></body> 

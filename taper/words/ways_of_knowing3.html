@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        #word-container {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: calc(7.14vh);  /* 1/14th of vh */
+            position: relative;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+        .word-span {
+            position: absolute;
+            white-space: nowrap;
+            transition: top 0.1s linear;
+        }
+    </style>
+</head>
+<body>
+    <div id="word-container"></div>
+
+    <script>
+        const words = [
+            'apologetically',
+            'astronomically',
+            'anesthetically',
+            'altruistically',
+            'asymptotically',
+            'asymmetrically',
+            'scholastically',
+            'scientifically',
+            'sociologically',
+            'systematically',
+            'telepathically',
+            'ultrasonically',
+            'geographically',
+            'electronically'
+        ];
+        const container = document.getElementById('word-container');
+        const d = window.innerWidth / 25;
+
+        // Create grid of absolutely positioned spans
+        function createSpan(i, j, word) {
+            const span = document.createElement('span');
+            span.textContent = word;
+            span.className = 'word-span';
+            span.id = `word-${i}-${j}`;
+            span.style.left = `${i * d}px`;
+            span.style.top = `${j * d}px`;
+            container.appendChild(span);
+            return span;
+        }
+
+        // Create backwards spans (negative indexes)
+        // for (let i = -8; i < 0; i++) {
+        //     for (let j = -7; j < 14; j++) {
+        //         const wordIndex = Math.abs(j) % words.length;
+        //         createSpan(i, j, words[wordIndex]);
+        //     }
+        // }
+
+        // Create forwards spans (positive indexes)
+        for (let i = 0; i <= 16; i++) {
+            for (let j = 0; j < 14; j++) {
+                const wordIndex = Math.abs(j) % words.length;
+                createSpan(i, j, words[wordIndex]);
+            }
+        }
+
+        // Animate spans
+        function animate() {
+            const spans = document.querySelectorAll('.word-span');
+            spans.forEach(span => {
+                const currentTop = parseFloat(span.style.top);
+                span.style.top = `${curren tTop + 0.5}px`;
+                
+                // Reset position when span goes too far down
+                if (currentTop > window.innerHeight) {
+                    span.style.top = `-${d}px`;
+                }
+            });
+            requestAnimationFrame(animate);
+        }
+
+        // Set initial container size
+        container.style.height = window.innerHeight + 'px';
+        container.style.width = window.innerWidth + 'px';
+
+        // Start animation
+        animate();
+    </script>
+</body>
+</html>
+

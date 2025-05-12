@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<body onload=s() onkeydown=k(event) style=margin:0;background:#000;overflow:hidden>
+<div id=o style="position:relative;width:100vw;height:100vh;transform:perspective(5em)rotateX(1deg);animation:a.05s infinite">
+  <div id=words></div>
+  <div id=ghosts></div>
+</div>
+<style>#o div div{color:#b5ffb5;text-shadow:0 0 5px #83fe83}#ghosts div{opacity:.4}@keyframes a{0%{filter:brightness(.8)}50%{filter:brightness(1)}}</style>
+<script>f=30;w=0;x=0;y=0;
+t=`King Carlos turns his coat for better fees and sleeves are wrapped round horns`.split(" ")
+t2=`The autumn leaves drift by my window The falling leaves of red and gold`.split(" ")
+t3=`In ancient Rome there was a poem about a dog who found two bones`.split(" ")
+t4=`Through the forest have I gone But Athenian found I none`.split(" ")
+texts=[t,t2,t3,t4];n=0;
+p=t[0];started=0;
+m=d=>{h=document.createElement("div");
+h.style=`font-size:${f}px;font-family:monospace;white-space:pre;position:absolute;visibility:hidden`;
+h.textContent="M";d.appendChild(h);c=h.offsetWidth;d.removeChild(h);return c};
+function s(){c=m(document.body);X=Math.floor(innerWidth/c)*c;Y=Math.floor(innerHeight/f)*f;x=X/2;y=Y/2;
+words.innerHTML="";ghosts.innerHTML="";
+g=document.createElement("div");
+g.style=`position:absolute;left:${x}px;top:${y-f}px;font-size:${f}px;font-family:monospace;white-space:pre`;
+g.textContent="  ^  ";words.appendChild(g);
+g=document.createElement("div");
+g.style=`position:absolute;left:${x}px;top:${y}px;font-size:${f}px;font-family:monospace;white-space:pre`;
+g.textContent="< v >";words.appendChild(g)}
+function r(){c=m(document.body);X=Math.floor(innerWidth/c)*c;Y=Math.floor(innerHeight/f)*f;
+for(i=0;i<p.length;i++){d=document.createElement("div");
+d.style=`position:absolute;left:${((((x+i*c)%X)+X)%X)}px;top:${((y%Y+Y)%Y)}px;font-size:${f}px;font-family:monospace;white-space:pre`;
+d.textContent=p[i];words.appendChild(d)}}
+function addGhosts(){c=m(document.body);X=Math.floor(innerWidth/c)*c;Y=Math.floor(innerHeight/f)*f;
+ghosts.innerHTML="";
+let nw=w+1;
+d=document.createElement("div");  // Up
+d.style=`position:absolute;left:${((((x)%X)+X)%X)}px;top:${((((y-f)%Y)+Y)%Y)}px;font-size:${f}px;font-family:monospace;white-space:pre`;
+d.textContent=t[nw%t.length];
+ghosts.appendChild(d);
+d=document.createElement("div");  // Right
+d.style=`position:absolute;left:${((((x+p.length*c)%X)+X)%X)}px;top:${((y%Y+Y)%Y)}px;font-size:${f}px;font-family:monospace;white-space:pre`;
+d.textContent=t2[nw%t2.length];
+ghosts.appendChild(d);
+d=document.createElement("div");  // Down
+d.style=`position:absolute;left:${((((x)%X)+X)%X)}px;top:${((((y+f)%Y)+Y)%Y)}px;font-size:${f}px;font-family:monospace;white-space:pre`;
+d.textContent=t3[nw%t3.length];
+ghosts.appendChild(d);
+d=document.createElement("div");  // Left
+d.style=`position:absolute;left:${((((x-t4[nw%t4.length].length*c)%X)+X)%X)}px;top:${((y%Y+Y)%Y)}px;font-size:${f}px;font-family:monospace;white-space:pre`;
+d.textContent=t4[nw%t4.length];
+ghosts.appendChild(d)}
+function k(e){if(![37,38,39,40].includes(e.keyCode))return;if(!started){started=1;words.innerHTML="";r();addGhosts();return}
+q=p;
+switch(e.keyCode){case 37:n=3;p=t4[++w%t4.length];break;
+case 39:n=1;p=t2[++w%t2.length];break;
+case 38:n=0;p=t[++w%t.length];break;
+case 40:n=2;p=t3[++w%t3.length];break}
+c=m(document.body);
+switch(e.keyCode){case 37:x-=c*p.length;break;case 39:x+=c*q.length;break;case 38:y-=f;break;case 40:y+=f}
+r();addGhosts();
+e.preventDefault()}onresize=s</script>
+</body>

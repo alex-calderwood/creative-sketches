@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>A Prism (Taper #14)</title>
+
+<!-- A Prism Copyright (C) 2024 Alex Calderwood
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright 
+notice and this notice are preserved. This file is offered as-is,
+without any warranty.
+
+This is from Taper #14: Sonnets, Spring 2025:
+
+https://taper.badquar.to/14/a_prism.html
+
+This is a strange little prism that seems to alter language... I 
+thought it would show only a distortion of the world, but I grow 
+dependent on it. Now only through it do I find my truth refracted...
+
+-->
+
+<style>
+	body { margin:0 ; overflow:hidden }
+	a { color:#eee ; text-decoration:none }
+	header { margin:0 ; padding:0 ; background-color:#444 ; color:#bbb ;
+		position:relative ; z-index:1000 }
+	header > h1 { margin:0 ; font-size:12px ; font-family:sans-serif ;
+		border-bottom:1px #999 solid ; padding:5px 10px ; line-height:17px }
+</style>
+</head>
+<body>
+<header id="nav">
+	<h1>
+		<a href="prev.html">&lt;&lt;</a> &nbsp; 
+		<a href="index.html">Taper #14 :
+		TBA</a> : Spring 2025 &nbsp; 
+		<a href="next.html">&gt;&gt;</a><br>
+		<a href="prism.html">“A Prism”</a> by
+		<a href="about.html#calderwod">Alex Calderwood</a>
+	</h1>
+</header>
+<div class="q" id="i"><div class="m"><div class="e" id="a"></div><div id="d">▲</div></div></div>
+<div class="q" id="j"><div class="m"><div class="e" id="b"></div></div></div>
+<div class="q" id="k"><div class="m"><div class="e" id="c"></div></div></div>
+<script>t=x=y=0
+s=1
+dx=100
+dy=200
+T=[["a prism","the world","the word"],["sight","lost","let loose"],["all","extracted","overlaid"],["visions","melismatic","prismatic"],["rarefied","reordered","refracted"],["garble", "long for","wash in"],["sense","stream","sent as"],["nonsense","make","sense with"],["chaos", "make more","finding"],["patterns","",""],["unseen","missing","invisible"],["radiance","madness","playing"],["brilliant","lust for","lustor"],["language","",""],["","",""]]
+D=document
+W=window
+M=Math.abs
+B=()=>{[w,f,z]=T[t];a.innerText=w;d.className='g'}
+P=f=>[...f].map((_,i)=>f.slice(-i-1)).concat([...f].map((_,i)=>f.slice(0,~i))).join(' ')
+F=()=>{t=(t+1)
+d.classList.remove('g')
+b.innerText=P(f)
+c.innerText=P(z)}
+B()
+F()
+onmousemove=e=>{
+x=e.pageX;y=e.pageY-50
+at=M(x-W.innerWidth/2)<dx&M(y-W.innerHeight/2)<75
+far=M(W.innerHeight-y)<dy
+if(s&at)B(),s=0
+if(far&!s)s=1,F()
+if(far)s=1
+}
+p={'--v':[[0,-241],[332,272],[-120,327]],'--u':[[0,-241],[-120,327],[-332,210]]}
+;(u=()=>{for(const[k,v]of Object.entries(p))
+D.documentElement.style.setProperty(k,v.map(([x1,y1])=>`${x1+x}px ${y1+y}px`).join(','));requestAnimationFrame(u)})()
+D.head.appendChild(D.createElement('style')).textContent=`.m{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.e{text-align:center}
+#d{position:absolute;right:50%;bottom:50px;color:#661fa3;opacity: 0}
+.g{opacity:1!important;transition:opacity 40s}
+.q{font:40px monospace;position:absolute;width:100%;height:100vh;}
+#i{background:#d07d09}
+#j{background:#40116a;clip-path:polygon(var(--u))}
+#k{background:#661fa3;clip-path:polygon(var(--v))}
+#a,#b{color:#784704}
+#b{font:24px monospace;transform:rotate(29deg)}
+#c{color:#d07d09;font-size:24px;transform:rotate(-7deg)}
+body{margin:0;cursor:none;}`</script></body>
+</html>

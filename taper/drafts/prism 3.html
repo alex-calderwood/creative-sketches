@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <style>
+    .text-layer {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .editable-text {
+        background: none;
+        border: none;
+        font-family: monospace;
+        font-size: 18px;
+        font-weight: bold;
+        color: #d07d09;
+        text-align: center;
+        resize: none;
+        outline: none;
+    }
+    .shape {
+        position: absolute;
+      --p: 50% 0,100% 100%,0 100%,50% 0;
+      width: 100%;
+      height: 100vh;
+      aspect-ratio: 1;
+      background: rgb(194, 150, 30); 
+      clip-path: polygon(var(--p));
+      cursor: none;
+    }
+    #clip2 {
+        background-color: rgb(102, 31, 163);
+    }
+    .shape.invert {
+      --d: -20px;
+      padding: 0;
+      clip-path: 
+        polygon(
+          evenodd,
+          var(--d) var(--d),
+          calc(100% - var(--d)) var(--d),
+          calc(100% - var(--d)) calc(100% - var(--d)),
+          var(--d) calc(100% - var(--d)),
+          var(--d) var(--d),
+          var(--p)
+        )
+        content-box;
+    }
+    #front-text {
+      font-size: 200px;
+    }
+    body {
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="shape invert" id="clipone">
+    <div class="text-layer">
+        <div class="editable-text" id="front-text"></div>
+    </div>
+  </div>
+  <div class="shape" id="clip2">
+    <div class="text-layer">
+        <div class="editable-text" id="back-text"></div>
+    </div>
+  </div>
+
+<script>
+    
+        // https://www.folger.edu/explore/shakespeares-works/shakespeares-sonnets/read/2/
+    const pairs = [
+        ["this first of many sonnets about the briefness of human", "life"],
+        ["The poet challenges the young man to imagine two different","futures"],
+        ["The poet urges the young man to reflect on his own image in a", "mirror"],
+        ["The poet returns to the idea of beauty as treasure that should be invested for", "profit"],
+        ["the poet compares the young man to summer and its flowers, doomed to be destroyed by", "winter"],
+        ["the poet urges the young man to produce a", "child"],
+        ["mortals gaze in admiration at the rising and the", "noonday"],
+        ["the young man hears in the", "harmony"],
+        ["leaving behind no heir to his", "beauty"],
+        ["murderous hatred against", "himself"],
+        ["The poet once again urges the young man to choose a", "future"],
+        ["he observes the motion of the clock and the movement of all living things", "movement"],
+        ["he sees that if the young man breeds a", "son"],
+        ["kept alive not only through", "procreation"],
+
+    ];
+
+    const words = pairs[Math.floor(Math.random() * pairs.length)];
+    const sign = words[0];
+    const word = words[1];
+    document.addEventListener('mousemove', event => {
+      let one = document.getElementById("clipone");
+      const rect = one.getBoundingClientRect();
+      let front = document.getElementById("front-text");
+      let back = document.getElementById("back-text");
+
+      let unpacked = ""
+      for (let i = 0; i < word.length; i++) {unpacked += word.slice(word.length - i, word.length) + " "} 
+      for(let i = word.length; i > 0; i--) {unpacked += word.slice(0, i) + " "} 
+      front.innerText = sign;
+      back.innerText = unpacked;
+      console.log(rect)
+      const x = (event.clientX - rect.left) / rect.width * 100;
+      const y = (event.clientY - rect.top) / rect.height * 100;
+      const size = 67;
+      const offset = 1;
+      console.log({x, y})
+      document.querySelectorAll('.shape').forEach(shape => {
+        shape.style.setProperty(
+          '--p',
+          `${x - 0.5 * size}% ${y - offset}%, ${x}% ${y - 0.86602540378 * size - offset}%, ${x + 0.5 * size}% ${y- offset}%, ${x - 0.5 * size}% ${y- offset}%`
+        );
+      });
+    });
+    </script>
+</body>
+</html>

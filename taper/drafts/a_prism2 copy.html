@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>A Prism (Taper #14)</title>
+
+<!-- A Prism Copyright (C) 2024 Alex Calderwood
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright 
+notice and this notice are preserved. This file is offered as-is,
+without any warranty.
+
+This is from Taper #14: Sonnets, Spring 2025:
+
+https://taper.badquar.to/14/a_prism.html
+
+This is a strange little prism that seems to refract words... I 
+thought it would show me only contortions but now I see everything 
+else as a distortion. I grow dependent on it. Only through it do I 
+separate my truth...
+
+*** BEGIN TEMPLATE INSTRUCTIONS ***
+* All poem code goes between the closing header and closing body tags
+below, and must not exceed 2KB (2048 bytes).
+* Without removing any template punctuation, insert your author name,
+poem title, and poem filename throughout the template, making sure your
+text, capitalization, and punctuation is consistent across the file.
+* Insert your creative statement above, wrapped to 72 characters, and 
+using typographical quotes “” and apostrophes ‘’.
+* Do not modify the template in any other way.
+*** END TEMPLATE INSTRUCTIONS ***
+
+-->
+
+<style>
+	body { margin:0 ; overflow:hidden }
+	a { color:#eee ; text-decoration:none }
+	header { margin:0 ; padding:0 ; background-color:#444 ; color:#bbb ;
+		position:relative ; z-index:1000 }
+	header > h1 { margin:0 ; font-size:12px ; font-family:sans-serif ;
+		border-bottom:1px #999 solid ; padding:5px 10px ; line-height:17px }
+</style>
+</head>
+<body>
+<header id="nav">
+	<h1>
+		<a href="prev.html">&lt;&lt;</a> &nbsp; 
+		<a href="index.html">Taper #14 :
+		TBA</a> : Spring 2025 &nbsp; 
+		<a href="next.html">&gt;&gt;</a><br>
+		<a href="prism.html">“Prism”</a> by
+		<a href="about.html#calderwod">Alex Calderwood</a>
+	</h1>
+</header>
+<div class="q" id="i"><div class="m"><div class="e" id="a"></div></div></div>
+<div class="q" id="j"><div class="m"><div class="e" id="b"></div></div></div>
+<div class="q" id="k"><div class="m"><div class="e" id="c"></div></div></div>
+<script>
+N=14
+t=0
+T=[["prisms","the world through","the word through"],["sight","to lose","what to loose?"],["all", "extracted", "overlaid"],
+["visions","melismatic","prismatic"],["other","things reordered","left deeply"], ["sword","mighty","the pen"],["unseen", "", ""],
+["garble", "to long for", "a wash in"],["sense", "streaming", "aching"],["nonsense", "made","sense with"],["chaos", "expect more","don't wait for"],
+["pattrn","a single stitch missing","seems invisible"],["genius", "gnarled", "metaphor"],["meta", "met in", "the after words"]]
+D=document
+W=window
+M=Math.abs
+re=()=>{
+[w,f,z]=T[t]
+// a.innerText=w
+// a.innerText=[...w].map((_,i)=>w.slice(w.length-i-1)).concat([...w].map((_,i)=>w.slice(0,w.length-i-1))).join(' ')
+// b.innerText=f
+a.innerText=w
+}
+de=()=>{
+b.innerText=[...f].map((_,i)=>f.slice(f.length-i-1)).concat([...f].map((_,i)=>f.slice(0,f.length-i-1))).join(' ')
+c.innerText=[...z].map((_,i)=>z.slice(z.length-i-1)).concat([...z].map((_,i)=>z.slice(0,z.length-i-1))).join(' ')
+t=(t+1)%N
+}
+no=()=>{
+b.innerText=''
+c.innerText=''
+console.log('no')
+}
+re()
+mid=1
+x=y=lx=ly=0
+d=100
+E=(W.innerHeight+W.innerWidth)/4
+addEventListener('mousemove',e=>{
+x=e.pageX;y=e.pageY
+near=M(x-W.innerWidth/2)>d || M(y-W.innerHeight/2)>d
+far=M(x-W.innerWidth/2) + M(y-W.innerHeight/2)>E
+if(mid && !near){mid=0;re()}
+// if(!mid && near){no()}
+if(!mid && far){mid=1;de()}
+console.log({mid, near, far})
+})
+p={'--v':[[0,-241],[332,272],[-120,327]], '--u':[[0,-241],[-120,327],[-332,210]]}
+
+;(u=()=>{for(const[k,v]of Object.entries(p))
+D.documentElement.style.setProperty(k,v.map(([x1,y1])=>`${x1+x}px ${y1+y}px`).join(','));requestAnimationFrame(u)})()
+
+D.head.appendChild(D.createElement('style')).textContent=`.m{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.e{font-family:monospace;text-align:center;font-size:40px}
+.q{position:absolute;width:100%;height:100vh;z-index:1}
+#i{background:#d07d09}
+#j{background:#40116a;clip-path:polygon(var(--u))}
+#k{background:#661fa3;clip-path:polygon(var(--v))}
+#a{color:#784704}
+#b{color:#784704;font-size:20px;transform:rotate(29deg)}
+#c{color:#d07d09;font-size:20px;transform:rotate(-7deg)}
+body{margin:0;cursor:none}`
+</script>
+</body>
+</html>
