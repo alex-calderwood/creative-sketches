@@ -40,9 +40,8 @@ body {
   border: none;
   outline: none;
   background: transparent;
-  /* color: var(--text); */
-  color: transparent;
-
+  color: var(--text);
+  color: rgba(255, 255, 255, 0.1);
 }
 
 
