@@ -2,6 +2,10 @@
   --background: #2d3952;
   --text: #c7c7c7;
 }
+/* get rid of spellcheck squiggle */
+* {
+  spellcheck: none;
+}
 
 body {
   /*Trykker */
@@ -42,6 +46,7 @@ body {
   background: transparent;
   color: var(--text);
   color: rgba(255, 255, 255, 0.1);
+  /* animation: fade var(--duration) cubic-bezier(0.32, 0, 0.67, 0) forwards; */
 }
 
 

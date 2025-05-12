@@ -104,6 +104,7 @@ grid.addEventListener('click', (event) => {
   element.style.left = `${curU * (ENABLE_GRID ? charWidth : 1)}px`;
   element.style.top = `${curV * (ENABLE_GRID ? charHeight : 1)}px`;
   element.contentEditable = true;
+  element.spellcheck = false;
   
   // Handle key events
   element.addEventListener('keydown', (e) => {
@@ -114,6 +115,7 @@ grid.addEventListener('click', (event) => {
       newElement.style.left = element.style.left;
       newElement.style.top = `${parseInt(element.style.top) + charHeight}px`;
       newElement.contentEditable = true;
+      newElement.spellcheck = false;
       grid.appendChild(newElement);
       newElement.focus();
     }
@@ -129,7 +131,6 @@ grid.addEventListener('click', (event) => {
 
 function rainElement(element) {
   const currentText = element.textContent;
-  console.log('currentText', currentText);
 
   // randomly select a letter from the text
   let index = currentText.length - 1;
@@ -148,15 +149,16 @@ function rainElement(element) {
   const startTop = parseInt(element.style.top);
   newElement.style.left = `${parseInt(element.style.left) + x}px`;
   newElement.style.top = `${startTop}px`;
+  newElement.contentEditable = true;
+  newElement.spellcheck = false;
 
   // Calculate distance to bottom of viewport
   const distanceToBottom = window.innerHeight - startTop - charHeight;
-  const speed = 100; // pixels per second
+  const speed = 400; // pixels per second
   const duration = distanceToBottom / speed;
   newElement.style.setProperty('--distance', `${distanceToBottom}px`);
   newElement.style.setProperty('--duration', `${duration}s`);
 
-  newElement.contentEditable = true;
   grid.appendChild(newElement);
 
   // Play sound after duration
