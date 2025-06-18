@@ -100,7 +100,7 @@ getProjects().then(projectList => {
 });
 
 // Project Directory
-app.get('/', (req, res) => {
+app.get('/editors', (req, res) => {
   // Read the index.html template
   const indexPath = path.join(__dirname, 'index.html');
   
@@ -118,11 +118,6 @@ app.get('/', (req, res) => {
     
     res.send(updatedHtml);
   });
-});
-
-// Also serve the editors index at /editors for direct access
-app.get('/editors', (req, res) => {
-  res.redirect('/');
 });
 
 const larderSentencesPath = path.join(__dirname, 'editors', 'larder', 'sentences.json');
