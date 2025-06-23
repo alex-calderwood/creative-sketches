@@ -12,7 +12,6 @@ RUN npm install
 COPY index.html ./
 COPY server.js ./
 
-
 # Copy the editors directory
 COPY editors/ ./editors/
 

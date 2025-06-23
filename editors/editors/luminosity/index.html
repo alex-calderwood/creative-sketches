@@ -10,23 +10,26 @@
 <body>
   <div class="prompt-container">
     <div id="prompt" class="prompt word">
-      A poem about a dream. Do not make mistakes.
+       A poem in the third person:
     </div>
   </div>
 
   <div id="editor-container" class="editor-container">
     <div id="editor" class="editor" spellcheck="false" contenteditable="true"></div>
     <div id="overlay" class="overlay"></div>
+    <div id="overlay2" class="overlay"></div>
+    <div id="overlay3" class="overlay"></div>
   </div>
   
-  <div id="mistakes-container">
+  <!-- <div id="mistakes-container">
     <div id="mistakes" class="word count"></div>
     <div id="word-count" class="word count"></div>
     <div id="submit" class="word"><buttom onclick="onComplete()">Submit</buttom></div>
   </div>
-  
+   -->
+  <script src="lib/diff.js"></script>
   <script src="textIterator.js"></script>
-  <script src="spellcheck.js"></script>
+  <script src="editor.js"></script>
   <script src="events.js"></script>
   
 </body>
