@@ -119,7 +119,7 @@ grid.addEventListener('click', (event) => {
       newElement.focus();
     }
     setTimeout(() => {
-      let length = rainElement(element);
+      let length = makeFall(element);
     }, 0);
 
   });
@@ -128,7 +128,7 @@ grid.addEventListener('click', (event) => {
   element.focus();
 }); 
 
-function rainElement(element) {
+function makeFall(element) {
   const currentText = element.textContent;
 
   // randomly select a letter from the text
