@@ -83,7 +83,7 @@ getProjects().then(projectList => {
     // Mount the router at the project path with 'editors' prefix
     app.use(`/editors/${project.url}`, projectRouter);
     
-    // console.log(`Serving ${project.name} at /editors/${project.url} from ${projectPath}`);
+    console.log(`Serving ${project.name} at /editors/${project.url} from ${projectPath}`);
   });
 
   // Serve wooden.avif specifically

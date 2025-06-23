@@ -1,7 +1,7 @@
 {
-    "name": "Concrete Rain",
+    "name": "Persistent Rain",
     "description": "Inspired by Romy Achituv & Camille Utterback's <a href=\"https://camilleutterback.com/projects/text-rain/\">Text Rain.</a>",
-    "version": "4",
+    "version": "6",
     "series": "concrete",
-    "url": "concrete-rain-type"
+    "url": "persistent-rain"
 }
