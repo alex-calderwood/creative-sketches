@@ -83,7 +83,7 @@ getProjects().then(projectList => {
     // Mount the router at the project path with 'editors' prefix
     app.use(`/editors/${project.url}`, projectRouter);
     
-    console.log(`Serving ${project.name} at /editors/${project.url} from ${projectPath}`);
+    // console.log(`Serving ${project.name} at /editors/${project.url} from ${projectPath}`);
   });
 
   // Serve wooden.avif specifically
@@ -96,7 +96,6 @@ getProjects().then(projectList => {
 
   //serve everything in assets
   app.use('/editors/assets', serveStatic(path.join(__dirname, 'assets')));
-
 });
 
 // Project Directory
@@ -171,6 +170,6 @@ app.post('/api/new-sentence', express.json(), (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
   console.log(`Available projects: ${projects.map(p => p.name).join(', ')}`);
+  console.log(`Running at: http://localhost:${port}/editors`);
 });

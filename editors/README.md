@@ -1,11 +1,17 @@
 
 # The Writer's Project Editors
 
-# Build
+# Dev
+
+    node server.js
+
+# Production
+
+## Build
 
 docker build -t editors .
 
-# Run
+## Run
 
 docker run -d --name editors-container -p 3000:3000 --restart unless-stopped editors
 

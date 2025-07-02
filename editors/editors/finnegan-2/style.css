@@ -2,13 +2,17 @@ body {
   font-family: "Times New Roman", Times, serif;
   background-color: #7b8eb5;
   margin: 0px;
+  height: 90vh;
 }
 
 .prompt-container {
-  position:relative;
-  width: 100%;
-  top: 0px;
-  left: 0px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 90vw;
+  height: 90vh;
+  margin-top: 5vh;
+  margin-left: 5vw;
 }
 
 .prompt.word {
@@ -17,7 +21,7 @@ body {
   margin-top: 0px;
   font-size: 14pt;
   /* font-weight: bold; */
-  background-color: #121083;
+  background-color: #0b0a47;
   color: white;
 }
 
@@ -37,12 +41,8 @@ body {
   position: absolute;
   border: 1px solid #8f8f8f;
   background-color: white;
-  /* Changed from 100vh to add some spacing */
-  height: 80%;
-  width: 90%;
-  left: 5%;
-  top: 10%;
-  /* margin: 5vh 0px; */
+  height: 100%;
+  width: 100%;
 }
 
 #editor {
@@ -62,9 +62,20 @@ body {
   border: 2px solid;
   border-color: #ffffff #808080 #808080 #ffffff; /* Classic Win95 beveled edge */
   box-shadow: 1px 1px 0 0 #11045a;
-  /* color: black; */
-  color: transparent;
+  color: black;
+  /* color: transparent; */
 }
+
+.overlay {
+  position: absolute;
+  pointer-events: none;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
 
 /* a bit of a violent shake */
 .shake {
@@ -83,19 +94,12 @@ body {
   color: rgba(255, 0, 0, 0.01);
 }
 
-.overlay {
-  position: absolute;
-  pointer-events: none;
-  z-index: 100;
-  top: 0;
-  left: 0;
-}
-
+/* incorrect words in the overlay */
 .overlay-word {
   position: absolute;
   /* color: red; */
-  color: rgba(255, 0, 0, 0.5);
-  /* color: transparent; */
+  /* color: rgba(255, 0, 0); */
+  color: transparent;
 }
 
 #editor-container.complete .editor {
@@ -108,7 +112,8 @@ body {
 
 .correct-overlay-word {
   position: absolute;
-  color: black;
+  /* color: black; */
+  color: transparent;
 }
 
 .spell-error-mark {
@@ -116,6 +121,8 @@ body {
   height: 6px;
   background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 4" height="4" width="20"><path d="M 0 3.5 Q 5 0.5, 10 3.5, 15 0.5, 20 3.5" stroke="red" fill="none"/></svg>');
   background-repeat: repeat-x;
+  color: rgba(255, 0, 0);
+
 }
 
 /* For browsers that don't support wavy text-decoration */
@@ -211,7 +218,7 @@ body {
   z-index: 1000;
   animation: fall var(--duration) linear forwards;
   text-decoration-color: red;
-  color: rgba(255, 0, 0, 0.5);
+  color: red;
 }
 
 @keyframes fall {
