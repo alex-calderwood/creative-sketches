@@ -15,6 +15,8 @@ class SpellChecker {
       this.checkNeeded = false;
       this.eventTarget = new EventTarget();
 
+      this.continuousCheck = false;
+
       this.eventTarget.addEventListener('misspellingsChanged', (event) => onMistake(this.numMistakes(), event.detail));
 
 
@@ -80,15 +82,23 @@ class SpellChecker {
 
     handleInput(event) {
       this.checkNeeded = true;
-      
+
       // If not already checking, start the check process
-      if (!this.isChecking) {
-        this.processCheck();
+      if (this.continuousCheck && !this.isChecking) {
+        this.processCheckContinuous();
+      }
+
+      else if (event.inputType === 'insertText' && event.data.length > 0) {
+        // if a space is inserted, we need to check the word before and after
+        const isSpace = event.data === ' ';
+        if (isSpace) {
+          this.performSpellCheck();
+        }
       }
     }
 
     // Process spell checking
-    processCheck() {
+    processCheckContinuous() {
       if (!this.checkNeeded) {
         this.isChecking = false;
         return;
@@ -100,7 +110,7 @@ class SpellChecker {
       // Perform the check
       this.performSpellCheck().then(() => {
         // Check if another check is needed when this one is done
-        requestAnimationFrame(() => this.processCheck());
+        requestAnimationFrame(() => this.processCheckContinuous());
       });
     }
 
@@ -127,7 +137,7 @@ class SpellChecker {
     checkSpelling() {
       this.checkNeeded = true;
       if (!this.isChecking) {
-        this.processCheck();
+        this.processCheckContinuous();
       }
     }
 
