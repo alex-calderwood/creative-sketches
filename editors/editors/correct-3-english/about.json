@@ -1,6 +1,6 @@
 {
     "name": "Drips Correct (English)",
-    "description": "Work in progress",
+    "description": "This is an experimint in making the spellchecker an experience. What does it mean to be 'right' when you're writing? How can we think through the effect of the spellchecker?",
     "version": "3",
     "series": ["autocorrect", "drips"],
     "url": "finnegan-correct"
