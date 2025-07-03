@@ -59,7 +59,7 @@
 
         .page a {
             text-decoration: underline;
-            color: rgb(151, 150, 150);
+            color: rgb(45, 44, 44);
         }
         @keyframes translateCard {
             0% { translate: 0 0; }
@@ -109,12 +109,162 @@
         .project-name {
             padding: 0.6rem;
             font-size: 0.6rem;
-            color: #2c3e50;
+            color: #18191a;
+            transition: all 0.6s ease;
+            filter: contrast(1) blur(0px);
+            position: relative;
+            font-family: 'Georgia', serif;
+            font-weight: 600;
+        }
+        
+        .page:hover .project-name {
+            filter: contrast(0.8) blur(0.3px);
+            opacity: 0.7;
+            transform: translateX(1px) translateY(0.5px);
+        }
+        
+        /* Blurred background layer (ink bleeding) */
+        .project-name::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0.6rem;
+            left: 0.6rem;
+            right: 0.6rem;
+            opacity: 0;
+            filter: blur(2px);
+            color: black;
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .page:hover .project-name::after {
+            opacity: 1;
+            transform: scale(1.05) translateX(-1px) translateY(-0.5px);
+        }
+        
+        /* Crisp top layer (fresh ink) */
+        .project-name::before {
+            content: attr(data-text);
+            position: absolute;
+            top: 0.6rem;
+            left: 0.6rem;
+            right: 0.6rem;
+            opacity: 0;
+            filter: contrast(1.2) brightness(0.9);
+            color: rgba(0, 0, 20, 0.9);
+            transition: opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s;
+            pointer-events: none;
+            z-index: 1;
+            text-shadow: 
+                0 0 1px currentColor,
+                0.5px 0.5px 0px rgba(28, 30, 32, 0.3);
+        }
+        
+        .page:hover .project-name::before {
+            opacity: 1;
+            transform: translateX(0.5px) translateY(-0.3px);
         }
         .project-description {
             padding: 0 0.6rem 0.6rem;
             font-size: 0.5rem;
-            color: #666;
+            color: #050505;
+            transition: all 0.5s ease;
+            filter: contrast(1) blur(0px);
+            position: relative;
+            font-family: 'Georgia', serif;
+        }
+        
+        .page:hover .project-description {
+            filter: contrast(0.85) blur(0.2px);
+            opacity: 0.8;
+            transform: translateX(-0.5px) translateY(0.3px);
+        }
+        
+        /* Blurred background for description */
+        .project-description::after {
+            content: attr(data-description);
+            position: absolute;
+            top: 0;
+            left: 0.6rem;
+            right: 0.6rem;
+            bottom: 0.6rem;
+            opacity: 0;
+            filter: blur(1.5px);
+            color: rgba(59, 57, 57, 0.3);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .page:hover .project-description::after {
+            opacity: 1;
+            transform: scale(1.02) translateX(0.5px) translateY(-0.2px);
+        }
+        
+        /* Crisp top layer for description */
+        .project-description::before {
+            content: attr(data-description);
+            position: absolute;
+            top: 0;
+            left: 0.6rem;
+            right: 0.6rem;
+            bottom: 0.6rem;
+            opacity: 0;
+            filter: contrast(1.1);
+            color: rgba(21, 19, 19, 0.8);
+            transition: opacity 0.6s ease 0.05s, transform 0.6s ease 0.05s;
+            pointer-events: none;
+            z-index: 1;
+            text-shadow: 0 0 0.5px rgba(102, 102, 102, 0.4);
+        }
+        
+        .page:hover .project-description::before {
+            opacity: 1;
+            transform: translateX(0.3px) translateY(-0.1px);
+        }
+        .project-metadata {
+            padding: 0 0.6rem 0.6rem;
+            font-family: 'Georgia', serif;
+            font-size: 0.45rem;
+            color: #888;
+            line-height: 1.4;
+            transition: all 0.4s ease;
+            filter: contrast(1) blur(0px);
+            font-style: italic;
+            position: relative;
+        }
+        
+        .page:hover .project-metadata {
+            filter: contrast(0.9) blur(0.15px);
+            opacity: 0.85;
+            transform: translateX(0.5px) translateY(-0.2px);
+            color: #292727;
+        }
+        
+        /* Simple overlay for metadata crispness */
+        .project-metadata::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0;
+            background: linear-gradient(45deg, 
+                rgba(136, 136, 136, 0.05) 0%, 
+                rgba(136, 136, 136, 0.02) 50%,
+                rgba(136, 136, 136, 0.05) 100%);
+            transition: opacity 0.4s ease 0.1s;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .page:hover .project-metadata::before {
+            opacity: 1;
+        }
+        .project-metadata div {
+            margin-bottom: 0.1rem;
         }
         .project-image {
             width: 100%;
@@ -132,6 +282,73 @@
             height: 100%;
             display: flex;
             flex-direction: column;
+            transition: all 0.6s ease;
+        }
+        
+        .page:hover .project-content {
+            background: rgba(252, 250, 245, 0.92);
+            box-shadow: 
+                inset 0 0 20px rgba(44, 62, 80, 0.05),
+                inset 0 0 40px rgba(44, 62, 80, 0.02);
+        }
+        
+        /* Add subtle ink stains that appear on hover */
+        .page::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, rgba(44, 62, 80, 0.15) 30%, transparent 70%);
+            border-radius: 50%;
+            top: 20%;
+            right: 15%;
+            opacity: 0;
+            transition: opacity 0.8s ease 0.2s;
+            z-index: 2;
+        }
+        
+        .page:hover::before {
+            opacity: 1;
+        }
+        
+        .page::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: radial-gradient(circle, rgba(44, 62, 80, 0.1) 40%, transparent 70%);
+            border-radius: 50%;
+            bottom: 30%;
+            left: 12%;
+            opacity: 0;
+            transition: opacity 0.9s ease 0.4s;
+            z-index: 2;
+        }
+        
+        .page:hover::after {
+            opacity: 1;
+        }
+
+        .project-content::after {
+            content: '';
+            position: absolute;
+            bottom: 0.5rem;
+            right: 0.5rem;
+            font-family: 'Georgia', serif;
+            font-size: 0.35rem;
+            opacity: 0;
+            letter-spacing: 0.5px;
+            color: #343232;
+            transition: all 0.3s ease 0.2s;
+            filter: contrast(1) blur(0px);
+            pointer-events: none;
+        }
+        
+        .page:hover .project-content::after {
+            content: '→ OPEN EDITOR';
+            opacity: 0.8;
+            filter: contrast(0.9) blur(0.2px);
+            text-shadow: 0 0 0.5px rgba(102, 102, 102, 0.3);
         }
     </style>
 </head>
@@ -146,10 +363,27 @@
         // This will be replaced with the actual projects array by the server
         const projects = [];
         
+        // Sort projects by series first, then by name
+        const sortedProjects = projects.sort((a, b) => {
+            // Projects with series come first, sorted by series name
+            if (a.series && b.series) {
+                if (a.series !== b.series) {
+                    return a.series.localeCompare(b.series);
+                }
+                // Within same series, sort by name
+                return a.name.localeCompare(b.name);
+            }
+            // Projects with series come before those without
+            if (a.series && !b.series) return -1;
+            if (!a.series && b.series) return 1;
+            // Projects without series, sort by name
+            return a.name.localeCompare(b.name);
+        });
+        
         // Generate project cards
         const container = document.getElementById('projects-container');
         
-        projects.forEach(project => {
+        sortedProjects.forEach(project => {
             let url = project.url;
             let name = project.name;
             const card = document.createElement('a');
@@ -191,14 +425,47 @@
             const nameDiv = document.createElement('div');
             nameDiv.className = 'project-name';
             nameDiv.textContent = name;
+            nameDiv.setAttribute('data-text', name);
             
             const descriptionDiv = document.createElement('div');
             descriptionDiv.className = 'project-description';
             descriptionDiv.innerHTML = project.description || '';
-
+            // Strip HTML tags for the data attribute used in CSS pseudo-elements
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = project.description || '';
+            descriptionDiv.setAttribute('data-description', tempDiv.textContent || tempDiv.innerText || '');
             
             contentDiv.appendChild(nameDiv);
             contentDiv.appendChild(descriptionDiv);
+            
+            // Add additional fields from about.json in simple typewriter style
+            const metadataDiv = document.createElement('div');
+            metadataDiv.className = 'project-metadata';
+            
+            const metadataLines = [];
+            
+            // Add version if it exists
+            if (project.version) {
+                metadataLines.push(`v${project.version}`);
+            }
+            
+            // Add series if it exists (with em dash for elegance)
+            if (project.series) {
+                metadataLines.push(`— ${project.series}`);
+            }
+            
+            // Add any other custom fields (excluding standard ones)
+            const excludeFields = ['name', 'description', 'version', 'series', 'url', 'image'];
+            Object.entries(project).forEach(([key, value]) => {
+                if (!excludeFields.includes(key) && value !== null && value !== undefined && value !== '') {
+                    metadataLines.push(`${key}: ${value}`);
+                }
+            });
+            
+            if (metadataLines.length > 0) {
+                metadataDiv.innerHTML = metadataLines.map(line => `<div>${line}</div>`).join('');
+                contentDiv.appendChild(metadataDiv);
+            }
             
             if (project.image) {
                 const image = document.createElement('img');
