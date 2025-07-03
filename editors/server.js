@@ -46,9 +46,11 @@ function getProjects() {
         try {
           const aboutData = JSON.parse(data);
           resolve({
+            // Include any other fields that might be in the about.json
+            ...aboutData,
+            // Override with correct directory-based values
             url: dir,
-            name: aboutData.name || dir,
-            description: aboutData.description
+            name: aboutData.name || dir
           });
         } catch (e) {
           resolve(defaultAbout);
