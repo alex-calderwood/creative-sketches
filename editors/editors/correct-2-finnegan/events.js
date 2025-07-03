@@ -117,7 +117,6 @@ function letterFall(text, i, startIndex, endIndex, rect, editor, fallDelay = 0) 
 function onMistake(count, event) {
   console.log("onMistake", event);
   const { isNewMistake, newMispellings } = event;
-  console.log(newMispellings);
     if (isNewMistake) {
       const editor = document.getElementById('editor');
 
