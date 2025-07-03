@@ -2,6 +2,7 @@ class SpellChecker {
     constructor(options = {}) {
       this.options = {
         checkDelay: 100,        // Milliseconds to wait after typing stops
+        dict: "scowl",
         squiggleColor: 'red',
         ...options
       };
@@ -19,8 +20,11 @@ class SpellChecker {
 
       this.eventTarget.addEventListener('misspellingsChanged', (event) => onMistake(this.numMistakes(), event.detail));
 
-
-      this.fromSwerveOfShore();
+      if (this.options.dict == "finnegan") {
+        this.fromSwerveOfShore();
+      } else if (this.options.dict == "scowl") {
+        this.fromSCOWL();
+      }
     }
 
     // Check if a word is spelled correctly
@@ -44,20 +48,20 @@ class SpellChecker {
       return this.updateVocabulary(words);
     }
 
-    fromSwerveOfShore() {
+    fromSwerveOfShore() { // load Finnegan's Wake
       let finnegan = fetch("/editors/assets/corpora/finnegans_wake_raw_cleaned.txt")
         .then(response => response.text())
         .then(text => this.updateVocabFromText(text));
       return finnegan;
     }
 
-    async fromSCOWL() {
+    async fromSCOWL(size="40") {
       // Official site: http://wordlist.aspell.net/
       // GitHub: https://github.com/en-wl/wordlist
 
       try {
         // You'd need to host a SCOWL word list file
-        const response = await fetch("/editors/assets/corpora/scowl-50-american.txt");
+        const response = await fetch(`/editors/assets/corpora/scowl/scowl-wl-${size}.txt`);
         const text = await response.text();
         const words = text.split('\n').map(word => word.toLowerCase().trim()).filter(word => word);
         this.updateVocabulary(words);
