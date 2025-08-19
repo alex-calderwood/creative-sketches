@@ -2,7 +2,7 @@
     "name": "Finnegan",
     "description": "Finnegan's Wake",
     "version": "1",
-    "series": "autocorrect-experiments",
-    "url": "finnegan",
+    "series": ["spellcheck"],
+    "url": "finnegan-check",
     "image": null
 }
