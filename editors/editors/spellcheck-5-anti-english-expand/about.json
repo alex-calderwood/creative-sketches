@@ -1,0 +1,8 @@
+{
+    "name": "Spellcheck Anti-English Expand",
+    "description": "Making corrections seem a bit more in your face?",
+    "notes": "Ge",
+    "version": "5",
+    "series": ["spellcheck", "expand"],
+    "url": "antienglish-checker-2"
+}
