@@ -21,7 +21,8 @@ class SpellChecker {
 
       // Register an event listener that listens for new mispellings
       // new mispellings will call the onMistake function
-      this.eventTarget.addEventListener('misspellingsChanged', (event) => onMistake(this.numMistakes(), event.detail));
+      this.misspellingsListener = (event) => onMistake(this.numMistakes(), event.detail);
+      this.eventTarget.addEventListener('misspellingsChanged', this.misspellingsListener);
 
       if (this.options.dict == "finnegan") {
         this.fromSwerveOfShore();
@@ -45,11 +46,10 @@ class SpellChecker {
 
     updateVocabulary(vocab) {
       this.vocab = vocab;
-      // console.log(this.vocab);
+      console.log("new vocab", this.vocab);
     }
 
     updateVocabFromText(text) {
-      console.log(text)
       let words = text.split(/\s+/).map(word => word.toLowerCase());
       // remove the punctuation
       words = words.map(word => word.replace(/[^\w\s]/g, ''));
@@ -107,6 +107,33 @@ class SpellChecker {
       return this;
     }
 
+    // Clean up resources and event listeners
+    destroy() {
+      // Remove input event listener
+      if (this.targetElement) {
+        this.targetElement.removeEventListener('input', this.handleInput.bind(this));
+        this.targetElement = null;
+      }
+      
+      // Remove misspellingsChanged event listener
+      if (this.eventTarget) {
+        this.eventTarget.removeEventListener('misspellingsChanged', this.misspellingsListener);
+        this.eventTarget = null;
+      }
+      
+      // Clear any timers or intervals
+      if (this.checkTimer) {
+        clearTimeout(this.checkTimer);
+        this.checkTimer = null;
+      }
+      
+      // Clear state
+      this.textState.misspellings = [];
+      this.textState.wordCount = 0;
+      this.isChecking = false;
+      this.checkNeeded = false;
+    }
+
     handleInput(event) {
       this.checkNeeded = true;
 
@@ -144,13 +171,14 @@ class SpellChecker {
     // Perform the actual spell check (returns a promise)
     async performSpellCheck() {
       if (!this.targetElement) return;
+
+      console.log('spellecheck vocab', this.vocab)
       
       let tokens = iterateContentEditableWords(this.targetElement);
       const [correctWords, currentMisspellings] = this.getMispellings(tokens);
       const prevMisspellings = this.textState.misspellings;
 
       const newMisspellings = this.findNewMisspellings(this.textState.misspellings, currentMisspellings);
-      console.log('new mispellings 2', newMisspellings)
       this.textState.misspellings = currentMisspellings;
       this.textState.wordCount = tokens.length;
 
@@ -251,16 +279,106 @@ class SpellChecker {
     }
   }
 
-  // Initialize the spellchecker with a sample dictionary
-  const demoSpellChecker = new SpellChecker({
+
+// Factory function to manage spellchecker instances
+function createSpellchecker(dictType, reverse) {
+  // Clean up old instance if it exists
+  if (window.demoSpellChecker) {
+    window.demoSpellChecker.destroy();
+  }
+  
+  // Create new instance
+  window.demoSpellChecker = new SpellChecker({
     checkDelay: 500,
-    squiggleColor: 'red'
+    squiggleColor: 'red',
+    dict: dictType,
+    reverse: reverse
   });
-    
-const editor = document.querySelector('#editor');
-if (editor) {
-  demoSpellChecker.setElement(editor);
+  
+  return window.demoSpellChecker;
 }
+
+// Single initialization function
+async function init(dictType = 'scowl', reverse = true) {
+  // Create spellchecker instance using factory
+  const spellchecker = createSpellchecker(dictType, reverse);
+  
+  // Wait for vocabulary to load before setting element
+  if (dictType === 'finnegan') {
+    await spellchecker.fromSwerveOfShore();
+  } else if (dictType === 'scowl') {
+    await spellchecker.fromSCOWL();
+  }
+  
+  // Set the editor element
+  const editor = document.querySelector('#editor');
+  if (editor) {
+    spellchecker.setElement(editor);
+  }
+  
+  // Reset UI state
+  resetUI();
+}
+
+// Reset UI state when changing dictionaries
+function resetUI() {
+  // Clear mistake list
+  const mistakeList = document.getElementById('mistake-list');
+  if (mistakeList) {
+    mistakeList.innerHTML = '';
+    mistakeList.style.visibility = 'hidden';
+  }
+  
+  // Clear enlarged words array and remove any existing enlarged word elements
+  if (typeof enlargedWords !== 'undefined') {
+    enlargedWords.forEach(word => {
+      if (word.ghost && word.ghost.parentNode) {
+        word.ghost.parentNode.removeChild(word.ghost);
+      }
+    });
+    enlargedWords.length = 0;
+  }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+  const reverseCheckbox = document.getElementById('reverse-checkbox');
+  const reverse = reverseCheckbox ? reverseCheckbox.checked : true;
+  
+  // Initial setup
+  init('scowl', reverse).catch(error => {
+    console.error('Failed to initialize spellchecker:', error);
+  });
+  
+  // Set up event listeners once
+  const dictionarySelect = document.getElementById('dictionary-select');
+  
+  if (dictionarySelect) {
+    dictionarySelect.addEventListener('change', function() {
+      const selectedDict = this.value;
+      const reverse = reverseCheckbox ? reverseCheckbox.checked : true;
+      console.log('Dictionary changed to:', selectedDict, 'Reverse:', reverse);
+      
+      // Call init with new settings (no recursion)
+      init(selectedDict, reverse).catch(error => {
+        console.error('Failed to initialize spellchecker:', error);
+      });
+    });
+  }
+  
+  if (reverseCheckbox) {
+    reverseCheckbox.addEventListener('change', function() {
+      const selectedDict = dictionarySelect ? dictionarySelect.value : 'scowl';
+      const reverse = this.checked;
+      console.log('Reverse changed to:', reverse, 'Dictionary:', selectedDict);
+      
+      // Call init with new settings (no recursion)
+      init(selectedDict, reverse).catch(error => {
+        console.error('Failed to initialize spellchecker:', error);
+      });
+    });
+  }
+});
 
 function onComplete() {
   document.getElementById('editor-container').classList.add('complete');
