@@ -1,8 +1,8 @@
 {
-    "name": "Antichecker",
-    "description": "Let you play with your mistakes as a material. Blows them up a bit maybe that's ~contemplative~",
-    "notes": "Has a few different options and shows the material of your revisions.",
-    "version": "6",
+    "name": "Antichecker games",
+    "description": "",
+    "notes": "",
+    "version": "7",
     "series": ["spellcheck", "expand"],
-    "url": "antienglish-checker-4"
+    "url": "anticorrect-7"
 }
