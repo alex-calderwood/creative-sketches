@@ -1,0 +1,8 @@
+{
+    "name": "Tetris Poetry Pretty",
+    "description": "A tetris-like pass at creating a game that uses the detritus of language as a material.",
+    "notes": "",
+    "version": "2",
+    "series": ["game", "dropper"],
+    "url": "tetris-poetry-pretty"
+}

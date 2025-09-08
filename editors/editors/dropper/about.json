@@ -1,8 +1,0 @@
-{
-    "name": "Dropper",
-    "description": "Game that uses dropping text",
-    "notes": ".",
-    "version": "1",
-    "series": ["game"],
-    "url": "dropper"
-}
