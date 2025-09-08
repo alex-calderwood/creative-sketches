@@ -520,7 +520,8 @@ class Dropper {
 }
 
 
-let defaultCorpora = ['corpora/short/harraway.txt', 'corpora/short/art.txt', 'corpora/short/harry_potter_ch1.txt'];
+let defaultCorpora = ['corpora/short/here.txt', 'corpora/short/art.txt', 'corpora/short/love_breton.txt', 'corpora/short/less_time.txt', 'corpora/short/sean.txt']; // 'corpora/short/harry_potter_ch1.txt',
+
 let defaultCorpus = defaultCorpora[Math.floor(Math.random() * defaultCorpora.length)];
 
 // Wait for DOM to be fully loaded before initializing
