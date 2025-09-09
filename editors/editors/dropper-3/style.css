@@ -7,9 +7,15 @@
 
 body {
   font-family: "Goma";
-  background-color: #C7E1FF;
+  background-image: url('../assets/wood.jpg');
+  background-color: #000000;
+  background-size: 100% 30%;
+  background-position: center top;
+  background-attachment: scroll;
+  background-repeat: repeat-y;
   margin: 0px;
   height: 90vh;
+
 }
 
 #game-banner {
