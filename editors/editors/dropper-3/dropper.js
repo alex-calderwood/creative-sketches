@@ -60,7 +60,7 @@ class Dropper {
     this.numColumns = 5;
     this.numRows = 12;
 
-    this.deleteProbability = 0.2;
+    this.deleteProbability = 0.3;
 
     // Grid positioning
     this.gridOffsetX = 200;
@@ -90,8 +90,8 @@ class Dropper {
     })
 
     this.tickTime = 100; // ms
-    this.dropTime = 800; // ms
-
+    this.dropTimePerBox = 50; // ms
+    this.completionTime = 1000; // ms
 
     let ticker = setInterval(() => {
       this.tick();
@@ -123,6 +123,7 @@ class Dropper {
       console.log('New delete probability:', this.deleteProbability);
       e.target.blur(); // Remove focus after selection
     });
+    this.deleteProbability = parseFloat(deleteRatioSelect.value);
   
     // Content strategy control
     const contentStrategySelect = document.getElementById('mode');
@@ -457,7 +458,7 @@ class Dropper {
         this.moveCompletedLine(completedLines);
         soundManager.playSound('woof');
 
-      }, this.dropTime);
+      }, this.completionTime);
     }
   }
 
@@ -500,7 +501,7 @@ class Dropper {
           this.state.grid[x][y] = null;
           
           let newTop = this.gridOffsetY + newY * this.cellHeight;
-          moveTo(word, word.offsetLeft, newTop, this.dropTime);
+          moveTo(word, word.offsetLeft, newTop, this.dropTimePerBox);
         }
       }
     }
@@ -529,14 +530,14 @@ class Dropper {
       word.classList.remove('block');
       word.classList.add('word');
       const position = wordPositions[index];
-      moveTo(word, position.left, position.top, this.dropTime, 500, true);
+      moveTo(word, position.left, position.top, this.completionTime, 500, true);
     });
 
     // Show the permanent words and remove originals after animation
     setTimeout(() => {
       permanentWords.forEach(word => word.style.opacity = '1');
       this.removeOriginalWords(completedWords);
-    }, this.dropTime);
+    }, this.completionTime);
 
     // Move down for the next completed line
     this.completedWordsTop += this.cellHeight;
@@ -600,11 +601,15 @@ class Dropper {
 
     console.log({x, y, collidedWord})
     let newTop = this.gridOffsetY + y * this.cellHeight;
-    moveTo(element, element.offsetLeft, newTop, this.dropTime);
+
+    console.log({'style': element.offsetTop, 'newTop': newTop})
+
+    let dropTime = this.dropTimePerBox * Math.abs(element.offsetTop - newTop) / this.cellHeight;
+    moveTo(element, element.offsetLeft, newTop, dropTime);
     this.state.grid[x][y] = element;
     setTimeout(() => {
       soundManager.playSound('rain/rain1');
-    }, this.dropTime);
+    }, dropTime);
     return true;
   }
 
@@ -632,7 +637,7 @@ class Dropper {
       if (word) {
         this.state.grid[col][y + 1] = word;
         this.state.grid[col][y] = null;
-        moveTo(word, word.offsetLeft, this.gridOffsetY + (y + 1) * this.cellHeight, this.dropTime);
+        moveTo(word, word.offsetLeft, this.gridOffsetY + (y + 1) * this.cellHeight, this.dropTimePerBox);
       }
     }
   }
