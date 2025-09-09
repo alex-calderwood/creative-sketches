@@ -1,5 +1,7 @@
 {
     "name": "Pencil",
     "description": "I miss the pencils from my childhood.",
-    "image": null
+    "image": null,
+    "version": "2",
+    "series": ["material"]
 }

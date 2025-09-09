@@ -3,6 +3,6 @@
     "description": "A tetris-like pass at creating a game that uses the detritus of language as a material.",
     "notes": ".",
     "version": "1",
-    "series": ["game", "dropper"],
+    "series": ["game", "poetris"],
     "url": "tetris-poetry"
 }

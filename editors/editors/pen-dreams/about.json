@@ -1,5 +1,7 @@
 {
     "name": "Bleed",
     "description": "A pen bleeds into dreams",
-    "image": null
+    "image": null,
+    "version": "1",
+    "series": ["material"]
 }

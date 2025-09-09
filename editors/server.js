@@ -34,6 +34,7 @@ function getProjects() {
     const aboutPath = path.join(editorsDir, dir, 'about.json');
     const defaultAbout = {
       url: dir,
+      dir: dir,
       name: dir
     };
 
@@ -49,7 +50,8 @@ function getProjects() {
             // Include any other fields that might be in the about.json
             ...aboutData,
             // Override with correct directory-based values
-            url: dir,
+            url: aboutData.url || dir,
+            dir: dir,
             name: aboutData.name || dir
           });
         } catch (e) {
@@ -72,7 +74,7 @@ getProjects().then(projectList => {
   app.use('/editors', serveStatic(path.join(__dirname, 'editors')));
 
   projects.forEach(project => {
-    const projectPath = path.join(__dirname, 'editors', project.url);
+    const projectPath = path.join(__dirname, 'editors', project.dir);
     // Create a router for this project
     const projectRouter = express.Router();
     
@@ -85,18 +87,13 @@ getProjects().then(projectList => {
     // Mount the router at the project path with 'editors' prefix
     app.use(`/editors/${project.url}`, projectRouter);
     
-    // console.log(`Serving ${project.name} at /editors/${project.url} from ${projectPath}`);
+    console.log(`Serving ${project.name} at /editors/${project.url} from ${projectPath}`);
   });
 
-  // Serve wooden.avif specifically
-  app.get('/editors/wooden.avif', (req, res) => {
-    const filePath = path.join(__dirname, 'editors', 'wooden.avif');
-    console.log('Attempting to serve wooden.avif from:', filePath);
-    console.log('File exists:', fs.existsSync(filePath));
-    res.sendFile(filePath);
-  });
-
-  //serve everything in assets
+  // Serve all assets from the root assets directory
+  app.use('/assets', serveStatic(path.join(__dirname, 'assets')));
+  
+  // Also serve assets from the editors/assets path for backward compatibility
   app.use('/editors/assets', serveStatic(path.join(__dirname, 'assets')));
 });
 
