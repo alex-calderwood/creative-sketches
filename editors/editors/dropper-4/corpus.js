@@ -1,13 +1,13 @@
 const POS_ORDER_CLASSIC = [
-  'verb', 'noun', 'adjective', 'random', 'linear', 'linear'
-];
-
-const POS_ORDER = [
   'linear', 'linear', 'verb', 'verb', 'verb', 'noun', 'noun', 'noun', 'adjective', 'adjective', 'adjective', 'random', 'random', 'random'
 ];
 
+const POS_ORDER = [
+  'linear', 'linear', 'verb', 'verb', 'noun', 'noun', 'adjective', 'verb', 'adverb', 'determiner', 'preposition', 'interjection', 'conjunction', 'propernoun', 'value', 'random', 'random', 'random'
+];
+
 // https://thereadersproject.org/readers.html
-let MODES = ['pos', 'pos-classic', 'focused', 'gramatical'];
+let MODES = ['pos', 'pos-classic', 'focused', 'gramatical', 'external-pos'];
 // mesostic reader
 
 // gramatical lookahead readern
@@ -24,22 +24,22 @@ let MODES = ['pos', 'pos-classic', 'focused', 'gramatical'];
 
 class Corpus {
     constructor(mode='pos') {
-      this.nouns = [];
-      this.verbs = []; 
-      this.adjectives = []; 
+      this.posLookup = {
+        'linear': [],
+        'random': [],
+      };
+      this.indexLookup = {
+        'linear': 0,
+        'random': 0,
+      };
+      this.posIndex = 0;
+
 
       this.selectionStrategy(mode);
 
       this.doc = null;
       this.texts = [];
       this.words = [];
-
-      this.posIndex = 0;
-      this.linearIndex = 0;
-      this.randomIndex = 0;
-      this.verbIndex = 0;
-      this.nounIndex = 0;
-      this.adjectiveIndex = 0;
 
       this.wordPOSOrder = POS_ORDER;
     }
@@ -94,16 +94,30 @@ class Corpus {
         }
       });
 
-      
-      // Create POS-specific arrays of the same word objects
-      this.verbs = this.words.filter(w => w.pos === 'Verb');
-      this.nouns = this.words.filter(w => w.pos === 'Noun');
-      this.adjectives = this.words.filter(w => w.pos === 'Adjective');
-      
+      this.posLookup = {
+
+      };
+      this.indexLookup = {
+        'linear': 0,
+        'random': 0,
+      };
+      this.posIndex = 0;
+
+      for (let word of this.words) {
+        let pos = word.pos.toLowerCase();
+        if (!this.posLookup[pos]) {
+          this.posLookup[pos] = [];
+          this.indexLookup[pos] = 0;
+        }
+        this.posLookup[pos].push(word);
+        this.indexLookup[pos] = 0;
+      }
+
+      this.posLookup['linear'] = this.words;
       // Create randomized order of the same word objects
-      this.randomOrder = [...this.words].sort(() => Math.random() - 0.5);
-      
-      this.linearIndex = 0;
+      this.posLookup['random'] = [...this.words].sort(() => Math.random() - 0.5);
+
+      console.log("posLookup", this.posLookup);
     }
 
     appendToCorpus(text) {
@@ -112,10 +126,7 @@ class Corpus {
 
     printCorpus() {
       console.log("words", this.words);
-      console.log('verbs', this.verbs);
-      console.log('nouns', this.nouns);
-      console.log('adjectives', this.adjectives);
-      console.log('randomOrder', this.randomOrder);
+      console.log("posLookup", this.posLookup);
     }
   
     getNextWord() {
@@ -126,7 +137,10 @@ class Corpus {
       } else if (this.mode === 'pos') {
         this.wordPOSOrder = POS_ORDER;
         wordObject = this.getNextWordPOS();
-      } else if (this.mode === 'focused') {
+      } else if (this.mode === 'external-pos') {
+        wordObject = this.getNextWordPOS();
+      }
+      else if (this.mode === 'focused') {
         wordObject = { ...this.getNextWordFocused(), type: 'linear' };
       } else if (this.mode === 'gramatical') {
         wordObject = this.getNextWordGramatical();
@@ -171,10 +185,17 @@ class Corpus {
     } // TODO use this for something
 
     getNextWordFocused() {
-      if (this.words.length === 0) {
+      if (this.posLookup['linear'].length === 0) {
+        console.error("Focused mode has no words");
         return null;
       }
-      const wordObj = this.words[this.linearIndex++ % this.words.length];
+      if (this.indexLookup['linear'] == null) {
+        console.error("Focused mode has no linear index");
+        return null;
+      }
+      
+      const wordObj = this.posLookup['linear'][this.indexLookup['linear']++ % this.posLookup['linear'].length];
+
       return { ...wordObj, type: 'linear' };
     }
 
@@ -195,25 +216,23 @@ class Corpus {
 
     getNextWordPOS() {
         // return ith verb followed by jth noun followed by kth adj etc
+        let index = this.indexLookup[this.colorBy]
         let type = this.wordPOSOrder[this.posIndex++ % this.wordPOSOrder.length];
         let wordObj;
 
         type = type ? type.toLowerCase() : type;
 
-        if (type === 'verb') {
-            wordObj = this.verbs[this.verbIndex++ % this.verbs.length];
-        } else if (type === 'noun') {
-            wordObj = this.nouns[this.nounIndex++ % this.nouns.length];
-        } else if (type === 'adjective') {
-            wordObj = this.adjectives[this.adjectiveIndex++ % this.adjectives.length];
-        } else if (type === 'linear') {
-            wordObj = this.words[this.linearIndex++ % this.words.length];
-        } else if (type === 'random') {
-            wordObj = this.getNextRandomOrder();
-        } else {
-            console.error("Invalid type", type);
-            return { text: null, type: 'random', pos: 'unknown' };
+        if (this.posLookup[type] == null) {
+          let validTypes = Object.keys(this.posLookup);
+          console.error('order', this.wordPOSOrder);
+          console.error("validTypes", validTypes);
+          console.log('Invalid Type:', type);
+          type = 'random';
         }
+        if (this.indexLookup[type] == null) {
+          throw new Error("Invalid index", type);
+        }
+        wordObj = this.posLookup[type][this.indexLookup[type]++ % this.posLookup[type].length];
 
         return { ...wordObj, type };
     }

@@ -105,7 +105,7 @@ function resizeWord(element, width, height) {
 class Dropper {
   constructor() {
     this.wordElements = [];
-    this.corpus = new Corpus(); // Add corpus instance
+    this.corpus = null;
     this.colorBy = 'pos'; // Default color by part of speech
 
     this.numColumns = 5;
@@ -125,11 +125,10 @@ class Dropper {
     // numColumns length, filled with 
     this.columnWidths = Array(this.numColumns).fill(this.cellWidth);
     this.columnHeights = Array(this.numRows).fill(this.cellHeight);
-    console.log({columnWidths: this.columnWidths, columnHeights: this.columnHeights});
 
     this.probabilities = {
       delete: 0.25,
-      constraint: 0.25,
+      constraint: 0.1,
       word: -1,
     }
 
@@ -143,6 +142,7 @@ class Dropper {
       grid: Array(this.numColumns).fill().map(() => Array(this.numRows).fill(null)),
       wordChain: [],
       constraints: Array(this.numColumns).fill(null),
+      blockHistory: [],
     }
 
     this.wordChainLength = 10;
@@ -162,19 +162,25 @@ class Dropper {
     this.completionTime = 1000; // ms
     this.arrowSpeed = 170; // ms
 
-    let ticker = setInterval(() => {
-      this.tick();
-    }, this.tickTime);
-
-    this.watchArrowKeys();
-    this.watchSwipes();
-    this.setupControls();
-
     this.completedWordsTop = 20;
     this.completedWordsLineHeight = this.cellHeight;
-    
-    // Initialize sound system
-    this.initializeSounds();
+  }
+
+  async initialize(corpusFile) {
+    // Initialize corpus first
+    this.corpus = new Corpus();
+    await this.corpus.setCorpusFromFile(corpusFile);
+
+    // Now that corpus is ready, set up the rest
+    this.setupControls();
+    this.watchArrowKeys();
+    this.watchSwipes();
+    await this.initializeSounds();
+
+    // Start the game loop
+    setInterval(() => {
+      this.tick();
+    }, this.tickTime);
   }
 
   getColumnWidth(x) {
@@ -514,8 +520,16 @@ class Dropper {
   }
 
   generateNextBlock() {
-    // roll a die using these probabilities logmax
-    let blockType = roll(this.probabilities);
+    let isBeginning = this.state.blockHistory.length < 10;
+    let blockType =  isBeginning ? 'constraint' : roll(this.probabilities);
+
+    if (blockType == "word") {
+      let constraints = this.targetConstraints();
+      constraints = constraints.filter(constraint => constraint != null);
+      console.log("Constraints", constraints);
+      this.corpus.wordPOSOrder = constraints;
+      this.corpus.selectionStrategy("external-pos");
+    }
 
     let wordData;
     switch (blockType) {
@@ -532,6 +546,7 @@ class Dropper {
         throw new Error("generateNextBlock: type is null");
     }
 
+    this.state.blockHistory.push(wordData);
     return wordData;
   }
 
@@ -556,7 +571,7 @@ class Dropper {
     for (let i = this.state.wordChain.length - 1; i >= 0; i--) {
       let curWord = this.state.wordChain[i];
       if (!curWord) {
-        console.error("updateWordChainLocations curWord is null", i);
+        console.error("updateWordChainLocations curWord is null", i, this.state.wordChain);
         continue;
       }
 
@@ -619,7 +634,6 @@ class Dropper {
 
     if (doCycle) {
       let loc = {left: this.state.currentBlockLeft - this.cellWidth, top: this.state.currentBlockTop};
-      console.log("moving word chain to", loc);
       this.updateWordChainLocations(loc);
     }
 
@@ -1004,8 +1018,7 @@ let defaultCorpus = file1; // Use first file as default
 
 
 // Wait for DOM to be fully loaded before initializing
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   let dropper = new Dropper();
-  dropper.corpus.setCorpusFromFile(defaultCorpus).then(words => {
-  });
+  await dropper.initialize(defaultCorpus);
 });
