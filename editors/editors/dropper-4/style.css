@@ -150,7 +150,7 @@ body {
   left: 50%;
   top: 100%;
   transform: translateX(-50%);
-  font-size: 0.4em;
+  font-size: 0.25em;
   color: var(--data-color) !important;
   white-space: nowrap;
   padding-top: 2px;
