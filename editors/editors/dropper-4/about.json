@@ -1,0 +1,8 @@
+{
+    "name": "Poetris In progress",
+    "description": "In Progress A tetris-like pass at creating a game that uses the detritus of language as a material.",
+    "notes": "",
+    "version": "4",
+    "series": ["game", "poetris"],
+    "url": "poetris-2"
+}

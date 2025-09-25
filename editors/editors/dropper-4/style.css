@@ -15,6 +15,8 @@ body {
   background-repeat: repeat-y;
   margin: 0px;
   height: 90vh;
+  /* don't overflow */
+  overflow: hidden;
 
 }
 
@@ -109,30 +111,53 @@ body {
 
 .block {
   font-family: 'Goma';
-  color: #000000;
+  color: var(--data-color);
   text-align: center;
   box-sizing: border-box;
   position: relative;
   font-variant-ligatures: none;
+  display: grid;
+  place-items: center;
   /* border: 1px solid; */
 }
 
 .block-word {
   width: fit-content;
-  margin: 0 auto; /* center */
-  transform-origin: center top; /* This will keep it centered when scaling */
-
+  transform-origin: center center; /* This will keep it centered when scaling */
 }
  
-.word {
+/* .word {
   text-align: center;
   text-decoration: none;
   box-sizing: border-box;
   border-radius: 10px;
+  color: var(--data-color);
+} */
+
+.constraint {
+  text-decoration: underline;
+  position: relative;
+  
+  /* make the color transparrent */
+  color: transparent;
+  background-color: transparent;
+  text-decoration-color: var(--data-color);
+}
+
+.constraint::after {
+  content: attr(data-constraint);
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translateX(-50%);
+  font-size: 0.4em;
+  color: var(--data-color) !important;
+  white-space: nowrap;
+  padding-top: 2px;
 }
 
 .inline-word {
-  color: #0061d0;
+  color: #d09500;
   background-color: transparent;
   display: inline-block;
 }
@@ -148,11 +173,10 @@ body {
 }
 
 .delete {
-  text-decoration: underline;
   color: #000000;
-  background-color: rgba(255, 20, 20, 0.1);
-  border: 1px solid #000000;
-  border-radius: 3px;
+  /* background-color: rgba(255, 20, 20, 0.1); */
+  /* border: 1px solid #000000;
+  border-radius: 3px; */
 }
 
 

@@ -35,7 +35,8 @@ function getProjects() {
     const defaultAbout = {
       url: dir,
       dir: dir,
-      name: dir
+      name: dir,
+      hide: false,
     };
 
     return new Promise((resolve) => {
@@ -50,9 +51,10 @@ function getProjects() {
             // Include any other fields that might be in the about.json
             ...aboutData,
             // Override with correct directory-based values
-            url: aboutData.url || dir,
             dir: dir,
-            name: aboutData.name || dir
+            url: aboutData.url || dir,
+            name: aboutData.name || dir,
+            hide: aboutData.hide == true,
           });
         } catch (e) {
           resolve(defaultAbout);
@@ -67,7 +69,7 @@ function getProjects() {
 // Get project directories
 let projects = [];
 getProjects().then(projectList => {
-  projects = projectList;
+  projects = projectList.filter(project => !project.hide);
 
   // Set up static serving for each project directory
   // First serve static files from the editors directory itself
@@ -87,7 +89,7 @@ getProjects().then(projectList => {
     // Mount the router at the project path with 'editors' prefix
     app.use(`/editors/${project.url}`, projectRouter);
     
-    console.log(`Serving ${project.name} at /editors/${project.url} from ${projectPath}`);
+    // console.log(`Serving ${project.name} at /editors/${project.url} from ${projectPath}`);
   });
 
   // Serve all assets from the root assets directory
