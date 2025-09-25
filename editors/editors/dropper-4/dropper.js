@@ -1,65 +1,46 @@
-function createWordAt(text, left, top, width, height, wordType = 'random') {
-  if (!text || text === 'undefined') {
-    console.warn('createWordAt called with invalid text:', text);
-    return null;
+
+// given a dict with weights or probabilities, pick one accordingly
+// assign the remaining probability mass to any key with value -1
+function roll(probabilities) {
+  let defaultKey = Object.keys(probabilities).find(key => probabilities[key] === -1);
+  let roll = Math.random();
+  
+  // Calculate total probability mass excluding default key
+  let totalProb = 0;
+  for (let key in probabilities) {
+    if (probabilities[key] !== -1) {
+      totalProb += probabilities[key];
+    }
   }
 
-  const newElement = document.createElement('div');
-  newElement.classList.add('move');
-  newElement.classList.add('block');
-  
-  const colorMap = {
-    'linear': { bg: '#ff0000', light: '#ff6666', dark: '#cc0000', darker: "#F0D3F7" },
-    'noun': { bg: '#0000ff', light: '#6666ff', dark: '#0000cc', darker: '#4D6A6D' }, // Blue for nouns
-    'adjective': { bg: '#00ff00', light: '#66ff66', dark: '#00cc00', darker: '#798478' }, // Green for adjectives
-    'verb': { bg: '#ffff00', light: '#ffff66', dark: '#cccc00', darker: '#9CF6F6' }, // Yellow for verb
-    'random': { bg: '#ff8800', light: '#ffaa44', dark: '#cc6600', darker: '#E4572E' }, 
-    'delete': { bg: '#000000', light: '#000000', dark: '#000000', darker: '#000000' }  // Black for delete
+  // If we have a default key, assign remaining probability mass
+  if (defaultKey !== undefined && totalProb < 1) {
+    probabilities[defaultKey] = 1 - totalProb;
   }
 
-  const color = colorMap[wordType] || colorMap['random'];
-  
-  // newElement.style.backgroundColor = color.bg;
-  // newElement.style.borderColor = `${color.light} ${color.dark} ${color.dark} ${color.light}`;
-  newElement.style.color = color.darker; // Use darkest variant for best text contrast
+  // Sample using CDF
+  let cumulative = 0;
+  for (let key in probabilities) {
+    cumulative += probabilities[key];
+    if (roll <= cumulative) {
+      return key;
+    }
+  }
 
-  newElement.style.left = `${left}px`;
-  newElement.style.top = `${top}px`;
-  newElement.style.height = `${height}px`;
-  newElement.style.width = `${width}px`;
-  newElement.style.fontSize = `${height}px`;
-
-  document.body.appendChild(newElement);
-
-  const blockWordElement =  document.createElement('div');
-  blockWordElement.classList.add('block-word');
-  blockWordElement.style.fontSize = `10px`;
-
-  blockWordElement.textContent = text;
-  newElement.appendChild(blockWordElement);
-
-  requestAnimationFrame(() => { // make sure it has rendered before measuring
-    setTimeout(() => {
-    let rect = blockWordElement.getBoundingClientRect();
-    let scale = width / rect.width;
-    let scaleY = height / rect.height;
-    
-    blockWordElement.style.transform = `scaleX(${scale}) scaleY(${scaleY})`;
-    }, 1); // Just 1ms delay helps the calculation be correct
-  });
-
-  return newElement;
+  // Fallback to last key (shouldn't happen with valid probabilities)
+  return defaultKey;
 }
 
+
+// resize a word to a new width and height using the transform property scaleX and scaleY
 function resizeWord(element, width, height) {
   element.style.width = `${width}px`;
   element.style.height = `${height}px`;
   element.style.fontSize = `${height}px`;
 
   let blockWordElement = element.querySelector('.block-word');
-  blockWordElement.style.fontSize = `10px`;
   blockWordElement.style.transform = `scaleX(1) scaleY(1)`;
-  blockWordElement.style.transformOrigin = `center top`;
+  // blockWordElement.style.transformOrigin = `center center`;
 
   requestAnimationFrame(() => { // make sure it has rendered before measuring
     setTimeout(() => {
@@ -72,10 +53,60 @@ function resizeWord(element, width, height) {
   });
 }
 
+// some issues with this one, not sure what is wrong...
+// function resizeWordAnimated(element, width, height, duration = 500) {
+//   // Get current scale of the text
+//   let blockWordElement = element.querySelector('.block-word');
+//   let currentTransform = blockWordElement.style.transform;
+  
+//   // Force a reflow to ensure clean measurement
+//   void blockWordElement.offsetHeight;
+
+//   requestAnimationFrame(() => {
+//     setTimeout(() => {
+//       // Measure at current state
+//       let rect = blockWordElement.getBoundingClientRect();
+//       let currentScaleX = currentTransform ? currentTransform.split('scaleX(')[1].split(')')[0] : 1;
+//       let currentScaleY = currentTransform ? currentTransform.split('scaleY(')[1].split(')')[0] : 1;
+      
+//       let targetScaleX = width / (rect.width / currentScaleX);
+//       let targetScaleY = height / (rect.height / currentScaleY);
+      
+//       console.log('current scale', {currentScaleX, currentScaleY}, currentTransform);
+//       console.log('target scale', {targetScaleX, targetScaleY});
+
+//       let timing = {
+//         duration: duration,
+//         iterations: 1,
+//         fill: "forwards",
+//         easing: "ease-out"
+//       };
+
+//       // Animate both container and text together
+//       element.animate([
+//         {
+//           width: element.offsetWidth + 'px',
+//           height: element.offsetHeight + 'px'
+//         },
+//         {
+//           width: width + 'px',
+//           height: height + 'px'
+//         }
+//       ], timing);
+
+//       blockWordElement.animate([
+//         { transform: currentTransform },
+//         { transform: `scaleX(${targetScaleX}) scaleY(${targetScaleY})` }
+//       ], timing);
+//     }, 1);
+//   });
+// }
+
 class Dropper {
   constructor() {
     this.wordElements = [];
     this.corpus = new Corpus(); // Add corpus instance
+    this.colorBy = 'pos'; // Default color by part of speech
 
     this.numColumns = 5;
     this.numRows = 12;
@@ -83,9 +114,9 @@ class Dropper {
     // Grid positioning
     this.gridStartX = 200;
     this.gridStartY = 100;
+    this.gridEndGap = 100;
     this.gridWidth = window.innerWidth - this.gridStartX;
-    this.gridHeight = window.innerHeight - this.gridStartY;
-
+    this.gridHeight = window.innerHeight - this.gridStartY - this.gridEndGap;
 
     // Individual cell sizing
     this.cellHeight = this.gridHeight / this.numRows;
@@ -96,16 +127,26 @@ class Dropper {
     this.columnHeights = Array(this.numRows).fill(this.cellHeight);
     console.log({columnWidths: this.columnWidths, columnHeights: this.columnHeights});
 
-    this.deleteProbability = 0.3;
-    this.betweenWordProbability = 0.3;
+    this.probabilities = {
+      delete: 0.25,
+      constraint: 0.25,
+      word: -1,
+    }
 
     this.state = {
-      currentWord: null,
+      currentBlock: null,
       curX: 0,
       curY: 0,
+      currentBlockLeft: this.gridStartX,
+      currentBlockTop: this.gridStartY,
       // 2D array of elements
       grid: Array(this.numColumns).fill().map(() => Array(this.numRows).fill(null)),
+      wordChain: [],
+      constraints: Array(this.numColumns).fill(null),
     }
+
+    this.wordChainLength = 10;
+    this.wordChainStart = {left: this.gridStartX * this.numColumns * this.cellWidth, top: this.gridStartY};
 
     console.log({
       numColumns: this.numColumns,
@@ -119,6 +160,7 @@ class Dropper {
     this.tickTime = 100; // ms
     this.dropTimePerBox = 50; // ms
     this.completionTime = 1000; // ms
+    this.arrowSpeed = 170; // ms
 
     let ticker = setInterval(() => {
       this.tick();
@@ -173,11 +215,11 @@ class Dropper {
     // Delete ratio control
     const deleteRatioSelect = document.getElementById('delete-ratio');
     deleteRatioSelect.addEventListener('change', (e) => {
-      this.deleteProbability = parseFloat(e.target.value);
-      console.log('New delete probability:', this.deleteProbability);
+      this.probabilities.delete = parseFloat(e.target.value);
+      console.log('New delete probability:', this.probabilities.delete);
       e.target.blur(); // Remove focus after selection
     });
-    this.deleteProbability = parseFloat(deleteRatioSelect.value);
+    this.probabilities.delete = parseFloat(deleteRatioSelect.value);
   
     // Content strategy control
     const contentStrategySelect = document.getElementById('mode');
@@ -187,6 +229,15 @@ class Dropper {
       e.target.blur(); // Remove focus after selection
     });
     this.corpus.selectionStrategy(contentStrategySelect.value);
+
+    // Color by control
+    const colorBySelect = document.getElementById('color-by');
+    colorBySelect.addEventListener('change', (e) => {
+      this.colorBy = e.target.value;
+      e.target.blur(); // Remove focus after selection
+    });
+    this.colorBy = colorBySelect.value;
+    console.log('New color by:', this.colorBy);
   
     // Paste text button
     const pasteBtn = document.getElementById('paste-text-btn');
@@ -373,8 +424,10 @@ class Dropper {
     }
 
     let newLeft = this.getColumnRect(this.state.curX, 0).left;
-    resizeWord(this.state.currentWord, this.columnWidths[this.state.curX], this.columnHeights[0]);
-    moveTo(this.state.currentWord, newLeft, this.state.currentWord.offsetTop, 0);
+    this.state.currentBlockLeft = newLeft;
+    resizeWord(this.state.currentBlock, this.columnWidths[this.state.curX], this.columnHeights[0]);
+    moveTo(this.state.currentBlock, newLeft, this.state.currentBlock.offsetTop, this.arrowSpeed, false, 'ease-in-out');
+    this.updateWordChainLocations({left: newLeft, top: this.state.currentBlock.offsetTop});
   }
 
   moveLeft() {
@@ -384,8 +437,10 @@ class Dropper {
       this.state.curX -= 1;
     }
     let newLeft = this.getColumnRect(this.state.curX, 0).left;
-    resizeWord(this.state.currentWord, this.columnWidths[this.state.curX], this.columnHeights[0]);
-    moveTo(this.state.currentWord, newLeft, this.state.currentWord.offsetTop, 0);
+    this.state.currentBlockLeft = newLeft;
+    resizeWord(this.state.currentBlock, this.columnWidths[this.state.curX], this.columnHeights[0]);
+    moveTo(this.state.currentBlock, newLeft, this.state.currentBlock.offsetTop, this.arrowSpeed, false, 'ease-in-out');
+    this.updateWordChainLocations({left: newLeft, top: this.state.currentBlock.offsetTop});
   }
 
   watchArrowKeys() {
@@ -395,7 +450,7 @@ class Dropper {
       } else if (event.key === 'ArrowLeft') {
         this.moveLeft();
       } else if (event.key === 'ArrowDown' || event.key === ' ') {
-        this.dropWord(this.state.currentWord);
+        this.dropBlock(this.state.currentBlock);
       } else if (event.key === 'ArrowUp') {
         this.addColToGrid(this.state.curX);
       }
@@ -415,7 +470,7 @@ class Dropper {
 
     document.addEventListener('touchend', (event) => {
       console.log('touchend', touchStartX, touchStartY);
-      if (!this.state.currentWord) return;
+      if (!this.state.currentBlock) return;
 
       const touchEndX = event.changedTouches[0].clientX;
       const touchEndY = event.changedTouches[0].clientY;
@@ -431,51 +486,118 @@ class Dropper {
           this.moveLeft();
         }
       } else if (Math.abs(deltaY) > swipeThreshold && deltaY > 0) {
-        this.dropWord(this.state.currentWord);
+        this.dropBlock(this.state.currentBlock);
       }
     });
   }
 
   tick() {
-    if (this.state.currentWord) {
+    if (this.state.currentBlock) {
       // this.dropWord(this.state.currentWord);
     } else {
-      this.displayNextWord();
-      console.log(this.bottomWords());
-      // console.log(this.matches(this.bottomWords()));
+      // this.nextWordUp();
+      this.nextBlockUp();
+      this.printState();
     }
   }
 
-  displayNextWord() {
-    let isDelete = Math.random() < this.deleteProbability;
-    
-    let isBetweenWord = false;
-    if (!isDelete) {
-      isBetweenWord = Math.random() < this.betweenWordProbability;
+  printState() {
+    let line = this.bottomLine();
+    let words = line.map(word => word == null ? '' : word.textContent);
+    console.log("Current line:", words);
+
+    let constraints =  this.targetConstraints();
+    let constraintValues = this.constraintsForRow(this.numRows - 1);
+
+    console.log("Line constraints", constraintValues);
+    console.log("Target constraints:", constraints);
+  }
+
+  generateNextBlock() {
+    // roll a die using these probabilities logmax
+    let blockType = roll(this.probabilities);
+
+    let wordData;
+    switch (blockType) {
+      case "delete":
+        wordData = { text: '←', type: 'delete' };
+        break;
+      case "constraint":
+        wordData = this.corpus.getNextConstraint();
+        break;
+      case "word":
+        wordData = this.corpus.getNextWord();
+        break;
+      case "null":
+        throw new Error("generateNextBlock: type is null");
     }
 
-    let wordData = isDelete ? { word: '←', type: 'delete' } : this.corpus.getNextWord();
+    return wordData;
+  }
+
+  nextBlockUp() {
+    // fill up the word chain with new words from the corpus
+    while (this.state.wordChain.length < this.wordChainLength) {
+      let block = this.generateNextBlock();
+      let blockElt = createBlockAt(block, this.wordChainStart.left, this.wordChainStart.top, this.cellWidth, this.cellHeight, this.colorBy);
+      this.wordElements.push(blockElt);
+      this.state.wordChain.unshift(blockElt);
+    }
+
+    // pop the last word off the word chain and set it as the current word
+    this.state.curY = 0;
+    this.state.currentBlock = this.state.wordChain.pop();
+  }
+
+  updateWordChainLocations(end) {
+    let start = this.wordChainStart;
+    let newLeft = end.left;
+
+    for (let i = this.state.wordChain.length - 1; i >= 0; i--) {
+      let curWord = this.state.wordChain[i];
+      if (!curWord) {
+        console.error("updateWordChainLocations curWord is null", i);
+        continue;
+      }
+
+      let curWidth = curWord?.getBoundingClientRect()?.width || 0;
+      if (!curWidth) {
+        console.error("updateWordChainLocations curWidth is 0", i);
+        continue;
+      }
+
+      newLeft += curWidth;
+      let newLoc = {
+        left: newLeft,
+        top: start.top
+      }
+
+      moveTo(curWord, newLoc.left, newLoc.top, this.arrowSpeed, false, 'ease-in-out');
+    }
+  }
+
+  nextWordUp() {
+    let wordData = this.generateNextBlock();
 
     this.state.curY = 0;
 
     if (isDelete) {
-
       let rect = this.getColumnRect(this.state.curX, this.numRows - 1);
-      this.state.currentWord = createWordAt(wordData.word, rect.left, rect.top, rect.width, rect.height, wordData.type);
-      this.state.currentWord.classList.add('delete');
+      this.state.currentBlock = createBlockAt(wordData, rect.left, rect.top, rect.width, rect.height, this.colorBy);
+      this.state.currentBlock.classList.add('delete');
     } else if (isBetweenWord) {
       let rect = this.getColumnRect(this.state.curX, this.state.curY);
-      this.state.currentWord = createWordAt(wordData.word, rect.left, rect.top, rect.width, rect.height, wordData.type);
-      this.state.currentWord.classList.add('between');
+      this.state.currentBlock = createBlockAt(wordData, rect.left, rect.top, rect.width, rect.height, this.colorBy);
+      this.state.currentBlock.classList.add('between');
       } else {
         let rect = this.getColumnRect(this.state.curX, this.state.curY);
-        this.state.currentWord = createWordAt(wordData.word, rect.left, rect.top, rect.width, rect.height, wordData.type);
+        this.state.currentBlock = createBlockAt(wordData, rect.left, rect.top, rect.width, rect.height, this.colorBy);
     }
 
-    this.wordElements.push(this.state.currentWord);
+    this.wordElements.push(this.state.currentBlock);
   }
 
-  dropWord(element) {
+  dropBlock(element) {
     if (element == null) {
       console.error("Attempting to drop null element", element)
     }
@@ -483,21 +605,30 @@ class Dropper {
     let doCycle = false;
     let dropTime = 0;
 
-    // drop the word / apply animation
+    // drop the block / apply animation
     if (element.classList.contains('delete')) {
       this.applyDelete(this.state.curX);
-      this.state.currentWord.remove();
+      this.state.currentBlock.remove();
       doCycle = true;
-    } else {
+    } else if (element.classList.contains('constraint')) {
+      this.applyConstraint(this.state.curX);
+      doCycle = true;
+    } else { // a word
       [doCycle, dropTime] = this.dropAndUpdateGrid(element);
     }
 
-    // reset the word
-    if (this.state.currentWord && doCycle) {
-      this.state.currentWord = null; 
+    if (doCycle) {
+      let loc = {left: this.state.currentBlockLeft - this.cellWidth, top: this.state.currentBlockTop};
+      console.log("moving word chain to", loc);
+      this.updateWordChainLocations(loc);
     }
 
-    // move completed lines
+    // reset the word
+    if (this.state.currentBlock && doCycle) {
+      this.state.currentBlock = null; 
+    }
+
+    // Check for completed lines
     let completedLines = this.getCompletedLines();
     if (completedLines && completedLines.length > 0) {
       console.log('completed lines', completedLines);
@@ -578,7 +709,7 @@ class Dropper {
       word.classList.remove('block');
       word.classList.add('word');
       const position = wordPositions[index];
-      moveTo(word, position.left, position.top, this.completionTime, 500, true);
+      moveTo(word, position.left, position.top, this.completionTime, true, 'ease-out');
     });
 
     // Show the permanent words and remove originals after animation
@@ -623,6 +754,54 @@ class Dropper {
   }
 
   getCompletedLines() {
+    let completedMode = 'constraint';
+    if (completedMode == 'full') {
+      return this.getFullLines();
+    } else if (completedMode == 'constraint') {
+      return this.getConstrainedLines();
+    }
+
+    return [];
+  }
+
+  getConstraintValue(word) {
+    return word ? word.getAttribute('data-constraint').toLowerCase() : null;
+  }
+
+  constraintsForRow(row) {
+    let constraints = [];
+    for (let x = 0; x < this.numColumns; x++) {
+      let word = this.state.grid[x][row];
+      constraints.push(this.getConstraintValue(word));
+    }
+    return constraints;
+  }
+
+  targetConstraints() {
+    return this.state.constraints.map(constraint => this.getConstraintValue(constraint));
+  }
+
+  lineCompleted(constraints, target) {
+    return constraints.every((constraint, index) => constraint == target[index]);
+  }
+
+  getConstrainedLines() {
+    let completedLines = [];
+
+    for (let y = 0; y < this.numRows; y++) {
+
+      let constraints = this.constraintsForRow(y);
+      let target = this.targetConstraints();
+      let lineCompleted = this.lineCompleted(constraints, target);
+      
+      if (lineCompleted) {
+        completedLines.push(y);
+      }
+    }
+    return completedLines;
+  }
+
+  getFullLines() {
     let completedLines = [];
     for (let y = 0; y < this.numRows; y++) {
       let complete = true;
@@ -640,7 +819,6 @@ class Dropper {
   }
   
   dropAndUpdateGrid(element) {
-
     let x = this.state.curX;
     let [y, collidedWord] = this.collide(x);
     if (y < 0) {
@@ -649,42 +827,19 @@ class Dropper {
     }
 
     let newTop = this.getColumnTop(y);
-    let newLeft = element.offsetLeft;
-
-    // if (element.classList.contains('between')) {
-      // console.log('between');
-      // this.addColToGrid(this.state.curX);
-
-    //   // newTop = this.gridOffsetY + y * this.cellHeight;
-    //   // newLeft = element.offsetLeft + this.cellWidth / 2;
-
-    //   // move everthing in curX + 1 over 
-
-
-    //   // let moveFrom = this.state.curX + 1;
-
-    //   // for (let moveX = moveFrom; moveX < this.numColumns; moveX++) {
-    //     // for (let moveY = 0; moveY < this.numRows; moveY++) {
-    //     //   let word = this.state.grid[moveX][moveY];
-    //     //   let newX = (moveX + 1);
-    //     //   if (newX < this.numColumns && word) {
-    //     //     console.log({curX: this.state.curX, moveX, moveFrom, newX, cols: this.numColumns})
-    //     //     this.state.grid[newX][moveY] = word;
-    //     //     this.state.grid[moveX][moveY] = null;
-    //     //     word.style.color = '#000000';
-    //     //     moveTo(word, newX * this.cellWidth, word.offsetTop, this.dropTimePerBox);
-    //     //   }
-    //     // }
-    //   // }
-    // }
     
-
     let dropTime = this.dropTimePerBox * Math.abs(element.offsetTop - newTop) / this.getColumnHeight(0);
-    moveTo(element, newLeft, newTop, dropTime);
+
+    // move the word to the bottom using a quadratic gravity
+    let quadratic = "cubic-bezier(0.5, 1, 0.89, 1)"
+    moveTo(element, this.state.currentBlockLeft, newTop, dropTime, false, quadratic);
     this.state.grid[x][y] = element;
+
+    // play a sound on drop
     setTimeout(() => {
       soundManager.playSound('rain/rain1');
     }, dropTime);
+
     return [true, dropTime];
   }
 
@@ -693,34 +848,7 @@ class Dropper {
     this.resizeColumn(col, newWidth);
     this.addColumn(col, newWidth);
     this.shrinkCurrentWord(newWidth);
-    // this.dropWord(this.state.currentWord);
-  //   console.log('addColToGrid', col);
-  //   let empty = Array(this.numRows).fill(null);
-  //   console.log('before grid', this.state.grid, empty);
-  //   this.state.grid.push(empty);
-  //   console.log('after grid', this.state.grid);
-  //   this.numColumns += 1;
-
-  //   // move the columns from col to numRows - 2 over by 1
-  //   for (let x = this.numColumns - 1; x >= col && x > 0; x--) {
-  //     for (let y = 0; y < this.numRows; y++) {
-  //       this.state.grid[x - 1][y] = this.state.grid[x][y];
-  //       this.state.grid[x][y] = null;
-  //     }
-  //   }
-    
-  //   // resize everything
-  //   this.cellWidth = this.gridWidth / this.numColumns;
-  //   this.cellHeight = this.cellHeight;
-  //   for (let y = 0; y < this.numRows; y++) {
-  //     for(let x = 0; x < this.numColumns; x++) {
-  //       let word = this.state.grid[x][y];
-  //       if (word) {
-  //         resizeWord(word, this.cellWidth, this.cellHeight);
-  //         moveTo(word, this.gridStartX + x * this.cellWidth, this.gridStartY + y * this.cellHeight, this.dropTimePerBox);
-  //       }
-  //     }
-    // }
+    this.dropBlock(this.state.currentBlock);
   }
 
   resizeColumn(col, width) {
@@ -767,13 +895,29 @@ class Dropper {
   }
 
   shrinkCurrentWord(width) {
-    let word = this.state.currentWord;
+    let word = this.state.currentBlock;
     if (word) {
       resizeWord(word, word.offsetWidth - width, word.offsetHeight);
       moveTo(word, word.offsetLeft, word.offsetTop, this.dropTimePerBox);
     }
   }
 
+  applyConstraint(col) {
+    // we want to move this to the bottom
+    let y = this.numRows - 1;
+
+    // remove prev constraint element
+    if (this.state.constraints[col]) {
+      this.state.constraints[col].remove();
+    }
+
+    this.state.constraints[col] = this.state.currentBlock;
+
+
+    moveTo(this.state.currentBlock, this.state.currentBlockLeft, this.getColumnTop(y), this.dropTimePerBox);
+
+    // this.state.currentBlock.remove();
+  }
 
   applyDelete(col) {
     // Find the bottommost word in the column
@@ -834,7 +978,6 @@ class Dropper {
 
   bottomWords() {
     let bottom = this.bottomLine();
-    return bottom.map(word => word == null ? '' : word.textContent);
   }
 
   matches(bottomWords) {
@@ -846,12 +989,15 @@ class Dropper {
 
 
 let defaultCorpora = [
-  // 'corpora/short/here.txt',
+  'corpora/short/here.txt',
+  'corpora/short/sacred_emily.txt',
+  'corpora/short/love_breton.txt', 
+  'corpora/short/less_time.txt', 
+  'corpora/books/nadja.txt',
+
+  // uninteresting
+  // 'corpora/short/art.txt', 
   // 'corpora/short/harry_potter_ch1.txt', 
-  // 'corpora/short/love_breton.txt', 
-  // 'corpora/short/less_time.txt', 
-  // 'corpora/books/nadja.txt',
-  'corpora/short/sacred_emily.txt'
 ];
 let [file1, file2] = defaultCorpora.sort(() => 0.5 - Math.random()).slice(0, 2);
 let defaultCorpus = file1; // Use first file as default
@@ -861,6 +1007,5 @@ let defaultCorpus = file1; // Use first file as default
 document.addEventListener('DOMContentLoaded', () => {
   let dropper = new Dropper();
   dropper.corpus.setCorpusFromFile(defaultCorpus).then(words => {
-    // console.log(words);
   });
 });

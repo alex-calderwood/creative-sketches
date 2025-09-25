@@ -74,18 +74,14 @@ function enlargeWord(word) {
   return newWordElement;
 }
 
-function moveDown(word) {
-  const { rect, element: editor } = word;
-  let editorBounds = editor.getBoundingClientRect();
-  const { left, top, width, height } = rect;
-  let dX = editorBounds.left - left + (editorBounds.width / 2);
-}
-
-function moveTo(element, leftPx, topPx, speed=500, resetTransform=false) {
+// move an element to the coordinates using the absolute left and top values
+// does not use the transform property, so it can be used for elements that are not scaled
+function moveTo(element, leftPx, topPx, speed=500, resetTransform=false, easing='ease-out') {
   const timing = {
     duration: speed,
     iterations: 1,
-    fill: "forwards" // stay put 
+    fill: "forwards", // stay put 
+    easing: easing
   };
   const animationFrames = [
     { 
@@ -104,7 +100,22 @@ function moveTo(element, leftPx, topPx, speed=500, resetTransform=false) {
   element.animate(animationFrames, timing);
 }
 
+function moveToScaled(element, leftPx, topPx, scaleX, scaleY, speed=500) {
+  const timing = {
+    duration: speed,
+    iterations: 1,
+    fill: "forwards" // stay put
+  };
 
+  const animationFrames = [
+    { transform: `translateX(${leftPx}px) translateY(${topPx}px) scaleX(${scaleX}) scaleY(${scaleY})` },
+  ];
+
+  element.animate(animationFrames, timing);
+}
+
+// move an element to the coordinates using the transform property
+// the 'transform property' is used in JS to 
 function animateToRelative(word, dX, dY, scale, speed=500) {
   const { text, rect, node, startIndex, endIndex, element: editor } = word;
    

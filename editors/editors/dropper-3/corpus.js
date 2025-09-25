@@ -64,7 +64,7 @@ class Corpus {
       this.nouns = this.doc.nouns().text().split(/\s+/);
       this.adjectives = this.doc.adjectives().text().split(/\s+/);
 
-      this.printCorpus();
+      // this.printCorpus();
     }
 
     appendToCorpus(text) {
