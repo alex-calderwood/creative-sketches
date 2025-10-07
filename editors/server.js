@@ -7,6 +7,8 @@ const fs = require('fs');
 const app = express();
 const port = process.env.PORT || 3008;
 
+const IMAGE_PATH = 'assets/editor-images/'
+
 // Discover all project directories within the editors subdirectory
 function getProjects() {
   const editorsDir = path.join(__dirname, 'editors');
@@ -37,7 +39,28 @@ function getProjects() {
       dir: dir,
       name: dir,
       hide: false,
+      image: null,
     };
+
+    let getImagePathSmart = (imageName, editorName) => {
+      // console.log("getting image path for", imageName, editorName);
+      // If imageName exists, check if IMAGE_PATH + imageName exists
+      if (imageName) {
+        const imagePath = IMAGE_PATH + imageName;
+        if (fs.existsSync(imagePath)) {
+          return imagePath;
+        }
+      }
+      
+      // If imageName doesn't exist or the file doesn't exist, check IMAGE_PATH + editorName
+      const editorPath = IMAGE_PATH + editorName + '.png';
+      if (fs.existsSync(editorPath)) {
+        return editorPath;
+      }
+      
+      // Neither exists, return null
+      return null;
+    }
 
     return new Promise((resolve) => {
       fs.readFile(aboutPath, 'utf8', (err, data) => {
@@ -47,7 +70,9 @@ function getProjects() {
         }
         try {
           const aboutData = JSON.parse(data);
-          resolve({
+          const image = getImagePathSmart(aboutData.image, dir);
+          console.log("dir", dir, "image", image);
+          resolve({ // resolve the outer Promise
             // Include any other fields that might be in the about.json
             ...aboutData,
             // Override with correct directory-based values
@@ -55,6 +80,7 @@ function getProjects() {
             url: aboutData.url || dir,
             name: aboutData.name || dir,
             hide: aboutData.hide == true,
+            image: image
           });
         } catch (e) {
           resolve(defaultAbout);
