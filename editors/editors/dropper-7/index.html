@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Poetris</title>
+  <link rel="preload" href="fonts/gomarice_goma_block.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+  <!-- SVG Sprites -->
+  <div style="display: none;">
+    <svg id="current-markup-sprite" width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 12H12.01M12 6H12.01M12 18H12.01M13 12C13 12.5523 12.5523 13 12 13C11.4477 13 11 12.5523 11 12C11 11.4477 11.4477 11 12 11C12.5523 11 13 11.4477 13 12ZM13 18C13 18.5523 12.5523 19 12 19C11.4477 19 11 18.5523 11 18C11 17.4477 11.4477 17 12 17C12.5523 17 13 17.4477 13 18ZM13 6C13 6.55228 12.5523 7 12 7C11.4477 7 11 6.55228 11 6C11 5.44772 11.4477 5 12 5C12.5523 5 13 5.44772 13 6Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div> 
+
+  <div id="game-banner">
+    <div class="text">
+      <a href="/editors/" class="back-link">The Writer's Project</a>
+      <span class="subtitle">Poetris</span>
+    </div>
+    
+    <div class="controls">
+      <button id="instructions-btn" class="control-btn">Instructions</button>
+      <button id="options-btn" class="control-btn">Options</button>
+    </div>
+
+  </div>
+
+
+  <script src="utils.js"></script>
+  <script src="sound.js"></script>
+  <script src="lib/compromise.js"></script>
+  <script src="corpus.js"></script>
+  <script src="block.js"></script>
+  <script src="dropper.js"></script>
+  
+  <!-- Instructions Modal -->
+  <div id="instructions-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>How to Play</h3>
+        <button id="close-instructions-modal" class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h4>Controls:</h4>
+        <ul>
+          <li><strong>Arrow Keys:</strong> Move the falling word left and right</li>
+          <li><strong>Down Arrow or Space:</strong> Drop the word immediately</li>
+          <li><strong>Touch/Swipe:</strong> Swipe left/right to move, swipe down to drop</li>
+        </ul>
+        
+        <h4>Gameplay:</h4>
+        <ul>
+          <li>Words fall from the top and you position them in columns</li>
+          <li>When a row is completely filled, those words move to the completed text area</li>
+          <li>Delete blocks (←) remove the bottom word in a column</li>
+          <li>Adjust the delete ratio to control how often delete blocks appear</li>
+          <li>Use the Corpus button to change the source text for word generation</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button id="close-instructions-btn" class="control-btn">Got it!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Options Modal -->
+  <div id="options-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Game Options</h3>
+        <button id="close-options-modal" class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="option-group">
+          <label for="delete-ratio">Delete Ratio:</label>
+          <select id="delete-ratio">
+            <option value="0.0">0%</option>
+            <option value="0.1">10%</option>
+            <option value="0.2">20%</option>
+            <option value="0.3" selected>30%</option>
+            <option value="0.4">40%</option>
+            <option value="0.5">50%</option>
+            <option value="0.6">60%</option>
+            <option value="0.7">70%</option>
+            <option value="0.8">80%</option>
+            <option value="0.9">90%</option>
+          </select>
+          <p class="option-description">Controls how often delete blocks (←) appear. Higher values create more dynamic, shifting compositions.</p>
+        </div>
+
+        <div class="option-group">
+          <label for="mode">Content Strategy:</label>
+          <select id="mode">
+            <option value="pos" selected>Part of Speech</option>
+            <option value="letters">Letters</option>
+            <option value="focused">Focused</option>
+          </select>
+          <p class="option-description">Choose how words are selected. Part of Speech maintains grammatical patterns, while Focused creates denser thematic clusters.</p>
+        </div>
+
+        <div class="option-group">
+          <label for="color-by">Color By:</label>
+          <select id="color-by">
+            <option value="pos" selected>Part of Speech</option>
+            <option value="type">Type</option>
+          </select>
+          <p class="option-description">Determines the color coding of blocks. POS shows grammatical structure, Type emphasizes block functions.</p>
+        </div>
+
+        <div class="option-group">
+          <label>Source Texts:</label>
+          <p class="option-description">Modify the source text that generates your word blocks. Add multiple texts to create hybrid compositions.</p>
+          <div id="corpora-container">
+            <!-- Dynamic corpora will be added here -->
+          </div>
+          <div class="corpus-controls">
+            <button id="add-corpus-btn" class="control-btn">Add Text</button>
+            <button id="save-corpus" class="control-btn">Save Changes</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="close-options-btn" class="control-btn">Close</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
