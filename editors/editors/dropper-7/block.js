@@ -8,7 +8,7 @@
 
 // colorBy can be 'pos', 'type', or 'random'
 
-const DELETE_SCALE_MOD = 0.5;
+const DELETE_SCALE_MOD = {x: 0.25, y: 0.5};
 
 const colorMap = {
     'linear': { bg: '#ff0000', light: '#ff6666', dark: '#cc0000', darker: "#F0D3F7" },
@@ -16,19 +16,19 @@ const colorMap = {
 
     'noun': { bg: '#0000ff', light: '#6666ff', dark: '#0000cc', darker: '#EE6A6D' },
     'adjective': { bg: '#00ff00', light: '#66ff66', dark: '#00cc00', darker: '#798478' },
-    'verb': { bg: '#ffff00', light: '#ffff66', dark: '#cccc00', darker: '#9CF6F6' },
-    'adverb': { bg: '#785212', light: '#9a6d2e', dark: '#5a421a', darker: '#E4572E' },
+    'verb': { bg: '#ffff00', light: '#ffff66', dark: '#cccc00', darker: '#14d2d2' },
+    'adverb': { bg: '#785212', light: '#9a6d2e', dark: '#5a421a', darker: '#FF572E' },
 
     'determiner': { bg: '#532699', light: '#6e34c3', dark: '#3c1a66', darker: '#67268E' },
     'preposition': { bg: '#ffff00', light: '#ffff66', dark: '#cccc00', darker: '#9CF600' }, 
     'interjection': { bg: '#ffff00', light: '#ffff66', dark: '#cccc00', darker: '#506A6D' }, 
     'conjunction': { bg: '#444444', light: '#666666', dark: '#222222', darker: '#9CF040' }, 
     'preposition': { bg: '#00ff00', light: '#66ff66', dark: '#00cc00', darker: '#798433' }, 
-    'propernoun': { bg: '#111111', light: '#333333', dark: '#000000', darker: '#9CF111' },
+    'propernoun': { bg: '#111111', light: '#333333', dark: '#000000', darker: '#8bd90d' },
     'value': { bg: '#111222', light: '#333444', dark: '#333333', darker: '#555044' },
 
-    'delete': { bg: '#000000', light: '#000000', dark: '#000000', darker: '#000000' },  // Black for delete
-    'any': { bg: '#000000', light: '#000000', dark: '#000000', darker: '#000000' }
+    'delete': { bg: '#000000', light: '#000000', dark: '#000000', darker: '#5F2944' },  // Black for delete
+    'word': { bg: '#000000', light: '#000000', dark: '#000000', darker: '#779977' }
 }
 
 function getColor(key) {
@@ -60,6 +60,10 @@ function createBlockAt(block, left, top, width, height, colorBy = "pos") {
     if (wordType === "constraint" && block.constraint) {
         let constraintType = block.constraint.type;
         let constraintValue = block.constraint.value;
+        // null out the any text
+        // if (constraintValue == 'word') {
+        //     constraintValue = '';
+        // }
         newElement.setAttribute('data-constraint', constraintValue);
         colorKey = constraintValue;
     } else {
@@ -79,12 +83,13 @@ function createBlockAt(block, left, top, width, height, colorBy = "pos") {
     const blockWordElement =  document.createElement('div');
     blockWordElement.classList.add('block-word');
 
+    // Set the text
     blockWordElement.textContent = text;
     newElement.appendChild(blockWordElement);
 
     blockWordElement.style.fontSize = `10px`;
 
-    let additionalScaleMod = 1;
+    let additionalScaleMod = {x: 1, y: 1};
     if (wordType == "delete") {
         additionalScaleMod = DELETE_SCALE_MOD;
     }
@@ -95,8 +100,8 @@ function createBlockAt(block, left, top, width, height, colorBy = "pos") {
         let scaleX = width / rect.width;
         let scaleY = height / rect.height;
 
-        scaleX *= additionalScaleMod;
-        scaleY *= additionalScaleMod;
+        scaleX *= additionalScaleMod.x;
+        scaleY *= additionalScaleMod.y;
         
         blockWordElement.style.transform = `scaleX(${scaleX}) scaleY(${scaleY})`;
         }, 1); // Just 1ms delay helps the calculation be correct
