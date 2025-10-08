@@ -25,6 +25,7 @@
     <div class="controls">
       <button id="instructions-btn" class="control-btn">Instructions</button>
       <button id="options-btn" class="control-btn">Options</button>
+      <button id="new-game-btn" class="control-btn">New Game</button>
     </div>
 
   </div>
@@ -45,24 +46,25 @@
         <button id="close-instructions-modal" class="close-btn">&times;</button>
       </div>
       <div class="modal-body">
-        <h4>Controls:</h4>
-        <ul>
-          <li><strong>Arrow Keys:</strong> Move the falling word left and right</li>
-          <li><strong>Down Arrow or Space:</strong> Drop the word immediately</li>
-          <li><strong>Touch/Swipe:</strong> Swipe left/right to move, swipe down to drop</li>
-        </ul>
-        
-        <h4>Gameplay:</h4>
-        <ul>
-          <li>Words fall from the top and you position them in columns</li>
-          <li>When a row is completely filled, those words move to the completed text area</li>
-          <li>Delete blocks (←) remove the bottom word in a column</li>
-          <li>Adjust the delete ratio to control how often delete blocks appear</li>
-          <li>Use the Corpus button to change the source text for word generation</li>
-        </ul>
+
+
+        <h4>Gameplay</h4>
+        <p>Write the best poem you can with the words available!</p>
+        <p>A line of your poem is complete when the bottom most word in each column matches its 'constraint'.</p>
+        <p>Words, constraints, and delete blocks will appear in the queue.</p>
+
+        <h4>Controls</h4>
+        <p><strong>Left/Right Arrow Keys:</strong> Move the queue of words left and right</p>
+        <p><strong>Down Arrow or Space:</strong>Drop the current block in its current position. Current block is indicated by the three dots.</p>
+        <p><strong>Touch/Swipe:</strong> Swipe left/right to move, swipe down to drop</p>
+
+        <h4>Block Types</h4>
+        <p><strong>Word:</strong> A word from the source text that can be used to complete a line</p>
+        <p><strong>Constraint:</strong>A property that must be matched to complete a line. These appear as colored underlines, and can be dropped just like a word. Constraints labels will disappear to indicate that they have been matched. Currently these are parts of speech like nouns, verbs, adjectives, etc. There is also a special 'word' constraint that will match any word.</p>
+        <p><strong>Delete:</strong> A block that will delete the bottom most word in a column</p>
       </div>
       <div class="modal-footer">
-        <button id="close-instructions-btn" class="control-btn">Got it!</button>
+        <button id="close-instructions-btn" class="control-btn">Close</button>
       </div>
     </div>
   </div>
@@ -95,9 +97,9 @@
         <div class="option-group">
           <label for="mode">Content Strategy:</label>
           <select id="mode">
-            <option value="pos" selected>Part of Speech</option>
+            <option value="pos">Part of Speech</option>
             <option value="letters">Letters</option>
-            <option value="focused">Focused</option>
+            <option value="focused" selected>Focused</option>
           </select>
           <p class="option-description">Choose how words are selected. Part of Speech maintains grammatical patterns, while Focused creates denser thematic clusters.</p>
         </div>
@@ -125,6 +127,51 @@
       </div>
       <div class="modal-footer">
         <button id="close-options-btn" class="control-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Game Modal -->
+  <div id="new-game-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>New Game</h3>
+        <button id="close-new-game-modal" class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="option-group">
+          <label for="new-game-columns">Number of Columns:</label>
+          <select id="new-game-columns">
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6" selected>6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+          </select>
+          <p class="option-description">Sets the width of the game grid. More columns allow for wider compositions.</p>
+        </div>
+
+        <div class="option-group">
+          <label for="new-game-rows">Number of Rows:</label>
+          <select id="new-game-rows">
+            <option value="8">8</option>
+            <option value="10">10</option>
+            <option value="12" selected>12</option>
+            <option value="14">14</option>
+            <option value="16">16</option>
+          </select>
+          <p class="option-description">Sets the height of the game grid. More rows give more space to work with.</p>
+        </div>
+
+        <div class="option-group">
+          <label for="new-game-source">Source Text:</label>
+          <textarea id="new-game-source" class="corpus-textarea" placeholder="Enter your source text here..."></textarea>
+          <!-- <p class="option-description">The text that will be used to generate the game.</p> -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="start-new-game-btn" class="control-btn">Start Game</button>
+        <button id="close-new-game-btn" class="control-btn">Cancel</button>
       </div>
     </div>
   </div>

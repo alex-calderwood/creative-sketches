@@ -1,8 +1,8 @@
 {
-    "name": "Poetris In Progress",
+    "name": "Poetris EIS-Age Demo",
     "description": "Poetris",
     "notes": "",
     "version": "7",
-    "series": ["game", "poetris"],
-    "url": "poetris-4"
+    "series": ["game", "poetris", "EIS"],
+    "url": "poetris-eis-demo"
 }

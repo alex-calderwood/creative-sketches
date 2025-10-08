@@ -40,7 +40,7 @@ function resizeToken(element, width, height) {
   blockTokenElement.style.transform = `scaleX(1) scaleY(1)`;
   // blockTokenElement.style.transformOrigin = `center center`;
 
-  let additionalScaleMod = 1;
+  let additionalScaleMod = {x: 1, y: 1};
   if (element.classList.contains('delete')) {
     additionalScaleMod = DELETE_SCALE_MOD;
   }
@@ -51,8 +51,8 @@ function resizeToken(element, width, height) {
     let scaleX = width / rect.width;
     let scaleY = height / rect.height;
 
-    scaleX *= additionalScaleMod;
-    scaleY *= additionalScaleMod;
+    scaleX *= additionalScaleMod.x;
+    scaleY *= additionalScaleMod.y;
     
     blockTokenElement.style.transform = `scaleX(${scaleX}) scaleY(${scaleY})`;
     }, 1); // Just 1ms delay helps the calculation be correct
@@ -127,15 +127,15 @@ class Dropper {
   }
 
   initializeAnyConstraints() {
-    // Create 'any' constraint blocks for each column
+    // Create 'word' constraint blocks for each column
     for (let x = 0; x < this.numColumns; x++) {
       // Create an 'any' constraint block with empty text
       const anyBlock = {
-        text: 'any', // Empty text so nothing is displayed
+        text: 'word',
         type: 'constraint',
         constraint: {
-          type: 'any',
-          value: 'any'
+          type: 'word',
+          value: 'word'
         }
       };
 
@@ -150,34 +150,86 @@ class Dropper {
     }
   }
 
-  async initialize(corpusFile) {
-    // Initialize corpus first
+  async initialize(options = {}) {
+    // Set or update grid dimensions
+    if (options.numColumns) this.numColumns = options.numColumns;
+    if (options.numRows) this.numRows = options.numRows;
+
+    // Calculate cell sizes
+    this.cellHeight = this.gridHeight / this.numRows;
+    this.cellWidth = this.gridWidth / this.numColumns;
+    this.columnWidths = Array(this.numColumns).fill(this.cellWidth);
+    this.columnHeights = Array(this.numRows).fill(this.cellHeight);
+
+    // Clear current game state if it exists
+    if (this.state) {
+      if (this.state.currentBlock) {
+        this.state.currentBlock.remove();
+      }
+      this.state.tokenChain.forEach(token => token.remove());
+      
+      // Clear grid
+      for (let x = 0; x < this.state.grid.length; x++) {
+        for (let y = 0; y < this.state.grid[x].length; y++) {
+          if (this.state.grid[x][y]) {
+            this.state.grid[x][y].remove();
+          }
+        }
+      }
+
+      // Clear constraints
+      this.state.constraints.forEach(constraint => {
+        if (constraint) {
+          constraint.remove();
+        }
+      });
+
+      // Clear completed tokens
+      if (this.completedTokensContainer) {
+        this.completedTokensContainer.innerHTML = '';
+      }
+    }
+
+    // Reset state
+    this.state = {
+      currentBlock: null,
+      curX: 0,
+      curY: 0,
+      currentBlockLeft: this.gridStartX,
+      currentBlockTop: this.gridStartY,
+      grid: Array(this.numColumns).fill().map(() => Array(this.numRows).fill(null)),
+      tokenChain: [],
+      constraints: Array(this.numColumns).fill(null),
+      blockHistory: [],
+    };
+
+    this.completedTokensTop = 20;
+
+    // Initialize corpus
     this.corpus = new Corpus();
-    await this.corpus.setCorpusFromFile(corpusFile);
+    if (options.sourceText) {
+      this.corpus.texts = [options.sourceText];
+      this.corpus.updateFromTexts();
+    } else if (options.corpusFile) {
+      await this.corpus.setCorpusFromFile(options.corpusFile);
+    } else {
+      await this.corpus.setCorpusFromFile(defaultCorpus);
+    }
 
-    // Now that corpus is ready, set up the rest
-    this.setupControls();
-    this.watchArrowKeys();
-    this.watchSwipes();
-    await this.initializeSounds();
+    // Set up controls and event listeners (only on first initialization)
+    if (!options.isReset) {
+      this.setupControls();
+      this.watchArrowKeys();
+      this.watchSwipes();
+      await this.initializeSounds();
+      
+      // Start the game loop
+      setInterval(() => {
+        this.tick();
+      }, this.tickTime);
+    }
 
-    // Initialize all columns with 'any' constraints
-    this.initializeAnyConstraints();
-
-    // Start the game loop
-    setInterval(() => {
-      this.tick();
-    }, this.tickTime);
-  }
-
-  async reset() {
-    this.state.tokenChain = [];
-    this.state.constraints = Array(this.numColumns).fill(null);
-    this.state.blockHistory = [];
-    this.state.currentBlock = null;
-    this.state.curX = 0;
-    
-    // Reinitialize with 'any' constraints
+    // Initialize constraints
     this.initializeAnyConstraints();
   }
 
@@ -349,6 +401,57 @@ class Dropper {
       }
     });
 
+    // New Game modal controls
+    const newGameBtn = document.getElementById('new-game-btn');
+    const newGameModal = document.getElementById('new-game-modal');
+    const closeNewGameBtn = document.getElementById('close-new-game-modal');
+    const closeNewGameBtnFooter = document.getElementById('close-new-game-btn');
+    const startNewGameBtn = document.getElementById('start-new-game-btn');
+
+    // Open new game modal
+    newGameBtn.addEventListener('click', async () => {
+      const sourceTextArea = document.getElementById('new-game-source');
+      let file = getNewCorpus();
+      let text = await getNewCorpusText(file);
+      sourceTextArea.value = text;
+      newGameModal.style.display = 'flex';
+      newGameBtn.blur();
+    });
+
+    // Close new game modal handlers
+    closeNewGameBtn.addEventListener('click', () => {
+      newGameModal.style.display = 'none';
+      closeNewGameBtn.blur();
+    });
+
+    closeNewGameBtnFooter.addEventListener('click', () => {
+      newGameModal.style.display = 'none';
+      closeNewGameBtnFooter.blur();
+    });
+
+    // Close new game modal when clicking outside
+    newGameModal.addEventListener('click', (e) => {
+      if (e.target === newGameModal) {
+        newGameModal.style.display = 'none';
+      }
+    });
+
+    // Start new game handler
+    startNewGameBtn.addEventListener('click', async () => {
+      const numColumns = parseInt(document.getElementById('new-game-columns').value);
+      const numRows = parseInt(document.getElementById('new-game-rows').value);
+      const sourceText = document.getElementById('new-game-source').value.trim();
+
+      await this.initialize({
+        numColumns,
+        numRows,
+        sourceText,
+        isReset: true
+      });
+      newGameModal.style.display = 'none';
+      startNewGameBtn.blur();
+    });
+
     // Close any modal with Escape key
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
@@ -357,6 +460,9 @@ class Dropper {
         }
         if (optionsModal.style.display === 'flex') {
           optionsModal.style.display = 'none';
+        }
+        if (newGameModal.style.display === 'flex') {
+          newGameModal.style.display = 'none';
         }
       }
     });
@@ -454,7 +560,7 @@ class Dropper {
       } else if (event.key === 'ArrowDown' || event.key === ' ') {
         this.dropBlock(this.state.currentBlock);
       } else if (event.key === 'ArrowUp') {
-        this.addColToGrid(this.state.curX);
+        // this.addColToGrid(this.state.curX);
       }
     });
   }
@@ -508,7 +614,7 @@ class Dropper {
     console.log("Current line:", tokens);
 
     let constraints =  this.targetConstraints();
-    let constraintValues = this.constraintsForRow(this.numRows - 1);
+    let constraintValues = this.getConstraintsFromWordsInRow(this.numRows - 1);
 
     console.log("Line constraints", constraintValues);
     console.log("Target constraints:", constraints);
@@ -634,7 +740,12 @@ class Dropper {
     }
 
     // Check for completed lines
-    let completedLines = this.getCompletedLines();
+    let constraintCompletedState = this.getCompletedConstraints();
+    let completedLines = this.getCompletedLines(constraintCompletedState);
+
+    // Update the visuals - don't show the ::after for completed 
+    this.updateConstraintVisuals(constraintCompletedState);
+
     if (completedLines && completedLines.length > 0) {
       console.log('completed lines', completedLines);
       // Play line complete sound
@@ -767,21 +878,32 @@ class Dropper {
     });
   }
 
-  getCompletedLines() {
+  getCompletedLines(actualConstraints, targetConstraints) {
     if (this.completedMode == 'full') {
       return this.getFullLines();
     } else if (this.completedMode == 'constraint') {
-      return this.getConstrainedLines();
+      return this.getCompletedLinesFromConstraints(actualConstraints, targetConstraints);
     }
 
     return [];
+  }
+
+  updateConstraintVisuals(completedConstraints) {
+    console.log('completed', {completedConstraints})
+    for (let i = 0; i < completedConstraints.completed.length; i++) {
+      if (completedConstraints.completed[i]) {
+        this.state.constraints[i].classList.add('completed');
+      } else {
+        this.state.constraints[i].classList.remove('completed');
+      }
+    }
   }
 
   getConstraintValue(token) {
     return token ? token.getAttribute('data-constraint').toLowerCase() : null;
   }
 
-  constraintsForRow(row) {
+  getConstraintsFromWordsInRow(row) {
     let constraints = [];
     for (let x = 0; x < this.numColumns; x++) {
       let token = this.state.grid[x][row];
@@ -796,21 +918,43 @@ class Dropper {
   }
 
   // Check if the current constraints match the target constraints
-  lineCompleted(constraints, target) {
-    return constraints.every((constraint, index) => constraint == target[index]);
+  checkLineSatisfied(constraints, target) {
+    return constraints.every((constraint, index) => this.checkConstraintSatisfied(constraint, target[index]));
   }
 
-  getConstrainedLines() {
+  checkConstraintSatisfied(actual, target) {
+
+    if (actual == null) {
+      return false;
+    }
+
+    if (target == 'word' || target == '') {
+      return true;
+    }
+
+    return actual == target;
+  }
+
+  getCompletedConstraints() {
+    let y = this.numRows - 1;
+    let actual = this.getConstraintsFromWordsInRow(y);
+    let target = this.targetConstraints();
+    let completed = [];
+    for (let i = 0; i < target.length; i++) {
+      completed.push(this.checkConstraintSatisfied(actual[i], target[i]));
+    }
+
+
+    return {actual, target, completed};
+  }
+
+  getCompletedLinesFromConstraints(constraintState) {
     let completedLines = [];
 
-    let y = this.numRows - 1;
-    // for (let y = 0; y < this.numRows; y++) {
-    let constraints = this.constraintsForRow(y);
-    let target = this.targetConstraints();
-    let lineCompleted = this.lineCompleted(constraints, target);
-    
+    let lineCompleted = this.checkLineSatisfied(constraintState.actual, constraintState.target);
+
     if (lineCompleted) {
-      completedLines.push(y);
+      completedLines.push(this.numRows - 1);
     }
     return completedLines;
   }
@@ -1004,22 +1148,37 @@ class Dropper {
 
 
 let defaultCorpora = [
-  'corpora/short/here.txt',
+  // 'corpora/short/here.txt',
   'corpora/short/sacred_emily.txt',
-  'corpora/short/love_breton.txt', 
-  'corpora/short/less_time.txt', 
-  'corpora/books/nadja.txt',
+  // 'corpora/short/love_breton.txt', 
+  // 'corpora/short/less_time.txt', 
+  // 'corpora/books/nadja.txt',
+  'corpora/short/eis.txt',
+  'corpora/short/eis_wiki.txt',
 
   // uninteresting
   // 'corpora/short/art.txt', 
   // 'corpora/short/harry_potter_ch1.txt', 
 ];
-let [file1, file2] = defaultCorpora.sort(() => 0.5 - Math.random()).slice(0, 2);
-let defaultCorpus = file1; // Use first file as default
+// let [file1, file2] = defaultCorpora.sort(() => 0.5 - Math.random()).slice(0, 2);
+// let defaultCorpus = file1; // Use first file as default
 
+function getNewCorpus() {
+  let order = defaultCorpora.sort(() => 0.5 - Math.random());
+  return order[0];
+}
+
+async function getNewCorpusText(filename) {
+  const assetsFolder = '/editors/assets';
+  const filePath = `${assetsFolder}/${filename}`;
+  const response = await fetch(filePath);
+  return response.text();
+}
+
+let defaultCorpus = getNewCorpus();
 
 // Wait for DOM to be fully loaded before initializing
 document.addEventListener('DOMContentLoaded', async () => {
   let dropper = new Dropper();
-  await dropper.initialize(defaultCorpus);
+  await dropper.initialize({ corpusFile: defaultCorpus });
 });
