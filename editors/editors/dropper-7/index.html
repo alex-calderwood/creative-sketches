@@ -101,7 +101,7 @@
             <option value="letters">Letters</option>
             <option value="focused" selected>Focused</option>
           </select>
-          <p class="option-description">Choose how words are selected. Part of Speech maintains grammatical patterns, while Focused creates denser thematic clusters.</p>
+          <p class="option-description">Choose how words are selected. Part of Speech selects words based on a grammatical pattern. Focused linearlly traverses words (matching the definition of the Focused Reader in The Reader's Project). Letters splits the text into letters rather than words.</p>
         </div>
 
         <div class="option-group">
@@ -110,12 +110,12 @@
             <option value="pos" selected>Part of Speech</option>
             <option value="type">Type</option>
           </select>
-          <p class="option-description">Determines the color coding of blocks. POS shows grammatical structure, Type emphasizes block functions.</p>
+          <p class="option-description">How should blocks be colored?. POS indicates grammatical structure, Type indicates block functions (this is mostly unncessary in this version).</p>
         </div>
 
         <div class="option-group">
           <label>Source Texts:</label>
-          <p class="option-description">Modify the source text that generates your word blocks. Add multiple texts to create hybrid compositions.</p>
+          <p class="option-description">Modify the source text that generates your word blocks.</p>
           <div id="corpora-container">
             <!-- Dynamic corpora will be added here -->
           </div>

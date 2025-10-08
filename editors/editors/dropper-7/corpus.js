@@ -22,18 +22,22 @@ const POS_TAGS = [
   'presenttense'
 ];
 
-
-
 const POS_TAGS_FOR_CONSTRAINTS = [
+  'noun',
+  'verb',
   'determiner',
   'preposition',
+  'conjunction',
   'adverb',
   'verb',
   'adjective',
+  'word',
+  'adverb',
   'noun',
   'propernoun',
   'conjunction',
   'pronoun',
+  'word',
 ]
 
 const CLASSIC_POS_ORDER = [
