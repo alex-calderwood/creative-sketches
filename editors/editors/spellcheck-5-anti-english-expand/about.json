@@ -4,5 +4,6 @@
     "notes": "Ge",
     "version": "5",
     "series": ["spellcheck", "expand"],
-    "url": "antienglish-checker-2"
+    "url": "antienglish-checker-2",
+    "image": "spellcheck.png"
 }

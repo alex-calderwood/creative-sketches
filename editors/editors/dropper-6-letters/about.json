@@ -1,6 +1,6 @@
 {
     "name": "Poetris Leters",
-    "description": "Poetris, but letters",
+    "description": "Poetris, but letters fall instead of words.",
     "notes": "",
     "version": "6",
     "series": ["game", "poetris"],

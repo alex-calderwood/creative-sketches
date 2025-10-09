@@ -4,5 +4,6 @@
     "notes": ".",
     "version": "1",
     "series": ["game", "poetris"],
-    "url": "tetris-poetry"
+    "url": "tetris-poetry",
+    "image": "poetris og.png"
 }

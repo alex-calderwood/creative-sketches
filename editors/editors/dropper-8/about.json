@@ -1,0 +1,9 @@
+{
+    "name": "Poetris Post EIS in progress",
+    "description": "Poetris",
+    "notes": "",
+    "version": "8",
+    "series": ["game", "poetris", "EIS"],
+    "url": "poetris-eis-demo",
+    "image": "dropper-7-eis.png"
+}

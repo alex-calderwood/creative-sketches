@@ -155,11 +155,14 @@
             margin-bottom: 0.1rem;
         }
         .project-image {
-            width: 80%;
-            height: auto;
-            margin: 0.5rem auto;
-            display: block;
-            order: 2;
+            position: absolute;
+            width: 90%;
+            height: 90%;
+            /* stretch  */
+            object-fit: cover;
+            opacity: 0.30;
+            z-index: 0;
+            margin: auto auto;
         }
         .project-content {
             position: relative;

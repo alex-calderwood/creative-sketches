@@ -4,5 +4,6 @@
     "notes": "Added up arrow and changed the colors, made focused default, added instructions.",
     "version": "3",
     "series": ["game", "poetris"],
-    "url": "poetris"
+    "url": "poetris",
+    "image": "poetris.png"
 }

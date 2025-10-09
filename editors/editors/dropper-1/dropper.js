@@ -416,7 +416,7 @@ class Dropper {
 // Wait for DOM to be fully loaded before initializing
 document.addEventListener('DOMContentLoaded', () => {
   let dropper = new Dropper();
-  dropper.corpus.setCorpusFromFile('corpora/books/harraway.txt').then(words => {
+  dropper.corpus.setCorpusFromFile('corpora/short/less_time.txt').then(words => {
     console.log(words);
   });
 });

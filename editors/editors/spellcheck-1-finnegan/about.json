@@ -4,5 +4,5 @@
     "version": "1",
     "series": ["spellcheck"],
     "url": "finnegan-check",
-    "image": null
+    "image": "spellcheck.png"
 }
