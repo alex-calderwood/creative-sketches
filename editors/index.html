@@ -12,7 +12,7 @@
         }
 
         body {
-            background-image: url('assets/wood.jpg');
+            background-image: url('/editors/assets/wood.jpg');
             background-color: #000000;
             background-size: 100% 30%;
             background-position: center top;
@@ -88,8 +88,8 @@
         }
         .page {
             background-color: white;
-            height: 10rem;
-            width: 10rem;
+            height: 14rem;
+            width: 12rem;
             /* Realistic paper shadows with depth */
             box-shadow: 
                 /* Main shadow */
@@ -114,6 +114,7 @@
                 1% 100%, 0% 99.5%, 0% 1%
             );
             transform-origin: center center;
+            padding: 0.5rem;
         }
 
         .page a {
@@ -154,22 +155,20 @@
             margin-bottom: 0.1rem;
         }
         .project-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 0;
+            width: 80%;
+            height: auto;
+            margin: 0.5rem auto;
+            display: block;
+            order: 2;
         }
         .project-content {
             position: relative;
             z-index: 1;
-            /* background: rgba(255, 255, 255, 0.9); */
             height: 100%;
             display: flex;
             flex-direction: column;
             transition: all 0.3s ease;
+            order: 1;
         }
         
         .tag-header {
@@ -180,6 +179,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
+
+            font-style: italic;
+            /*  add a hashtag */
+
             
             /* Aged paper background with subtle variations */
             background: 
@@ -196,8 +199,9 @@
                     #fcfbf2 75%,  /* Aged paper tone */
                     #fefdf8 100%
                 );
-            height: 10rem;
+            height: 4rem;
             width: 10rem;
+            margin-top: calc(5rem);
             /* Realistic paper shadows with depth */
             box-shadow: 
                 /* Main shadow */
@@ -265,9 +269,16 @@
             return a.name.localeCompare(b.name);
         });
         
-        // Sort tags alphabetically
-        const sortedTags = Object.keys(projectsByTag).sort();
-        
+        // Sort tags first alphabeetically
+        let sortedTags = Object.keys(projectsByTag).sort();
+        // Then, sort by our custom list (if not in the list, put at the end)
+        const customTagOrder = ['poetris', 'spellcheck', 'concrete', 'EIS'];
+        sortedTags = sortedTags.sort((a, b) => {
+            const aIndex = customTagOrder.indexOf(a);
+            const bIndex = customTagOrder.indexOf(b);
+            return (aIndex === -1 ? Infinity : aIndex) - (bIndex === -1 ? Infinity : bIndex);
+        });
+        console.log('sorted', sortedTags);
         // Generate project cards grouped by tags
         const container = document.getElementById('projects-container');
         
@@ -335,14 +346,14 @@
                 contentDiv.appendChild(metadataDiv);
             }
             
+            card.appendChild(contentDiv);
+            
             if (project.image) {
                 const image = document.createElement('img');
                 image.className = 'project-image';
                 image.src = project.image;
                 card.appendChild(image);
             }
-            
-            card.appendChild(contentDiv);
             return card;
         };
         

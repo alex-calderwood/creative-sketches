@@ -7,7 +7,8 @@ const fs = require('fs');
 const app = express();
 const port = process.env.PORT || 3008;
 
-const IMAGE_PATH = 'assets/editor-images/'
+const IMAGE_URL_PATH = '/editors/assets/editor-images/'
+const IMAGE_FS_PATH = path.join(__dirname, 'assets/editor-images/')
 
 // Discover all project directories within the editors subdirectory
 function getProjects() {
@@ -43,19 +44,18 @@ function getProjects() {
     };
 
     let getImagePathSmart = (imageName, editorName) => {
-      // console.log("getting image path for", imageName, editorName);
-      // If imageName exists, check if IMAGE_PATH + imageName exists
+      // If imageName exists, check if IMAGE_FS_PATH + imageName exists
       if (imageName) {
-        const imagePath = IMAGE_PATH + imageName;
-        if (fs.existsSync(imagePath)) {
-          return imagePath;
+        const fsPath = path.join(IMAGE_FS_PATH, imageName);
+        if (fs.existsSync(fsPath)) {
+          return IMAGE_URL_PATH + imageName;
         }
       }
       
-      // If imageName doesn't exist or the file doesn't exist, check IMAGE_PATH + editorName
-      const editorPath = IMAGE_PATH + editorName + '.png';
-      if (fs.existsSync(editorPath)) {
-        return editorPath;
+      // If imageName doesn't exist or the file doesn't exist, check IMAGE_FS_PATH + editorName
+      const editorFsPath = path.join(IMAGE_FS_PATH, editorName + '.png');
+      if (fs.existsSync(editorFsPath)) {
+        return IMAGE_URL_PATH + editorName + '.png';
       }
       
       // Neither exists, return null
@@ -71,7 +71,7 @@ function getProjects() {
         try {
           const aboutData = JSON.parse(data);
           const image = getImagePathSmart(aboutData.image, dir);
-          console.log("dir", dir, "image", image);
+          console.log('dir', image, dir)
           resolve({ // resolve the outer Promise
             // Include any other fields that might be in the about.json
             ...aboutData,
@@ -92,7 +92,7 @@ function getProjects() {
   return Promise.all(projectPromises);
 }
 
-// Get project directories
+// Get project directories and corresponding data
 let projects = [];
 getProjects().then(projectList => {
   projects = projectList.filter(project => !project.hide);
