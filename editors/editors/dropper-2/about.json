@@ -4,5 +4,6 @@
     "notes": "",
     "version": "2",
     "series": ["game", "poetris"],
-    "url": "dropper-2"
+    "url": "dropper-2",
+    "image": "poetris.png"
 }

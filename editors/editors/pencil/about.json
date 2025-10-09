@@ -3,5 +3,6 @@
     "description": "I miss the pencils from my childhood.",
     "image": null,
     "version": "3",
-    "series": ["material"]
+    "series": ["material"],
+    "image": "material.png"
 }

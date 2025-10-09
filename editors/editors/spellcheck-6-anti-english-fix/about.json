@@ -4,5 +4,6 @@
     "notes": "",
     "version": "7",
     "series": ["spellcheck", "expand"],
-    "url": "anticorrect-7"
+    "url": "anticorrect-7",
+    "image": "spellcheck.png"
 }

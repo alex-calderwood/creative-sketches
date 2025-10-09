@@ -3,5 +3,6 @@
     "description": "A pen bleeds into dreams",
     "image": null,
     "version": "1",
-    "series": ["material"]
+    "series": ["material"],
+    "image": "material.png"
 }

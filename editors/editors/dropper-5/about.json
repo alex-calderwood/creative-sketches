@@ -1,8 +1,9 @@
 {
-    "name": "Poetris In progress",
-    "description": "In Progress A tetris-like pass at creating a game that uses the detritus of language as a material.",
+    "name": "Poetris",
+    "description": "This version updated the options bar and might have changed the constraint strategy.",
     "notes": "",
     "version": "5",
     "series": ["game", "poetris"],
-    "url": "poetris-3"
-}
+    "url": "poetris-3",
+    "image": "poetris 2.png"
+}d
