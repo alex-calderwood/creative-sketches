@@ -466,7 +466,6 @@ class Dropper {
         }
       }
     });
-    
   }
 
   updateCorpusContainer() {
@@ -523,6 +522,20 @@ class Dropper {
     await soundManager.initialize();
   }
 
+  onMove() {
+
+    let newLeft = this.getColumnRect(this.state.curX, 0).left;
+    let newTop  = this.state.currentBlock.offsetTop;
+
+    this.state.currentBlockLeft = newLeft;
+
+    this.drawCurColumn(this.state.curX);
+
+    // resizeToken(this.state.currentBlock, this.columnWidths[this.state.curX], this.columnHeights[0]);
+    moveTo(this.state.currentBlock, newLeft, newTop, this.arrowSpeed, false, 'ease-in-out');
+    this.moveTokenChain({left: newLeft, top: newTop});
+  }
+
 
   moveRight() {
     if (this.state.curX == this.numColumns - 1) {
@@ -531,13 +544,8 @@ class Dropper {
       this.state.curX += 1;
     }
 
-    let newLeft = this.getColumnRect(this.state.curX, 0).left;
-    let newTop  = this.state.currentBlock.offsetTop;
+    this.onMove();
 
-    this.state.currentBlockLeft = newLeft;
-    // resizeToken(this.state.currentBlock, this.columnWidths[this.state.curX], this.columnHeights[0]);
-    moveTo(this.state.currentBlock, newLeft, newTop, this.arrowSpeed, false, 'ease-in-out');
-    this.moveTokenChain({left: newLeft, top: newTop});
   }
 
   moveLeft() {
@@ -546,13 +554,8 @@ class Dropper {
     } else {
       this.state.curX -= 1;
     }
-    let newLeft = this.getColumnRect(this.state.curX, 0).left;
-    let newTop  = this.state.currentBlock.offsetTop;
-
-    this.state.currentBlockLeft = newLeft;
-    // resizeToken(this.state.currentBlock, this.columnWidths[this.state.curX], this.columnHeights[0]);
-    moveTo(this.state.currentBlock, newLeft, newTop, this.arrowSpeed, false, 'ease-in-out');
-    this.moveTokenChain({left: newLeft, top: newTop});
+    
+    this.onMove();
   }
 
   watchArrowKeys() {
@@ -655,11 +658,11 @@ class Dropper {
     return tokenData;
   }
 
-  createCurrentMarkup() {
-    const markup = document.getElementById('current-markup-sprite').cloneNode(true);
-    markup.classList.add('current-markup');
-    return markup;
-  }
+  // createCurrentMarkup() {
+  //   const markup = document.getElementById('current-markup-sprite').cloneNode(true);
+  //   markup.classList.add('current-markup');
+  //   return markup;
+  // }
 
   nextBlockUp() {
 
@@ -677,8 +680,8 @@ class Dropper {
     this.state.currentBlock.classList.add('current-token');
     
     // Add dots to current token
-    const markup = this.createCurrentMarkup();
-    this.state.currentBlock.appendChild(markup);
+    // const markup = this.createCurrentMarkup();
+    // this.state.currentBlock.appendChild(markup);
   }
 
   moveTokenChain(to) {
@@ -737,6 +740,26 @@ class Dropper {
 
   //     moveTo(curToken, newLoc.left, newLoc.top, this.arrowSpeed, false, 'ease-in-out');
   //   } // end for each token
+  }
+
+  drawCurColumn(col) {
+    let columnElt;
+    // get it or create it 
+    columnElt = document.querySelector('.column');
+    if (!columnElt) {
+      columnElt = document.createElement('div');
+      columnElt.classList.add('column');
+      document.body.appendChild(columnElt);
+    }
+
+    // draw the column
+    columnElt.style.left = this.getColumnLeft(col) + 'px';
+    // columnElt.style.top = this.getColumnTop(0) + 'px';
+    columnElt.style.top = '0px';
+    columnElt.style.width = this.columnWidths[col] + 'px';
+    // columnElt.style.height = this.columnHeights.reduce((sum, height) => sum + height, 0) + 'px';
+    // bototm of the screen
+    columnElt.style.height = '1000px';
   }
 
 
