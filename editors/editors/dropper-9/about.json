@@ -1,0 +1,9 @@
+{
+    "name": "Poetris in progress",
+    "description": "Poetris",
+    "notes": "",
+    "version": "9",
+    "series": ["game", "poetris"],
+    "url": "poetris-in-progress",
+    "image": "column.png"
+}
