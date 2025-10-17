@@ -70,7 +70,7 @@ class Dropper {
 
     // Grid positioning
     this.gridStartX = 200;
-    this.gridStartY = 240;
+    this.gridStartY = 300;
     this.gridEndGap = 40;
     this.gridWidth = window.innerWidth - this.gridStartX;
     this.gridHeight = window.innerHeight - this.gridStartY - this.gridEndGap;
@@ -104,7 +104,7 @@ class Dropper {
     }
 
     // Token chain
-    this.tokenChainLength = 10;
+    this.tokenChainLength = 20;
     this.tokenChainOrigin = {left: this.gridStartX * this.numColumns * this.cellWidth, top: this.gridStartY};
 
     console.log({
@@ -466,7 +466,6 @@ class Dropper {
         }
       }
     });
-    
   }
 
   updateCorpusContainer() {
@@ -523,6 +522,20 @@ class Dropper {
     await soundManager.initialize();
   }
 
+  onMove() {
+
+    let newLeft = this.getColumnRect(this.state.curX, 0).left;
+    let newTop  = this.state.currentBlock.offsetTop;
+
+    this.state.currentBlockLeft = newLeft;
+
+    this.drawCurColumn(this.state.curX);
+
+    // resizeToken(this.state.currentBlock, this.columnWidths[this.state.curX], this.columnHeights[0]);
+    moveTo(this.state.currentBlock, newLeft, newTop, this.arrowSpeed, false, 'ease-in-out');
+    this.moveTokenChain({left: newLeft, top: newTop});
+  }
+
 
   moveRight() {
     if (this.state.curX == this.numColumns - 1) {
@@ -531,13 +544,8 @@ class Dropper {
       this.state.curX += 1;
     }
 
-    let newLeft = this.getColumnRect(this.state.curX, 0).left;
-    let newTop  = this.state.currentBlock.offsetTop;
+    this.onMove();
 
-    this.state.currentBlockLeft = newLeft;
-    // resizeToken(this.state.currentBlock, this.columnWidths[this.state.curX], this.columnHeights[0]);
-    moveTo(this.state.currentBlock, newLeft, newTop, this.arrowSpeed, false, 'ease-in-out');
-    this.moveTokenChain({left: newLeft, top: newTop});
   }
 
   moveLeft() {
@@ -546,13 +554,8 @@ class Dropper {
     } else {
       this.state.curX -= 1;
     }
-    let newLeft = this.getColumnRect(this.state.curX, 0).left;
-    let newTop  = this.state.currentBlock.offsetTop;
-
-    this.state.currentBlockLeft = newLeft;
-    // resizeToken(this.state.currentBlock, this.columnWidths[this.state.curX], this.columnHeights[0]);
-    moveTo(this.state.currentBlock, newLeft, newTop, this.arrowSpeed, false, 'ease-in-out');
-    this.moveTokenChain({left: newLeft, top: newTop});
+    
+    this.onMove();
   }
 
   watchArrowKeys() {
@@ -655,11 +658,11 @@ class Dropper {
     return tokenData;
   }
 
-  createCurrentMarkup() {
-    const markup = document.getElementById('current-markup-sprite').cloneNode(true);
-    markup.classList.add('current-markup');
-    return markup;
-  }
+  // createCurrentMarkup() {
+  //   const markup = document.getElementById('current-markup-sprite').cloneNode(true);
+  //   markup.classList.add('current-markup');
+  //   return markup;
+  // }
 
   nextBlockUp() {
 
@@ -675,10 +678,13 @@ class Dropper {
     this.state.curY = 0;
     this.state.currentBlock = this.state.tokenChain.pop();
     this.state.currentBlock.classList.add('current-token');
+
+    this.drawCurColumn(this.state.curX);
+
     
     // Add dots to current token
-    const markup = this.createCurrentMarkup();
-    this.state.currentBlock.appendChild(markup);
+    // const markup = this.createCurrentMarkup();
+    // this.state.currentBlock.appendChild(markup);
   }
 
   moveTokenChain(to) {
@@ -687,28 +693,34 @@ class Dropper {
     let curTop = to.top;
 
     // const offsetDist = this.cellHeight * 1.2;
-    const offsetDist = this.cellHeight;
     const center = {
       left: to.left,
       top: to.top - 500
     }
 
-    console.log(this.state.tokenChain.map(token => console.log('token', token.textContent)))
     for (let i = this.state.tokenChain.length - 1; i >= 0; i--) { // for each token
-
       let curToken = this.state.tokenChain[i];
       if (!curToken) {
         console.error("updateTokenChainLocations curToken is null", i, this.state.tokenChain);
         continue;
       }
 
-      curTop -= offsetDist;
+
+      let scale = (this.state.tokenChain.length - i ) ** 0.5;
+      let newHeight = this.cellHeight * scale;
+
+      curTop -= newHeight;
 
       let newLoc = {
         left: newLeft,
         top: curTop,
       }
-      let speed = 250 * (this.state.tokenChain.length + 1 - i);
+
+      let speed = 180 * (this.state.tokenChain.length + 1 - i) ** 0.5;
+
+      console.log({text: curToken.textContent, scale, i })
+
+      resizeToken(curToken, this.cellWidth, newHeight);
       moveTo(curToken, newLoc.left, newLoc.top, speed);
     }
 
@@ -737,6 +749,35 @@ class Dropper {
 
   //     moveTo(curToken, newLoc.left, newLoc.top, this.arrowSpeed, false, 'ease-in-out');
   //   } // end for each token
+  }
+
+  drawCurColumn(col) {
+    let columnElt;
+    // get it or create it 
+    columnElt = document.querySelector('.column');
+    if (!columnElt) {
+      columnElt = document.createElement('div');
+      columnElt.classList.add('column');
+      document.body.appendChild(columnElt);
+    }
+
+    let colColor;
+    if (this.state.currentBlock && this.state.currentBlock.classList.contains('delete')) {
+      colColor = "#e83713";
+    } else {
+      colColor =  "#ff9d14";
+    }
+
+    columnElt.style.setProperty('--col-color', colColor);
+
+    // draw the column
+    columnElt.style.left = this.getColumnLeft(col) + 'px';
+    // columnElt.style.top = this.getColumnTop(0) + 'px';
+    columnElt.style.top = '0px';
+    columnElt.style.width = this.columnWidths[col] + 'px';
+    // columnElt.style.height = this.columnHeights.reduce((sum, height) => sum + height, 0) + 'px';
+    // bottom of the screen
+    columnElt.style.height = '1000px';
   }
 
 
