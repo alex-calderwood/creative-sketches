@@ -52,7 +52,7 @@ class Worder {
         this.words = {}; // {id: {word: "word", x: 0, y: 0, size: 0, wordWidth: 0}}
         this.wordOrder = []; // [id, id, id]
         this._nextWordID = 0;
-        this.guitarNoteRange = [40, 89];
+        this.guitarNoteRange = [40, 89]; // The range of midi signals that correspond to guitar notes
     }
 
     noteToWords(note) {

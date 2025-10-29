@@ -1,5 +1,4 @@
-python make_index.py .
-python server.py 
+python -m http.server 8101
 
-open https://localhost:8101/html/instrument_study_1.html
+open http://[::]:8101/html/instrument_study_1.html
 
