@@ -53,10 +53,6 @@ class ControlManager {
     for (const [action, handler] of Object.entries(actionMap)) {
       this.addAction(action, handler);
     }
-    
-    // Generate a summary of mapped actions
-    this.summarizeActionMappings();
-    
     return this;
   }
   
@@ -107,75 +103,3 @@ class ControlManager {
     return false;
   }
 }
-
-  
-/**
- * Arrow-specific control manager for tetris-like games
- * Handles moveLeft, moveRight, moveUp, moveDown, and drop actions
- */
-class ArrowControlManager extends ControlManager {
-  constructor(game) {
-    super();
-    this.game = game;
-  }
-
-  initialize() {
-    // Set up event listeners for game actions
-    this.setupGameHandlers();
-    return this;
-  }
-
-  setupGameHandlers() {
-    // Use the new declareActions method to set up all handlers at once
-    this.declareActions({
-      'Left': this.onMoveLeft.bind(this),
-      'Right': this.onMoveRight.bind(this),
-      'Up': this.onMoveUp.bind(this),
-      'Down': this.onMoveDown.bind(this),
-      'Drop': this.onDrop.bind(this)
-    });
-  }
-
-  /**
-   * Handler for Left action
-   * @param {Object} data - The input data
-   */
-  onMoveLeft(data) {
-    // To be implemented
-  }
-
-  /**
-   * Handler for Right action
-   * @param {Object} data - The input data
-   */
-  onMoveRight(data) {
-    // To be implemented
-  }
-
-  /**
-   * Handler for Up action
-   * @param {Object} data - The input data
-   */
-  onMoveUp(data) {
-    // To be implemented
-  }
-
-  /**
-   * Handler for Down action
-   * @param {Object} data - The input data
-   */
-  onMoveDown(data) {
-    // To be implemented
-  }
-
-  /**
-   * Handler for Drop action
-   * @param {Object} data - The input data
-   */
-  onDrop(data) {
-    // To be implemented
-  }
-}
-
-  // Export the classes
-  export { ControlManager, ArrowControlManager };

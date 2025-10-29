@@ -692,50 +692,14 @@ class Dropper {
     this.drawCurLocation();
   }
 
-  moveRight() {
-    this.state.didDrop = false;
-    this.moveCurrent(1, 0);
-    this.drawMove();
-    this.onStart();
-  }
-
-  moveLeft() {
-    this.state.didDrop = false;
-    this.moveCurrent(-1, 0);
-    this.drawMove();
-    this.onStart();
-  }
-
-  moveUp() {
-    this.state.didDrop = false;
-    this.moveCurrent(0, -1);
-    this.drawMove();
-    this.onStart();
-  }
-
-  moveDown() {
-    this.state.didDrop = false;
-    this.moveCurrent(0, 1);
-    this.drawMove();
-    this.onStart();
-  }
 
   watchArrowKeys() {
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'ArrowRight') {
-        this.moveRight();
-      } else if (event.key === 'ArrowLeft') {
-        this.moveLeft();
-      } else if (event.key === 'ArrowDown') {
-        this.moveDown();
-      } else if (event.key === 'ArrowUp') {
-        this.moveUp();
-      } else if (event.key === ' ') {
-        this.drop();
-      } else if (event.key === 'ArrowUp') {
-        // this.addColToGrid(this.state.curX);
-      }
-    });
+    // const controlManager = new ArrowControls(this);
+    // const keyboardMapper = new KeyboardMapper().initialize();
+
+    const controller = new ArrowControls(this);
+    const keyboardMapper = new KeyboardMapper().initialize();
+    keyboardMapper.setController(controller);
   }
 
   watchSwipes() {
@@ -891,46 +855,7 @@ class Dropper {
   }
 
 
-  // Drop a block onto the grid and apply any necessary effects
-  drop() {
-    let element = this.state.currentBlock;
-    if (element == null) {
-      console.error("Attempting to drop null element", element)
-    }
-
-    this.state.didDrop = true;
-    this.drawCurLocation();
-
-    // Remove current-token class and markup
-    element.classList.remove('current-token');
-    const markup = element.querySelector('.current-markup');
-    if (markup) markup.remove();
-
-    // drop the block / apply animation
-    if (element.classList.contains('delete')) {
-      this.delete(this.state.curX, this.state.curY);
-      this.state.currentBlock.remove();
-    } else if (element.classList.contains('constraint')) {
-      this.applyConstraint(this.state.curX, this.state.curY);
-    } else { // a word token
-      this.updateGrid(element);
-    }
-    
-    if (this.state.curY != 0) {
-      this.moveCurrent(0, -1);
-    }
-
-    this.nextBlockUp(); // fill the token chain and set current block
-
-
-    if (this.isGridFull()) {
-      this.endGame();
-      return;
-    }
-    this.printState();
-
-    soundManager.playSound('woof');
-  }
+ 
 
   // collectCompletedTokens(row) {
   //   let completedTokens = [];
