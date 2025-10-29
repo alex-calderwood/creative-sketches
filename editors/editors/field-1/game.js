@@ -68,8 +68,8 @@ class Dropper {
     this.numRows = 12;
 
     // Grid positioning
-    this.gridStartX = 200;
-    this.gridStartY = 300;
+    this.gridStartX = 100;
+    this.gridStartY = 100;
     this.gridEndGap = 40;
     this.gridWidth = window.innerWidth - this.gridStartX;
     this.gridHeight = window.innerHeight - this.gridStartY - this.gridEndGap;
@@ -80,11 +80,11 @@ class Dropper {
 
     // numColumns length, filled with 
     this.columnWidths = Array(this.numColumns).fill(this.cellWidth);
-    this.columnHeights = Array(this.numRows).fill(this.cellHeight);
+    this.rowHeights = Array(this.numRows).fill(this.cellHeight);
 
     this.probabilities = {
       delete: 0.25,
-      constraint: 0.2,
+      constraint: 0,
       token: -1,
     }
     this.numInitialConstraints = 0;
@@ -139,7 +139,14 @@ class Dropper {
       };
 
       // Create the block element
-      const blockElement = createBlockAt(anyBlock, this.getColumnLeft(x), this.getColumnTop(this.numRows - 1), this.columnWidths[x], this.columnHeights[0], this.colorBy);
+      const blockElement = createBlockAt(
+        anyBlock, 
+        this.getColumnLeft(x), 
+        this.getColumnTop(this.numRows - 1), 
+        this.columnWidths[x], 
+        this.rowHeights[0], 
+        this.colorBy
+      );
       
       // Set it as a constraint for this column
       if (this.state.constraints[x]) {
@@ -158,7 +165,7 @@ class Dropper {
     this.cellHeight = this.gridHeight / this.numRows;
     this.cellWidth = this.gridWidth / this.numColumns;
     this.columnWidths = Array(this.numColumns).fill(this.cellWidth);
-    this.columnHeights = Array(this.numRows).fill(this.cellHeight);
+    this.rowHeights = Array(this.numRows).fill(this.cellHeight);
 
     // Clear current game state if it exists
     if (this.state) {
@@ -199,9 +206,10 @@ class Dropper {
       currentBlockTop: this.gridStartY,
       grid: Array(this.numColumns).fill().map(() => Array(this.numRows).fill(null)),
       tokenChain: [],
-      constraints: Array(this.numColumns).fill(null),
+      constraints: Array(this.numColumns).fill().map(() => Array(this.numRows).fill(null)),
       blockHistory: [],
-      gameOver: false
+      gameOver: false,
+      didDrop: false,
     };
 
     this.completedTokensTop = 20;
@@ -231,33 +239,46 @@ class Dropper {
     }
 
     // Initialize constraints
-    this.initializeAnyConstraints();
+    // this.initializeAnyConstraints();
+
+    this.nextBlockUp();
   }
 
   getColumnWidth(x) {
     return this.columnWidths[x];
   }
 
-  getColumnHeight(y) {
-    return this.columnHeights[y];
-  }
 
   getColumnLeft(x) {
     return this.gridStartX + this.columnWidths.slice(0, x).reduce((sum, width) => sum + width, 0);
   }
 
-  getColumnTop(y) {
-    return this.gridStartY + this.columnHeights.slice(0, y).reduce((sum, height) => sum + height, 0);
+  // getColumnTop(y) {
+  //   return this.gridStartY + this.columnHeights.slice(0, y).reduce((sum, height) => sum + height, 0);
+  // }
+
+
+  // getColumnHeight(y) {
+  //   return this.columnHeights[y];
+  // }
+
+  getRowTop(y) {
+    return this.gridStartY + this.rowHeights.slice(0, y).reduce((sum, height) => sum + height, 0);
   }
 
-  getColumnRect(x, y) {
+  getRowHeight(y) {
+    return this.rowHeights[y];
+  }
+
+  getRect(x, y) {
+    // console.log({x, y, top: this.getColumnTop(y),});
     return {
       width: this.getColumnWidth(x),
-      height: this.getColumnHeight(y),
+      height: this.getRowHeight(y),
       left: this.getColumnLeft(x),
-      top: this.getColumnTop(y),
+      top: this.getRowTop(y),
       right: this.getColumnLeft(x + 1), // we can optimize this
-      bottom: this.getColumnTop(y + 1),
+      bottom: this.getRowTop(y + 1),
     }
   }
 
@@ -627,40 +648,58 @@ class Dropper {
     await soundManager.initialize();
   }
 
-  onMove() {
-
-    let newLeft = this.getColumnRect(this.state.curX, 0).left;
-    let newTop  = this.state.currentBlock.offsetTop;
-
-    this.state.currentBlockLeft = newLeft;
-
-    this.drawCurColumn(this.state.curX);
-
-    // resizeToken(this.state.currentBlock, this.columnWidths[this.state.curX], this.columnHeights[0]);
-    moveTo(this.state.currentBlock, newLeft, newTop, this.arrowSpeed, false, 'ease-in-out');
-    this.moveTokenChain({left: newLeft, top: newTop});
-  }
-
-
-  moveRight() {
-    if (this.state.curX == this.numColumns - 1) {
+  moveCurrent(dx, dy) {
+    this.state.curX += dx;
+    this.state.curY += dy;
+    
+    if (this.state.curX < 0) {
+      this.state.curX = this.numColumns - 1;
+    } else if (this.state.curX > this.numColumns - 1) {
       this.state.curX = 0;
-    } else {
-      this.state.curX += 1;
     }
 
-    this.onMove();
+    if (this.state.curY < 0) {
+      this.state.curY = this.numRows - 1;
+    } else if (this.state.curY > this.numRows - 1) {
+      this.state.curY = 0;
+    }
 
+    console.log({dx, dy, x: this.state.curX, y :this.state.curY})
+
+    let {left, top} = this.getRect(this.state.curX, this.state.curY);
+    this.state.currentBlockLeft = left;
+    this.state.currentBlockTop = top;
+  }
+
+  drawMove() {
+    let {currentBlockLeft: left, currentBlockTop: top } = this.state;
+    moveTo(this.state.currentBlock, left, top, this.arrowSpeed, false, 'ease-in-out');
+    this.doMoveTokenChain();
+    this.drawCurLocation();
+  }
+
+  moveRight() {
+    this.state.didDrop = false;
+    this.moveCurrent(1, 0);
+    this.drawMove();
   }
 
   moveLeft() {
-    if (this.state.curX == 0) {
-      this.state.curX = this.numColumns - 1;
-    } else {
-      this.state.curX -= 1;
-    }
-    
-    this.onMove();
+    this.state.didDrop = false;
+    this.moveCurrent(-1, 0);
+    this.drawMove();
+  }
+
+  moveUp() {
+    this.state.didDrop = false;
+    this.moveCurrent(0, -1);
+    this.drawMove();
+  }
+
+  moveDown() {
+    this.state.didDrop = false;
+    this.moveCurrent(0, 1);
+    this.drawMove();
   }
 
   watchArrowKeys() {
@@ -669,8 +708,12 @@ class Dropper {
         this.moveRight();
       } else if (event.key === 'ArrowLeft') {
         this.moveLeft();
-      } else if (event.key === 'ArrowDown' || event.key === ' ') {
-        this.dropBlock(this.state.currentBlock);
+      } else if (event.key === 'ArrowDown') {
+        this.moveDown();
+      } else if (event.key === 'ArrowUp') {
+        this.moveUp();
+      } else if (event.key === ' ') {
+        this.drop();
       } else if (event.key === 'ArrowUp') {
         // this.addColToGrid(this.state.curX);
       }
@@ -706,7 +749,9 @@ class Dropper {
           this.moveLeft();
         }
       } else if (Math.abs(deltaY) > swipeThreshold && deltaY > 0) {
-        this.dropBlock(this.state.currentBlock);
+        this.moveUp();
+      } else if (Math.abs(deltaY) > swipeThreshold && deltaY < 0) {
+        this.moveDown();
       }
     });
   }
@@ -718,25 +763,29 @@ class Dropper {
       // this.dropToken(this.state.currentToken);
     } else {
       // Check if grid is full before generating next block
-      if (this.isGridFull()) {
-        this.endGame();
-        return;
-      }
-      this.nextBlockUp();
-      this.printState();
+      // if (this.isGridFull()) {
+      //   this.endGame();
+      //   return;
+      // }
+      // this.nextBlockUp();
+      // this.printState();
     }
   }
 
   printState() {
-    let line = this.bottomLine();
-    let tokens = line.map(token => token == null ? '' : token.textContent);
-    console.log("Current line:", tokens);
+    // let s = {...this.state};
 
-    let constraints =  this.targetConstraints();
-    let constraintValues = this.getConstraintsFromWordsInRow(this.numRows - 1);
+    console.log("state", this.state)
+    // let line = this.bottomLine();
+    // let tokens = line.map(token => token == null ? '' : token.textContent);
+    // console.log("Current line:", tokens);
 
-    console.log("Line constraints", constraintValues);
-    console.log("Target constraints:", constraints);
+    // let constraints =  this.targetConstraints();
+    // let constraintValues = this.getConstraintsFromWordsInRow(this.numRows - 1);
+
+    // console.log("Line constraints", constraintValues);
+    // console.log("Target constraints:", constraints);
+    // console.log("Current Block", this.state.curX, this.state.curY);
   }
 
   generateNextBlockData() {
@@ -744,12 +793,12 @@ class Dropper {
     let blockType =  isBeginning ? 'constraint' : roll(this.probabilities);
 
     // if we are using the pos strategy, update the constraint 
-    if (this.corpus.selectionStrategy == "pos") {
-      let constraints = this.targetConstraints();
-      constraints = constraints.filter(constraint => constraint != null);
-      console.log("Constraints", constraints);
-      this.corpus.selectionStrategy("pos", {tokenPOSOrder: constraints});
-    }
+    // if (this.corpus.selectionStrategy == "pos") {
+    //   let constraints = this.targetConstraints();
+    //   constraints = constraints.filter(constraint => constraint != null);
+    //   console.log("Constraints", constraints);
+    //   this.corpus.selectionStrategy("pos", {tokenPOSOrder: constraints});
+    // }
 
     let tokenData;
     switch (blockType) {
@@ -777,7 +826,6 @@ class Dropper {
   // }
 
   nextBlockUp() {
-
     // fill up the token chain with new tokens from the corpus
     while (this.state.tokenChain.length < this.tokenChainLength) {
       let blockData = this.generateNextBlockData();
@@ -786,28 +834,19 @@ class Dropper {
       this.state.tokenChain.unshift(blockElement);
     }
 
-    // pop the last token off the token chain and set it as the current token
-    this.state.curY = 0;
     this.state.currentBlock = this.state.tokenChain.pop();
     this.state.currentBlock.classList.add('current-token');
-
-    this.drawCurColumn(this.state.curX);
-
-    
-    // Add dots to current token
-    // const markup = this.createCurrentMarkup();
-    // this.state.currentBlock.appendChild(markup);
   }
 
-  moveTokenChain(to) {
-    let from = this.tokenChainOrigin;
-    let newLeft = to.left;
-    let curTop = to.top;
 
-    // const offsetDist = this.cellHeight * 1.2;
-    const center = {
+  doMoveTokenChain() {
+    let from = this.tokenChainOrigin;
+    // let to = {left: this.state.currentBlockLeft, top: this.state.currentBlockTop}
+    let to = {left: this.gridStartX, top: this.gridStartY - this.cellHeight }
+
+    let newLoc = {
       left: to.left,
-      top: to.top - 500
+      top: to.top,
     }
 
     for (let i = this.state.tokenChain.length - 1; i >= 0; i--) { // for each token
@@ -817,24 +856,14 @@ class Dropper {
         continue;
       }
 
-
-      let scale = (this.state.tokenChain.length - i ) ** 0.5;
-      let newHeight = this.cellHeight * scale;
-
-      curTop -= newHeight;
-
-      let newLoc = {
-        left: newLeft,
-        top: curTop,
-      }
+      newLoc.left += this.cellWidth;
 
       let speed = 180 * (this.state.tokenChain.length + 1 - i) ** 0.5;
-
-      console.log({text: curToken.textContent, scale, i })
-
-      resizeToken(curToken, this.cellWidth, newHeight);
       moveTo(curToken, newLoc.left, newLoc.top, speed);
     }
+
+    console.log('5 did move token chain', to)
+
 
   // updateTokenChainLocationsOld(end) {
   //   let start = this.tokenChainOrigin;
@@ -863,220 +892,114 @@ class Dropper {
   //   } // end for each token
   }
 
-  drawCurColumn(col) {
-    let columnElt;
+  drawCurLocation() {
+    let elt;
+    let {curX: x, curY: y} = this.state;
+
     // get it or create it 
-    columnElt = document.querySelector('.column');
-    if (!columnElt) {
-      columnElt = document.createElement('div');
-      columnElt.classList.add('column');
-      document.body.appendChild(columnElt);
+    elt = document.querySelector('.current-highlight');
+    if (!elt) {
+      elt = document.createElement('div');
+      elt.classList.add('current-highlight');
+      document.body.appendChild(elt);
     }
 
     let colColor;
-    if (this.state.currentBlock && this.state.currentBlock.classList.contains('delete')) {
+
+    if (this.state.currentBlock == null) {
+      colColor = 'transparent';
+    } else if ( this.state.currentBlock.classList.contains('delete')) {
       colColor = DELETE_COLOR;
-    } else {
+    } else if (this.state.currentBlock.classList.contains('constraint')) {
+      colColor = this.state.currentBlock.style.getPropertyValue('--data-color');
+    }
+    else {
       colColor =  "#ff9d14";
     }
 
-    columnElt.style.setProperty('--col-color', colColor);
+    elt.style.setProperty('--col-color', colColor);
 
     // draw the column
-    columnElt.style.left = this.getColumnLeft(col) + 'px';
-    columnElt.style.top = '0px';
-    columnElt.style.width = this.columnWidths[col] + 'px';
-    // bottom of the screen
-    columnElt.style.height = '1000px';
+    elt.style.left = this.state.currentBlockLeft + 'px';
+    elt.style.top = this.state.currentBlockTop + 'px';
+    elt.style.width = this.columnWidths[x] + 'px';
+    elt.style.height = this.rowHeights[y] + 'px';
+
+    if (this.state.didDrop) {
+      elt.style.scale = 0;
+    } else {
+      elt.style.scale = 1;
+    }
   }
 
 
-  dropBlock(element) {
+  // Drop a block onto the grid and apply any necessary effects
+  drop() {
+    let element = this.state.currentBlock;
     if (element == null) {
       console.error("Attempting to drop null element", element)
     }
+
+    this.state.didDrop = true;
+    this.drawCurLocation();
 
     // Remove current-token class and markup
     element.classList.remove('current-token');
     const markup = element.querySelector('.current-markup');
     if (markup) markup.remove();
 
-    let doCycle = false;
-    let dropTime = 0;
-
     // drop the block / apply animation
     if (element.classList.contains('delete')) {
-      this.applyDelete(this.state.curX);
+      this.delete(this.state.curX, this.state.curY);
       this.state.currentBlock.remove();
-      doCycle = true;
     } else if (element.classList.contains('constraint')) {
-      this.applyConstraint(this.state.curX);
-      doCycle = true;
-    } else { // a token
-      [doCycle, dropTime] = this.dropAndUpdateGrid(element);
+      this.applyConstraint(this.state.curX, this.state.curY);
+    } else { // a word token
+      this.updateGrid(element);
     }
-
-    if (doCycle) {
-      let loc = {left: this.state.currentBlockLeft, top: this.state.currentBlockTop};
-      this.moveTokenChain(loc);
-    }
-
-    // reset the token
-    if (this.state.currentBlock && doCycle) {
-      this.state.currentBlock = null; 
-    }
-
-    // Check for completed lines
-    let constraintCompletedState = this.getCompletedConstraints();
-    let completedLines = this.getCompletedLines(constraintCompletedState);
-
-    // Update the visuals - don't show the ::after for completed 
-    this.updateConstraintVisuals(constraintCompletedState);
-
-    if (completedLines && completedLines.length > 0) {
-      console.log('completed lines', completedLines);
-      // Play line complete sound
-      setTimeout(() => {
-        this.moveCompletedLine(completedLines);
-        soundManager.playSound('woof');
-
-      }, dropTime);
-    }
-  }
-
-  moveCompletedLine(completedLines) {
-    // Sort completed lines from bottom to top to avoid conflicts
-    completedLines.sort((a, b) => b - a);
     
-    for (let row of completedLines) {
-      let completedTokens = this.collectCompletedTokens(row);
-      this.removeCompletedTokensFromGrid(row);
-      this.shiftTokensDown(row);
-      this.animateCompletedTokens(completedTokens);
+    if (this.state.curY != 0) {
+      this.moveCurrent(0, -1);
     }
 
-    // Show submit button when a line is completed
-    if (completedLines && completedLines.length > 0) {
-      this.updateSubmitButtonVisibility();
+    this.nextBlockUp(); // fill the token chain and set current block
+
+
+    if (this.isGridFull()) {
+      this.endGame();
+      return;
     }
+    this.printState();
+
+    soundManager.playSound('woof');
   }
 
-  collectCompletedTokens(row) {
-    let completedTokens = [];
-    for (let x = 0; x < this.numColumns; x++) {
-      let token = this.state.grid[x][row];
-      if (token) {
-        completedTokens.push({ token, x, y: row });
-      }
-    }
-    // remove the _ and replace with spaces
-    completedTokens = completedTokens.map((token) => {
-      if (token.token.textContent == '_') {
-        token.token.textContent = ' ';
-      }
-      return token;
-    });
+  // collectCompletedTokens(row) {
+  //   let completedTokens = [];
+  //   for (let x = 0; x < this.numColumns; x++) {
+  //     let token = this.state.grid[x][row];
+  //     if (token) {
+  //       completedTokens.push({ token, x, y: row });
+  //     }
+  //   }
+  //   // remove the _ and replace with spaces
+  //   completedTokens = completedTokens.map((token) => {
+  //     if (token.token.textContent == '_') {
+  //       token.token.textContent = ' ';
+  //     }
+  //     return token;
+  //   });
     
 
-    return completedTokens;
-  }
+  //   return completedTokens;
+  // }
 
-  removeCompletedTokensFromGrid(row) {
-    for (let x = 0; x < this.numColumns; x++) {
-      this.state.grid[x][row] = null;
-    }
-  }
+  // removeCompletedTokensFromGrid(row) {
+  //   for (let x = 0; x < this.numColumns; x++) {
+  //     this.state.grid[x][row] = null;
+  //   }
+  // }
 
-  shiftTokensDown(row) {
-    for (let y = row - 1; y >= 0; y--) {
-      for (let x = 0; x < this.numColumns; x++) {
-        let token = this.state.grid[x][y];
-        if (token) {
-          let newY = y + 1;
-          this.state.grid[x][newY] = token;
-          this.state.grid[x][y] = null;
-          
-          let newTop = this.getColumnTop(newY);
-          moveTo(token, token.offsetLeft, newTop, this.dropTimePerBox);
-        }
-      }
-    }
-  }
-
-  animateCompletedTokens(completedTokens) {
-    // Create a container for completed tokens if it doesn't exist
-    if (!this.completedTokensContainer) {
-      const containerWrapper = document.createElement('div');
-      containerWrapper.classList.add('completed-wrapper');
-      
-      this.completedTokensContainer = document.createElement('div');
-      this.completedTokensContainer.classList.add('completed-container');
-      
-      // Move submit button inside wrapper
-      const submitBtn = document.getElementById('submit-poem');
-      if (submitBtn) {
-        submitBtn.remove();
-        containerWrapper.appendChild(this.completedTokensContainer);
-        containerWrapper.appendChild(submitBtn);
-        document.body.appendChild(containerWrapper);
-      } else {
-        containerWrapper.appendChild(this.completedTokensContainer);
-        document.body.appendChild(containerWrapper);
-      }
-    }
-
-    // Create permanent tokens and measure their natural positions
-    const permanentTokens = this.createPermanentTokens(completedTokens);
-    const tokenPositions = permanentTokens.map(token => {
-      const rect = token.getBoundingClientRect();
-      return { left: rect.left, top: rect.top };
-    });
-    
-    // Hide the permanent tokens
-    permanentTokens.forEach(token => token.style.opacity = '0');
-    
-    // Animate original tokens to those positions
-    completedTokens.forEach(({ token }, index) => {
-      token.classList.remove('block');
-      token.classList.add('word');
-      const position = tokenPositions[index];
-      moveTo(token, position.left, position.top, this.completionTime, true, 'ease-out');
-    });
-
-    // Show the permanent tokens and remove originals after animation
-    setTimeout(() => {
-      permanentTokens.forEach(token => token.style.opacity = '1');
-      this.removeOriginalTokens(completedTokens);
-    }, this.completionTime);
-
-    // Move down for the next completed line
-    this.completedTokensTop += this.completedTokensLineHeight;
-  }
-
-  createPermanentTokens(completedTokens) {
-    const permanentTokens = [];
-    completedTokens.forEach(({ token }, index) => {
-      const newToken = document.createElement('div');
-      newToken.textContent = token.textContent;
-      newToken.classList.add('inline-word');
-      
-      this.completedTokensContainer.appendChild(newToken);
-      permanentTokens.push(newToken);
-      
-      // Add a space after each token except the last one
-      if (index < completedTokens.length - 1) {
-        const space = document.createElement('span');
-        space.textContent = ' ';
-        this.completedTokensContainer.appendChild(space);
-      }
-    });
-    
-    // Add a line break after each completed row
-    const lineBreak = document.createElement('br');
-    this.completedTokensContainer.appendChild(lineBreak);
-    
-    return permanentTokens;
-  }
 
   removeOriginalTokens(completedTokens) {
     completedTokens.forEach(({ token }) => {
@@ -1084,18 +1007,8 @@ class Dropper {
     });
   }
 
-  getCompletedLines(actualConstraints, targetConstraints) {
-    if (this.completedMode == 'full') {
-      return this.getFullLines();
-    } else if (this.completedMode == 'constraint') {
-      return this.getCompletedLinesFromConstraints(actualConstraints, targetConstraints);
-    }
-
-    return [];
-  }
-
   updateConstraintVisuals(completedConstraints) {
-    console.log('completed', {completedConstraints})
+    console.log('completed', completedConstraints)
     for (let i = 0; i < completedConstraints.completed.length; i++) {
       if (completedConstraints.completed[i]) {
         this.state.constraints[i].classList.add('completed');
@@ -1109,14 +1022,14 @@ class Dropper {
     return token ? token.getAttribute('data-constraint').toLowerCase() : null;
   }
 
-  getConstraintsFromWordsInRow(row) {
-    let constraints = [];
-    for (let x = 0; x < this.numColumns; x++) {
-      let token = this.state.grid[x][row];
-      constraints.push(this.getConstraintValue(token));
-    }
-    return constraints;
-  }
+  // getConstraintsFromWordsInRow(row) {
+  //   let constraints = [];
+  //   for (let x = 0; x < this.numColumns; x++) {
+  //     let token = this.state.grid[x][row];
+  //     constraints.push(this.getConstraintValue(token));
+  //   }
+  //   return constraints;
+  // }
 
   // Get the names of the current constraints
   targetConstraints() {
@@ -1142,17 +1055,29 @@ class Dropper {
   }
 
   getCompletedConstraints() {
-    let y = this.numRows - 1;
-    let actual = this.getConstraintsFromWordsInRow(y);
-    let target = this.targetConstraints();
     let completed = [];
-    for (let i = 0; i < target.length; i++) {
-      completed.push(this.checkConstraintSatisfied(actual[i], target[i]));
+    for (let x = 0; x < this.numColumns; x++) {
+      for (let y = 0; y < this.numRows; y++) {
+        let block = this.state.grid[x][y];
+        let constraint = this.state.constraints[x][y];
+
+        if (block) {
+          let actual = this.getConstraintValue(block)
+          let target = this.getConstraintValue(constraint)
+          completed.push(this.checkConstraintSatisfied(actual, target));
+        }
+        if (block && constraint) {
+          constraint.classList.add('filled');
+        } else if (constraint) {
+          constraint.classList.remove('filled');
+        }
+      }
     }
-
-
-    return {actual, target, completed};
+    return completed;
   }
+
+  //   return {actual, target, completed};
+  // }
 
   getCompletedLinesFromConstraints(constraintState) {
     let completedLines = [];
@@ -1183,29 +1108,25 @@ class Dropper {
     return completedLines;
   }
   
-  dropAndUpdateGrid(element) {
-    let x = this.state.curX;
-    let [y, collidedToken] = this.collide(x);
-    if (y < 0) {
-      console.log('no space to drop', x, y)
-      return [false, 0];
-    }
-
-    let newTop = this.getColumnTop(y);
-    
-    let dropTime = this.dropTimePerBox * Math.abs(element.offsetTop - newTop) / this.getColumnHeight(0);
-
-    // move the token to the bottom using a quadratic gravity
-    let quadratic = "cubic-bezier(0.5, 1, 0.89, 1)"
-    moveTo(element, this.state.currentBlockLeft, newTop, dropTime, false, quadratic);
+  updateGrid(element) {
+    let {curX: x, curY: y} = this.state;
+    this.delete(x, y);
     this.state.grid[x][y] = element;
 
-    // play a sound on drop
-    setTimeout(() => {
-      soundManager.playSound('rain/rain1');
-    }, dropTime);
+    console.log('2 updateGrid', x, y)
 
-    return [true, dropTime];
+    // let newTop = this.getColumnTop(y);
+    
+    // let dropTime = this.dropTimePerBox * Math.abs(element.offsetTop - newTop) / this.getColumnHeight(0);
+
+    // move the token to the bottom using a quadratic gravity
+    // let quadratic = "cubic-bezier(0.5, 1, 0.89, 1)"
+    // moveTo(element, this.state.currentBlockLeft, newTop, dropTime, false, quadratic);
+
+    // play a sound on drop
+    // setTimeout(() => {
+    //   soundManager.playSound('rain/rain1');
+    // }, dropTime);
   }
 
   addColToGrid(col) {
@@ -1213,7 +1134,7 @@ class Dropper {
     this.resizeColumn(col, newWidth);
     this.addColumn(col, newWidth);
     this.shrinkCurrentToken(newWidth);
-    this.dropBlock(this.state.currentBlock);
+    this.drop();
   }
 
   resizeColumn(col, width) {
@@ -1231,7 +1152,7 @@ class Dropper {
 
   resizeRow(row, height) {
     console.log(`Resizing row ${row} to height: ${height}`);
-    this.columnHeights[row] = height;
+    this.rowHeights[row] = height;
     let width = this.getColumnWidth(0);
 
     for (let x = 0; x < this.numColumns; x++) {
@@ -1267,59 +1188,35 @@ class Dropper {
     }
   }
 
-  applyConstraint(col) {
-    // we want to move this to the bottom
-    let y = this.numRows - 1;
+  applyConstraint(col, row) {
 
-    // remove prev constraint element
-    if (this.state.constraints[col]) {
-      this.state.constraints[col].remove();
+    // // remove prev constraint element
+    // if (this.state.constraints[col]) {
+    //   this.state.constraints[col].remove();
+    // }
+
+    // this.state.constraints[col] = this.state.currentBlock;
+
+    if (this.state.constraints[col][row]) {
+      this.state.constraints[col][row].remove();
     }
+    this.state.constraints[col][row] = this.state.currentBlock;
 
-    this.state.constraints[col] = this.state.currentBlock;
 
-
-    moveTo(this.state.currentBlock, this.state.currentBlockLeft, this.getColumnTop(y), this.dropTimePerBox);
+    // moveTo(this.state.currentBlock, this.state.currentBlockLeft, this.getColumnTop(y), this.dropTimePerBox);
 
     // this.state.currentBlock.remove();
   }
 
-  applyDelete(col) {
-    // Find the bottommost token in the column
-    let bottommostY = -1;
-    for (let y = this.numRows - 1; y >= 0; y--) {
-      if (this.state.grid[col][y] != null) {
-        bottommostY = y;
-        break;
-      }
-    }
-    
-    if (bottommostY == -1) {
-      console.log('no token to delete');
-      return;
-    }
-
-    // delete the bottommost token
-    this.removeTokenAt(col, bottommostY);
-
-    // shift each token down
-    for (let y = bottommostY - 1; y >= 0; y--) {
-      let token = this.state.grid[col][y];
-      if (token) {
-        this.state.grid[col][y + 1] = token;
-        this.state.grid[col][y] = null;
-        moveTo(token, token.offsetLeft, this.getColumnTop(y + 1), this.dropTimePerBox);
-      }
-    }
-  }
  
-  removeTokenAt(x, y) {
+  delete(x, y) {
     let removed = null
     let token = this.state.grid[x][y];
     if (token) {
       removed = token.remove();
     }
     this.state.grid[x][y] = null;
+    console.log('1 delete', x, y)
     return removed;
   }
 
@@ -1359,8 +1256,10 @@ let defaultCorpora = [
   // 'corpora/short/love_breton.txt', 
   // 'corpora/short/less_time.txt', 
   // 'corpora/books/nadja.txt',
-  'corpora/short/eis.txt',
-  'corpora/short/eis_wiki.txt',
+  // 'corpora/short/eis.txt',
+  // 'corpora/short/eis_wiki.txt',
+  'corpora/books/tale_of_two_cities_small.txt',
+  // 'corpora/books/tale_of_two_cities.txt',
 
   // uninteresting
   // 'corpora/short/art.txt', 

@@ -63,7 +63,10 @@ let MODES = ['pos', 'focused', 'gramatical', 'letters'];
 class Corpus {
   static DEFAULT_POS_ORDER = CLASSIC_POS_ORDER;
   
-    constructor(mode='pos') {
+    constructor(mode='pos', source='unkown') {
+      this.source = source;
+      this.selectionStrategy(mode);
+
       this.posLookup = {
         'linear': [],
         'random': [],
@@ -74,7 +77,6 @@ class Corpus {
       };
       this.posIndex = 0;
 
-      this.selectionStrategy(mode);
 
       this.doc = null;
       this.texts = [];
@@ -91,6 +93,7 @@ class Corpus {
     }
 
     async setCorpusFromFile(filename) {
+      this.source = filename;
       const assetsFolder = '/editors/assets';
       try {
         const filePath = `${assetsFolder}/${filename}`;
@@ -191,6 +194,8 @@ class Corpus {
       if (tokenObject.text) {
         tokenObject.text = tokenObject.text.replace(/[!"#$%&'()*+,./:;<=>?@[\]^`{|}~]/g, '');
       }
+
+      tokenObject.source = this.source;
 
       return tokenObject;
     }

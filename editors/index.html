@@ -275,13 +275,12 @@
         // Sort tags first alphabeetically
         let sortedTags = Object.keys(projectsByTag).sort();
         // Then, sort by our custom list (if not in the list, put at the end)
-        const customTagOrder = ['poetris', 'spellcheck', 'concrete', 'EIS'];
+        const customTagOrder = ['field', 'poetris', 'spellcheck', 'concrete', 'EIS'];
         sortedTags = sortedTags.sort((a, b) => {
             const aIndex = customTagOrder.indexOf(a);
             const bIndex = customTagOrder.indexOf(b);
             return (aIndex === -1 ? Infinity : aIndex) - (bIndex === -1 ? Infinity : bIndex);
         });
-        console.log('sorted', sortedTags);
         // Generate project cards grouped by tags
         const container = document.getElementById('projects-container');
         

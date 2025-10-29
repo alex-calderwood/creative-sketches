@@ -8,7 +8,7 @@
 
 // colorBy can be 'pos', 'type', or 'random'
 
-const DELETE_SCALE_MOD = {x: 0.18, y: 0.5};
+const DELETE_SCALE_MOD = {x: 0.1, y: 0.1};
 const I_SCALE_MOD = {x: 0.7, y: 1};
 
 function getScaleModifier(element) {
@@ -35,7 +35,7 @@ function getScaleModifier(element) {
 }
 
 const colorMap = {
-    'linear': { bg: '#ff0000', light: '#ff6666', dark: '#cc0000', darker: "#F0D3F7" },
+    'linear': { bg: '#ff0000', light: '#ff6666', dark: '#cc0000', darker: "#8e40d6" },
     'random': { bg: '#ff8800', light: '#ffaa44', dark: '#cc6600', darker: '#E4572E' }, 
 
     'noun': { bg: '#0000ff', light: '#6666ff', dark: '#0000cc', darker: '#EE6A6D' },
@@ -70,8 +70,6 @@ function createBlockAt(block, left, top, width, height, colorBy = "pos") {
         return null;
     }
 
-    console.log('createBlockAt', block);
-
     const newElement = document.createElement('div');
     newElement.classList.add('move');
     newElement.classList.add('block');
@@ -84,10 +82,6 @@ function createBlockAt(block, left, top, width, height, colorBy = "pos") {
     if (wordType === "constraint" && block.constraint) {
         let constraintType = block.constraint.type;
         let constraintValue = block.constraint.value;
-        // null out the any text
-        // if (constraintValue == 'word') {
-        //     constraintValue = '';
-        // }
         newElement.setAttribute('data-constraint', constraintValue);
         colorKey = constraintValue;
     } else {
@@ -114,12 +108,6 @@ function createBlockAt(block, left, top, width, height, colorBy = "pos") {
     blockWordElement.style.fontSize = `10px`;
 
     let additionalScaleMod = getScaleModifier(text);
-    console.log({
-        text: text,
-        textLength: text.length,
-        textCharCodes: Array.from(text).map(c => c.charCodeAt(0)),
-        additionalScaleMod: additionalScaleMod
-    });
 
     requestAnimationFrame(() => { // make sure it has rendered before measuring
         setTimeout(() => {
