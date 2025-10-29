@@ -250,11 +250,11 @@ class Dropper {
 
   setupControls() {
     // Instructions button
-    const instructionsBtn = document.getElementById('instructions-btn');
-    instructionsBtn.addEventListener('click', () => {
-      this.showInstructions();
-      instructionsBtn.blur(); // Remove focus after clicking
-    });
+    // const instructionsBtn = document.getElementById('instructions-btn');
+    // instructionsBtn.addEventListener('click', () => {
+    //   this.showInstructions();
+    //   instructionsBtn.blur(); // Remove focus after clicking
+    // });
 
     // Submit button
     const submitBtn = document.getElementById('submit-poem');
@@ -375,28 +375,28 @@ class Dropper {
       saveCorpusBtn.blur();
     });
 
-    // Instructions modal controls
-    const instructionsModal = document.getElementById('instructions-modal');
-    const closeInstructionsBtn = document.getElementById('close-instructions-modal');
-    const closeInstructionsBtnFooter = document.getElementById('close-instructions-btn');
+    // // Instructions modal controls
+    // const instructionsModal = document.getElementById('instructions-modal');
+    // const closeInstructionsBtn = document.getElementById('close-instructions-modal');
+    // const closeInstructionsBtnFooter = document.getElementById('close-instructions-btn');
 
-    // Close instructions modal handlers
-    closeInstructionsBtn.addEventListener('click', () => {
-      instructionsModal.style.display = 'none';
-      closeInstructionsBtn.blur();
-    });
+    // // Close instructions modal handlers
+    // closeInstructionsBtn.addEventListener('click', () => {
+    //   instructionsModal.style.display = 'none';
+    //   closeInstructionsBtn.blur();
+    // });
 
-    closeInstructionsBtnFooter.addEventListener('click', () => {
-      instructionsModal.style.display = 'none';
-      closeInstructionsBtnFooter.blur();
-    });
+    // closeInstructionsBtnFooter.addEventListener('click', () => {
+    //   instructionsModal.style.display = 'none';
+    //   closeInstructionsBtnFooter.blur();
+    // });
 
-    // Close instructions modal when clicking outside
-    instructionsModal.addEventListener('click', (e) => {
-      if (e.target === instructionsModal) {
-        instructionsModal.style.display = 'none';
-      }
-    });
+    // // Close instructions modal when clicking outside
+    // instructionsModal.addEventListener('click', (e) => {
+    //   if (e.target === instructionsModal) {
+    //     instructionsModal.style.display = 'none';
+    //   }
+    // });
 
     // Options modal controls
     const optionsBtn = document.getElementById('options-btn');
@@ -485,9 +485,9 @@ class Dropper {
     // Close any modal with Escape key
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
-        if (instructionsModal.style.display === 'flex') {
-          instructionsModal.style.display = 'none';
-        }
+        // if (instructionsModal.style.display === 'flex') {
+        //   instructionsModal.style.display = 'none';
+        // }
         if (optionsModal.style.display === 'flex') {
           optionsModal.style.display = 'none';
         }
@@ -543,10 +543,10 @@ class Dropper {
     }
   }
 
-  showInstructions() {
-    const modal = document.getElementById('instructions-modal');
-    modal.style.display = 'flex';
-  }
+  // showInstructions() {
+  //   const modal = document.getElementById('instructions-modal');
+  //   modal.style.display = 'flex';
+  // }
 
   isGridFull() {
     for (let x = 0; x < this.numColumns; x++) {
