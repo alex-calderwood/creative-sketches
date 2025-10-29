@@ -5,5 +5,6 @@
     "version": "1",
     "series": ["game", "field"],
     "url": "field-1",
-    "image": "field-1.png"
+    "image": "field/field-1.png",
+    "major": false
 }

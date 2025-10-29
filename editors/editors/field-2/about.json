@@ -1,9 +1,10 @@
 {
     "name": "Field",
-    "description": "A 2D grid branch of poetris",
+    "description": "Words come at you and you place them into a growing field or poem.",
     "notes": "",
     "version": "2",
-    "series": ["game", "field"],
-    "url": "field",
-    "image": "field-1.png"
+    "series": ["game", "field", "concrete"],
+    "url": "field-2",
+    "image": "field/age.png",
+    "major": true
 }
