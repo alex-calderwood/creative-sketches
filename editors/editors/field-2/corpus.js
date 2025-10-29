@@ -63,7 +63,10 @@ let MODES = ['pos', 'focused', 'gramatical', 'letters'];
 class Corpus {
   static DEFAULT_POS_ORDER = CLASSIC_POS_ORDER;
   
-    constructor(mode='pos') {
+    constructor(mode='focused', source='unknown') {
+      this.source = source;
+      this.selectionStrategy(mode);
+
       this.posLookup = {
         'linear': [],
         'random': [],
@@ -74,7 +77,6 @@ class Corpus {
       };
       this.posIndex = 0;
 
-      this.selectionStrategy(mode);
 
       this.doc = null;
       this.texts = [];
@@ -91,6 +93,7 @@ class Corpus {
     }
 
     async setCorpusFromFile(filename) {
+      this.source = filename;
       const assetsFolder = '/editors/assets';
       try {
         const filePath = `${assetsFolder}/${filename}`;
@@ -174,6 +177,7 @@ class Corpus {
     }
   
     getNextToken() {
+      console.log("next token", this.mode)
       let tokenObject = {};
       if (this.mode === 'pos') {
         tokenObject = this.getNextTokenPOS();
@@ -191,6 +195,8 @@ class Corpus {
       if (tokenObject.text) {
         tokenObject.text = tokenObject.text.replace(/[!"#$%&'()*+,./:;<=>?@[\]^`{|}~]/g, '');
       }
+
+      tokenObject.source = this.source;
 
       return tokenObject;
     }
@@ -273,9 +279,9 @@ class Corpus {
 
         if (this.posLookup[type] == null) {
           let validTypes = Object.keys(this.posLookup);
-          console.error('order', this.tokenPOSOrder);
-          console.error("validTypes", validTypes);
-          console.log('Invalid Type:', type);
+          console.error('Invalid Type:', type);
+          console.log('order', this.tokenPOSOrder);
+          console.log("validTypes", validTypes);
           type = 'random';
         }
         if (this.indexLookup[type] == null) {

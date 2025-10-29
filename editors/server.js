@@ -71,7 +71,6 @@ function getProjects() {
         try {
           const aboutData = JSON.parse(data);
           const image = getImagePathSmart(aboutData.image, dir);
-          console.log('dir', image, dir)
           resolve({ // resolve the outer Promise
             // Include any other fields that might be in the about.json
             ...aboutData,
