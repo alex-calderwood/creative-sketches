@@ -1,0 +1,10 @@
+{
+    "name": "Midi Experiment",
+    "description": "Words come at you and you place them into a growing field or poem.",
+    "notes": "",
+    "version": "1",
+    "series": ["game", "instrument", "sound"],
+    "url": "nonsynth-revival",
+    "image": "instrument.png",
+    "major": true
+}

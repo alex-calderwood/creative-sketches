@@ -719,7 +719,7 @@ function setup() {
     Object.assign(worder, phraseWorderMixin); // Add the mixin to the specific instance (order matters unf)
 
     sampleView = new SampleView(worder, [0, 0, width, height / 4]);
-    // guitar = new GuitarTracker();e
+    // guitar = new GuitarTracker();
     slidyWindow = new Multitrack([0, sampleView.loc[3], width, height / 4 + 200]);
     textLocation = [width - 100, slidyWindow.loc[3] + 200];
     maxTracksNum = (slidyWindow.loc[3] - slidyWindow.loc[1]) / slidyWindow.trackHeight;
