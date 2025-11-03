@@ -13,9 +13,15 @@ class InputMapper {
   /**
    * Register an input mapper with the control manager
    * @param {ControlManager} controller - The controller to use
+   * @returns {boolean} - Whether the controller was set successfully
    */
   setController(controller) {
+    if (!controller || typeof controller.executeAction !== 'function') {
+      console.error('Invalid controller: missing executeAction method');
+      return false;
+    }
     this.executeAction = controller.executeAction.bind(controller);
+    return true;
   }
 
   getActions() {

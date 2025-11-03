@@ -2,7 +2,8 @@
  * Central event manager for game controls using native EventTarget
  */
 class ControlManager {
-  constructor() {
+  constructor(game) {
+    this.game = game;
     this.inputMappers = [];
     // Map of player actions to handler functions
     // ie 'move up' -> moveUp()
@@ -15,10 +16,24 @@ class ControlManager {
    * @returns {ControlManager} - Returns this for method chaining
    */
   registerMapper(mapper) {
-    if (!this.inputMappers.includes(mapper)) {
-      this.inputMappers.push(mapper);
+    // Validate mapper parameter
+    if (!mapper || typeof mapper !== 'object') {
+      console.error('Invalid mapper: must be a valid InputMapper instance');
       return this;
     }
+    
+    // Check if mapper is already registered
+    if (!this.inputMappers.includes(mapper)) {
+      this.inputMappers.push(mapper);
+      
+      // Connect the mapper to this controller if it has a setController method
+      if (typeof mapper.setController === 'function') {
+        mapper.setController(this);
+      }
+      
+      return this;
+    }
+    
     console.warn(`Mapper ${mapper.constructor.name} already registered`);
     return this;
   }
@@ -95,11 +110,27 @@ class ControlManager {
    * @returns {boolean} - Whether the action was executed
    */
   executeAction(action, data = {}) {
+    // Validate action parameter
+    if (!action || typeof action !== 'string') {
+      console.error('Invalid action: must be a non-empty string');
+      return false;
+    }
+    
     // Run the appropriate action if it exists
     if (this.playerActions.has(action)) {
-      this.playerActions.get(action)(data);
-      return true;
+      try {
+        this.playerActions.get(action)(data);
+        return true;
+      } catch (error) {
+        console.error(`Error executing action "${action}":`, error);
+        return false;
+      }
+    } else {
+      // Only log as debug since this might be expected in some cases
+      if (this.playerActions.size > 0) {
+        console.debug(`Action not found: "${action}". Available actions: ${[...this.playerActions.keys()].join(', ')}`);
+      }
+      return false;
     }
-    return false;
   }
 }
