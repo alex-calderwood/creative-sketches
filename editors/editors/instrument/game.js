@@ -58,14 +58,14 @@ function resizeToken(element, width, height) {
 
 const DELETE_COLOR = "#e83713";
 
-class Dropper {
+class Game {
   constructor() {
     this.tokenElements = [];
     this.corpus = null;
     this.colorBy = 'pos'; // Default color by part of speech
 
-    this.numColumns = 20;
-    this.numRows = 20;
+    this.numColumns = 5;
+    this.numRows = 10;
 
     // Grid positioning
     this.gridStartX = 20;
@@ -126,6 +126,10 @@ class Dropper {
     this.completedTokensLineHeight = this.cellHeight;
   }
 
+  /* 
+    Mark that the player has taken some action
+
+  */
   onStart() {
     const controlIcons = document.getElementById('control-icons');
     if (controlIcons) {
@@ -206,7 +210,6 @@ class Dropper {
     // Set up controls and event listeners (only on first initialization)
     if (!options.isReset) {
       this.setupControls();
-      this.watchArrowKeys();
       this.watchSwipes();
       await this.initializeSounds();
       
@@ -249,12 +252,18 @@ class Dropper {
   }
 
   setupControls() {
-    // Instructions button
-    // const instructionsBtn = document.getElementById('instructions-btn');
-    // instructionsBtn.addEventListener('click', () => {
-    //   this.showInstructions();
-    //   instructionsBtn.blur(); // Remove focus after clicking
-    // });
+    this.controller = new FieldGameControls(this);
+    
+    // Initialize keyboard controls
+    this.keyboardMapper = new KeyboardMapper().initialize();
+    this.keyboardMapper.setController(this.controller);
+    
+    // Initialize MIDI controls
+    this.midiMapper = new MidiMapper();
+    this.midiMapper.initialize().then(() => {
+      this.midiMapper.setController(this.controller);
+      console.log('MIDI mapper initialized and connected to controller');
+    });
 
     // Submit button
     const submitBtn = document.getElementById('submit-poem');
@@ -690,16 +699,8 @@ class Dropper {
     moveTo(this.state.currentBlock, left, top, this.arrowSpeed, false, 'ease-in-out');
     this.drawTokenChain();
     this.drawCurLocation();
-  }
 
-
-  watchArrowKeys() {
-    // const controlManager = new ArrowControls(this);
-    // const keyboardMapper = new KeyboardMapper().initialize();
-
-    const controller = new ArrowControls(this);
-    const keyboardMapper = new KeyboardMapper().initialize();
-    keyboardMapper.setController(controller);
+    this.onStart(); // mark that the player has done something
   }
 
   watchSwipes() {
@@ -1137,9 +1138,9 @@ let defaultCorpora = [
   // 'corpora/short/eis.txt',
   // 'corpora/books/tale_of_two_cities.txt',
   // 'corpora/short/eis_wiki.txt',
-  'corpora/short/here.txt',
+  // 'corpora/short/here.txt',
   'corpora/books/tale_of_two_cities_small.txt',
-  'corpora/books/this_the_way_to_the_museyroom_finnegans_wake.txt'
+  'corpora/short/chapters/this_the_way_to_the_museyroom_finnegans_wake.txt',
 
   // uninteresting
   // 'corpora/short/art.txt', 
@@ -1165,6 +1166,6 @@ let defaultCorpus = getNewCorpus();
 
 // Wait for DOM to be fully loaded before initializing
 document.addEventListener('DOMContentLoaded', async () => {
-  let dropper = new Dropper();
-  await dropper.initialize({ corpusFile: defaultCorpus });
+  let game = new Game();
+  await game.initialize({ corpusFile: defaultCorpus });
 });

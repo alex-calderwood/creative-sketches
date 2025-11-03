@@ -4,10 +4,9 @@
  * Arrow-specific control manager for tetris-like games
  * Handles moveLeft, moveRight, moveUp, moveDown, and drop actions
  */
-class ArrowControls extends ControlManager {
+class FieldGameControls extends ControlManager {
     constructor(game) {
-      super();
-      this.game = game;
+      super(game);
   
       // Use the new declareActions method to set up all handlers at once
       this.declareActions({
@@ -15,7 +14,7 @@ class ArrowControls extends ControlManager {
         'Right': this.moveRight.bind(this),
         'Up': this.moveUp.bind(this),
         'Down': this.moveDown.bind(this),
-        'Drop': this.drop.bind(this)
+        'Drop': this.drop.bind(this),
       });
     }
     
@@ -23,28 +22,24 @@ class ArrowControls extends ControlManager {
       this.game.state.didDrop = false;
       this.game.moveCurrent(1, 0);
       this.game.drawMove();
-      this.game.onStart();
     }
   
     moveLeft() {
       this.game.state.didDrop = false;
       this.game.moveCurrent(-1, 0);
       this.game.drawMove();
-      this.game.onStart();
     }
   
     moveUp() {
       this.game.state.didDrop = false;
       this.game.moveCurrent(0, -1);
       this.game.drawMove();
-      this.game.onStart();
     }
   
     moveDown() {
       this.game.state.didDrop = false;
       this.game.moveCurrent(0, 1);
       this.game.drawMove();
-      this.game.onStart();
     }
   
      // Drop a block onto the grid and apply any necessary effects
