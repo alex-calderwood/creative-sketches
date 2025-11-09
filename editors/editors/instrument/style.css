@@ -172,8 +172,9 @@ body {
   transform-origin: center center; /* This will keep it centered when scaling */
   /* transition: transform 1s ease-in; */
   /* transition: scaleY 2s ease-in; */
+  /* animation: pulse-margin 2s ease-in-out infinite forwards; */
 }
- 
+
 .constraint {
   text-decoration: underline;
   position: relative;
@@ -274,44 +275,13 @@ body {
   font-weight: bold;
 }
 
-
 .move {
   position: absolute;
   font-family: "Goma";
   pointer-events: none;
-  z-index: 1000;
+  z-index: 1001;
 }
 
-
-@keyframes move {
-  0% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  30% { /* Equivalent to 1.5s when total duration is 5s */
-    transform: translateY(0);
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(var(--dX)) translateY(var(--dY)) scale(var(--S)) ;
-    opacity: 1
-  }
-}
-
-@keyframes fall {
-  0% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  30% { /* Equivalent to 1.5s when total duration is 5s */
-    transform: translateY(0);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(var(--distance));
-    opacity: 1
-  }
-}
 
 /* Default input and dropdown styles */
 input, select, .dropdown {

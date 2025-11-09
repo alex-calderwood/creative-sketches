@@ -50,6 +50,7 @@
   <script src="http://unpkg.com/tone"></script>
 
   <script src="utils.js"></script>
+  <script src="src/EventBus.js"></script>
   <script src="block.js"></script>
   <script src="controls/ControlManager.js"></script>
   <script src="controls/FieldGameControls.js"></script>
@@ -57,9 +58,24 @@
   <script src="controls/KeyboardMapper.js"></script>
   <script src="controls/MIDI.js"></script>
   <script src="controls/MidiMapper.js"></script>
+
+  <script src="readers/Reader.js"></script>
+  <script src="readers/TextReader.js"></script>
+  
+  <script src="corpus/Token.js"></script>
+  <script src="corpus/TextCorpus.js"></script>
+  <script src="corpus/WikiCorpus.js"></script>
+
+  <script src="select/ReaderSelect.js"></script>
+  <script src="select/WikiSelect.js"></script>
+
+  <script src="streams/TextStream.js"></script>
+  <script src="streams/TextStreamEntity.js"></script>
+  <script src="streams/TextStreamComponent.js"></script>
+
+
   <script src="sound.js"></script>
   <script src="lib/compromise.js"></script>
-  <script src="corpora/corpus.js"></script>
   <script src="game.js"></script>
   
   <!-- Instructions Modal -->
@@ -118,7 +134,7 @@
           <p class="option-description">Controls how often delete blocks (←) appear. Higher values create more dynamic, shifting compositions.</p>
         </div>
 
-        <div class="option-group">
+        <!-- <div class="option-group">
           <label for="mode">Content Strategy:</label>
           <select id="mode">
             <option value="pos">Part of Speech</option>
@@ -126,7 +142,7 @@
             <option value="focused" selected>Focused</option>
           </select>
           <p class="option-description">Choose how words are selected. Part of Speech selects words based on a grammatical pattern. Focused linearlly traverses words (matching the definition of the Focused Reader in The Reader's Project). Letters splits the text into letters rather than words.</p>
-        </div>
+        </div> -->
 
         <div class="option-group">
           <label for="color-by">Color By:</label>
