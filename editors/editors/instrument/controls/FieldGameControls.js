@@ -19,25 +19,24 @@ class FieldGameControls extends ControlManager {
     }
     
     moveRight() {
-      this.game.state.didDrop = false;
+      this.game.state.showCursor = false;
       this.game.moveCurrent(1, 0);
       this.game.drawMove();
     }
   
     moveLeft() {
-      this.game.state.didDrop = false;
+      this.game.state.showCursor = false;
       this.game.moveCurrent(-1, 0);
       this.game.drawMove();
     }
   
     moveUp() {
-      this.game.state.didDrop = false;
+      this.game.state.showCursor = false;
       this.game.moveCurrent(0, -1);
       this.game.drawMove();
     }
   
     moveDown() {
-      this.game.state.didDrop = false;
       this.game.moveCurrent(0, 1);
       this.game.drawMove();
     }
@@ -50,7 +49,7 @@ class FieldGameControls extends ControlManager {
       }
   
       this.game.state.didDrop = true;
-      this.game.drawCurLocation();
+      this.game.drawCursor();
   
       // Remove current-token class and markup
       element.classList.remove('current-token');
@@ -66,13 +65,10 @@ class FieldGameControls extends ControlManager {
       } else { // a word token
         this.game.updateGrid(element);
       }
-      
-      if (this.game.state.curY != 0) {
-        this.game.moveCurrent(0, -1);
-      }
+  
+      // if (this.game.state.curY != 0) { this.game.moveCurrent(0, -1); }
   
       this.game.nextBlockUp(); // fill the token chain and set current block
-  
   
       if (this.game.isGridFull()) {
         this.game.endGame();

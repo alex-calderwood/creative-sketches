@@ -61,12 +61,12 @@ function getColor(key) {
     return color;
 }
 
-function createBlockAt(block, left, top, width, height, colorBy = "pos") {
-    let text = block.text;
-    let wordType = block.type;
+function createBlockAt(token, left, top, width, height, colorBy = "pos") {
+    let text = token.text;
+    let wordType = token.type;
 
     if (!text || text === 'undefined') {
-        console.warn('createBlockAt called with invalid text:', block);
+        console.warn('createBlockAt called with invalid text:', token);
         return null;
     }
 
@@ -79,15 +79,15 @@ function createBlockAt(block, left, top, width, height, colorBy = "pos") {
     }
 
     let colorKey;
-    if (wordType === "constraint" && block.constraint) {
-        let constraintType = block.constraint.type;
-        let constraintValue = block.constraint.value;
+    if (wordType === "constraint" && token.constraint) {
+        let constraintType = token.constraint.type;
+        let constraintValue = token.constraint.value;
         newElement.setAttribute('data-constraint', constraintValue);
         colorKey = constraintValue;
     } else {
-        let blockType = block.type;
-        colorKey = block[colorBy] ||  blockType;
-        newElement.setAttribute('data-constraint', block?.pos || 'none');
+        let blockType = token.type;
+        colorKey = token[colorBy] ||  blockType;
+        newElement.setAttribute('data-constraint', token?.pos || 'none');
     }
 
     newElement.style.left = `${left}px`;
@@ -127,4 +127,12 @@ function createBlockAt(block, left, top, width, height, colorBy = "pos") {
     newElement.style.setProperty('--data-color', color.darker); // for pseudo-element styling
 
     return newElement;
+}
+
+function getBlockText(block) {
+    let blockWord = block.querySelector('.block-word');
+    if (!blockWord) {
+        return '';
+    }
+    return blockWord.textContent;
 }

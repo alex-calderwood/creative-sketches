@@ -61,14 +61,14 @@ const DELETE_COLOR = "#e83713";
 class Game {
   constructor() {
     this.tokenElements = [];
-    this.corpus = null;
+    this.reader = null;
     this.colorBy = 'pos'; // Default color by part of speech
 
-    this.numColumns = 5;
-    this.numRows = 10;
+    this.numColumns = 4;
+    this.numRows = 4;
 
     // Grid positioning
-    this.gridStartX = 20;
+    this.gridStartX = 200;
     this.gridStartY = 100;
     this.gridEndGapX = 20;
     this.gridEndGapY = 20;
@@ -98,14 +98,12 @@ class Game {
       currentBlockTop: this.gridStartY,
       // 2D array of elements
       grid: Array(this.numColumns).fill().map(() => Array(this.numRows).fill(null)),
-      tokenChain: [],
       constraints: Array(this.numColumns).fill(null),
       blockHistory: [],
     }
 
     // Token chain
-    this.tokenChainLength = 20;
-    this.tokenChainOrigin = {left: this.gridStartX * this.numColumns * this.cellWidth, top: this.gridStartY};
+    this.streamLength = 20;
 
     console.log({
       numColumns: this.numColumns,
@@ -121,7 +119,6 @@ class Game {
     this.completionTime = 1000; // ms
     this.arrowSpeed = 170; // ms
 
-    this.completedMode = 'constraint';
     this.completedTokensTop = 20;
     this.completedTokensLineHeight = this.cellHeight;
   }
@@ -148,12 +145,13 @@ class Game {
     this.columnWidths = Array(this.numColumns).fill(this.cellWidth);
     this.rowHeights = Array(this.numRows).fill(this.cellHeight);
 
+
+
     // Clear current game state if it exists
     if (this.state) {
       if (this.state.currentBlock) {
         this.state.currentBlock.remove();
       }
-      this.state.tokenChain.forEach(token => token.remove());
       
       // Clear grid
       for (let x = 0; x < this.state.grid.length; x++) {
@@ -162,19 +160,6 @@ class Game {
             this.state.grid[x][y].remove();
           }
         }
-      }
-
-      // Clear constraints
-      // this.state.constraints.forEach(row => {
-      //   row.forEach(constraint => { if (constraint) { constraint.remove(); } })
-      // });
-
-      // this.state.constraints.forEach()
-
-      // Clear completed tokens and container
-      if (this.completedTokensContainer) {
-        this.completedTokensContainer.remove();
-        this.completedTokensContainer = null;
       }
     }
 
@@ -186,26 +171,28 @@ class Game {
       currentBlockLeft: this.gridStartX,
       currentBlockTop: this.gridStartY,
       grid: Array(this.numColumns).fill().map(() => Array(this.numRows).fill(null)),
-      tokenChain: [],
       constraints: Array(this.numColumns).fill().map(() => Array(this.numRows).fill(null)),
       blockHistory: [],
       gameOver: false,
-      didDrop: false,
+      showCursor: true,
     };
 
     this.completedTokensTop = 20;
 
-    // Initialize corpus
-    let mode = options.mode ? options.mode : 'focused';
-    this.corpus = new Corpus(mode);
-    if (options.sourceText) {
-      this.corpus.texts = [options.sourceText];
-      this.corpus.updateFromTexts();
-    } else if (options.corpusFile) {
-      await this.corpus.setCorpusFromFile(options.corpusFile);
-    } else {
-      await this.corpus.setCorpusFromFile(defaultCorpus);
+    // Decide on a reader
+    this.reader = await new WikiSelect().getReader();
+    console.log('Loaded Reader:', this.reader);
+
+    if (this.stream) {
+      this.stream.clear();
     }
+    
+    // Initialize the text stream
+    this.streamLength = 20;
+    this.stream = new TextStreamEntity(this, 
+      new TextStream(this.streamLength, this.reader),
+      new ClassicDomTextStreamComponent(this)
+    );
 
     // Set up controls and event listeners (only on first initialization)
     if (!options.isReset) {
@@ -312,15 +299,6 @@ class Game {
       e.target.blur(); // Remove focus after selection
     });
     this.probabilities.delete = parseFloat(deleteRatioSelect.value);
-  
-    // Content strategy control
-    const contentStrategySelect = document.getElementById('mode');
-    contentStrategySelect.addEventListener('change', (e) => {
-      this.corpus.selectionStrategy(e.target.value);
-      console.log('New content strategy:', this.corpus.mode);
-      e.target.blur(); // Remove focus after selection
-    });
-    this.corpus.selectionStrategy(contentStrategySelect.value);
 
     // Color by control
     const colorBySelect = document.getElementById('color-by');
@@ -333,10 +311,6 @@ class Game {
   
     // Add corpus button handler
     const addCorpusBtn = document.getElementById('add-corpus-btn');
-    const saveCorpusBtn = document.getElementById('save-corpus');
-    
-    // Initialize corpus container with current texts
-    this.updateCorpusContainer();
 
     addCorpusBtn.addEventListener('click', () => {
       const container = document.getElementById('corpora-container');
@@ -363,26 +337,26 @@ class Game {
       addCorpusBtn.blur();
     });
 
-    // Save corpus handler
-    saveCorpusBtn.addEventListener('click', () => {
-      const container = document.getElementById('corpora-container');
-      const textareas = container.querySelectorAll('textarea');
-      const texts = [];
+    // // Save corpus handler
+    // saveCorpusBtn.addEventListener('click', () => {
+    //   const container = document.getElementById('corpora-container');
+    //   const textareas = container.querySelectorAll('textarea');
+    //   const texts = [];
       
-      textareas.forEach(textarea => {
-        const text = textarea.value.trim();
-        if (text) {
-          texts.push(text);
-        }
-      });
+    //   textareas.forEach(textarea => {
+    //     const text = textarea.value.trim();
+    //     if (text) {
+    //       texts.push(text);
+    //     }
+    //   });
       
-      if (texts.length > 0) {
-        this.corpus.texts = texts;
-        this.corpus.updateFromTexts();
-      }
+    //   if (texts.length > 0) {
+    //     this.corpus.texts = texts;
+    //     this.corpus.updateFromTexts();
+    //   }
       
-      saveCorpusBtn.blur();
-    });
+    //   saveCorpusBtn.blur();
+    // });
 
     // // Instructions modal controls
     // const instructionsModal = document.getElementById('instructions-modal');
@@ -477,13 +451,11 @@ class Game {
       const numColumns = parseInt(document.getElementById('new-game-columns').value);
       const numRows = parseInt(document.getElementById('new-game-rows').value);
       const sourceText = document.getElementById('new-game-source').value.trim();
-      const mode = document.getElementById('mode').value.trim();
 
       await this.initialize({
         numColumns,
         numRows,
         sourceText,
-        mode,
         isReset: true
       });
       newGameModal.style.display = 'none';
@@ -507,56 +479,6 @@ class Game {
     });
   }
 
-  updateCorpusContainer() {
-    const container = document.getElementById('corpora-container');
-    
-    // Clear existing content
-    container.innerHTML = '';
-    
-    // Create a textarea for each text
-    this.corpus.texts.forEach((text, index) => {
-      const textareaDiv = document.createElement('div');
-      textareaDiv.classList.add('corpus-textarea-container');
-      
-      const label = document.createElement('label');
-      label.textContent = `Text ${index + 1}:`;
-      label.classList.add('corpus-textarea-label');
-      
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      textarea.classList.add('corpus-textarea');
-      textarea.dataset.index = index;
-      
-      textareaDiv.appendChild(label);
-      textareaDiv.appendChild(textarea);
-      container.appendChild(textareaDiv);
-    });
-    
-    // If no texts exist, create one empty textarea
-    if (this.corpus.texts.length === 0) {
-      const textareaDiv = document.createElement('div');
-      textareaDiv.classList.add('corpus-textarea-container');
-      
-      const label = document.createElement('label');
-      label.textContent = 'Text 1:';
-      label.classList.add('corpus-textarea-label');
-      
-      const textarea = document.createElement('textarea');
-      textarea.value = '';
-      textarea.classList.add('corpus-textarea');
-      textarea.dataset.index = 0;
-      
-      textareaDiv.appendChild(label);
-      textareaDiv.appendChild(textarea);
-      container.appendChild(textareaDiv);
-    }
-  }
-
-  // showInstructions() {
-  //   const modal = document.getElementById('instructions-modal');
-  //   modal.style.display = 'flex';
-  // }
-
   isGridFull() {
     for (let x = 0; x < this.numColumns; x++) {
       for (let y = 0; y < this.numRows; y++) {
@@ -574,20 +496,8 @@ class Game {
   }
 
   getCompletedPoemText() {
-    if (!this.completedTokensContainer) return '';
-    
-    // Get all text nodes from the completed container
-    const textContent = Array.from(this.completedTokensContainer.childNodes)
-      .map(node => {
-        if (node.nodeType === Node.TEXT_NODE) return node.textContent;
-        if (node.nodeType === Node.ELEMENT_NODE) {
-          if (node.tagName.toLowerCase() === 'br') return '\n';
-          return node.textContent.toUpperCase();
-        }
-        return '';
-      })
-      .join('');
-
+    const textContent = this.state.grid.map(row => 
+      row.map(cell => getBlockText(cell)).join(' ')).join('\n');
     return textContent.trim();
   }
 
@@ -602,7 +512,7 @@ class Game {
     const endGameModal = document.getElementById('end-game-modal');
     const finalPoemDiv = document.getElementById('final-poem');
     
-    finalPoemDiv.textContent = poemText || 'You ran out of space and didn\'t finish your poem!';
+    finalPoemDiv.textContent = poemText || 'Your poem is complete.';
     endGameModal.style.display = 'flex';
 
     // Stop the game
@@ -625,7 +535,7 @@ class Game {
     await soundManager.initialize();
   }
 
-  drawCurLocation() {
+  drawCursor() {
     let elt;
     let {curX: x, curY: y} = this.state;
 
@@ -639,9 +549,11 @@ class Game {
 
     let colColor;
 
-    if (this.state.currentBlock == null) {
-      colColor = 'transparent';
-    } else if ( this.state.currentBlock.classList.contains('delete')) {
+    // if (this.state.currentBlock == null) {
+    //   colColor = 'transparent';
+    // } else 
+    
+    if ( this.state.currentBlock.classList.contains('delete')) {
       colColor = DELETE_COLOR;
     } else if (this.state.currentBlock.classList.contains('constraint')) {
       colColor = this.state.currentBlock.style.getPropertyValue('--data-color');
@@ -658,10 +570,10 @@ class Game {
     elt.style.width = this.columnWidths[x] + 'px';
     elt.style.height = this.rowHeights[y] + 'px';
 
-    if (this.state.didDrop) {
-      elt.style.scale = 0;
-    } else {
+    if (this.state.showCursor) {
       elt.style.scale = 1;
+    } else {
+      elt.style.scale = 0;
     }
   }
 
@@ -697,9 +609,8 @@ class Game {
   drawMove() {
     let {currentBlockLeft: left, currentBlockTop: top } = this.state;
     moveTo(this.state.currentBlock, left, top, this.arrowSpeed, false, 'ease-in-out');
-    this.drawTokenChain();
-    this.drawCurLocation();
-
+    this.state.showCursor = true;
+    this.drawCursor();
     this.onStart(); // mark that the player has done something
   }
 
@@ -763,24 +674,17 @@ class Game {
     let isBeginning = this.state.blockHistory.length < this.numInitialConstraints;
     let blockType =  isBeginning ? 'constraint' : roll(this.probabilities);
 
-    // if we are using the pos strategy, update the constraint 
-    // if (this.corpus.selectionStrategy == "pos") {
-    //   let constraints = this.targetConstraints();
-    //   constraints = constraints.filter(constraint => constraint != null);
-    //   console.log("Constraints", constraints);
-    //   this.corpus.selectionStrategy("pos", {tokenPOSOrder: constraints});
-    // }
-
     let tokenData;
     switch (blockType) {
       case "delete":
         tokenData = { text: '←', type: 'delete' };
         break;
       case "constraint":
+        console.error("generateNextBlock: constraint is not supported");
         tokenData = this.corpus.getNextConstraint();
         break;
       case "token":
-        tokenData = this.corpus.getNextToken();
+        tokenData = this.reader.read(); // get the next token from the reader
         break;
       case "null": case null:
         throw new Error("generateNextBlock: type is null");
@@ -791,99 +695,20 @@ class Game {
   }
 
   nextBlockUp() {
-    // fill up the token chain with new tokens from the corpus
-    while (this.state.tokenChain.length < this.tokenChainLength) {
-      let blockData = this.generateNextBlockData();
-      let blockElement = createBlockAt(blockData, this.tokenChainOrigin.left, this.tokenChainOrigin.top, this.cellWidth, this.cellHeight, this.colorBy);
-      this.tokenElements.push(blockElement);
-      this.state.tokenChain.unshift(blockElement);
-    }
+    let next =  this.stream.pop();
+    this.state.currentBlock = next?.block;
+    if (this.state.currentBlock) {
+      this.state.currentBlock.classList.add('current-token');
 
-    this.state.currentBlock = this.state.tokenChain.pop();
-    this.state.currentBlock.classList.add('current-token');
+      resizeToken(this.state.currentBlock, this.cellWidth, this.cellHeight);
+      moveTo(
+        this.state.currentBlock,
+        this.state.currentBlockLeft,
+        this.state.currentBlockTop,
+        this.dropTimePerBox
+      )
+    }
   }
-
-
-  drawTokenChain() {
-    let from = this.tokenChainOrigin;
-    // let to = {left: this.state.currentBlockLeft, top: this.state.currentBlockTop}
-    let to = {left: this.gridStartX, top: this.gridStartY - this.cellHeight }
-
-    let newLoc = {
-      left: to.left,
-      top: to.top,
-    }
-
-    for (let i = this.state.tokenChain.length - 1; i >= 0; i--) { // for each token
-      let curToken = this.state.tokenChain[i];
-      if (!curToken) {
-        console.error("updateTokenChainLocations curToken is null", i, this.state.tokenChain);
-        continue;
-      }
-
-
-      let speed = 180 * (this.state.tokenChain.length + 1 - i) ** 0.5;
-      moveTo(curToken, newLoc.left, newLoc.top, speed);
-      newLoc.left += this.cellWidth;
-    }
-
-
-  // updateTokenChainLocationsOld(end) {
-  //   let start = this.tokenChainOrigin;
-  //   let newLeft = end.left;
-
-  //   for (let i = this.state.tokenChain.length - 1; i >= 0; i--) { // for each token
-  //     let curToken = this.state.tokenChain[i];
-  //     if (!curToken) {
-  //       console.error("updateTokenChainLocations curToken is null", i, this.state.tokenChain);
-  //       continue;
-  //     }
-
-  //     let curWidth = curToken?.getBoundingClientRect()?.width || 0;
-  //     if (!curWidth) {
-  //       console.error("updateTokenChainLocations curWidth is 0", i);
-  //       continue;
-  //     }
-
-  //     newLeft += curWidth;
-  //     let newLoc = {
-  //       left: newLeft,
-  //       top: start.top
-  //     }
-
-  //     moveTo(curToken, newLoc.left, newLoc.top, this.arrowSpeed, false, 'ease-in-out');
-  //   } // end for each token
-  }
-
-
- 
-
-  // collectCompletedTokens(row) {
-  //   let completedTokens = [];
-  //   for (let x = 0; x < this.numColumns; x++) {
-  //     let token = this.state.grid[x][row];
-  //     if (token) {
-  //       completedTokens.push({ token, x, y: row });
-  //     }
-  //   }
-  //   // remove the _ and replace with spaces
-  //   completedTokens = completedTokens.map((token) => {
-  //     if (token.token.textContent == '_') {
-  //       token.token.textContent = ' ';
-  //     }
-  //     return token;
-  //   });
-    
-
-  //   return completedTokens;
-  // }
-
-  // removeCompletedTokensFromGrid(row) {
-  //   for (let x = 0; x < this.numColumns; x++) {
-  //     this.state.grid[x][row] = null;
-  //   }
-  // }
-
 
   removeOriginalTokens(completedTokens) {
     completedTokens.forEach(({ token }) => {
@@ -904,15 +729,6 @@ class Game {
   getConstraintValue(token) {
     return token ? token.getAttribute('data-constraint').toLowerCase() : null;
   }
-
-  // getConstraintsFromWordsInRow(row) {
-  //   let constraints = [];
-  //   for (let x = 0; x < this.numColumns; x++) {
-  //     let token = this.state.grid[x][row];
-  //     constraints.push(this.getConstraintValue(token));
-  //   }
-  //   return constraints;
-  // }
 
   // Get the names of the current constraints
   targetConstraints() {
@@ -959,9 +775,6 @@ class Game {
     return completed;
   }
 
-  //   return {actual, target, completed};
-  // }
-
   getCompletedLinesFromConstraints(constraintState) {
     let completedLines = [];
 
@@ -995,19 +808,6 @@ class Game {
     let {curX: x, curY: y} = this.state;
     this.delete(x, y);
     this.state.grid[x][y] = element;
-
-    // let newTop = this.getColumnTop(y);
-    
-    // let dropTime = this.dropTimePerBox * Math.abs(element.offsetTop - newTop) / this.getColumnHeight(0);
-
-    // move the token to the bottom using a quadratic gravity
-    // let quadratic = "cubic-bezier(0.5, 1, 0.89, 1)"
-    // moveTo(element, this.state.currentBlockLeft, newTop, dropTime, false, quadratic);
-
-    // play a sound on drop
-    // setTimeout(() => {
-    //   soundManager.playSound('rain/rain1');
-    // }, dropTime);
   }
 
   addColToGrid(col) {
@@ -1062,31 +862,20 @@ class Game {
   }
 
   shrinkCurrentToken(width) {
-    let token = this.state.currentBlock;
-    if (token) {
-      resizeToken(token, token.offsetWidth - width, token.offsetHeight);
-      moveTo(token, token.offsetLeft, token.offsetTop, this.dropTimePerBox);
+    let elt = this.state.currentBlock;
+    if (elt) {
+      resizeToken(elt, elt.offsetWidth - width, elt.offsetHeight);
+      moveTo(elt, elt.offsetLeft, elt.offsetTop, this.dropTimePerBox);
     }
   }
 
   applyConstraint(col, row) {
-
-    // // remove prev constraint element
-    // if (this.state.constraints[col]) {
-    //   this.state.constraints[col].remove();
-    // }
-
-    // this.state.constraints[col] = this.state.currentBlock;
 
     if (this.state.constraints[col][row]) {
       this.state.constraints[col][row].remove();
     }
     this.state.constraints[col][row] = this.state.currentBlock;
 
-
-    // moveTo(this.state.currentBlock, this.state.currentBlockLeft, this.getColumnTop(y), this.dropTimePerBox);
-
-    // this.state.currentBlock.remove();
   }
 
  
@@ -1097,7 +886,6 @@ class Game {
       removed = token.remove();
     }
     this.state.grid[x][y] = null;
-    console.log('1 delete', x, y)
     return removed;
   }
 
