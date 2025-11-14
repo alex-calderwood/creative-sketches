@@ -1,4 +1,4 @@
-class ScoreTracker {
+export class ScoreTracker {
     constructor() {
         this.bufferSize = 1000;
         // length limited, in order
@@ -31,9 +31,9 @@ const MIDI_SETTINGS = {
 }
 
 /**
- * MIDI interface for handling different MIDI input sources
- */
-class MidiInterface {
+| * MIDI interface for handling different MIDI input sources
+| */
+export class MidiInterface {
     constructor(play = true) {
       this.midiAccess = null;
       this.onMidiMessage = null;
@@ -156,7 +156,7 @@ class MidiInterface {
     }
   }
 
-class MIDIPlayer {
+export class MIDIPlayer {
   constructor() {
     // Flag to track if Tone.js has been started
     this.initialized = false;

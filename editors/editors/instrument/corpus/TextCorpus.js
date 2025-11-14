@@ -1,4 +1,9 @@
-class TextCorpus {
+import { Token } from './Token.js';
+
+// compromise is loaded globally via script tag in index.html
+const nlp = window.nlp;
+
+export class TextCorpus {
       constructor( source='unknown') {
         this.source = source;
         this.doc = null;
@@ -21,7 +26,7 @@ class TextCorpus {
           console.log('Loading corpus from:', filePath);
           const response = await fetch(filePath);
           let text = await response.text();
-          this.setTextFromString(text);
+          this.setText(text);
         } catch (error) {
           console.error('Error loading corpus:', filename, error);
         }
@@ -54,4 +59,3 @@ class TextCorpus {
         return head;
     }
 }
-

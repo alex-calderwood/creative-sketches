@@ -1,4 +1,4 @@
-class TextStreamEntity {
+export class TextStreamEntity {
   constructor(game, stream, component) {
     this.game = game;
     this.textStream = stream;

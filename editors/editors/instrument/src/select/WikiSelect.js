@@ -1,5 +1,5 @@
 import { ReaderSelect } from './ReaderSelect.js';
-import { WikiCorpus } from '../corpus/WikiCorpus.js';
+import { WikiCorpus } from '../../corpus/WikiCorpus.js';
 import { TextReader } from '../readers/TextReader.js';
 
 function createModal(content) {

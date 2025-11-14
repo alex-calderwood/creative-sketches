@@ -1,4 +1,8 @@
-class TextStreamComponent {
+import eventBus from '../EventBus.js';
+import { createBlockAt } from '../../block.js';
+import { moveTo } from '../../utils.js';
+
+export class TextStreamComponent {
   constructor(game) {
     this.game = game;
     this.setupListeners();
@@ -78,7 +82,7 @@ class TextStreamComponent {
   
 }
 
-class ClassicDomTextStreamComponent extends TextStreamComponent {
+export class ClassicDomTextStreamComponent extends TextStreamComponent {
   constructor(game) {
     super(game);
 

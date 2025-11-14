@@ -1,9 +1,12 @@
+import { Reader } from './Reader.js';
+import { TextCorpus } from '../../corpus/TextCorpus.js';
+
 /**
  * Implementation of Reader for text-based corpora.
  * Reads from a TextCorpus instance and tracks reading position.
  * 
  */
-class TextReader extends Reader {
+export class TextReader extends Reader {
     /**
      * Creates a new TextReader instance.
      * @param {TextCorpus} corpus - The text corpus to read from.

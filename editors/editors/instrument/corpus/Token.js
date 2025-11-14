@@ -1,8 +1,8 @@
-function uuid(name) {
+export function uuid(name) {
   return name + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }
 
-class Token {
+export class Token {
   constructor(data) {
     this.text = data.text;
     this.type = data.type || 'word';
