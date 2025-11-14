@@ -1,3 +1,14 @@
+import { getScaleModifier, getBlockText } from './block.js';
+import { moveTo, singleton } from './utils.js';
+import { FieldGameControls } from './src/controls/FieldGameControls.js';
+import { KeyboardMapper } from './src/controls/KeyboardMapper.js';
+import { MidiMapper } from './src/controls/MidiMapper.js';
+import { WikiSelect } from './src/select/WikiSelect.js';
+import { TextStream } from './src/streams/TextStream.js';
+import { TextStreamEntity } from './src/streams/TextStreamEntity.js';
+import { ClassicDomTextStreamComponent } from './src/streams/TextStreamComponent.js';
+import soundManager from './sound.js';
+
 // given a dict with weights or probabilities, pick one accordingly
 // assign the remaining probability mass to any key with value -1
 function roll(probabilities) {
@@ -31,7 +42,7 @@ function roll(probabilities) {
 }
 
 // resize a token to a new width and height using the transform property scaleX and scaleY
-function resizeToken(element, width, height) {
+export function resizeToken(element, width, height) {
   element.style.width = `${width}px`;
   element.style.height = `${height}px`;
   element.style.fontSize = `${height}px`;
@@ -58,7 +69,7 @@ function resizeToken(element, width, height) {
 
 const DELETE_COLOR = "#e83713";
 
-class Game {
+export class Game {
   constructor() {
     this.tokenElements = [];
     this.reader = null;
@@ -700,7 +711,6 @@ class Game {
     if (this.state.currentBlock) {
       this.state.currentBlock.classList.add('current-token');
 
-      resizeToken(this.state.currentBlock, this.cellWidth, this.cellHeight);
       moveTo(
         this.state.currentBlock,
         this.state.currentBlockLeft,
@@ -919,7 +929,7 @@ class Game {
 }
 
 
-let defaultCorpora = [
+export let defaultCorpora = [
   // 'corpora/short/sacred_emily.txt',
   // 'corpora/short/love_breton.txt', 
   // 'corpora/short/less_time.txt', 
@@ -938,22 +948,14 @@ let defaultCorpora = [
 // let [file1, file2] = defaultCorpora.sort(() => 0.5 - Math.random()).slice(0, 2);
 // let defaultCorpus = file1; // Use first file as default
 
-function getNewCorpus() {
+export function getNewCorpus() {
   let order = defaultCorpora.sort(() => 0.5 - Math.random());
   return order[0];
 }
 
-async function getNewCorpusText(filename) {
+export async function getNewCorpusText(filename) {
   const assetsFolder = '/editors/assets';
   const filePath = `${assetsFolder}/${filename}`;
   const response = await fetch(filePath);
   return response.text();
 }
-
-let defaultCorpus = getNewCorpus();
-
-// Wait for DOM to be fully loaded before initializing
-document.addEventListener('DOMContentLoaded', async () => {
-  let game = new Game();
-  await game.initialize({ corpusFile: defaultCorpus });
-});

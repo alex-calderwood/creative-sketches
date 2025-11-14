@@ -1,4 +1,4 @@
-class SoundManager {
+export class SoundManager {
   constructor() {
     this.audioContext = null;
     this.sounds = {};
@@ -67,3 +67,4 @@ class SoundManager {
 
 // Create global sound manager instance
 const soundManager = new SoundManager();
+export default soundManager;

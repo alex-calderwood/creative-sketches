@@ -1,8 +1,10 @@
+import eventBus from '../EventBus.js';
+
 /**
  * TextStream - Base class for text token streams
  * Manages a stream of tokens that can be accessed and modified
  */
-class TextStream {
+export class TextStream {
   /**
    * Creates a new TextStream
    * @param {number} size - The number of tokens to maintain in the stream

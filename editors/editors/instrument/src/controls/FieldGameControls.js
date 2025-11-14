@@ -1,5 +1,5 @@
 import { ControlManager } from './ControlManager.js';
-import soundManager from '../sound.js';
+import soundManager from '../../sound.js';
 
   
 /**

@@ -1,4 +1,6 @@
-class WikiCorpus extends TextCorpus {
+import { TextCorpus } from './TextCorpus.js';
+
+export class WikiCorpus extends TextCorpus {
   constructor(url) {
     super(url);
   }

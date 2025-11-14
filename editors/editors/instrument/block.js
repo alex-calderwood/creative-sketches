@@ -11,7 +11,7 @@
 const DELETE_SCALE_MOD = {x: 0.1, y: 0.1};
 const I_SCALE_MOD = {x: 0.7, y: 1};
 
-function getScaleModifier(element) {
+export function getScaleModifier(element) {
     // For new blocks, element is the text string
     // For existing blocks, element is the DOM element
     if (typeof element === 'string') {
@@ -55,13 +55,13 @@ const colorMap = {
     'word': { bg: '#000000', light: '#000000', dark: '#000000', darker: '#779977' }
 }
 
-function getColor(key) {
+export function getColor(key) {
     key = key ? key.toLowerCase() : key;
     let color = colorMap[key] || colorMap['random'];
     return color;
 }
 
-function createBlockAt(token, left, top, width, height, colorBy = "pos") {
+export function createBlockAt(token, left, top, width, height, colorBy = "pos") {
     let text = token.text;
     let wordType = token.type;
 
@@ -129,7 +129,7 @@ function createBlockAt(token, left, top, width, height, colorBy = "pos") {
     return newElement;
 }
 
-function getBlockText(block) {
+export function getBlockText(block) {
     let blockWord = block.querySelector('.block-word');
     if (!blockWord) {
         return '';

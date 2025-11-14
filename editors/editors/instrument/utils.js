@@ -33,7 +33,7 @@ async function loadAllAudioFiles() {
 // Load all audio files
 loadAllAudioFiles();
 
-function getTextWidth(element, startIndex=0, endIndex=null) {
+export function getTextWidth(element, startIndex=0, endIndex=null) {
   if (endIndex === null) {
     endIndex = element.textContent.length;
   }
@@ -51,7 +51,7 @@ function getTextWidth(element, startIndex=0, endIndex=null) {
   return context.measureText(text).width;
 }
 
-function enlargeWord(word) {
+export function enlargeWord(word) {
   const { rect, element: editor } = word;
   let editorBounds = editor.getBoundingClientRect();
   const { left, top, width, height } = rect;
@@ -76,7 +76,7 @@ function enlargeWord(word) {
 
 // move an element to the coordinates using the absolute left and top values
 // does not use the transform property, so it can be used for elements that are not scaled
-function moveTo(element, leftPx, topPx, speed=500, resetTransform=false, easing='ease-out') {
+export function moveTo(element, leftPx, topPx, speed=500, resetTransform=false, easing='ease-out') {
   if (element == null) {
     console.error("Cannot move null element", element);
     return;
@@ -105,7 +105,7 @@ function moveTo(element, leftPx, topPx, speed=500, resetTransform=false, easing=
   element.animate(animationFrames, timing);
 }
 
-function moveToScaled(element, leftPx, topPx, scaleX, scaleY, speed=500) {
+export function moveToScaled(element, leftPx, topPx, scaleX, scaleY, speed=500) {
   const timing = {
     duration: speed,
     iterations: 1,
@@ -121,7 +121,7 @@ function moveToScaled(element, leftPx, topPx, scaleX, scaleY, speed=500) {
 
 // move an element to the coordinates using the transform property
 // the 'transform property' is used in JS to 
-function animateToRelative(word, dX, dY, scale, speed=500) {
+export function animateToRelative(word, dX, dY, scale, speed=500) {
   const { text, rect, node, startIndex, endIndex, element: editor } = word;
    
   const timing = {
@@ -155,7 +155,7 @@ function animateToRelative(word, dX, dY, scale, speed=500) {
 
 
 /* Play the word raining animation */
-function makeFall(word) {
+export function makeFall(word) {
   const { text, rect, node, startIndex, endIndex, element: editor } = word;
   for (let i = 0; i < text.length; i++) {
     const fallDelay = i * 50; // 50ms delay between each letter's fall start
@@ -166,7 +166,7 @@ function makeFall(word) {
 }
 
 
-function letterFall(text, i, startIndex, endIndex, rect, editor, fallDelay = 0) {
+export function letterFall(text, i, startIndex, endIndex, rect, editor, fallDelay = 0) {
   const letter = text[i];
 
   const newElement = document.createElement('div');
@@ -220,7 +220,7 @@ Function called in spellcheck.js when misspellingsChanged event is fired
 // https://stackoverflow.com/questions/44846614/trigger-css-animations-in-javascript
 // https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API
 */
-function onMistake(count, event) {
+export function onMistake(count, event) {
   console.log("onMistake", count, event);
   const { isNewMistake, newMispellings } = event;
     if (isNewMistake) {
@@ -257,7 +257,7 @@ function onMistake(count, event) {
   checkComplete();
 }
 
-function singleton(id) {
+export function singleton(id) {
   let elt = document.getElementById(id);
   if (elt) {
     return elt;

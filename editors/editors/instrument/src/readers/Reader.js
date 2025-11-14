@@ -4,7 +4,7 @@
  * 
  * To implement a Reader, you sohuld impleent currentToken and updateState but NOT read
  */
-class Reader {
+export class Reader {
     /**
      * Creates a new Reader instance.
      */

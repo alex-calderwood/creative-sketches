@@ -47,36 +47,19 @@
 
   </div>
 
-  <script src="http://unpkg.com/tone"></script>
-
-  <script src="utils.js"></script>
-  <script src="src/EventBus.js"></script>
-  <script src="block.js"></script>
-  <script src="controls/ControlManager.js"></script>
-  <script src="controls/FieldGameControls.js"></script>
-  <script src="controls/InputMapper.js"></script>
-  <script src="controls/KeyboardMapper.js"></script>
-  <script src="controls/MIDI.js"></script>
-  <script src="controls/MidiMapper.js"></script>
-
-  <script src="readers/Reader.js"></script>
-  <script src="readers/TextReader.js"></script>
+  <script src="https://unpkg.com/tone"></script>
+  <script src="./lib/compromise.js"></script>
   
-  <script src="corpus/Token.js"></script>
-  <script src="corpus/TextCorpus.js"></script>
-  <script src="corpus/WikiCorpus.js"></script>
-
-  <script src="select/ReaderSelect.js"></script>
-  <script src="select/WikiSelect.js"></script>
-
-  <script src="streams/TextStream.js"></script>
-  <script src="streams/TextStreamEntity.js"></script>
-  <script src="streams/TextStreamComponent.js"></script>
-
-
-  <script src="sound.js"></script>
-  <script src="lib/compromise.js"></script>
-  <script src="game.js"></script>
+  <!-- Import as ES module -->
+  <script type="module">
+    import { Game } from './game.js';
+    
+    // Wait for DOM to be fully loaded before initializing
+    document.addEventListener('DOMContentLoaded', async () => {
+      let game = new Game();
+      await game.initialize({ corpusFile: 'corpora/books/tale_of_two_cities_small.txt' });
+    });
+  </script>
   
   <!-- Instructions Modal -->
   <!-- <div id="instructions-modal" class="modal" style="display: none;">
