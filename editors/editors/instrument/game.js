@@ -4,9 +4,9 @@ import { FieldGameControls } from './src/controls/FieldGameControls.js';
 import { KeyboardMapper } from './src/controls/KeyboardMapper.js';
 import { MidiMapper } from './src/controls/MidiMapper.js';
 import { WikiSelect } from './src/select/WikiSelect.js';
-import { TextStream } from './src/streams/TextStream.js';
-import { TextStreamEntity } from './src/streams/TextStreamEntity.js';
-import { ClassicDomTextStreamComponent } from './src/streams/TextStreamComponent.js';
+import { TextStream } from './streams/TextStream.js';
+import { TextStreamEntity } from './streams/TextStreamEntity.js';
+import { ClassicDomTextStreamComponent } from './streams/TextStreamComponent.js';
 import soundManager from './sound.js';
 
 // given a dict with weights or probabilities, pick one accordingly

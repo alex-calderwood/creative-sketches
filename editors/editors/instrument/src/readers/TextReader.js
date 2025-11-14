@@ -1,5 +1,5 @@
 import { Reader } from './Reader.js';
-import { TextCorpus } from '../../corpus/TextCorpus.js';
+import { TextCorpus } from '../corpus/TextCorpus.js';
 
 /**
  * Implementation of Reader for text-based corpora.

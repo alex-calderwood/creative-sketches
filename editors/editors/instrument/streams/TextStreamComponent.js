@@ -1,6 +1,6 @@
-import eventBus from '../EventBus.js';
-import { createBlockAt } from '../../block.js';
-import { moveTo } from '../../utils.js';
+import eventBus from '../src/EventBus.js';
+import { createBlockAt } from '../block.js';
+import { moveTo } from '../utils.js';
 
 export class TextStreamComponent {
   constructor(game) {
