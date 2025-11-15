@@ -1,4 +1,4 @@
-import eventBus from '../src/EventBus.js';
+import eventBus from '../EventBus.js';
 
 /**
  * TextStream - Base class for text token streams

@@ -6,17 +6,17 @@ import { MidiInterface } from './MIDI.js';
  * Maps MIDI notes to game actions
  */
 
-const LEFT_RANGE = [0, 11];
-const RIGHT_RANGE = [12, 127];
 
-export class MidiMapper extends InputMapper {
+export class TrackingMidiMapper extends InputMapper {
+  static name = 'Tracking';
+  static description = 'Tracks note changes. Higher/lower notes trigger right/left. Sharp/flat notes trigger up/down.';
+  static options = [
+    { id: 'noteRange', label: 'Note Range', type: 'range', min: 0, max: 127, defaults: [0, 127] }
+  ];
+
   constructor(options = {}) {
     super();
-    this.midiInterface = new MidiInterface();
-    
-    // Use provided ranges or defaults
-    const leftRange = options.leftRange || LEFT_RANGE;
-    const rightRange = options.rightRange || RIGHT_RANGE;
+    this.midiInterface = new MidiInterface(true, options);
     
     // Define default mappings for directional controls
     // Map from MIDI note numbers to game actions
@@ -24,33 +24,32 @@ export class MidiMapper extends InputMapper {
       'Left': {
         filter: (midiData) => 
           this.isNoteOn(midiData) && 
-          this.isNoteInRange(midiData, leftRange[0], leftRange[1])
-          && !this.isNoteFlat(midiData)
+          midiData.isLower &&
+          !this.isNoteFlat(midiData)
       },
       'Right': {
         filter: (midiData) => 
           this.isNoteOn(midiData) && 
-          this.isNoteInRange(midiData, rightRange[0], rightRange[1])
-          && !this.isNoteFlat(midiData)
+          midiData.isHigher &&
+          !this.isNoteFlat(midiData)
       },
       'Up': {
         filter: (midiData) => 
           this.isNoteOn(midiData) && 
-          this.isNoteInRange(midiData, leftRange[0], leftRange[1])
-          && this.isNoteFlat(midiData)
+          midiData.isLower &&
+          this.isNoteFlat(midiData)
       },
       'Down': {
         filter: (midiData) => 
           this.isNoteOn(midiData) && 
-          this.isNoteInRange(midiData, rightRange[0], rightRange[1])
-          && this.isNoteFlat(midiData)
-          
+          midiData.isHigher &&
+          this.isNoteFlat(midiData)
       },
       'Drop': {
         filter: (midiData) => 
-         midiData.note === 40 // kick pad
-        // this.isNoteOn(midiData)
-
+          this.isNoteOn(midiData)
+        && (midiData.note === 40 // kick pad 
+         || midiData.isSame) 
       }
     };
   }

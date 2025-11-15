@@ -23,39 +23,48 @@ export class FourDirectionControls extends ControlManager {
       });
     }
     
-    moveRight() {
-      if (this.dropOnMove) this.drop();
+    updateColorFromMidiData(data) {
+      if (data?.midiData?.note !== undefined) {
+        this.game.updateTokenColors(data.midiData.note);
+      }
+    }
+    
+    moveRight(data) {
+      if (this.dropOnMove) this.drop(data);
 
       this.game.state.showCursor = false;
       this.game.moveCurrent(1, 0);
       this.game.drawMove();
     }
   
-    moveLeft() {
-      if (this.dropOnMove) this.drop();
+    moveLeft(data) {
+      if (this.dropOnMove) this.drop(data);
 
       this.game.state.showCursor = false;
       this.game.moveCurrent(-1, 0);
       this.game.drawMove();
     }
   
-    moveUp() {
-      if (this.dropOnMove) this.drop();
+    moveUp(data) {
+      if (this.dropOnMove) this.drop(data);
 
       this.game.state.showCursor = false;
       this.game.moveCurrent(0, -1);
       this.game.drawMove();
     }
   
-    moveDown() {
-      if (this.dropOnMove) this.drop();
+    moveDown(data) {
+      if (this.dropOnMove) this.drop(data);
 
+      this.game.state.showCursor = false;
       this.game.moveCurrent(0, 1);
       this.game.drawMove();
     }
   
      // Drop a block onto the grid and apply any necessary effects
-    drop() {
+    drop(data) {
+      this.updateColorFromMidiData(data);
+
       let element = this.game.state.currentBlock;
       if (element == null) {
         console.error("Attempting to drop null element", element)

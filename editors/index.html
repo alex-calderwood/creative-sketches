@@ -88,8 +88,8 @@
         }
         .page {
             background-color: white;
-            height: 14rem;
             width: 12rem;
+            height: 19.32rem;
             /* Realistic paper shadows with depth */
             box-shadow: 
                 /* Main shadow */
@@ -114,7 +114,7 @@
                 1% 100%, 0% 99.5%, 0% 1%
             );
             transform-origin: center center;
-            padding: 0.5rem;
+            padding: 0.5rem 1rem;
         }
 
         .page a {
@@ -156,65 +156,99 @@
         }
         .project-image {
             position: absolute;
-            width: 90%;
-            height: 90%;
-            /* stretch  */
-            object-fit: cover;
-            opacity: 0.30;
+            width: calc(100% - 2rem);
+            height: calc(100% - 1rem);
+            object-fit: contain;
+            opacity: 1.0;
             z-index: 0;
-            margin: auto auto;
+            top: 0.5rem;
+            left: 1rem;
         }
         .project-content {
             position: relative;
             z-index: 1;
-            height: 100%;
             display: flex;
             flex-direction: column;
             transition: all 0.3s ease;
             order: 1;
+            background-color: rgba(255, 255, 255, 0.95);
         }
         
         .tag-header {
+            width: 0;
+            height: 0;
+            overflow: visible;
+            position: relative;
+        }
+        
+        .tag-header + .page {
+            position: relative;
+        }
+        
+        .tag-header + .page::before {
+            content: attr(data-tag);
             box-sizing: border-box;
-            /* center the text */
             text-align: center;
-            /* center the text vertically */
             display: flex;
             align-items: center;
             justify-content: center;
-
             font-style: italic;
-            /*  add a hashtag */
-
-            
-            /* Aged paper background with subtle variations */
+            font-family: 'Georgia', serif;
+            font-size: 1.5rem;
+            color: #020116;
+            font-weight: 600;
+            /* Sticky note / label background with texture */
             background: 
-                /* Paper grain texture */
-                radial-gradient(circle at 20% 80%, rgba(0,0,0,0.02) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(0,0,0,0.02) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(0,0,0,0.01) 0%, transparent 50%),
-                radial-gradient(circle at 60% 70%, rgba(0,0,0,0.015) 0%, transparent 50%),
-                /* Base aged paper color */
+                /* Paper texture overlay */
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(255,255,255,0.1) 2px,
+                    rgba(255,255,255,0.1) 4px
+                ),
+                /* Subtle grain */
+                radial-gradient(circle at 30% 40%, rgba(255,255,255,0.2) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(0,0,0,0.03) 0%, transparent 50%),
+                /* Rich yellow gradient */
                 linear-gradient(135deg, 
-                    #fefdf8 0%,   /* Warm white */
-                    #fdfcf5 25%,  /* Slight cream */
-                    #fefdf8 50%,
-                    #fcfbf2 75%,  /* Aged paper tone */
-                    #fefdf8 100%
+                    #ffe66d 0%,
+                    #ffd93d 25%,
+                    #ffe156 50%,
+                    #ffd829 75%,
+                    #ffe156 100%
                 );
-            height: 4rem;
-            width: 10rem;
-            margin-top: calc(5rem);
-            /* Realistic paper shadows with depth */
+            height: 3rem;
+            width: 12rem;
+            padding: 0.5rem 1rem;
+            z-index: 50;
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            /* Deep shadow with curl effect */
             box-shadow: 
+                /* Bottom right curl shadow */
+                8px 8px 12px rgba(0,0,0,0.25),
                 /* Main shadow */
-                0 3px 8px rgba(0,0,0,0.12),
-                0 1px 3px rgba(0,0,0,0.08),
-                /* Inner shadow for depth */
-                inset 0 0 0 1px rgba(0,0,0,0.03),
-                /* Subtle edge lighting */
-                inset 0 1px 0 rgba(255,255,255,0.8),
-                inset 0 -1px 0 rgba(0,0,0,0.02);
+                0 6px 20px rgba(0,0,0,0.2),
+                0 3px 6px rgba(0,0,0,0.15),
+                /* Edge definition */
+                inset 0 0 0 1px rgba(255,255,255,0.3),
+                inset 1px 1px 0 rgba(255,255,255,0.5),
+                /* Top lighting */
+                inset 0 2px 4px rgba(255,255,255,0.4),
+                /* Bottom shadow */
+                inset 0 -1px 2px rgba(0,0,0,0.1);
+            /* Slightly irregular corners */
+            border-radius: 3px 2px 4px 1px;
+            /* More interesting imperfect edges */
+            clip-path: polygon(
+                0.5% 1%, 2% 0.3%, 98% 0%, 99.5% 0.5%, 
+                100% 2%, 100% 97%, 99% 99.5%, 98% 100%, 
+                2% 100%, 0.5% 99%, 0% 97%, 0% 2%
+            );
+            transform: translate(0px, 16rem) rotate(-3deg);
+            transition: all 0.3s ease;
             }
     </style>
 </head>
@@ -275,7 +309,7 @@
         // Sort tags first alphabeetically
         let sortedTags = Object.keys(projectsByTag).sort();
         // Then, sort by our custom list (if not in the list, put at the end)
-        const customTagOrder = ['field', 'poetris', 'spellcheck', 'concrete', 'EIS'];
+        const customTagOrder = ['instrument','poetris', 'field', 'spellcheck', 'concrete', 'EIS'];
         sortedTags = sortedTags.sort((a, b) => {
             const aIndex = customTagOrder.indexOf(a);
             const bIndex = customTagOrder.indexOf(b);
@@ -361,15 +395,17 @@
         
         // Create tag headers and render projects
         sortedTags.forEach(tag => {
-            // Create tag header
+            // Create tag header (invisible spacer)
             const tagHeader = document.createElement('div');
-            tagHeader.textContent = `${tag}`;
             tagHeader.className = 'tag-header';
             container.appendChild(tagHeader);
             
             // Create projects for this tag
-            projectsByTag[tag].forEach(project => {
+            projectsByTag[tag].forEach((project, index) => {
                 const card = createProjectCard(project);
+                if (index === 0) {
+                    card.setAttribute('data-tag', tag);
+                }
                 container.appendChild(card);
             });
         });
@@ -377,12 +413,14 @@
         // Add untagged projects at the end
         if (untaggedProjects.length > 0) {
             const untaggedHeader = document.createElement('div');
-            untaggedHeader.textContent = 'other';
             untaggedHeader.className = 'tag-header';
             container.appendChild(untaggedHeader);
             
-            untaggedProjects.forEach(project => {
+            untaggedProjects.forEach((project, index) => {
                 const card = createProjectCard(project);
+                if (index === 0) {
+                    card.setAttribute('data-tag', 'other');
+                }
                 container.appendChild(card);
             });
         }
