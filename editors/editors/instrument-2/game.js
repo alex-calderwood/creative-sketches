@@ -1,4 +1,4 @@
-import { getScaleModifier, getBlockText } from './block.js';
+import { getScaleModifier, getBlockText, noteToHue, updateBlockColor } from './block.js';
 import { moveTo, singleton } from './utils.js';
 import { WikiSelect } from './src/configuration/WikiSelect.js';
 import { ControlSelect } from './src/configuration/ControlSelect.js';
@@ -69,12 +69,12 @@ const DELETE_COLOR = "#e83713";
 
 export class Game {
   static DEFAULTS = {
-    numColumns: 6,
-    numRows: 6,
-    gridStartX: 200,
-    gridStartY: 100,
-    gridEndGapX: 20,
-    gridEndGapY: 20,
+    numColumns: 10,
+    numRows: 10,
+    gridStartX: 50,
+    gridStartY: 150,
+    gridEndGapX: 50,
+    gridEndGapY: 50,
     colorBy: 'pos',
     probabilities: {
       delete: 0.25,
@@ -123,6 +123,9 @@ export class Game {
     this.completionTime = config.completionTime;
     this.arrowSpeed = config.arrowSpeed;
     this.completedTokensTop = config.completedTokensTop;
+    
+    // Track if we've done first-time initialization
+    this.firstInitDone = false;
   }
 
   /* 
@@ -200,15 +203,19 @@ export class Game {
       new ClassicDomTextStreamComponent(this)
     );
 
-    // Set up controls and event listeners (only on first initialization)
-    if (!options.isReset) {
-      await this.setupControls(options);
+    // Set up controls and event listeners
+    await this.setupControls(options);
+    
+    // Only do these once on first initialization
+    if (!this.firstInitDone) {
       await this.initializeSounds();
       
       // Start the game loop
       setInterval(() => {
         this.tick();
       }, this.tickTime);
+      
+      this.firstInitDone = true;
     }
 
     this.drawBackground();
@@ -306,55 +313,6 @@ export class Game {
     });
     this.colorBy = colorBySelect.value;
     console.log('New color by:', this.colorBy);
-  
-    // Add corpus button handler
-    const addCorpusBtn = document.getElementById('add-corpus-btn');
-
-    addCorpusBtn.addEventListener('click', () => {
-      const container = document.getElementById('corpora-container');
-      const textareaCount = container.querySelectorAll('textarea').length;
-      
-      const textareaDiv = document.createElement('div');
-      textareaDiv.classList.add('corpus-textarea-container');
-      
-      const label = document.createElement('label');
-      label.textContent = `Text ${textareaCount + 1}:`;
-      label.classList.add('corpus-textarea-label');
-      
-      const textarea = document.createElement('textarea');
-      textarea.value = '';
-      textarea.classList.add('corpus-textarea');
-      textarea.dataset.index = textareaCount;
-      
-      textareaDiv.appendChild(label);
-      textareaDiv.appendChild(textarea);
-      container.appendChild(textareaDiv);
-      
-      // Focus on the new textarea
-      setTimeout(() => textarea.focus(), 100);
-      addCorpusBtn.blur();
-    });
-
-    // // Save corpus handler
-    // saveCorpusBtn.addEventListener('click', () => {
-    //   const container = document.getElementById('corpora-container');
-    //   const textareas = container.querySelectorAll('textarea');
-    //   const texts = [];
-      
-    //   textareas.forEach(textarea => {
-    //     const text = textarea.value.trim();
-    //     if (text) {
-    //       texts.push(text);
-    //     }
-    //   });
-      
-    //   if (texts.length > 0) {
-    //     this.corpus.texts = texts;
-    //     this.corpus.updateFromTexts();
-    //   }
-      
-    //   saveCorpusBtn.blur();
-    // });
 
     // // Instructions modal controls
     // const instructionsModal = document.getElementById('instructions-modal');
@@ -389,6 +347,7 @@ export class Game {
     optionsBtn.addEventListener('click', () => {
       optionsModal.style.display = 'flex';
       optionsBtn.blur();
+      this.populateMidiOptions();
     });
 
     // Close options modal handlers
@@ -409,6 +368,13 @@ export class Game {
       }
     });
 
+    // Save MIDI options
+    const saveMidiOptionsBtn = document.getElementById('save-midi-options');
+    saveMidiOptionsBtn.addEventListener('click', () => {
+      this.saveMidiOptions();
+      saveMidiOptionsBtn.blur();
+    });
+
     // New Game modal controls
     const newGameBtn = document.getElementById('new-game-btn');
     const newGameModal = document.getElementById('new-game-modal');
@@ -417,11 +383,7 @@ export class Game {
     const startNewGameBtn = document.getElementById('start-new-game-btn');
 
     // Open new game modal
-    newGameBtn.addEventListener('click', async () => {
-      const sourceTextArea = document.getElementById('new-game-source');
-      let file = getNewCorpus();
-      let text = await getNewCorpusText(file);
-      sourceTextArea.value = text;
+    newGameBtn.addEventListener('click', () => {
       newGameModal.style.display = 'flex';
       newGameBtn.blur();
     });
@@ -448,16 +410,15 @@ export class Game {
     startNewGameBtn.addEventListener('click', async () => {
       const numColumns = parseInt(document.getElementById('new-game-columns').value);
       const numRows = parseInt(document.getElementById('new-game-rows').value);
-      const sourceText = document.getElementById('new-game-source').value.trim();
 
-      await this.initialize({
-        numColumns,
-        numRows,
-        sourceText,
-        isReset: true
-      });
       newGameModal.style.display = 'none';
       document.getElementById('end-game-modal').style.display = 'none';
+      
+      await this.initialize({
+        numColumns,
+        numRows
+      });
+      
       startNewGameBtn.blur();
     });
 
@@ -630,6 +591,21 @@ export class Game {
 
   printState() {
     console.log("state", this.state)
+  }
+
+  /**
+   * Update the current block's color based on a MIDI note
+   * @param {number} midiNote - MIDI note number (0-127)
+   */
+  updateTokenColors(midiNote) {
+    if (!this.state.currentBlock) {
+      return;
+    }
+    
+    const hue = noteToHue(midiNote);
+    updateBlockColor(this.state.currentBlock, hue);
+
+    this.stream.updateColor(hue);
   }
 
   generateNextBlockData() {
@@ -876,6 +852,92 @@ export class Game {
     let search = bottomTokens.map(token => token == '' ? '.' : token).join(' ');
     let match = this.corpus.doc.match(bottomTokens.join(' ')).terms().out('array');
     console.log({search, match})
+  }
+
+  /**
+   * Populate the MIDI options in the options modal
+   */
+  populateMidiOptions() {
+    if (!this.midiMapper) return;
+
+    const MapperClass = this.midiMapper.constructor;
+    const infoContainer = document.getElementById('midi-mapper-info');
+    const optionsContainer = document.getElementById('midi-options-container');
+
+    if (!infoContainer || !optionsContainer) return;
+
+    // Show mapper name and description
+    infoContainer.innerHTML = `
+      <div style="padding: 10px; background: #f0f0f0; border-radius: 4px;">
+        <strong>${MapperClass.name}</strong>
+        <p style="margin: 5px 0 0 0; font-size: 0.9em;">${MapperClass.description}</p>
+      </div>
+    `;
+
+    // Render options based on mapper's static options
+    const optionsHtml = MapperClass.options.map(option => {
+      if (option.type === 'range') {
+        // Get current values from midiInterface settings
+        const currentRange = this.midiMapper.midiInterface.settings[option.id] || option.defaults;
+        
+        return `
+          <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">
+              ${option.label}
+            </label>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <div>
+                <label for="midi-${option.id}-min" style="font-size: 0.85em;">Min:</label>
+                <input type="number" id="midi-${option.id}-min" value="${currentRange[0]}" 
+                       min="${option.min}" max="${option.max}" 
+                       style="width: 60px; margin-left: 5px;">
+              </div>
+              <div>
+                <label for="midi-${option.id}-max" style="font-size: 0.85em;">Max:</label>
+                <input type="number" id="midi-${option.id}-max" value="${currentRange[1]}" 
+                       min="${option.min}" max="${option.max}" 
+                       style="width: 60px; margin-left: 5px;">
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      return '';
+    }).join('');
+
+    optionsContainer.innerHTML = optionsHtml;
+  }
+
+  /**
+   * Save the MIDI options from the modal
+   */
+  saveMidiOptions() {
+    if (!this.midiMapper) return;
+
+    const MapperClass = this.midiMapper.constructor;
+
+    // Build new options from UI inputs
+    const newOptions = {};
+    MapperClass.options.forEach(option => {
+      if (option.type === 'range') {
+        const minValue = parseInt(document.getElementById(`midi-${option.id}-min`).value, 10);
+        const maxValue = parseInt(document.getElementById(`midi-${option.id}-max`).value, 10);
+        newOptions[option.id] = [minValue, maxValue];
+      }
+    });
+
+    // Update the midiInterface settings
+    Object.assign(this.midiMapper.midiInterface.settings, newOptions);
+
+    console.log('MIDI settings updated:', newOptions);
+    
+    // Show feedback
+    const btn = document.getElementById('save-midi-options');
+    const originalText = btn.textContent;
+    btn.textContent = 'Settings Applied!';
+    setTimeout(() => {
+      btn.textContent = originalText;
+    }, 2000);
   }
 }
 

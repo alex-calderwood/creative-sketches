@@ -9,10 +9,18 @@ import { MidiInterface } from './MIDI.js';
 const LEFT_RANGE = [0, 11];
 const RIGHT_RANGE = [12, 127];
 
-export class MidiMapper extends InputMapper {
+export class HighLowMidiMapper extends InputMapper {
+  static name = 'High/Low Ranges';
+  static description = 'Maps specific note ranges to directions. Low range (natural notes) = left/up, high range (natural notes) = right/down.';
+  static options = [
+    { id: 'noteRange', label: 'Note Range', type: 'range', min: 0, max: 127, defaults: [0, 127] },
+    { id: 'leftRange', label: 'Left Range', type: 'range', min: 0, max: 127, defaults: [0, 11] },
+    { id: 'rightRange', label: 'Right Range', type: 'range', min: 0, max: 127, defaults: [12, 127] }
+  ];
+
   constructor(options = {}) {
     super();
-    this.midiInterface = new MidiInterface();
+    this.midiInterface = new MidiInterface(true, options);
     
     // Use provided ranges or defaults
     const leftRange = options.leftRange || LEFT_RANGE;

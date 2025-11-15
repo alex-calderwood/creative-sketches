@@ -1,15 +1,7 @@
 import { ReaderSelect } from './ReaderSelect.js';
 import { WikiCorpus } from '../corpus/WikiCorpus.js';
 import { TextReader } from '../readers/TextReader.js';
-
-function createModal(content) {
-  const modal = document.createElement('div');
-  modal.className = 'modal';
-  modal.innerHTML = content;
-  document.body.appendChild(modal);
-  modal.style.display = 'flex';
-  return modal;
-}
+import { createModal } from './uiUtils.js';
 
 export class WikiSelect extends ReaderSelect {
 
@@ -27,7 +19,7 @@ export class WikiSelect extends ReaderSelect {
     const modal = createModal(`
       <div class="modal-content">
         <div class="modal-header">
-          <h3>Enter a Wikipedia URL</h3>
+          <h3>Corpus Selection</h3>
         </div>
         <div class="modal-body">
           <input type="text" id="wikipedia-url" placeholder="Enter a Wikipedia URL">

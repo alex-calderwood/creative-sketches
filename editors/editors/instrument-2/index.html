@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Field Prototype</title>
+  <title>Score Tracker</title>
   <link rel="preload" href="fonts/gomarice_goma_block.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="stylesheet" href="style.css">
 
@@ -60,37 +60,6 @@
       await game.initialize({ corpusFile: 'corpora/books/tale_of_two_cities_small.txt', autoDrop: true });
     });
   </script>
-  
-  <!-- Instructions Modal -->
-  <!-- <div id="instructions-modal" class="modal" style="display: none;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>How to Play</h3>
-        <button id="close-instructions-modal" class="close-btn">&times;</button>
-      </div>
-      <div class="modal-body">
-
-
-        <h4>Gameplay</h4>
-        <p>Write the best poem you can with the words available!</p>
-        <p>A line of your poem is complete when the bottom most word in each column matches its 'constraint'.</p>
-        <p>Words, constraints, and delete blocks will appear in the queue.</p>
-
-        <h4>Controls</h4>
-        <p><strong>Left/Right Arrow Keys:</strong> Move the queue of words left and right</p>
-        <p><strong>Down Arrow or Space:</strong>Drop the current block in its current position. Current block is indicated by the three dots.</p>
-        <p><strong>Touch/Swipe:</strong> Swipe left/right to move, swipe down to drop</p>
-
-        <h4>Block Types</h4>
-        <p><strong>Word:</strong> A word from the source text that can be used to complete a line</p>
-        <p><strong>Constraint:</strong>A property that must be matched to complete a line. These appear as colored underlines, and can be dropped just like a word. Constraints labels will disappear to indicate that they have been matched. Currently these are parts of speech like nouns, verbs, adjectives, etc. There is also a special 'word' constraint that will match any word.</p>
-        <p><strong>Delete:</strong> A block that will delete the bottom most word in a column</p>
-      </div>
-      <div class="modal-footer">
-        <button id="close-instructions-btn" class="control-btn">Close</button>
-      </div>
-    </div>
-  </div> -->
 
   <!-- Options Modal -->
   <div id="options-modal" class="modal" style="display: none;">
@@ -137,15 +106,15 @@
         </div>
 
         <div class="option-group">
-          <label>Source Texts:</label>
-          <p class="option-description">Modify the source text that generates your word blocks.</p>
-          <div id="corpora-container">
-            <!-- Dynamic corpora will be added here -->
+          <label>MIDI Controls:</label>
+          <p class="option-description">Configure your MIDI mapper settings.</p>
+          <div id="midi-mapper-info" style="margin-bottom: 10px;">
+            <!-- Current mapper info will be shown here -->
           </div>
-          <div class="corpus-controls">
-            <button id="add-corpus-btn" class="control-btn">Add Text</button>
-            <button id="save-corpus" class="control-btn">Save Changes</button>
+          <div id="midi-options-container">
+            <!-- Dynamic MIDI options will be added here -->
           </div>
+          <button id="save-midi-options" class="control-btn">Apply MIDI Settings</button>
         </div>
       </div>
       <div class="modal-footer">
@@ -184,12 +153,6 @@
             <option value="16">16</option>
           </select>
           <p class="option-description">Sets the height of the game grid. More rows give more space to work with.</p>
-        </div>
-
-        <div class="option-group">
-          <label for="new-game-source">Source Text:</label>
-          <textarea id="new-game-source" class="corpus-textarea" placeholder="Enter your source text here..."></textarea>
-          <!-- <p class="option-description">The text that will be used to generate the game.</p> -->
         </div>
       </div>
       <div class="modal-footer">
@@ -253,5 +216,16 @@
     </svg>
   </div>
   </div>
+
+  <script>
+    // Load about.json and set the document title
+    fetch('about.json')
+      .then(response => response.json())
+      .then(data => {
+        document.title = data.name;
+        document.querySelector('title').textContent = data.name;
+      })
+      .catch(error => console.error('Error loading about.json:', error));
+  </script>
 </body>
 </html>
