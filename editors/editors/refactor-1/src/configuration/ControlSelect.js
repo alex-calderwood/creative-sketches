@@ -1,8 +1,8 @@
 import { createModal } from './uiUtils.js';
-import { FourDirectionControls, AutoDropFourDirectionControls } from '../controls/FieldGameControls.js';
-import { KeyboardMapper } from '../controls/KeyboardMapper.js';
+import { FourDirectionController, AutoDropFourDirectionControls } from '../controls/FourDirectionController.js';
+import { FourDirectionKeyboardMapper } from '../controls/FourDirectionKeyboardMapper.js';
 import { TrackingMidiMapper } from '../controls/TrackingMidiMapper.js';
-import { HighLowMidiMapper } from '../controls/HighLowMidiMapper.js';
+import { FourDimensionHighLowMidiMapper } from '../controls/FourDimensionHighLowMidiMapper.js';
 
 export class ControlSelect {
   constructor(game) {
@@ -12,7 +12,7 @@ export class ControlSelect {
     // Define available MIDI mappers - configuration comes from the classes themselves
     this.mapperTypes = {
       'tracking': TrackingMidiMapper,
-      'highlow': HighLowMidiMapper
+      'highlow': FourDimensionHighLowMidiMapper
     };
   }
 
@@ -36,7 +36,7 @@ export class ControlSelect {
         <div class="modal-body">
           <div style="margin-bottom: 20px;">
             <label style="display: flex; align-items: center; gap: 10px;">
-              <input type="checkbox" id="autodrop-checkbox" checked>
+              <input type="checkbox" id="autodrop-checkbox">
               <span>Auto Drop</span>
             </label>
             <p style="font-size: 0.85em; color: #666; margin: 5px 0 0 26px;">
@@ -152,10 +152,10 @@ export class ControlSelect {
     // Create the controller based on autoDrop setting
     const controller = autoDrop 
       ? new AutoDropFourDirectionControls(this.game)
-      : new FourDirectionControls(this.game);
+      : new FourDirectionController(this.game);
     
     // Initialize keyboard controls
-    const keyboardMapper = new KeyboardMapper().initialize();
+    const keyboardMapper = new FourDirectionKeyboardMapper().initialize();
     keyboardMapper.setController(controller);
     
     // Build options object from the UI inputs
@@ -186,6 +186,8 @@ export class ControlSelect {
     if (this.resolveConfigPromise) {
       this.resolveConfigPromise(controls);
     }
+
+    controller.summarizeActionMappings([keyboardMapper, midiMapper]);
     
     return controls;
   }

@@ -1,10 +1,10 @@
 import { getScaleModifier, getBlockText, noteToHue, updateBlockColor } from './block.js';
 import { moveTo, singleton } from './utils.js';
-import { WikiSelect } from './src/configuration/WikiSelect.js';
+import { CorpusSelect } from './src/configuration/CorpusSelect.js';
 import { ControlSelect } from './src/configuration/ControlSelect.js';
 import { TextStream } from './src/streams/TextStream.js';
 import { TextStreamEntity } from './src/streams/TextStreamEntity.js';
-import { ClassicDomTextStreamComponent } from './src/streams/TextStreamComponent.js';
+import { ClassicDomTextStreamComponent } from './src/streams/ClassicDomTextStreamComponent.js';
 import soundManager from './sound.js';
 
 // given a dict with weights or probabilities, pick one accordingly
@@ -188,7 +188,7 @@ export class Game {
     this.completedTokensTop = 20;
 
     // Decide on a reader
-    this.reader = await new WikiSelect().getReader();
+    this.reader = await new CorpusSelect().getReader();
     console.log('Loaded Reader:', this.reader);
 
     if (this.stream) {
@@ -936,33 +936,3 @@ export class Game {
 }
 
 
-export let defaultCorpora = [
-  // 'corpora/short/sacred_emily.txt',
-  // 'corpora/short/love_breton.txt', 
-  // 'corpora/short/less_time.txt', 
-  // 'corpora/short/eis.txt',
-  // 'corpora/books/tale_of_two_cities.txt',
-  // 'corpora/short/eis_wiki.txt',
-  // 'corpora/short/here.txt',
-  'corpora/books/tale_of_two_cities_small.txt',
-  'corpora/short/chapters/this_the_way_to_the_museyroom_finnegans_wake.txt',
-
-  // uninteresting
-  // 'corpora/short/art.txt', 
-  // 'corpora/books/nadja.txt',
-  // 'corpora/short/harry_potter_ch1.txt', 
-];
-// let [file1, file2] = defaultCorpora.sort(() => 0.5 - Math.random()).slice(0, 2);
-// let defaultCorpus = file1; // Use first file as default
-
-export function getNewCorpus() {
-  let order = defaultCorpora.sort(() => 0.5 - Math.random());
-  return order[0];
-}
-
-export async function getNewCorpusText(filename) {
-  const assetsFolder = '/editors/assets';
-  const filePath = `${assetsFolder}/${filename}`;
-  const response = await fetch(filePath);
-  return response.text();
-}
