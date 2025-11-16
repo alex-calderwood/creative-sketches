@@ -1,0 +1,10 @@
+{
+    "name": "In progress",
+    "description": "This one lets you play a word grid placement game using a MIDI keyboard. Unlike the previous experiment, this one uses a score tracker to determine the direction of the block placement. Direction is controlled by pitch changes.",
+    "notes": "",
+    "version": "2",
+    "series": ["game", "instrument", "sound"],
+    "url": "instrument-3",
+    "image": "instrument.png",
+    "major": true
+}
