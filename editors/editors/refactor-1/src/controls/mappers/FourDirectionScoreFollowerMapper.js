@@ -1,5 +1,5 @@
 import { InputMapper } from './InputMapper.js';
-import { MidiInterface } from './MIDI.js';
+import { MidiInterface } from '../MIDI.js';
 
 /**
  * MIDI-specific input mapper
@@ -7,7 +7,7 @@ import { MidiInterface } from './MIDI.js';
  */
 
 
-export class TrackingMidiMapper extends InputMapper {
+export class FourDirectionScoreFollowerMapper extends InputMapper {
   static name = 'Tracking';
   static description = 'Tracks note changes. Higher/lower notes trigger right/left. Sharp/flat notes trigger up/down.';
   static options = [

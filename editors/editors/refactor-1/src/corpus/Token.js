@@ -5,6 +5,8 @@ export function uuid(name) {
 export class Token {
   constructor(data) {
     this.text = data.text;
+    this.term = data.term || null; // the NLP term/token object from compromise.js
+    this.idx = data.idx || null;   // the index of the token in its parent term
     this.type = data.type || 'word';
     this.pos = data.pos;
     this.source = data.source;
@@ -20,17 +22,19 @@ export class Token {
    * Create a token from another token, but ID is not preserved
    */
   static fromToken(oldToken) {
-    return new Token(oldToken.toJSON().except('id'));
+    if (oldToken == null) {
+      throw new Error("Token.fromToken(): oldToken is null");
+    }
+
+    let json = oldToken.toJSON();
+    delete json.id;
+    return new Token(json);
   }
 
   toJSON() {
-    return {
-      text: this.text,
-      type: this.type,
-      pos: this.pos,
-      source: this.source,
-      id: this.id,
-      display: this.display,
-    };
+    // Return only "own" non-function properties (excluding methods)
+    return Object.fromEntries(
+      Object.entries(this).filter(([key, value]) => typeof value !== 'function')
+    );
   }
 }

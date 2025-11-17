@@ -1,5 +1,27 @@
 /**
- * Central event manager for game controls using native EventTarget
+ * Controllers define what actions a player can take in the game.
+ * 
+ * Think of a Controller as the list of things a player can do (move left, jump, shoot, etc.)
+ * and what should happen when they do those things.
+ * 
+ * ## To override:
+ * 
+ * Extend Controller and call `declareActions()` to set up your player actions.
+ * Pass it an object where keys are action names and values are the functions to run.
+ * 
+ * ## How Controllers work with Mappers:
+ * 
+ * Controllers work together with Mappers:
+ * - **Mappers** translate physical inputs (keyboard keys, MIDI notes) into action names
+ * - **Controllers** define what happens when those actions are triggered
+ * 
+ * Example flow: Player presses ArrowRight → Mapper says "Right" → Controller runs your _moveRight function
+ * 
+ * Communication: Mappers call `setController(controller)` to get access to this controller's 
+ * `executeAction` method. When they detect an input, they call `executeAction(actionName, data)` 
+ * which looks up and runs the corresponding handler function.
+ * 
+ * See FourDirectionController for a complete implementation.
  */
 export class Controller {
   constructor(game) {
@@ -59,7 +81,7 @@ export class Controller {
     });
     
     // Print the number of mapped actions
-    console.log(`Actions mapped: ${mappedActions.size}`);
+    console.log(`Actions mapped (${mappedActions.size}): ${[...mappedActions].join(', ')}`);
     
     // Find actions that are declared but not mapped to any input
     const unmappedActions = [...this.playerActions.keys()].filter(action => !mappedActions.has(action));

@@ -1,3 +1,12 @@
+/**
+ * TextStreamEntity coordinates between TextStream (data) and TextStreamComponent (visuals).
+ * 
+ * This class ties together a TextStream and a TextStreamComponent. It's a convenience wrapper 
+ * that lets you work with the stream without worrying about coordinating data and display separately.
+ * 
+ * The communication is handled automatically - TextStream emits events, TextStreamComponent
+ * listens and updates. TextStreamEntity just owns both and provides helper methods.
+ */
 export class TextStreamEntity {
   constructor(game, stream, component) {
     this.game = game;

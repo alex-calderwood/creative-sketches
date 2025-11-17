@@ -1,5 +1,5 @@
 import { InputMapper } from './InputMapper.js';
-import { MidiInterface } from './MIDI.js';
+import { MidiInterface } from '../MIDI.js';
 
 /**
  * MIDI-specific input mapper
@@ -11,7 +11,7 @@ const RIGHT_RANGE = [12, 127];
 
 export class FourDimensionHighLowMidiMapper extends InputMapper {
   static name = 'High/Low Ranges';
-  static description = 'Maps specific note ranges to directions. Low range (natural notes) = left/up, high range (natural notes) = right/down.';
+  static description = 'A MIDI controller that maps specific note ranges to directions. Low range (natural notes) = left/up, high range (natural notes) = right/down.';
   static options = [
     { id: 'noteRange', label: 'Note Range', type: 'range', min: 0, max: 127, defaults: [0, 127] },
     { id: 'leftRange', label: 'Left Range', type: 'range', min: 0, max: 127, defaults: [0, 11] },

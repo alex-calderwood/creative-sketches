@@ -1,4 +1,4 @@
-import { getScaleModifier, getBlockText, noteToHue, updateBlockColor } from './block.js';
+import { getScaleModifier, getBlockText, noteToHue, updateBlockColor, createBlockAt } from './block.js';
 import { moveTo, singleton } from './utils.js';
 import { CorpusSelect } from './src/configuration/CorpusSelect.js';
 import { ControlSelect } from './src/configuration/ControlSelect.js';
@@ -6,6 +6,7 @@ import { TextStream } from './src/streams/TextStream.js';
 import { TextStreamEntity } from './src/streams/TextStreamEntity.js';
 import { ClassicDomTextStreamComponent } from './src/streams/ClassicDomTextStreamComponent.js';
 import soundManager from './sound.js';
+import { Token } from './src/corpus/Token.js';
 
 // given a dict with weights or probabilities, pick one accordingly
 // assign the remaining probability mass to any key with value -1
@@ -174,6 +175,7 @@ export class Game {
     
     this.state = {
       currentBlock: null,
+      currentToken: null,
       curX: initialX,
       curY: initialY,
       currentBlockLeft: initialRect.left,
@@ -469,10 +471,7 @@ export class Game {
     endGameModal.style.display = 'flex';
 
     // Stop the game
-    if (this.state.currentBlock) {
-      this.state.currentBlock.remove();
-      this.state.currentBlock = null;
-    }
+    this.deleteCurrentBlock();
 
     // Mark game as over
     this.state.gameOver = true;
@@ -482,6 +481,15 @@ export class Game {
     submitBtn.style.display = 'none';
 
     // TODO: In the future, we'll send the poem to the leaderboard here
+  }
+
+  deleteCurrentBlock() {
+    if (!this.state.currentBlock) {
+      return;
+    }
+    this.state.currentBlock.remove();
+    this.state.currentBlock = null;
+    this.state.currentToken = null;
   }
 
   async initializeSounds() {
@@ -502,10 +510,6 @@ export class Game {
 
     let colColor;
 
-    // if (this.state.currentBlock == null) {
-    //   colColor = 'transparent';
-    // } else 
-    
     if ( this.state.currentBlock.classList.contains('delete')) {
       colColor = DELETE_COLOR;
     } else if (this.state.currentBlock.classList.contains('constraint')) {
@@ -626,9 +630,19 @@ export class Game {
     return tokenData;
   }
 
+  /**
+   * Get the next token from the stream and make it the current block.
+   * Marks it as current and animates it into position.
+   */
   nextBlockUp() {
-    let next =  this.stream.pop();
-    this.state.currentBlock = next?.block;
+    let next = this.stream.pop();
+    console.log("nextBlockUp():", next?.token?.term);
+    this.setCurrentBlock(next?.block, next?.token);
+  }
+
+  setCurrentBlock(block, token) {
+    this.state.currentBlock = block;
+    this.state.currentToken = token;
     if (this.state.currentBlock) {
       this.state.currentBlock.classList.add('current-token');
 
@@ -641,7 +655,22 @@ export class Game {
     }
   }
 
-  removeOriginalTokens(completedTokens) {
+  // Not to be used generally, just for special token replacements
+  changeCurrentToken(text) {
+    // this.game.state.currentBlock.innerHTML = newView.text();
+
+    let newToken = new Token({
+      text: text,
+      type: 'word',
+      pos: 'word',
+      source: 'user',
+    })
+    let newBlock = createBlockAt(newToken, this.state.currentBlockLeft, this.state.currentBlockTop, this.columnWidths[this.state.curX], this.rowHeights[this.state.curY]);
+    this.deleteCurrentBlock();
+    this.setCurrentBlock(newBlock, newToken);
+  }
+
+  removeOriginalTokens(completedTokens) { 
     completedTokens.forEach(({ token }) => {
       token.remove();
     });
@@ -741,13 +770,13 @@ export class Game {
     this.state.grid[x][y] = element;
   }
 
-  addColToGrid(col) {
-    let newWidth = 50;
-    this.resizeColumn(col, newWidth);
-    this.addColumn(col, newWidth);
-    this.shrinkCurrentToken(newWidth);
-    this.drop();
-  }
+  // addColToGrid(col) {
+  //   let newWidth = 50;
+  //   this.resizeColumn(col, newWidth);
+  //   this.addColumn(col, newWidth);
+  //   this.shrinkCurrentToken(newWidth);
+  //   this.drop();
+  // }
 
   resizeColumn(col, width) {
     console.log(`Resizing column ${col} to width: ${width}`);

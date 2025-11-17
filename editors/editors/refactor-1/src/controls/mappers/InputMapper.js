@@ -1,43 +1,27 @@
 
 /**
- * Base class for input mappers - converts device inputs to game actions
+ * Mappers translate physical inputs into action names.
  * 
- * ## To extend:
+ * A Mapper listens for inputs from a device (keyboard, MIDI controller, etc.) and converts
+ * them into simple action names like "Left" or "Jump". This lets you swap input devices
+ * without changing game logic.
  * 
- * 1. **Define mappings** - Set `this.mappings` with action → filter pairs
- *    Filter returns true when action should trigger
+ * ## How Mappers work with Controllers:
  * 
- * 2. **Implement initialize()** - Listen for input, check filters, 
- *    call `this.handleInput(action, data)` when matched
+ * - **Mappers** turn physical inputs into action names (ArrowRight → "Right")
+ * - **Controllers** define what those actions actually do ("Right" → move player right)
  * 
- * 3. **Actions auto-populate** from `Object.keys(this.mappings)`
+ * Flow: Input Device → Mapper → Controller → Game
  * 
- * ## Example:
+ * ## To override:
  * 
- * ```javascript
- * class MyMapper extends InputMapper {
- *   constructor() {
- *     super();
- *     this.mappings = {
- *       'Jump': { filter: (data) => data.key === 'Space' },
- *       'Move': { filter: (data) => data.key === 'ArrowRight' }
- *     };
- *   }
+ * 1. Set `this.mappings` - an object where each key is an action name and each value
+ *    has a `filter` function that returns true when that action should trigger
  * 
- *   initialize() {
- *     window.addEventListener('keydown', (e) => {
- *       for (const [action, mapping] of Object.entries(this.mappings)) {
- *         if (mapping.filter({ key: e.code })) {
- *           this.handleInput(action, { key: e.code });
- *         }
- *       }
- *     });
- *     return this;
- *   }
- * }
- * ```
+ * 2. Implement `initialize()` - set up listeners for your input device. When an input
+ *    matches a filter, call `this.handleInput(actionName, data)`
  * 
- * See MidiMapper.js for an example implementation.
+ * See FourDirectionKeyboardMapper for a complete implementation.
 */
 export class InputMapper {
   

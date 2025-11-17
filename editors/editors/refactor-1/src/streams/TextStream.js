@@ -1,8 +1,20 @@
 import eventBus from '../EventBus.js';
 
 /**
- * TextStream - Base class for text token streams
- * Manages a stream of tokens that can be accessed and modified
+ * TextStream represents the data for a stream of tokens/words.
+ * 
+ * This class manages the actual token data - storing them, retrieving them, and keeping
+ * the stream filled using a Reader. It's the data layer, with no visual logic.
+ * 
+ * ## Communication:
+ * 
+ * TextStream communicates changes by emitting events through the EventBus:
+ * - `token-change` - when a token is modified
+ * - `stream-push` - when a new token is added
+ * - `stream-pop` - when a token is removed
+ * 
+ * TextStreamComponent listens for these events and updates the visual display accordingly.
+ * TextStreamEntity coordinates between the two.
  */
 export class TextStream {
   /**
