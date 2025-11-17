@@ -1,5 +1,29 @@
 import eventBus from '../EventBus.js';
 
+/**
+ * TextStreamComponent is the visual component for a stream of tokens.
+ * 
+ * This is where all visual logic should go - rendering tokens to the DOM, updating their
+ * appearance, animations, etc. It has no knowledge of how tokens are generated or stored,
+ * only how to display them.
+ * 
+ * ## To override:
+ * 
+ * Implement the required methods:
+ * - `render()` - render all tokens
+ * - `initialize(tokens)` - set up initial visual state with token array
+ * - `onChange(index, event)` - update display when a token changes
+ * - `onPush(event)` - update display when a token is added
+ * - `onPop(event)` - update display when a token is removed
+ * 
+ * ## Communication:
+ * 
+ * TextStreamComponent listens for events from TextStream via EventBus and responds with
+ * visual updates. When TextStream data changes, it emits events; TextStreamComponent
+ * catches them and updates what the user sees.
+ * 
+ * See ClassicDomTextStreamComponent for a complete implementation.
+ */
 export class TextStreamComponent {
   constructor(game) {
     this.game = game;

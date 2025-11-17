@@ -7,7 +7,7 @@
 class EventBus {
   constructor(eventTarget = document) {
     this.eventTarget = eventTarget;
-    this.verbose = true;
+    this.verbose = false;
   }
   
   on(eventName, callback) {

@@ -24,10 +24,18 @@ export class FourDirectionKeyboardMapper extends InputMapper {
           'Drop': {
             filter: (event) => event.key === ' ' || event.key === 'Space'
           },
-          'Number': {
-            filter: (event) => 
-              /^[0-9]$/.test(event.key)
-          }
+          'ChangeTense': {
+            filter: (event) => event.key === '1'
+          },
+          'ChangeInflection': {
+            filter: (event) => event.key === '2'
+          },
+          'Next': {
+            filter: (event) => event.key === 'Enter'
+          },
+          'Delete': {
+            filter: (event) => event.key === 'Backspace'
+          },
         };
         this.actions = Object.keys(this.mappings);
     }

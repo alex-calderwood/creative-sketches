@@ -38,19 +38,32 @@ export class TextCorpus {
         // Use comprimise to tokenize the text
         this.doc = nlp(text);
 
+
+        // print out the type that this.doc.terms()
+        console.log("this.doc.terms()", typeof this.doc.terms());
         // Store all tokens with their POS info
-        this.tokens = this.doc.terms().json().map((jsonTerm) => {
-          if (jsonTerm.terms.length != 1) {
-            console.error("Term length should be 1", jsonTerm);
-          }
-          let term = jsonTerm.terms[0];
-          return new Token({
-            text: term.text,
-            pos: term.tags[0] || 'Unknown',  // Get the primary tag
-            term: term,
-            source: this.source,
+        this.tokens = this.doc.terms().map((parentTerm) => {
+          console.log("term", parentTerm);
+          return parentTerm.terms().map((subTerm, idx) => {
+            let token = subTerm.json();
+            if (token.length != 1) {
+              console.error("Token of term length should be 1", token);
+            }
+            token = token[0].terms[0];
+            return new Token({
+              // ...token,
+              text: token.text,
+              pos: token.tags[0] || 'Unknown',  // Get the primary tag
+              parentTerm: parentTerm,           // parent term reference
+              term: subTerm,                    // term reference
+              termIndex: idx,
+              source: this.source,
+            });
           });
-        }).filter(token => token.text && token.text.trim().length > 0); // Filter out empty tokens
+        }).flat().filter(token => token.text && token.text.trim().length > 0); // Filter out empty tokens
+
+        console.log("this.tokens", this.tokens);
+        window.tokens = this.tokens;
       }
 
     head(N=100) {

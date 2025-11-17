@@ -1,8 +1,8 @@
 import { createModal } from './uiUtils.js';
-import { FourDirectionController, AutoDropFourDirectionControls } from '../controls/FourDirectionController.js';
-import { FourDirectionKeyboardMapper } from '../controls/FourDirectionKeyboardMapper.js';
-import { TrackingMidiMapper } from '../controls/TrackingMidiMapper.js';
-import { FourDimensionHighLowMidiMapper } from '../controls/FourDimensionHighLowMidiMapper.js';
+import { FourDirectionController, AutoDropFourDirectionControls } from '../controls/controllers/FourDirectionController.js';
+import { FourDirectionKeyboardMapper } from '../controls/mappers/FourDirectionKeyboardMapper.js';
+import { FourDirectionScoreFollowerMapper } from '../controls/mappers/FourDirectionScoreFollowerMapper.js';
+import { FourDimensionHighLowMidiMapper } from '../controls/mappers/FourDimensionHighLowMidiMapper.js';
 
 export class ControlSelect {
   constructor(game) {
@@ -11,7 +11,7 @@ export class ControlSelect {
     
     // Define available MIDI mappers - configuration comes from the classes themselves
     this.mapperTypes = {
-      'tracking': TrackingMidiMapper,
+      'tracking': FourDirectionScoreFollowerMapper,
       'highlow': FourDimensionHighLowMidiMapper
     };
   }
