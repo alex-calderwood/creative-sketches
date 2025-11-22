@@ -90,12 +90,10 @@ export class Game {
     this.blockWidth = config.blockWidth;
     this.blockHeight = config.blockHeight;
     this.numHands = config.numHands;
-
   }
 
   /* 
     Mark that the player has taken some action
-
   */
   onStart() {
     const controlIcons = document.getElementById('control-icons');
@@ -166,7 +164,8 @@ export class Game {
       // Call controller tick every second
       setInterval(() => {
         if (this.controller) {
-          this.controller.handleAction('Tick', {});
+          console.log("Calling controller tick");
+          this.controller.executeAction('Tick', {});
         }
       }, 1000);
       
