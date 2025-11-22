@@ -35,6 +35,16 @@ export class Reader {
         throw new Error("updateContext() not implemented");
     }
 
+    /**
+     * Creates a clone of this reader with independent state.
+     * Subclasses should override this method.
+     * @returns {Reader} A new Reader instance with the same configuration.
+     * @throws {Error} If not implemented by subclass.
+     */
+    clone() {
+        throw new Error("clone() not implemented");
+    }
+
     toString() {
         return `Reader(type: ${this.constructor.name})`;
     }

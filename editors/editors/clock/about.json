@@ -1,0 +1,10 @@
+{
+    "name": "Clock Words",
+    "description": "For the CM Game Jam, a reprise of my p5 poetry clocks using the word generator, but it came out weird.",
+    "notes": "",
+    "version": "1",
+    "series": ["clock"],
+    "url": "clock",
+    "image": "clock.png",
+    "major": true
+}
