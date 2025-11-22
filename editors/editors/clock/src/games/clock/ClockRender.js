@@ -34,7 +34,7 @@ export class ClockRender {
         // Initialize hands array with position objects
         this.state.hands = [];
         // const maxRadius = Math.min(window.innerWidth, window.innerHeight) / 2 - this.params.blockWidth * 2;
-        let radius = this.params.blockHeight;
+        let radius = this.params.blockWidth / 4;
         
         for (let i = 0; i < streams.length; i++) {
             this._readFromStreamI.push(() => {
@@ -44,21 +44,22 @@ export class ClockRender {
             // Initialize each hand with its own position, radius, and period
             // Each hand gets a smaller radius (concentric circles)
             // Use blockHeight to match the vertical spacing of text streams
-            const radiusStep = this.params.blockWidth;
-            radius += radiusStep;
             
             // Each hand gets a different period (speed)
             // Hand 0 is slowest, each subsequent hand is faster
-            const handPeriod = (i + 1) * (i + 1) * 2110;
+            const handPeriod = (i + 1) * (i + 1) * 1000
             
             this.state.hands.push({
                 element: null,
                 position: {
-                    radius:radius,
+                    radius: radius,
                     theta: 0,
                 },
                 period: handPeriod,
             });
+
+            radius += this.params.blockWidth;
+
         }
             
     }

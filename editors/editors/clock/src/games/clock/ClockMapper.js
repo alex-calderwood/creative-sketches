@@ -18,6 +18,11 @@ export class ClockMapper extends InputMapper {
               return handNumber >= 0 && handNumber < this.numHands;
             }
           },
+          'Tick': {
+            filter: (event) => {
+              return event.key === 'Enter';
+            }
+          },
         };
         this.actions = Object.keys(this.mappings);
     }
