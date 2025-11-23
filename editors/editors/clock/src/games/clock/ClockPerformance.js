@@ -2,7 +2,7 @@ import { createBlockAt, rotateTo, rotate, setColor } from '../../../block.js';
 import { Token } from '../../corpus/Token.js';
 import { moveTo } from '../../../utils.js';
 
-export class ClockRender {
+export class ClockPerformance {
     constructor(params={}) {
         this.params = {
             radius: 100,
@@ -14,6 +14,7 @@ export class ClockRender {
             },
             blockWidth: 100,
             blockHeight: 80,
+            handRatio: 2,
         }
         this.params = { ...this.params, ...params };
 
@@ -34,7 +35,9 @@ export class ClockRender {
         // Initialize hands array with position objects
         this.state.hands = [];
         // const maxRadius = Math.min(window.innerWidth, window.innerHeight) / 2 - this.params.blockWidth * 2;
-        let radius = this.params.blockWidth / 4;
+        let radius = 0;
+        // let period = streams.length ** this.params.handRatio * 1000;
+        let basePeriod = 200;
         
         for (let i = 0; i < streams.length; i++) {
             this._readFromStreamI.push(() => {
@@ -47,7 +50,11 @@ export class ClockRender {
             
             // Each hand gets a different period (speed)
             // Hand 0 is slowest, each subsequent hand is faster
-            const handPeriod = (i + 1) * (i + 1) * 1000
+            let period = radius * 2 * Math.PI * basePeriod / this.params.blockWidth;
+
+            if (period === 0) {
+                period = 200;
+            }
             
             this.state.hands.push({
                 element: null,
@@ -55,11 +62,13 @@ export class ClockRender {
                     radius: radius,
                     theta: 0,
                 },
-                period: handPeriod,
+                period: period,
             });
 
             radius += this.params.blockWidth;
-
+            // period = period / this.params.handRatio;
+            // period *= this.params.handRatio;
+            // period += 1000;
         }
             
     }
@@ -83,6 +92,12 @@ export class ClockRender {
         for (let i = 0; i < this.state.hands.length; i++) {
             const hand = this.state.hands[i];
             hand.position.theta = (this.state.time / hand.period) * 2 * Math.PI;
+            // the number of times theta has wrapped around the circle
+            hand.position.numTicks = Math.floor(hand.position.theta / (2 * Math.PI));
+            if (hand.position.numTicks > hand.position.prevNumTicks) {
+                this.nextBlockUp(i);
+            }
+            hand.position.prevNumTicks = hand.position.numTicks;
         }
 
         this.render(timeSinceLastTick);
@@ -90,7 +105,7 @@ export class ClockRender {
 
     getLoc(hand) {
         let radius = hand.position.radius;
-        let theta = hand.position.theta;
+        let theta = hand.position.theta - Math.PI / 2;
         return {
             left: this.params.center.x + radius * Math.cos(theta),
             top: this.params.center.y + radius * Math.sin(theta),
@@ -124,7 +139,7 @@ export class ClockRender {
         console.log("nextBlockUp(): hand", hand.element, this.params.center);
         
         // Position new element at current theta position (instant)
-        moveTo(hand.element, loc.left, loc.top, 1000);
+        moveTo(hand.element, loc.left, loc.top, 0);
         
         // Rotate element around its own center to match current orientation (instant)
         // rotate(hand.element, hand.position.theta, 0);

@@ -8,7 +8,7 @@ import { Token } from './src/corpus/Token.js';
 
 import { ClockController } from './src/games/clock/ClockController.js';
 import { ClockMapper } from './src/games/clock/ClockMapper.js';
-import { ClockRender } from './src/games/clock/ClockRender.js';
+import { ClockPerformance } from './src/games/clock/ClockPerformance.js';
 
 // given a dict with weights or probabilities, pick one accordingly
 // assign the remaining probability mass to any key with value -1
@@ -72,9 +72,10 @@ export class Game {
   static DEFAULTS = {
     tickTime: 1,
     dropTimePerBox: 50,
-    blockWidth: 100,
-    blockHeight: 60,
-    numHands: 10,
+    blockWidth: 50,
+    blockHeight: 20,
+    numHands: 16,
+    streamLength: 30
   };
 
   constructor(options = {}) {
@@ -90,6 +91,7 @@ export class Game {
     this.blockWidth = config.blockWidth;
     this.blockHeight = config.blockHeight;
     this.numHands = config.numHands;
+    this.streamLength = config.streamLength;
   }
 
   /* 
@@ -121,12 +123,10 @@ export class Game {
     this.reader = await new CorpusSelect().getReader();
     console.log('Loaded Reader:', this.reader);
 
-    this.gameRender = new ClockRender({blockWidth: this.blockWidth, blockHeight: this.blockHeight});
+    this.gameRender = new ClockPerformance({blockWidth: this.blockWidth, blockHeight: this.blockHeight});
 
-    // Create streams based on numHands configuration
-    this.streamLength = 20;
     const streams = [];
-    let top = 200;
+    let top = 30;
 
     for (let i = 0; i < this.numHands; i++) {
       // Clone the reader for each stream (except the first one uses the original)
@@ -162,12 +162,12 @@ export class Game {
       }, this.tickTime);
       
       // Call controller tick every second
-      setInterval(() => {
-        if (this.controller) {
-          console.log("Calling controller tick");
-          this.controller.executeAction('Tick', {});
-        }
-      }, 1000);
+      // setInterval(() => {
+      //   if (this.controller) {
+      //     console.log("Calling controller tick");
+      //     this.controller.executeAction('Tick', {});
+      //   }
+      // }, 1000);
       
       this.firstInitDone = true;
     }
