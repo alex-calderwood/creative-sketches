@@ -370,7 +370,7 @@
             }
             
             // Add any other custom fields (excluding standard ones)
-            const excludeFields = ['name', 'notes', 'description', 'version', 'series', 'url', 'image', 'dir', 'hide'];
+            const excludeFields = ['name', 'notes', 'description', 'version', 'series', 'url', 'image', 'dir', 'hide', 'major'];
             Object.entries(project).forEach(([key, value]) => {
                 if (!excludeFields.includes(key) && value !== null && value !== undefined && value !== '') {
                     metadataLines.push(`${key}: ${value}`);
