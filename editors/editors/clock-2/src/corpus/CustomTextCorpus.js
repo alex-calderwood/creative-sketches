@@ -5,7 +5,7 @@ import { TextCorpus } from './TextCorpus.js';
  * or select from a collection of example texts.
  */
 export class CustomTextCorpus extends TextCorpus {
-  static INDEX_PATH = '/assets/corpora/index.json';
+  static INDEX_PATH = '/editors/assets/corpora/index.json';
 
   constructor(source = 'custom', { exclude = [], include = [] } = {}) {
     super(source);
