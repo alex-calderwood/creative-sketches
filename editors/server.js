@@ -104,13 +104,12 @@ getProjects().then(projectList => {
     const projectPath = path.join(__dirname, 'editors', project.dir);
     // Create a router for this project
     const projectRouter = express.Router();
-
-    // Serve static files
-    projectRouter.use(serveStatic(projectPath));
     
     // Apply history API fallback for SPAs if needed
     projectRouter.use(history());
     
+    // Serve static files
+    projectRouter.use(serveStatic(projectPath));
     
     // Mount the router at the project path with 'editors' prefix
     app.use(`/editors/${project.url}`, projectRouter);
