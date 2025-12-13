@@ -2,7 +2,7 @@ import { TextStreamComponent } from '../../streams/TextStreamComponent.js';
 import { createBlockAt, updateBlockColor } from '../../../block.js';
 import { moveTo } from '../../../utils.js';
 
-export class HyperTextStream extends TextStreamComponent {
+export class HyperTextStreamComponent extends TextStreamComponent {
   constructor(game, params={}) {
     super(game);
 
@@ -16,8 +16,8 @@ export class HyperTextStream extends TextStreamComponent {
       to: { left: 0, top: 0 },
       blockHeight: 100,
       blockWidth: 100,
-      spaceWidth: 10,
       clipRect: null,   // bounding box { left, top, width, height } for clipping
+      hideOverflow: true,
     };
 
     this.params = { ...defaultParams, ...params };
@@ -26,22 +26,17 @@ export class HyperTextStream extends TextStreamComponent {
     this.blockHeight = this.params.blockHeight;
     this.clipRect = this.params.clipRect;
 
-    // Set up positions based on clipRect (container created in initialize)
-    if (this.clipRect) {
-      const rect = this.clipRect;
-      // Positions are relative to container (0,0 is top-left)
-      this.params.from = { left: 0, top: -1.1 * rect.height };
-      this.params.to = { left: 0, top: rect.height * 10 };
-    }
+    // Positions are relative to container (0,0 is top-left)
+    this.params.from = { left: 0, top: 0 - this.params.blockHeight };
+    // this.params.to = { left: 0, top: rect.height * 10 };
 
-    // If from.top was specified but to.top wasn't, match them
-    if (params.from?.top !== undefined && params.to?.top === undefined) {
-      this.params.to.top = this.params.from.top;
-    }
   }
 
   createContainer() {
-    if (!this.clipRect) return;
+    if (!this.clipRect) {
+      console.error("TextStreamComponent.createContainer(): no clipRect", this.params);
+      return;
+    }
     
     const rect = this.clipRect;
     this.container = document.createElement('div');
@@ -51,7 +46,7 @@ export class HyperTextStream extends TextStreamComponent {
     this.container.style.top = `${rect.top}px`;
     this.container.style.width = `${rect.width}px`;
     this.container.style.height = `${rect.height}px`;
-    this.container.style.overflow = 'hidden';
+    this.container.style.overflow = this.params.hideOverflow ? 'hidden' : 'visible';
     document.body.appendChild(this.container);
   }
   
@@ -129,7 +124,11 @@ export class HyperTextStream extends TextStreamComponent {
   }
 
   updateWidth(width) {
+    console.log("TextStreamComponent.updateWidth():", width);
     this.blockWidth = width;
+    if (this.container) {
+      this.container.style.width = `${width}px`;
+    }
   }
 
   updateHeight(height) {
@@ -141,18 +140,18 @@ export class HyperTextStream extends TextStreamComponent {
    */
   render() {
     let from = this.params.from;
-    let to = this.params.to;
+    // let to = this.params.to;
 
     let newLoc = {
       left: from.left,
       top: from.top,
     }
 
-    let nSteps = this.tokens.length;
+    // let nSteps = this.tokens.length;
 
     let delta = {
-      left: (to.left - from.left) / nSteps,
-      top: (to.top - from.top) / nSteps,
+      left: 0,
+      top: this.params.blockHeight,
     }
 
     for (let i = 0; i < this.tokens.length; i++) {
@@ -173,6 +172,7 @@ export class HyperTextStream extends TextStreamComponent {
 
   deleteToken(token) {
     let block = this.tokensToBlocks[token.id];
+    console.log("deleting", {token, block})
     
     if (block) {
       // Fade out the block before removing it
@@ -209,10 +209,12 @@ export class HyperTextStream extends TextStreamComponent {
       "random"
     );
 
-    // Move block into container if we have one (for clipping)
+    // Move block into container, which allows clipping
     // Block's position will now be relative to container
     if (this.container && block) {
       this.container.appendChild(block);
+    } else {
+      console.error("TextStreamComponent.blockFromToken(): no container or block", {container: this.container, block})
     }
 
     this.tokensToBlocks[token.id] = block;

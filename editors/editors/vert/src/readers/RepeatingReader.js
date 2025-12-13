@@ -5,17 +5,32 @@ import { Token } from '../corpus/Token.js';
  * Placeholder - will be replaced with more sophisticated logic later.
  */
 export class RepeatingReader {
-  constructor(word) {
+  constructor(word, params={}) {
     this.word = word;
+    this.params = {
+      cycle: true,
+      ...params,
+    }
+    this.history = [];
+    this.history.push(word);
+    this.historyIndex = 0;
   }
 
   updateWord(word) {
     this.word = word;
+    this.history.push(word);
   }
 
   read() {
-    console.log('reading word', this.word);
-    return new Token({ text: this.word, type: 'word' });
+    let word;
+    if (this.params.cycle) {
+      word = this.history[this.historyIndex];
+      this.historyIndex = (this.historyIndex + 1) % this.history.length;
+    } else {
+      word = this.word;
+    }
+    console.log('reading word', word);
+    return new Token({ text: word, type: 'word' });
   }
 
   clone() {

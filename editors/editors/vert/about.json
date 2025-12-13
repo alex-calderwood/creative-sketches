@@ -1,10 +1,10 @@
 {
     "name": "Hyper",
-    "description": "A kinetic poem which iterates through the text of William Bronk's 'At Tikal' at different rates.",
+    "description": "A first experiment in using text streams as buffers to record a multiplicity of what the writer was writing.",
     "notes": "",
     "version": "1",
     "series": ["hyper"],
     "url": "hyper",
     "image": "tikal.png",
-    "major": true
+    "major": false
 }
