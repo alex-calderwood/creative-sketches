@@ -1,4 +1,4 @@
-import { HyperTextStream } from './HyperTextStream.js';
+import { HyperTextStreamComponent } from './HyperTextStreamComponent.js';
 import { TextStream } from '../../streams/TextStream.js';
 import { TextStreamEntity } from '../../streams/TextStreamEntity.js';
 import { RepeatingReader } from '../../readers/RepeatingReader.js';
@@ -6,7 +6,7 @@ import { RepeatingReader } from '../../readers/RepeatingReader.js';
 export class HyperPerformance {
     constructor(params={}) {
         this.params = { 
-            streamLength: 5,
+            streamLength: 3,
             hideEditorText: true,  // whether to hide the editor text
             drawBoxes: false,
             slideRate: 1000,
@@ -57,18 +57,7 @@ export class HyperPerformance {
                 return;
             }
             
-            const reader = new RepeatingReader(wordBox.text);
-            const textStream = new TextStream(this.params.streamLength, reader);
-
-            const component = new HyperTextStream(this, {
-                clipRect: wordBox.rect,
-                blockWidth: wordBox.rect.width,
-                blockHeight: wordBox.rect.height,
-                slideRate: this.params.slideRate,
-            });
-
-            const entity = new TextStreamEntity(this, textStream, component);
-            this.state.streams[i] = entity;
+            this.createReaderAndStream(wordBox, i);
         });
 
         // Trim extra streams if word count decreased
@@ -76,6 +65,32 @@ export class HyperPerformance {
             const extra = this.state.streams.pop();
             extra.clear();
         }
+    }
+
+    createReaderAndStream(wordBox, i) {
+        const reader = new RepeatingReader(wordBox.text);
+        const textStream = new TextStream(this.params.streamLength, reader);
+
+        const component = new HyperTextStreamComponent(this, {
+            clipRect: wordBox.rect,
+            blockWidth: wordBox.rect.width,
+            blockHeight: wordBox.rect.height,
+            slideRate: this.params.slideRate,
+        });
+
+        const streamEntity = new TextStreamEntity(this, textStream, component);
+        this.state.streams[i] = streamEntity;
+
+        this.callPop(streamEntity);
+    }
+
+    callPop(entity) {
+        let newRate = (1 + Math.random()) * this.params.slideRate;
+        console.log('newRate', {newRate})
+        setTimeout(() => {
+            entity.pop();
+            this.callPop(entity);
+        }, newRate);
     }
 
     getWords(element) {
@@ -140,11 +155,11 @@ export class HyperPerformance {
         this.updateWordBoxes();  // rebuild with new setting
     }
 
-    tick() {
-        this.state.streams.forEach(entity => {
-            entity.pop();
-        });
-    }
+    // tick() {
+    //     this.state.streams.forEach(entity => {
+    //         entity.pop();
+    //     });
+    // }
 
     render(time) {}
 }

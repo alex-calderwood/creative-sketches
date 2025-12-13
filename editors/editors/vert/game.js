@@ -11,8 +11,8 @@ export class Game {
     this.performance.initialize();
 
     // Start tick loop
-    setInterval(() => {
-      this.performance.tick();
-    }, this.tickInterval);
+    // setInterval(() => {
+    //   this.performance.tick();
+    // }, this.tickInterval);
   }
 }
