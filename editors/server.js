@@ -3,6 +3,7 @@ const serveStatic = require('serve-static');
 const history = require('connect-history-api-fallback');
 const path = require('path');
 const fs = require('fs');
+const synonymsRouter = require('./words/synonyms');
 
 const app = express();
 const port = process.env.PORT || 3008;
@@ -194,6 +195,8 @@ app.post('/api/new-sentence', express.json(), (req, res) => {
   writeSentences(sentences);
   res.json(sentences);
 });
+
+app.use('/api', synonymsRouter);
 
 app.listen(port, () => {
   console.log(`Available projects: ${projects.map(p => p.name).join(', ')}`);
