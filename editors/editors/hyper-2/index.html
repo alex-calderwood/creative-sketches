@@ -68,7 +68,9 @@
   </script>
   
   <div id="editor-container">
-    <div id="editor" contenteditable="true"></div>
+    <!-- <div id="editor" contenteditable="true"></div> -->
+     <!-- I am doing this to disallow fancy pasting, but eventually I could upgrade to a different (temporary div? hack to allow rich text but not the existing paste format) -->
+    <div id="editor" contenteditable="plaintext-only"></div>
     <div id="overlay"></div>
   </div>
 

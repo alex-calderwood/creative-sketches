@@ -29,7 +29,6 @@ export class RepeatingReader {
     } else {
       word = this.word;
     }
-    console.log('reading word', word);
     return new Token({ text: word, type: 'word' });
   }
 
