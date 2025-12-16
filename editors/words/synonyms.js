@@ -6,6 +6,7 @@ const router = express.Router();
 
 async function getSynonyms(word) {
   const results = await wordpos.lookup(word.toLowerCase().trim());
+  console.log(results);
   return [...new Set(results.flatMap(r => r.synonyms))];
 }
 

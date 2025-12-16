@@ -43,7 +43,6 @@ export class TextCorpus {
         console.log("this.doc.terms()", typeof this.doc.terms());
         // Store all tokens with their POS info
         this.tokens = this.doc.terms().map((parentTerm) => {
-          console.log("term", parentTerm);
           return parentTerm.terms().map((subTerm, idx) => {
             let token = subTerm.json();
             if (token.length != 1) {
