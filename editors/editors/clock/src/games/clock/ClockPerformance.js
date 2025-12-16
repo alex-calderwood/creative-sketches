@@ -136,7 +136,6 @@ export class ClockPerformance {
 
         hand.element = this._readFromStreamI[i]()
         setColor(hand.element, "#ffffff");
-        console.log("nextBlockUp(): hand", hand.element, this.params.center);
         
         // Position new element at current theta position (instant)
         moveTo(hand.element, loc.left, loc.top, 0);

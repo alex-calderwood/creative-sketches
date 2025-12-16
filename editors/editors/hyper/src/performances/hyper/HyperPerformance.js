@@ -47,11 +47,10 @@ export class HyperPerformance {
                 this.state.streams[i].textStream.print();
                 // Update reader's word if it changed
                 const reader = this.state.streams[i].textStream.reader;
-                console.log('reader.word', reader.word, 'wordBox.text', wordBox.text, reader);
+                // console.log('reader.word', reader.word, 'wordBox.text', wordBox.text, reader);
                 if (reader.word !== wordBox.text) {
                     reader.updateWord(wordBox.text);
                     this.state.streams[i].component.updateWidth(wordBox.rect.width);
-                    console.log('updated reader', reader.word);
                     this.state.streams[i].textStream.print();
                 }
                 return;
