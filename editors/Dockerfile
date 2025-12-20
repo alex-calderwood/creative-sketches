@@ -14,9 +14,8 @@ COPY server.js ./
 
 # Copy the editors directory
 COPY editors/ ./editors/
-
-# Copy the assets directory
 COPY assets/ ./assets/
+COPY words/ ./words/
 
 # Debug - list what's in the container
 RUN ls -la
