@@ -169,13 +169,13 @@ function writeSentences(sentences) {
 }
 
 // GET endpoint to fetch sentences
-app.get('/api/sentences', (req, res) => {
+app.get('/editors/api/sentences', (req, res) => {
   const sentences = readSentences();
   res.json(sentences);
 });
 
 // POST endpoint to add a new sentence
-app.post('/api/new-sentence', express.json(), (req, res) => {
+app.post('/editors/api/new-sentence', express.json(), (req, res) => {
   const { sentence, index } = req.body;
   if (
     typeof sentence !== 'string' ||
@@ -196,7 +196,7 @@ app.post('/api/new-sentence', express.json(), (req, res) => {
   res.json(sentences);
 });
 
-app.use('/api', synonymsRouter);
+app.use('/editors/api', synonymsRouter);
 
 app.listen(port, () => {
   console.log(`Available projects: ${projects.map(p => p.name).join(', ')}`);
