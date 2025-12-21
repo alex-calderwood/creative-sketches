@@ -5,7 +5,7 @@ let previewText = "";
 let hasSubmitted = false;
 
 // Fetch sentences on load
-fetch('/api/sentences')
+fetch('/editors/api/sentences')
   .then(res => res.json())
   .then(data => {
     if (Array.isArray(data)) {
