@@ -1,0 +1,247 @@
+import { HyperSkipTextStreamComponent } from './HyperSkipTextStreamComponent.js';
+import { TextStream } from '../../streams/TextStream.js';
+import { TextStreamEntity } from '../../streams/TextStreamEntity.js';
+import { SynonymReader } from '../../readers/SynonymReader.js';
+
+export class HyperSkipPerformance {
+    constructor(params={}) {
+        this.params = { 
+            streamLength: 3,
+            hideEditorText: true,  // whether to hide the editor text
+            drawBoxes: false,
+            slideRate: 4000,
+            animationSpeed: 500,
+            ...params 
+        };
+        this.state = {
+            tokenBoxes: [],  // stores bounding boxes for each word
+            streams: []    // TextStreamEntity for each word
+        };
+        this.editor = null;
+        this.overlay = null;
+    }
+
+    initialize() {
+        this.editor = document.getElementById('editor');
+        this.overlay = document.getElementById('overlay');
+        
+        if (this.editor) {
+            this.editor.addEventListener('input', () => this.updateWordBoxes());
+            this.editor.classList.toggle('text-hidden', this.params.hideEditorText);
+        }
+    }
+
+    updateWordBoxes() {
+        if (!this.editor || !this.overlay) return;
+        
+        this.state.tokenBoxes = this.getTokens(this.editor);
+
+        if (this.params.drawBoxes) {
+            this.drawBoxes();
+        }
+        this.drawOverlayWords(); // needed when the streams 
+        this.createStreams();
+    }
+
+    // Use compromise on full editor text to get POS for each term (in order)
+    getPOSList() {
+        const text = this.editor?.innerText || '';
+        const doc = nlp(text);
+        const posList = [];
+        
+        const posTagMap = {
+            'Noun': 'noun',
+            'Verb': 'verb',
+            'Adjective': 'adjective',
+            'Adverb': 'adverb',
+        };
+        
+        // Flatten all terms from all sentences, use first matching POS tag
+        doc.json().forEach(sentence => {
+            sentence.terms.forEach(term => {
+                const tags = term.tags || [];
+                console.log(term.text, "tags", tags);
+                let pos = null;
+                for (const tag of tags) {
+                    if (posTagMap[tag]) {
+                        pos = posTagMap[tag];
+                        break;
+                    }
+                }
+                posList.push(pos);
+            });
+        });
+        
+        return posList;
+    }
+
+    createStreams() {
+        const posList = this.getPOSList();
+        
+        this.state.tokenBoxes.forEach((tokenBox, i) => {
+            const pos = posList[i] || null;
+            console.log(tokenBox.text, "pos", pos);
+            
+            if (this.state.streams[i]) { // Stream already exists
+                // Update reader's word if it changed
+                const reader = this.state.streams[i].textStream.reader;
+                if (reader.word !== tokenBox.text) {
+                    reader.updateWord(tokenBox.text, pos);
+                    
+                    // this.state.streams[i].component.updateWidth(tokenBox.rect.width);
+                    this.state.streams[i].component.updateWord(tokenBox.text, tokenBox.rect.width);
+                }
+                return;
+            }
+            
+            // If stream doesn't exist, create it
+            this.createReaderAndStream(tokenBox, i, pos);
+        });
+
+        // Trim extra streams if word count decreased
+        while (this.state.streams.length > this.state.tokenBoxes.length) {
+            const extra = this.state.streams.pop();
+            extra.clear();
+        }
+    }
+
+    createReaderAndStream(tokenBox, i, pos = null) {
+        const reader = new SynonymReader(tokenBox.text);
+        reader.updateWord(tokenBox.text, pos); // fetch synonyms with POS context
+        const textStream = new TextStream(this.params.streamLength, reader);
+
+        const component = new HyperSkipTextStreamComponent(this, {
+            clipRect: tokenBox.rect,
+            blockWidth: tokenBox.rect.width,
+            blockHeight: tokenBox.rect.height,
+            animationSpeed: this.params.animationSpeed,
+            hidden: true,
+        });
+
+        const streamEntity = new TextStreamEntity(this, textStream, component);
+        this.state.streams[i] = streamEntity;
+
+        this.callPop(streamEntity, i);
+    }
+
+    callPop(entity, i) {
+        // let newRate = (1 + Math.random()) * this.params.slideRate;
+        let newRate =  this.params.slideRate / Math.min(10, entity?.textStream?.reader.getStreamLength() || 1);
+        newRate += Math.random() * this.params.slideRate / 10;
+        
+        setTimeout(() => {
+            let synonymCount = entity.textStream.reader.getStreamLength();
+            let shouldPop = synonymCount > 1;
+            if (!shouldPop) {
+                let currentTokens = new Set(entity.textStream.tokens.map(token => token?.text ?? ''));
+                let currentWord = entity?.textStream?.reader?.word || '';
+                if (currentTokens.size > 1 || !currentTokens.has(currentWord)) {
+                    shouldPop = true;
+                }
+            }
+            if (shouldPop) {
+                entity.pop();
+                // Check if the newest token matches the base word
+                const tokens = entity.textStream.tokens;
+                const newestToken = tokens[0];
+                const currentWord = entity.textStream.reader.word;
+                if (newestToken?.text === currentWord) {
+                    entity.component.setHidden(false);
+                }
+            }
+            this.callPop(entity, i);
+            this.drawOverlayWords();
+        }, newRate);
+    }
+
+    getTokens(element) {
+        const words = [];
+        
+        const processTextNode = (textNode) => {
+            const text = textNode.nodeValue;
+            const tokens = text.split(/\s+/);
+            let currentIndex = 0;
+            
+            for (const token of tokens) {
+                if (token.length === 0) continue;
+                
+                const startIndex = text.indexOf(token, currentIndex);
+                if (startIndex === -1) continue;
+                const endIndex = startIndex + token.length;
+                currentIndex = endIndex;
+                
+                try {
+                    const range = document.createRange();
+                    range.setStart(textNode, startIndex);
+                    range.setEnd(textNode, endIndex);
+                    const rect = range.getBoundingClientRect();
+                    
+                    words.push({
+                        text: token,
+                        rect: { top: rect.top, left: rect.left, width: rect.width, height: rect.height, bottom: rect.bottom, right: rect.right }
+                    });
+                } catch (e) {}
+            }
+        };
+        
+        const traverse = (node) => {
+            if (node.nodeType === Node.TEXT_NODE) {
+                processTextNode(node);
+            } else {
+                for (const child of node.childNodes) traverse(child);
+            }
+        };
+        
+        traverse(element);
+        return words;
+    }
+
+    drawBoxes() {
+        this.overlay.innerHTML = '';
+        const editorRect = this.editor.getBoundingClientRect();
+        
+        this.state.tokenBoxes.forEach(word => {
+            const box = document.createElement('div');
+            box.className = 'word-box';
+            box.style.left = `${word.rect.left - editorRect.left}px`;
+            box.style.top = `${word.rect.top - editorRect.top}px`;
+            box.style.width = `${word.rect.width}px`;
+            box.style.height = `${word.rect.height}px`;
+            this.overlay.appendChild(box);
+        });
+    }
+
+    drawOverlayWords() {
+        // Clear existing word overlays
+        this.overlay.querySelectorAll('.word-overlay').forEach(el => el.remove());
+        
+        const editorRect = this.editor.getBoundingClientRect();
+        
+        this.state.tokenBoxes.forEach((tokenBox, i) => {
+            const stream = this.state.streams[i];
+
+            let shouldDraw = true;
+            if (!stream) {
+                shouldDraw = true;
+            } 
+            else {
+                shouldDraw = stream.component.params.hidden;
+            }
+            
+            if (shouldDraw) {
+                const wordEl = document.createElement('div');
+                wordEl.className = 'word-overlay';
+                wordEl.textContent = tokenBox.text;
+                wordEl.style.position = 'absolute';
+                wordEl.style.left = `${tokenBox.rect.left - editorRect.left}px`;
+                wordEl.style.top = `${tokenBox.rect.top - editorRect.top}px`;
+                this.overlay.appendChild(wordEl);
+            }
+        });
+    }
+
+    setClipped(clipped) {
+        this.params.clipped = clipped;
+        this.updateWordBoxes();  // rebuild with new setting
+    }
+}

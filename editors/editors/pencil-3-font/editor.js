@@ -272,10 +272,10 @@ class Editor {
     }
   }
 
-  const vis = new Editor({
-    checkDelay: 500,
-    squiggleColor: 'red'
-  });
+const vis = new Editor({
+  checkDelay: 500,
+  squiggleColor: 'red'
+});
     
 const editor = document.querySelector('#editor');
 if (editor) {

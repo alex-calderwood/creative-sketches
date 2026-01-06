@@ -1,0 +1,9 @@
+{
+    "name": "Deleteless",
+    "description": "A text editor with no backspace.",
+    "version": "4",
+    "series": ["material"],
+    "image": "material.png",
+    "url": "no-delete",
+    "date": "2026-01-05"
+}

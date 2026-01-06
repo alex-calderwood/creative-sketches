@@ -1,10 +1,10 @@
 {
-    "name": "Hyperfragments 3",
-    "description": "Integrating fracture aesthetics. In this version, words are replaced by their 'synonyms' according to the WordNet ontology.",
+    "name": "Hyperfragments Prism",
+    "description": "View multiple versions of your text through a prism.",
     "notes": "",
     "version": "3",
     "series": ["hyper"],
-    "url": "hyper-fragment-3",
+    "url": "hyper-fragment-prism",
     "image": "hyper.png",
     "major": false
 }

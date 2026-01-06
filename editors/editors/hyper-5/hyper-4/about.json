@@ -1,0 +1,10 @@
+{
+    "name": "Hyperfracture",
+    "description": "Integrating fracture aesthetics. In this version, words are replaced by their 'synonyms' according to the WordNet ontology.",
+    "notes": "",
+    "version": "4",
+    "series": ["hyper", "fracture"],
+    "url": "hyper-4",
+    "image": "hyper.png",
+    "major": false
+}
