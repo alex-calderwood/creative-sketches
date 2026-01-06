@@ -11,6 +11,21 @@ const port = process.env.PORT || 3008;
 const IMAGE_URL_PATH = '/editors/assets/editor-images/'
 const IMAGE_FS_PATH = path.join(__dirname, 'assets/editor-images/')
 
+function escapeHtml(text) {
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function injectProjectNameIntoIndexHtml(html, projectName) {
+  if (!html.includes('$PROJECT_NAME')) return html;
+  const safeName = escapeHtml(projectName);
+  return html.split('$PROJECT_NAME').join(safeName);
+}
+
 // Discover all project directories within the editors subdirectory
 function getProjects() {
   const editorsDir = path.join(__dirname, 'editors');
@@ -108,6 +123,18 @@ getProjects().then(projectList => {
     
     // Apply history API fallback for SPAs if needed
     projectRouter.use(history());
+
+    // Serve a modified index.html with <title> + <span class="subtitle"> set to project.name
+    projectRouter.use((req, res, next) => {
+      if (req.method !== 'GET') return next();
+      if (req.url !== '/index.html' && req.url !== '/' && req.url !== '') return next();
+
+      const indexPath = path.join(projectPath, 'index.html');
+      fs.readFile(indexPath, 'utf8', (err, html) => {
+        if (err) return next();
+        res.type('html').send(injectProjectNameIntoIndexHtml(html, project.name));
+      });
+    });
     
     // Serve static files
     projectRouter.use(serveStatic(projectPath));
