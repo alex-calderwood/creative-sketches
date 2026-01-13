@@ -173,6 +173,20 @@ app.get('/editors', (req, res) => {
   });
 });
 
+// ELO Submission / cohesive narrative
+app.use('/editors/directions', serveStatic(path.join(__dirname, 'directions')));
+
+app.get('/editors/directions', (req, res) => {
+  const directionsPath = path.join(__dirname, 'directions', 'landing.html');
+  fs.readFile(directionsPath, 'utf8', (err, data) => {
+    if (err) {
+      console.error('Error reading direction landing page', err);
+      return res.status(500).send('Error loading directions page');
+    }
+    res.send(data);
+  });
+});
+
 const larderSentencesPath = path.join(__dirname, 'editors', 'larder', 'sentences.json');
 
 // Helper to read sentences.json

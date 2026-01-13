@@ -44,34 +44,3 @@ body {
   padding: 0.5vh 1vw;
   z-index: 1000;
 }
-
-
-.controls {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.control-btn {
-  font-family: var(--font);
-  background-color: transparent;
-  border: 2px solid var(--primary-color);
-  color: var(--button-color);
-  padding: 2px 8px;
-  font-size: 12px;
-  cursor: pointer;
-  outline: none;
-  height: 80%;
-  transition: background-color 0.2s, color 0.2s;
-}
-
-.control-btn:hover {
-  background-color: var(--primary-color);
-  color: var(--button-color);
-}
-
-.control-btn:active {
-  background-color: var(--primary-color);
-  color: var(--button-color);
-  transform: scale(0.98);
-}
