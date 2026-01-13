@@ -2,7 +2,7 @@ import { TextStreamComponent } from '../../streams/TextStreamComponent.js';
 import { createBlockAt, updateBlockColor } from '../../../block.js';
 import { moveTo } from '../../../utils.js';
 
-export class HyperTextStreamComponent extends TextStreamComponent {
+export class HyperSkipTextStreamComponent extends TextStreamComponent {
   constructor(game, params={}) {
     super(game);
 

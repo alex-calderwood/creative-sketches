@@ -54,7 +54,7 @@ export class SynonymSentenceReader {
         this.previousWords = [...currentWords];
         
         // Pre-fetch synonyms for all words in the text
-        await Promise.all(currentWords.map(word => this._ensureSynonymCached(word)));
+        await Promise.all(currentWords.map(word => this._lookupSynonym(word)));
     }
 
     /**
@@ -65,9 +65,9 @@ export class SynonymSentenceReader {
     }
 
     /**
-     * Ensure a word's synonym is cached. Returns immediately if already cached.
+     * Get word from the cache or retrieve it from the synonym server
      */
-    async _ensureSynonymCached(word) {
+    async _lookupSynonym(word) {
         
         // Already cached
         if (this.synonymCache.has(word)) {

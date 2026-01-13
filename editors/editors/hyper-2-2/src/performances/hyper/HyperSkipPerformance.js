@@ -1,20 +1,20 @@
-import { HyperTextStreamComponent } from './HyperTextStreamComponent.js';
+import { HyperSkipTextStreamComponent } from './HyperSkipTextStreamComponent.js';
 import { TextStream } from '../../streams/TextStream.js';
 import { TextStreamEntity } from '../../streams/TextStreamEntity.js';
 import { SynonymReader } from '../../readers/SynonymReader.js';
 
-export class HyperPerformance {
+export class HyperSkipPerformance {
     constructor(params={}) {
         this.params = { 
             streamLength: 3,
             hideEditorText: true,  // whether to hide the editor text
-            drawBoxes: false,
+            drawBoxes: true,
             slideRate: 4000,
             animationSpeed: 500,
             ...params 
         };
         this.state = {
-            wordBoxes: [],  // stores bounding boxes for each word
+            tokenBoxes: [],  // stores bounding boxes for each word
             streams: []    // TextStreamEntity for each word
         };
         this.editor = null;
@@ -34,47 +34,86 @@ export class HyperPerformance {
     updateWordBoxes() {
         if (!this.editor || !this.overlay) return;
         
-        this.state.wordBoxes = this.getWords(this.editor);
+        this.state.tokenBoxes = this.getTokens(this.editor);
 
         if (this.params.drawBoxes) {
             this.drawBoxes();
         }
-        this.drawOverlayWords(); // needed when the streams 
+        this.drawOverlayWords();
         this.createStreams();
     }
 
+    // Use compromise on full editor text to get POS for each term (in order)
+    getPOSList() {
+        const text = this.editor?.innerText || '';
+        const doc = nlp(text);
+        const posList = [];
+        
+        const posTagMap = {
+            'Noun': 'noun',
+            'Verb': 'verb',
+            'Adjective': 'adjective',
+            'Adverb': 'adverb',
+        };
+        
+        // Flatten all terms from all sentences, use first matching POS tag
+        doc.json().forEach(sentence => {
+            sentence.terms.forEach(term => {
+                const tags = term.tags || [];
+                let pos = null;
+                for (const tag of tags) {
+                    if (posTagMap[tag]) {
+                        pos = posTagMap[tag];
+                        break;
+                    }
+                }
+                posList.push(pos);
+            });
+        });
+        
+        return posList;
+    }
+
     createStreams() {
-        this.state.wordBoxes.forEach((wordBox, i) => {
-            if (this.state.streams[i]) {
+        const posList = this.getPOSList();
+        
+        this.state.tokenBoxes.forEach((tokenBox, i) => {
+            const pos = posList[i] || null;
+            
+            if (this.state.streams[i]) { // Stream already exists
                 // Update reader's word if it changed
                 const reader = this.state.streams[i].textStream.reader;
-                if (reader.word !== wordBox.text) {
-                    reader.updateWord(wordBox.text);
-                    
-                    // this.state.streams[i].component.updateWidth(wordBox.rect.width);
-                    this.state.streams[i].component.updateWord(wordBox.text, wordBox.rect.width);
+                if (reader.word !== tokenBox.text) {
+                    // Tell the reader resonsible for producing more words that the word has changed
+                    reader.updateWord(tokenBox.text, pos);
+                    // Tell the component responsible for rendering the words that the word has changed
+                    this.state.streams[i].component.updateWord(tokenBox.text, tokenBox.rect.width);
                 }
                 return;
             }
             
-            this.createReaderAndStream(wordBox, i);
+            // If stream doesn't exist, create it
+            this.createReaderAndStream(tokenBox, i, pos);
         });
 
         // Trim extra streams if word count decreased
-        while (this.state.streams.length > this.state.wordBoxes.length) {
+        while (this.state.streams.length > this.state.tokenBoxes.length) {
             const extra = this.state.streams.pop();
             extra.clear();
         }
+
+        window.streams = this.state.streams;
     }
 
-    createReaderAndStream(wordBox, i) {
-        const reader = new SynonymReader(wordBox.text);
+    createReaderAndStream(tokenBox, i, pos = null) {
+        const reader = new SynonymReader(tokenBox.text);
+        reader.updateWord(tokenBox.text, pos); // fetch synonyms with POS context
         const textStream = new TextStream(this.params.streamLength, reader);
 
-        const component = new HyperTextStreamComponent(this, {
-            clipRect: wordBox.rect,
-            blockWidth: wordBox.rect.width,
-            blockHeight: wordBox.rect.height,
+        const component = new HyperSkipTextStreamComponent(this, {
+            clipRect: tokenBox.rect,
+            blockWidth: tokenBox.rect.width,
+            blockHeight: tokenBox.rect.height,
             animationSpeed: this.params.animationSpeed,
             hidden: true,
         });
@@ -89,6 +128,7 @@ export class HyperPerformance {
         // let newRate = (1 + Math.random()) * this.params.slideRate;
         let newRate =  this.params.slideRate / Math.min(10, entity?.textStream?.reader.getStreamLength() || 1);
         newRate += Math.random() * this.params.slideRate / 10;
+
         
         setTimeout(() => {
             let synonymCount = entity.textStream.reader.getStreamLength();
@@ -115,7 +155,7 @@ export class HyperPerformance {
         }, newRate);
     }
 
-    getWords(element) {
+    getTokens(element) {
         const words = [];
         
         const processTextNode = (textNode) => {
@@ -161,7 +201,7 @@ export class HyperPerformance {
         this.overlay.innerHTML = '';
         const editorRect = this.editor.getBoundingClientRect();
         
-        this.state.wordBoxes.forEach(word => {
+        this.state.tokenBoxes.forEach(word => {
             const box = document.createElement('div');
             box.className = 'word-box';
             box.style.left = `${word.rect.left - editorRect.left}px`;
@@ -178,7 +218,7 @@ export class HyperPerformance {
         
         const editorRect = this.editor.getBoundingClientRect();
         
-        this.state.wordBoxes.forEach((wordBox, i) => {
+        this.state.tokenBoxes.forEach((tokenBox, i) => {
             const stream = this.state.streams[i];
 
             let shouldDraw = true;
@@ -192,10 +232,10 @@ export class HyperPerformance {
             if (shouldDraw) {
                 const wordEl = document.createElement('div');
                 wordEl.className = 'word-overlay';
-                wordEl.textContent = wordBox.text;
+                wordEl.textContent = tokenBox.text;
                 wordEl.style.position = 'absolute';
-                wordEl.style.left = `${wordBox.rect.left - editorRect.left}px`;
-                wordEl.style.top = `${wordBox.rect.top - editorRect.top}px`;
+                wordEl.style.left = `${tokenBox.rect.left - editorRect.left}px`;
+                wordEl.style.top = `${tokenBox.rect.top - editorRect.top}px`;
                 this.overlay.appendChild(wordEl);
             }
         });

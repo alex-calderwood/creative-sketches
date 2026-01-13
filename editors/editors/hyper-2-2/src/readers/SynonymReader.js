@@ -18,17 +18,22 @@ export class SynonymReader {
     return this.synonyms.length;
   }
 
-  async updateWord(word) {
+  async updateWord(word, pos = null) {
     this.word = word;
-    const data = await getSynonyms(word);
+    const data = await getSynonyms(word, pos);
+    if (this.word !== word) return; // to prevent race condition errors if updateWord call is stale
     let synonyms = data.synonyms.filter(synonym => this._synonymCriteria(word, synonym));
     this.synonyms = Array.from(new Set([word, ...synonyms]));
   }
 
   _synonymCriteria(originalWord, synonym) {
     let nearLength = Math.abs(originalWord.length - synonym.length) < originalWord.length / 2;
+
+    // let nearLength = Math.abs(originalWord.length - synonym.length) < originalWord.length * 0.8;
     let notJustDifferentCase = originalWord.toLowerCase() !== synonym.toLowerCase();
+
     return nearLength && notJustDifferentCase;
+    // return notJustDifferentCase;
   }
 
   read() { 

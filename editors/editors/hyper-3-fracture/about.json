@@ -3,7 +3,7 @@
     "description": "View multiple versions of your text through a prism.",
     "notes": "",
     "version": "3",
-    "series": ["hyper"],
+    "series": ["hyper", "fracture"],
     "url": "hyper-fragment-prism",
     "image": "hyper.png",
     "major": false

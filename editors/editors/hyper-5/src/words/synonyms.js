@@ -1,5 +1,14 @@
+// Global variable to choose synonym source
+const SYNONYM_SOURCE = 'wordhoard'; // values: wordnet, wordhoard
+
+const ENDPOINTS = {
+  wordnet: '/editors/api/synonyms',
+  wordhoard: `${window.location.protocol}//${window.location.hostname}:3019/synonyms`
+};
+
 export async function getSynonyms(word) {
-  const response = await fetch(`/editors/api/synonyms?word=${encodeURIComponent(word)}`);
+  const endpoint = ENDPOINTS[SYNONYM_SOURCE];
+  const response = await fetch(`${endpoint}?word=${encodeURIComponent(word)}`);
   const data = await response.json();
 
   if (data.error || !data.synonyms) {
