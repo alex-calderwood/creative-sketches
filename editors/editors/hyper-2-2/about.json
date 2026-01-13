@@ -1,0 +1,11 @@
+{
+    "name": "Hypersense 3",
+    "description": "Using a different synonym source for hyperense (wordhoard)",
+    "notes": "",
+    "version": "3",
+    "series": ["hyper"],
+    "url": "hyper-sense-3",
+    "image": "hyper.png",
+    "date": "Dec 21, 2025",
+    "major": false
+}

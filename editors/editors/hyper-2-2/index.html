@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hypersense</title>
+  <title>$PROJECT_NAME</title>
   <link rel="preload" href="fonts/gomarice_goma_block.ttf" as="font" type="font/ttf" crossorigin>
 
   <!-- <link rel="stylesheet" media="screen" href="https://fontlibrary.org//face/squareantiqua" type="text/css"/> -->
 
   <link rel="stylesheet" href="base-style.css">
-  <link rel="stylesheet" href="src/performances/fragment/fragment.css">
-  <link rel="stylesheet" href="src/performances/fragment/fragment-block.css">
+  <link rel="stylesheet" href="src/performances/hyper/hyper.css">
+  <link rel="stylesheet" href="src/performances/hyper/hyper-block.css">
 
 </head>
 <body>
@@ -41,12 +41,12 @@
   <div id="game-banner">
     <div class="text">
       <a href="/editors/" class="back-link">The Writer's Project</a>
-      <span class="subtitle">Hypersense</span>
+      <span class="subtitle">$PROJECT_NAME</span>
     </div>
 
     <div class="controls">
       <button id="options-btn" class="control-btn">Options</button>
-      <!-- <button id="new-game-btn" class="control-btn">New</button> -->
+      <button id="new-game-btn" class="control-btn">New</button>
     </div>
 
 
@@ -72,35 +72,6 @@
      <!-- I am doing this to disallow fancy pasting, but eventually I could upgrade to a different (temporary div? hack to allow rich text but not the existing paste format) -->
     <div id="editor" contenteditable="plaintext-only"></div>
     <div id="overlay"></div>
-  </div>
-
-  <!-- Options Modal -->
-  <div id="options-modal" class="modal" style="display: none;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Options</h3>
-        <button class="close-btn" id="options-close-btn">&times;</button>
-      </div>
-      <div class="modal-body">
-        <label>Overlay Count <input type="number" id="overlay-count" value="3" min="2" step="1"></label>
-        <label>Base Velocity <input type="number" id="base-velocity" value="0.1" min="0.01" step="0.01"></label>
-        <label>Corner Pause (s) <input type="number" id="corner-pause" value="3" min="0" step="0.5"></label>
-        <label>Font Size (px) <input type="number" id="font-size" value="16" min="8" step="1"></label>
-        <label>Font
-          <select id="font-family">
-            <option value="SquareAntiqua">Square Antiqua</option>
-            <option value="Goma">Goma Block</option>
-            <option value="Garamond, serif">Garamond</option>
-            <option value="Arial, sans-serif">Arial</option>
-            <option value="Georgia, serif">Georgia</option>
-            <option value="Courier New, monospace">Courier</option>
-          </select>
-        </label>
-      </div>
-      <div class="modal-footer">
-        <button class="submit-btn" id="options-apply-btn">Apply</button>
-      </div>
-    </div>
   </div>
 
 </body>

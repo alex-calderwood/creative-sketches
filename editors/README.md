@@ -3,7 +3,33 @@
 
 # Dev
 
-    node server.js
+## Running the servers
+
+Start the Node.js server (port 3008):
+
+    npm run server
+
+Start the Python synonyms server (port 3019):
+
+    npm run wordhoard-server
+
+Start both servers at once:
+
+    npm run servers
+
+## Synonyms CLI
+
+Query both synonym servers from the command line:
+
+    npm run get-synonyms
+
+This will prompt you for a word and optional part of speech, then query both the WordNet (Node.js) and Wordhoard (Python) servers and display the results.
+
+## Python setup
+
+First time setup - install Python dependencies:
+
+    pip install -r words/requirements.txt
 
 # Production
 
@@ -31,5 +57,6 @@ You can put `$PROJECT_NAME` anywhere in an editor's `index.html` (e.g. in the `<
 
 - `GET /editors/api/sentences` — returns the sentences list from `editors/larder/sentences.json`
 - `POST /editors/api/new-sentence` — adds a sentence to that list
-- The synonyms router (`./words/synonyms`) is also mounted at `/editors/api`
+- `GET /editors/api/synonyms?word=<word>&pos=<noun|verb|adjective|adverb>` — WordNet synonyms via Node.js (port 3008)
+- `GET /synonyms?word=<word>&pos=<noun|verb|adjective|adverb>` — Wordhoard synonyms via Python (port 3019)
 

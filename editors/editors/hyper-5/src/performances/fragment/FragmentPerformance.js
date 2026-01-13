@@ -20,7 +20,8 @@ export class FragmentPerformance {
             // Each overlay layer uses one triangle derived from these points (a true shared-edge shatter).
             borderPoints: [],
             centerPoints: [],
-            triangles: []
+            triangles: [],
+            prevLoc: { x: 0, y: 0, deltaThreshold: 10 },
         };
         
         this.editor = null;
@@ -304,21 +305,31 @@ export class FragmentPerformance {
     }
 
     updateCenterPointLocationBasedOnMouseMove(x, y) {
+
+        let prevLoc = this.state.prevLoc;
+        let dist = Math.sqrt((x - prevLoc.x) ** 2 + (y - prevLoc.y) ** 2);
+        if (dist < this.state.prevLoc.deltaThreshold) return;
+        const deltaThreshold = Math.random() * 6;
+        this.state.prevLoc = { x, y, deltaThreshold};
+
+
         const svgRect = this.svg?.getBoundingClientRect();
         if (!svgRect?.width || !svgRect?.height) return;
 
         const mouseX = ((x - svgRect.left) / svgRect.width) * 100;
         const mouseY = ((y - svgRect.top) / svgRect.height) * 100;
 
-        const offsets = [-5, -10];
+        const offsets = [0, -4];
 
         const clampedX = Math.max(0, Math.min(100, mouseX)) + offsets[0];
         const clampedY = Math.max(0, Math.min(100, mouseY)) + offsets[1];
-
+    
         for (const p of this.state.centerPoints) {
             p.x = clampedX;
             p.y = clampedY;
         }
+
+
     }
 
     updateOverlayText() {
