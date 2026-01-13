@@ -8,9 +8,10 @@ export class HyperSkipPerformance {
         this.params = { 
             streamLength: 3,
             hideEditorText: true,  // whether to hide the editor text
-            drawBoxes: true,
+            drawBoxes: false,
             slideRate: 4000,
             animationSpeed: 500,
+            initialText: '',
             ...params 
         };
         this.state = {
@@ -19,6 +20,7 @@ export class HyperSkipPerformance {
         };
         this.editor = null;
         this.overlay = null;
+        this.inputHandler = null;
     }
 
     initialize() {
@@ -26,9 +28,25 @@ export class HyperSkipPerformance {
         this.overlay = document.getElementById('overlay');
         
         if (this.editor) {
-            this.editor.addEventListener('input', () => this.updateWordBoxes());
+            this.inputHandler = () => this.updateWordBoxes();
+            this.editor.addEventListener('input', this.inputHandler);
             this.editor.classList.toggle('text-hidden', this.params.hideEditorText);
         }
+
+        console.log("HyperSkipPerformance.initialize() initialText", this.params.initialText);
+
+        if (this.params.initialText) {
+            this.editor.innerText = this.params.initialText;
+            this.updateWordBoxes();
+        }
+    }
+
+    getState() {
+        let save = {
+            text: this.editor?.innerText || ''
+        };
+        console.log("HyperSkipPerformance.getState() Save:", save);
+        return save;
     }
 
     updateWordBoxes() {

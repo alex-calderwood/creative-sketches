@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="Document.js"></script>
+    <script src="GameplaySave.js"></script>
+    <script src="directions.js" defer></script>
+    <style>
+        .content-layout {
+            display: flex;
+            gap: 20px;
+        }
+        .document-list {
+            flex: 1;
+        }
+        .documents-container {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        .document-detail {
+            flex: 1;
+        }
+        .document-detail.empty {
+            opacity: 0.5;
+        }
+        .document-item {
+            padding: 10px;
+            margin: 5px 0;
+            cursor: pointer;
+        }
+        .document-item:hover {
+            background-color: #f0f0f0;
+        }
+        .document-item.selected {
+            background-color: #e0e0e0;
+        }
+        .doc-meta {
+            font-size: 0.9em;
+            opacity: 0.7;
+        }
+        .document-detail {
+            padding: 10px;
+            margin-top: 30px;
+        }
+        .detail-section {
+            margin: 5px 0;
+            display: flex;
+            flex-direction: row;
+            gap: 5px;
+            font-size: 0.8em;
+        }
+        .detail-label {
+            font-weight: bold;
+        }
+        .document-content-preview {
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            white-space: pre-wrap;
+        }
+        #document-title-input {
+            flex: 1;
+            padding: 4px;
+            border: none;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Directions</h1>
+
+    <div class="games">
+        <div class="project-nav"><a href="/editors/hyper-sense-3/">Hyper</a></div>
+        <div class="project-nav"><a href="/editors/poetris-beta/">Poetris</a></div>
+    </div>
+    
+    <div class="save-controls">
+        <h2>Save</h2>
+        <div id="dateCreated"></div>
+        <div id="dateModified"></div>
+        <div id="saveStatus"></div>
+        <input type="file" id="fileInput" accept=".json">
+        <button onclick="loadSaveState()">Load Save State</button>
+        <button onclick="restartState()">Restart</button>
+        <button onclick="saveState()">Download Save</button>
+    </div>
+
+    <div class="content-layout">
+        <div class="document-list">
+            <h2>Documents <span id="documentCount"></span></h2>
+            <div class="documents-container">
+                <div id="documentsList"></div>
+            </div>
+        </div>
+        <div class="document-detail empty" id="documentDetail">
+            Select a document to view details
+        </div>
+    </div>
+
+</body>
+</html>
