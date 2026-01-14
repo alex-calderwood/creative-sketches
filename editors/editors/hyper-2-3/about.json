@@ -1,0 +1,11 @@
+{
+    "name": "Hypersense 4",
+    "description": "asdf",
+    "notes": "",
+    "version": "5",
+    "series": ["hyper"],
+    "url": "hyper-sense-4",
+    "image": "hyper.png",
+    "date": "Jan 13, 2026",
+    "major": false
+}

@@ -9,11 +9,17 @@ export class HyperSkipPerformance {
             streamLength: 3,
             hideEditorText: true,  // whether to hide the editor text
             drawOutlines: false,
-            slideRate: 4000,
-            animationSpeed: 500,
-            toggleRecalibrate: false,
-            textHidden: true,
+
+            numSlidesPerStroke: 20,
+            slideMode: 'random',
+
             fontSize: 16,
+
+            automaticSlide: false,
+            slideRate: 40000,
+            animationSpeed: 500,
+
+            textHidden: true,
             initialText: '',
             ...params 
         };
@@ -22,10 +28,17 @@ export class HyperSkipPerformance {
         this.settings = [
             { name: 'textHidden', type: 'boolean', description: 'View your own text rather than the replacements'},
             { name: 'fontSize', type: 'number', description: 'Font size for the editor text (px)'},
+
+            { name: 'slideMode', type: 'select', description: 'Mode of slide', options: ['random', 'sequential', 'proximate']},
+            { name: 'numSlidesPerStroke', type: 'number', description: 'Number of streams to slide per stroke'},
+            
+
             { name: 'drawOutlines', type: 'boolean', description: 'Debugging tool to show bounding boxes for each word'},
+
+            { name: 'automaticSlide', type: 'boolean', description: 'Automatically slide the streams when the editor text changes'},
             { name: 'slideRate', type: 'number', description: 'Time between each word popping (ms).'},
             { name: 'animationSpeed', type: 'number', description: 'Speed of the animation when a word pops'},
-            { name: 'toggleRecalibrate', type: 'boolean', description: 'Recalibrate the word boxes when the setting changes'},
+
         ]
         this.state = {
             tokenBoxes: [],  // stores bounding boxes for each word
@@ -41,7 +54,10 @@ export class HyperSkipPerformance {
         this.overlay = document.getElementById('overlay');
         
         if (this.editor) {
-            this.inputHandler = () => this.updateWordBoxes();
+            this.inputHandler = () => {
+                this.updateWordBoxes();
+                this.conductSlide();
+            }
             this.editor.addEventListener('input', this.inputHandler);
             this.editor.classList.toggle('text-hidden', this.params.hideEditorText);
         }
@@ -54,6 +70,10 @@ export class HyperSkipPerformance {
         if (this.params.initialText) {
             this.editor.innerText = this.params.initialText;
             this.updateWordBoxes();
+        }
+
+        if (this.params.automaticSlide) {
+            this.state.streams.forEach(stream => this.automaticSlide(stream, stream.index));
         }
     }
 
@@ -73,10 +93,6 @@ export class HyperSkipPerformance {
             } else {
                 this.overlay.querySelectorAll('.word-box').forEach(el => el.remove());
             }
-        } else if (name === 'toggleRecalibrate') {
-            if (value !== oldValue) {
-                this.updateWordBoxes();
-            }
         } else if (name === 'textHidden') {
             this.toggleTextHidden(value);
         } else if (name === 'fontSize') {
@@ -86,6 +102,12 @@ export class HyperSkipPerformance {
             this.state.streams.forEach(stream => stream.clear());
             this.state.streams = [];
             this.updateWordBoxes();
+        } else if (name === 'automaticSlide') {
+            if (value && !oldValue) {
+                this.state.streams.forEach(stream => this.automaticSlide(stream, stream.index));
+            } else if (!value && oldValue) {
+                this.state.streams.forEach(stream => clearTimeout(stream.component.popTimeoutId));
+            }
         }
 
     }
@@ -129,6 +151,62 @@ export class HyperSkipPerformance {
 
         this.drawOverlayWords();
         this.createStreams();
+    }
+
+    getCursorPosition() {
+        const selection = window.getSelection();
+        if (!selection || selection.rangeCount === 0) {
+            return { x: 0, y: 0 };
+        }
+        
+        const range = selection.getRangeAt(0).cloneRange();
+        range.collapse(true);
+        
+        const rect = range.getBoundingClientRect();
+        return { x: rect.left, y: rect.top };
+    }
+
+    conductSlide() {
+        var streamsToSlide = [];
+        switch(this.params.slideMode) {
+            case 'random':
+                // randomly generate 10 stream indexes
+                let streamIndexes = Array.from({length: this.state.streams.length}, (_, i) => i);
+                streamsToSlide = streamIndexes.sort(() => Math.random() - 0.5).slice(0, this.params.numSlidesPerStroke);
+                break;
+            case 'sequential':
+                let previous = this.state.previousSlides || 0;
+                let numSlides = this.params.numSlidesPerStroke;
+                for (let i = previous; i < previous + numSlides; i++) {
+                    let index = i % this.state.streams.length;
+                    streamsToSlide.push(index);
+                }
+                this.state.previousSlides = (previous + numSlides + 1) % this.state.streams.length;
+                break;
+            case 'proximate':
+                // get the streams nearest to the caret
+                let caret = this.getCursorPosition();
+                let distances = [];
+                for (let i = 0; i < this.state.streams.length; i++) {
+                    let stream = this.state.streams[i];
+                    let streamRect = stream.component.params.clipRect;
+                    let dist = (x1, y1, x2, y2) => (x1 - x2)**2 + (y1 - y2)**2;
+                    distances.push({ index: i, distance: dist(caret.x, caret.y, streamRect.left, streamRect.top) });
+                }
+                let sorted = distances.sort((a, b) => a.distance - b.distance);
+                streamsToSlide = sorted.slice(0, this.params.numSlidesPerStroke).map(item => item.index);
+                // randonmly get rid of 50%
+                streamsToSlide = streamsToSlide.filter(() => Math.random() > 0.5);
+                break;
+        }
+
+        for (let i = 0; i < streamsToSlide.length; i++) {
+            let streamIndex = streamsToSlide[i];
+            let stream = this.state.streams[streamIndex];
+            setTimeout(() => {
+                this.callPop(stream, streamIndex);
+            }, i * 100);
+        }
     }
 
     toggleTextHidden(textHidden) {
@@ -228,34 +306,40 @@ export class HyperSkipPerformance {
     }
 
     callPop(entity, i) {
-        // let newRate = (1 + Math.random()) * this.params.slideRate;
+        this._doPop(entity, i);
+    }
+
+    automaticSlide(entity, i) {
         let newRate =  this.params.slideRate / Math.min(10, entity?.textStream?.reader.getStreamLength() || 1);
         newRate += Math.random() * this.params.slideRate / 10;
-
         
         entity.component.popTimeoutId = setTimeout(() => {
-            let synonymCount = entity.textStream.reader.getStreamLength();
-            let shouldPop = synonymCount > 1;
-            if (!shouldPop) {
-                let currentTokens = new Set(entity.textStream.tokens.map(token => token?.text ?? ''));
-                let currentWord = entity?.textStream?.reader?.word || '';
-                if (currentTokens.size > 1 || !currentTokens.has(currentWord)) {
-                    shouldPop = true;
-                }
-            }
-            if (shouldPop) {
-                entity.pop();
-                // Check if the newest token matches the base word
-                const tokens = entity.textStream.tokens;
-                const newestToken = tokens[0];
-                const currentWord = entity.textStream.reader.word;
-                if (newestToken?.text === currentWord) {
-                    entity.component.setHidden(false);
-                }
-            }
-            this.callPop(entity, i);
+            this._doPop(entity, i);
+            this.automaticSlide(entity, i);
             this.drawOverlayWords();
         }, newRate);
+    }
+
+   _doPop(entity, i) {
+        let synonymCount = entity.textStream.reader.getStreamLength();
+        let shouldPop = synonymCount > 1;
+        if (!shouldPop) {
+            let currentTokens = new Set(entity.textStream.tokens.map(token => token?.text ?? ''));
+            let currentWord = entity?.textStream?.reader?.word || '';
+            if (currentTokens.size > 1 || !currentTokens.has(currentWord)) {
+                shouldPop = true;
+            }
+        }
+        if (shouldPop) {
+            entity.pop();
+            // Check if the newest token matches the base word
+            const tokens = entity.textStream.tokens;
+            const newestToken = tokens[0];
+            const currentWord = entity.textStream.reader.word;
+            if (newestToken?.text === currentWord) {
+                entity.component.setHidden(false);
+            }
+        }
     }
 
     getTokens(element) {

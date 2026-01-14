@@ -1,6 +1,6 @@
 {
     "name": "Hypersense 3",
-    "description": "Using a different synonym source for hyperense (wordhoard)",
+    "description": "Using a different synonym source for hyperense (wordhoard). I also added saving and font changing to this version.",
     "notes": "",
     "version": "3",
     "series": ["hyper"],
