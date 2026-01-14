@@ -278,6 +278,20 @@ export class Controls {
           this.game.performance.updateSetting(setting.name, parseFloat(input.value));
         });
         settingDiv.appendChild(input);
+      } else if (setting.type === 'select') {
+        const select = document.createElement('select');
+        select.className = 'setting-input';
+        setting.options.forEach(option => {
+          const optionEl = document.createElement('option');
+          optionEl.value = option;
+          optionEl.textContent = option;
+          select.appendChild(optionEl);
+        });
+        select.value = setting.value;
+        select.addEventListener('change', () => {
+          this.game.performance.updateSetting(setting.name, select.value);
+        });
+        settingDiv.appendChild(select);
       } else {
         const input = document.createElement('input');
         input.type = 'text';
