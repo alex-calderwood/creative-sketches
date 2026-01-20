@@ -2,9 +2,12 @@ import { HyperSkipTextStreamComponent } from './HyperSkipTextStreamComponent.js'
 import { TextStream } from '../../streams/TextStream.js';
 import { TextStreamEntity } from '../../streams/TextStreamEntity.js';
 import { SynonymReader } from '../../readers/SynonymReader.js';
+import { setSource } from '../../words/synonyms.js';
+import { SettingsMixin } from '../SettingsMixin.js';
 
-export class HyperSkipPerformance {
+export class HyperSkipPerformance extends SettingsMixin(class {}) {
     constructor(params={}) {
+        super();
         this.params = { 
             streamLength: 3,
             hideEditorText: true,  // whether to hide the editor text
@@ -15,12 +18,13 @@ export class HyperSkipPerformance {
 
             fontSize: 16,
 
-            automaticSlide: false,
+            automaticSlide: true,
             slideRate: 40000,
             animationSpeed: 500,
 
             textHidden: true,
             initialText: '',
+            synonymSource: 'wordnet',
             ...params 
         };
         // Settings should match a corresponding default value in this.params
@@ -32,13 +36,13 @@ export class HyperSkipPerformance {
             { name: 'slideMode', type: 'select', description: 'Mode of slide', options: ['random', 'sequential', 'proximate']},
             { name: 'numSlidesPerStroke', type: 'number', description: 'Number of streams to slide per stroke'},
             
-
             { name: 'drawOutlines', type: 'boolean', description: 'Debugging tool to show bounding boxes for each word'},
 
             { name: 'automaticSlide', type: 'boolean', description: 'Automatically slide the streams when the editor text changes'},
             { name: 'slideRate', type: 'number', description: 'Time between each word popping (ms).'},
             { name: 'animationSpeed', type: 'number', description: 'Speed of the animation when a word pops'},
 
+            { name: 'synonymSource', type: 'select', description: 'Source for synonym lookup', options: ['wordhoard', 'wordnet']},
         ]
         this.state = {
             tokenBoxes: [],  // stores bounding boxes for each word
@@ -47,11 +51,26 @@ export class HyperSkipPerformance {
         this.editor = null;
         this.overlay = null;
         this.inputHandler = null;
+        this.redrawScheduled = false;
+
+        window.getState = this.getState.bind(this);
+    }
+
+    scheduleRedraw() {
+        if (!this.redrawScheduled) {
+            this.redrawScheduled = true;
+            requestAnimationFrame(() => {
+                this.drawOverlayWords();
+                this.redrawScheduled = false;
+            });
+        }
     }
 
     initialize() {
         this.editor = document.getElementById('editor');
         this.overlay = document.getElementById('overlay');
+        
+        setSource(this.params.synonymSource);
         
         if (this.editor) {
             this.inputHandler = () => {
@@ -64,6 +83,32 @@ export class HyperSkipPerformance {
         
         this.resizeHandler = () => this.updateWordBoxes();
         window.addEventListener('resize', this.resizeHandler);
+        
+        this.scrollHandler = () => this.updateWordBoxes();
+        window.addEventListener('scroll', this.scrollHandler);
+
+        // Setup submit button
+        const submitButton = document.getElementById('submit-button');
+        if (submitButton) {
+            submitButton.addEventListener('click', () => this.showOnComplete());
+        }
+
+        // Setup modal buttons
+        const modalCancel = document.getElementById('modal-cancel');
+        const modalContinue = document.getElementById('modal-continue');
+        const modal = document.getElementById('complete-modal');
+        
+        if (modalCancel) {
+            modalCancel.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+        }
+        
+        if (modalContinue) {
+            modalContinue.addEventListener('click', () => {
+                // Continue button doesn't do anything yet
+            });
+        }
 
         console.log("HyperSkipPerformance.initialize() initialText", this.params.initialText);
 
@@ -77,15 +122,7 @@ export class HyperSkipPerformance {
         }
     }
 
-    updateSetting(name, value) {
-        if (!(name in this.params)) {
-            let validNames = Object.keys(this.params).join(', ');
-            throw new Error(`Invalid setting name: ${name}. Valid names: ${validNames}`);
-        }
-
-        let oldValue = this.params[name];
-        this.params[name] = value;
-        
+    onSettingChanged(name, value, oldValue) {
         // Apply special behaviors for certain settings
         if (name === 'drawOutlines') {
             if (value) {
@@ -108,38 +145,70 @@ export class HyperSkipPerformance {
             } else if (!value && oldValue) {
                 this.state.streams.forEach(stream => clearTimeout(stream.component.popTimeoutId));
             }
+        } else if (name === 'synonymSource') {
+            setSource(value);
         }
-
-    }
-
-    getSetting(name) {
-        if (!(name in this.params)) {
-            let validNames = Object.keys(this.params).join(', ');
-            throw new Error(`Invalid setting name: ${name}. Valid names: ${validNames}`);
-        }
-        return this.params[name];
-    }
-
-    getAllSettings() {
-        let settings = {};
-        this.settings.forEach((setting) => {
-            const { name } = setting;
-            settings[name] = {
-                ...setting,
-                value: this.getSetting(name),
-            };
-        });
-        return settings;
     }
 
     getState() {
+        let text = this.editor?.innerText || '';
+        let alternate = this.getAlternateText() || '';
         let save = {
-            text: this.editor?.innerText || ''
+            text: text,
+            alternate: alternate
         };
-        console.log("HyperSkipPerformance.getState() Save:", save);
         return save;
     }
 
+    *iterateTokenBoxStreams() {
+        for (let i = 0; i < this.state.tokenBoxes.length; i++) {
+            yield {
+                tokenBox: this.state.tokenBoxes[i],
+                stream: this.state.streams[i],
+                index: i
+            };
+        }
+    }
+
+    getAlternateText() {
+        const words = [];
+        let lastTop = null;
+        
+        for (const { tokenBox, stream } of this.iterateTokenBoxStreams()) {
+            // Add line break if this token is on a new line
+            if (lastTop !== null && Math.abs(tokenBox.rect.top - lastTop) > tokenBox.rect.height / 2) {
+                const verticalDistance = Math.abs(tokenBox.rect.top - lastTop);
+                const numLineBreaks = Math.round(verticalDistance / tokenBox.rect.height);
+                words.push('\n'.repeat(numLineBreaks));
+            }
+            words.push(stream?.component.getDisplayWord() || tokenBox.text);
+            lastTop = tokenBox.rect.top;
+        }
+        return words.join(' ');
+    }
+
+    showOnComplete() {
+        const alternateText = this.getAlternateText();
+        const modal = document.getElementById('complete-modal');
+        const alternateTextEl = document.getElementById('alternate-text');
+        
+        if (alternateTextEl) {
+            alternateTextEl.textContent = alternateText;
+        }
+        
+        if (modal) {
+            modal.style.display = 'flex';
+        }
+    }
+
+    /**
+     * 1. Retrieve the word tokens again, computing the location of each word
+     * 2. Draw the outlines of the words (if drawOutlines is on)
+     * 3. Draw the overlay words (placeholders for the streams)
+     * 4. Create or update the streams
+     * @returns 
+     * 
+     */
     updateWordBoxes() {
         if (!this.editor || !this.overlay) return;
         
@@ -150,7 +219,7 @@ export class HyperSkipPerformance {
         }
 
         this.drawOverlayWords();
-        this.createStreams();
+        this.createOrUpdateStreams();
     }
 
     getCursorPosition() {
@@ -249,33 +318,36 @@ export class HyperSkipPerformance {
         return posList;
     }
 
-    createStreams() {
+    createOrUpdateStreams() {
         const posList = this.getPOSList();
         
-        this.state.tokenBoxes.forEach((tokenBox, i) => {
-            const pos = posList[i] || null;
+        for (const { tokenBox, stream, index } of this.iterateTokenBoxStreams()) {
+            const pos = posList[index] || null;
             
-            if (this.state.streams[i]) { // Stream already exists
-
+            if (stream) { // Stream already exists
                 // if the rect changed, update it
-                if (this.state.streams[i].component.params.clipRect !== tokenBox.rect) {
-                    this.state.streams[i].component.updateRect(tokenBox.rect);
+                if (stream.component.params.clipRect !== tokenBox.rect) {
+                    stream.component.updateRect(tokenBox.rect);
                 }
                 
                 // Update reader's word if it changed
-                const reader = this.state.streams[i].textStream.reader;
+                const reader = stream.textStream.reader;
                 if (reader.word !== tokenBox.text) {
+                    if (!tokenBox.text) {
+                        console.error('Attempting to update reader with undefined text:', tokenBox, 'at index', index);
+                        continue;
+                    }
                     // Tell the reader resonsible for producing more words that the word has changed
                     reader.updateWord(tokenBox.text, pos);
                     // Tell the component responsible for rendering the words that the word has changed
-                    this.state.streams[i].component.updateWord(tokenBox.text)
+                    stream.component.updateWord(tokenBox.text)
                 }
-                return;
+                continue;
             }
             
             // If stream doesn't exist, create it
-            this.createReaderAndStream(tokenBox, i, pos);
-        });
+            this.createReaderAndStream(tokenBox, index, pos);
+        }
 
         // Trim extra streams if word count decreased
         while (this.state.streams.length > this.state.tokenBoxes.length) {
@@ -287,6 +359,10 @@ export class HyperSkipPerformance {
     }
 
     createReaderAndStream(tokenBox, i, pos = null) {
+        if (!tokenBox || !tokenBox.text) {
+            console.error('createReaderAndStream called with invalid tokenBox:', tokenBox, 'at index', i);
+            return;
+        }
         const reader = new SynonymReader(tokenBox.text);
         reader.updateWord(tokenBox.text, pos); // fetch synonyms with POS context
         const textStream = new TextStream(this.params.streamLength, reader);
@@ -307,6 +383,7 @@ export class HyperSkipPerformance {
 
     callPop(entity, i) {
         this._doPop(entity, i);
+        this.scheduleRedraw();
     }
 
     automaticSlide(entity, i) {
@@ -316,7 +393,7 @@ export class HyperSkipPerformance {
         entity.component.popTimeoutId = setTimeout(() => {
             this._doPop(entity, i);
             this.automaticSlide(entity, i);
-            this.drawOverlayWords();
+            this.scheduleRedraw();
         }, newRate);
     }
 

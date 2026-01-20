@@ -20,10 +20,20 @@ function escapeHtml(text) {
     .replace(/'/g, '&#39;');
 }
 
-function injectProjectNameIntoIndexHtml(html, projectName) {
-  if (!html.includes('$PROJECT_NAME')) return html;
-  const safeName = escapeHtml(projectName);
-  return html.split('$PROJECT_NAME').join(safeName);
+function injectProjectInfoIntoHtml(html, project) {
+  const replacements = {
+    '$PROJECT_NAME': project.name,
+    '$PROJECT_ID': project.url
+  };
+  
+  let result = html;
+  for (const [placeholder, value] of Object.entries(replacements)) {
+    if (html.includes(placeholder)) {
+      const safeValue = escapeHtml(value);
+      result = result.split(placeholder).join(safeValue);
+    }
+  }
+  return result;
 }
 
 // Discover all project directories within the editors subdirectory
@@ -132,7 +142,7 @@ getProjects().then(projectList => {
       const indexPath = path.join(projectPath, 'index.html');
       fs.readFile(indexPath, 'utf8', (err, html) => {
         if (err) return next();
-        res.type('html').send(injectProjectNameIntoIndexHtml(html, project.name));
+        res.type('html').send(injectProjectInfoIntoHtml(html, project));
       });
     });
     
@@ -235,6 +245,11 @@ app.post('/editors/api/new-sentence', express.json(), (req, res) => {
   sentences.splice(safeIndex, 0, cleanSentence);
   writeSentences(sentences);
   res.json(sentences);
+});
+
+// GET endpoint to fetch all projects
+app.get('/api/projects', (req, res) => {
+  res.json(projects);
 });
 
 app.use('/editors/api', synonymsRouter);

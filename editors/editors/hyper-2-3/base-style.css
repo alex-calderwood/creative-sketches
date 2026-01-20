@@ -20,9 +20,9 @@ body {
   background-attachment: scroll;
   background-repeat: repeat-y;
   margin: 0px;
-  height: 90vh;
-  /* don't overflow */
-  overflow: hidden;
+  min-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 #game-banner {
@@ -44,3 +44,38 @@ body {
   padding: 0.5vh 1vw;
   z-index: 1000;
 }
+
+
+  /* Back link styling */
+  .back-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: normal;
+    font-family: var(--font);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  
+  .back-link:hover {
+    border-bottom-color: var(--primary-color);
+  }
+  
+  /* Text container styling */
+  .text {
+    display: flex;
+    align-items: center;
+    height: 100%;
+  }
+  
+  /* Subtitle styling */
+  .subtitle {
+    margin-left: 15px;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    font-family: var(--game-font);
+    /* text-shadow: 1px 1px 0px #fff; */
+  }
