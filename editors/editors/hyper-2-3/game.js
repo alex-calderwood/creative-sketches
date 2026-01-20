@@ -17,7 +17,8 @@ export class Game {
     }
 
     let doc = this.save.getDocument(this.documentId);
-    let initialText = doc.getField('content');
+    let content = doc.getField('content');
+    let initialText = content ? JSON.parse(content).text : '';
     
     this.performance = new HyperSkipPerformance({ initialText });
     this.performance.initialize();

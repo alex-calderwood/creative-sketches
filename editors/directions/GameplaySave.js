@@ -1,4 +1,6 @@
-class GameplaySave {
+import { Document } from './Document.js';
+
+export class GameplaySave {
     constructor() {
         this.documents = new Map();
         this.metadata = {};

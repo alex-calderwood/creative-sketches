@@ -47,6 +47,17 @@ export class HyperSkipTextStreamComponent extends TextStreamComponent {
 
     this.setHidden(this.params.hidden);
   }
+
+  /*
+  The component has one hidden token above the clip box, so the word being displayed is the second token.
+  */
+  getDisplayWord() {
+    return this.getWordAtIndex(1);
+  }
+
+  getWordAtIndex(index) {
+    return this.tokens[index]?.text || '';
+  }
   
   /**
    * Handle token change events

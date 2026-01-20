@@ -1,4 +1,7 @@
-export class Controls {
+import { captureScreenshot } from './utils/utils.js';
+import { GameplaySave } from './GameplaySave.js';
+
+export class MetaGameControls {
   constructor(options = {}) {
     this.game = options.game || null;
     this.save = options.save || null;
@@ -12,7 +15,7 @@ export class Controls {
     if (this.templateLoaded) return;
     
     try {
-      const response = await fetch('controls.html');
+      const response = await fetch('/editors/directions/MetaGameControls.html');
       const html = await response.text();
       
       // Parse the HTML
@@ -53,8 +56,9 @@ export class Controls {
 
   attachEventListeners() {
     const saveBtn = document.getElementById('save-btn');
-    const downloadSaveBtn = document.getElementById('download-save-btn');
+    const downloadBtn = document.getElementById('download-btn');
     const loadBtn = document.getElementById('load-btn');
+    const uploadBtn = document.getElementById('upload-btn');
     const newGameBtn = document.getElementById('new-game-btn');
     const fileInput = document.getElementById('file-input');
     const settingsBtn = document.getElementById('settings-btn');
@@ -62,12 +66,16 @@ export class Controls {
       saveBtn.addEventListener('click', () => this.handleSave());
     }
 
-    if (downloadSaveBtn) {
-      downloadSaveBtn.addEventListener('click', () => this.handleDownloadSave());
+    if (downloadBtn) {
+      downloadBtn.addEventListener('click', () => this.handleDownloadSave());
     }
 
     if (loadBtn) {
-      loadBtn.addEventListener('click', () => this.handleLoad());
+      loadBtn.addEventListener('click', () => this.handleLoadFromLocalStorage());
+    }
+
+    if (uploadBtn) {
+      uploadBtn.addEventListener('click', () => this.handleUpload());
     }
 
     if (newGameBtn) {
@@ -83,16 +91,27 @@ export class Controls {
     }
   }
 
-  handleSave() {
+  async handleSave() {
     if (!this.game || !this.save || !this.documentId) return;
 
     const state = this.game.saveState();
     if (!state) return;
 
-    const document = this.save.getDocument(this.documentId);
-    if (document) {
-      document.setField('content', state.text);
-      document.setField('lastModified', new Date().toISOString());
+    // Capture screenshot for manual saves (check for common editor elements)
+    const editorElement = document.querySelector('#editor');
+    if (editorElement) {
+      const image = await captureScreenshot(editorElement.id ? `#${editorElement.id}` : null);
+      if (image) {
+        state.image = image;
+      }
+    } else {
+      console.warn('Image not captured. Perhaps, no #editor element found. Add an element with id="editor" to enable screenshots.');
+    }
+
+    const doc = this.save.getDocument(this.documentId);
+    if (doc) {
+      doc.setField('content', JSON.stringify(state));
+      doc.setField('lastModified', new Date().toISOString());
       this.save.setMetadata('dateModified', new Date().toISOString());
       this.save.saveToLocalStorage();
       this.updateLastSavedDisplay();
@@ -108,7 +127,15 @@ export class Controls {
     this.save.downloadSave();
   }
 
-  handleLoad() {
+  handleLoadFromLocalStorage() {
+    if (!this.save) {
+      alert('No save data in local storage');
+      return;
+    }
+    this.showDocumentSelector(this.save);
+  }
+
+  handleUpload() {
     const fileInput = document.getElementById('file-input');
     if (fileInput) {
       fileInput.click();
@@ -138,6 +165,13 @@ export class Controls {
       alert('No documents found in save file');
       return;
     }
+
+    // Sort by lastModified (most recent first)
+    documents.sort((a, b) => {
+      const aTime = a.getField('lastModified') || a.getField('createdAt');
+      const bTime = b.getField('lastModified') || b.getField('createdAt');
+      return new Date(bTime) - new Date(aTime);
+    });
 
     // Create modal
     const modal = document.createElement('div');
@@ -187,7 +221,6 @@ export class Controls {
   }
 
   loadSaveWithDocument(save, documentId) {
-    save.setMetadata('currentDocumentId', documentId);
     save.setMetadata('dateModified', new Date().toISOString());
     save.saveToLocalStorage();
     

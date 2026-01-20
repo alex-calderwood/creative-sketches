@@ -119,7 +119,7 @@ export class SubtleDomTextStreamComponent extends TextStreamComponent {
       let curToken = this.tokens[i];
       let block = this.tokensToBlocks[curToken.id];
       if (!block) {
-        console.error("TextStreamComponent.render(): null token at index", i, this.tokens);
+        console.error("TextStreamComponent.render(): null token at index", i, {curToken,tokens: this.tokens, tokensToBlocks: this.tokensToBlocks});
         continue;
       }
 

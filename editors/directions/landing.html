@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script src="Document.js"></script>
-    <script src="GameplaySave.js"></script>
-    <script src="directions.js" defer></script>
+    <script type="module" src="landing.js"></script>
     <style>
         .content-layout {
             display: flex;
@@ -59,7 +57,10 @@
             max-height: 200px;
             overflow-y: auto;
             padding: 10px;
-            white-space: pre-wrap;
+            white-space: pre;
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.5;
         }
         #document-title-input {
             flex: 1;
@@ -67,14 +68,23 @@
             border: none;
             font-size: 1.2em;
         }
+        .image-preview {
+            margin: 10px 0;
+            max-width: 100%;
+        }
+        .image-preview img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
     <h1>Directions</h1>
 
-    <div class="games">
-        <div class="project-nav"><a href="/editors/hyper-sense-3/">Hyper</a></div>
-        <div class="project-nav"><a href="/editors/poetris-beta/">Poetris</a></div>
+    <div class="games" id="projects-list">
+        <!-- Projects will be loaded dynamically -->
     </div>
     
     <div class="save-controls">
@@ -85,7 +95,13 @@
         <input type="file" id="fileInput" accept=".json">
         <button onclick="loadSaveState()">Load Save State</button>
         <button onclick="restartState()">Restart</button>
+        <button onclick="clearStorage()">Clear</button>
         <button onclick="saveState()">Download Save</button>
+    </div>
+
+    <div class="directions-section">
+        <h2>Directions</h2>
+        <div id="directionsDisplay"></div>
     </div>
 
     <div class="content-layout">
