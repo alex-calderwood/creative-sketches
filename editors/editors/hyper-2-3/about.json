@@ -1,11 +1,11 @@
 {
-    "name": "Hypersense Revolution",
+    "name": "Hypersense Editor",
     "description": "A narrativization of the Hypersense series.",
     "notes": "",
     "version": "5",
     "series": ["hyper", "directions"],
     "url": "hyper-sense-4",
     "image": "hyper.png",
-    "date": "Jan 13, 2026",
+    "date": "2026-01-20",
     "major": false
 }

@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Writer's Project</title>
+    <title>The Writer(')s Project</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/icons/1298512738.svg">
     <style>
 
         a {
@@ -20,6 +21,27 @@
             background-repeat: repeat-y;
             margin: 0px;
             height: 90vh;
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .sidebar {
+            width: 220px;
+            padding: 1.5rem 1rem;
+            align-self: flex-start;
+            background-color: rgba(250, 250, 250, 0.95);
+            border-radius: 4px;
+            margin-left: 1rem;
+            margin-top: 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         .header-paper {
             /* Aged paper background with subtle variations */
@@ -250,73 +272,287 @@
             transform: translate(0px, 16rem) rotate(-3deg);
             transition: all 0.3s ease;
             }
+        
+        .tag-filter-label {
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            font-size: 0.7rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.06rem;
+        }
+        
+        .tag-filter-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+        
+        .tag-filter-button {
+            cursor: pointer;
+            display: inline-block;
+            padding: 0.4rem 0.65rem;
+            font-size: 0.7rem;
+            font-weight: 400;
+            color: #666;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            background-color: #fff;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+        
+        .tag-filter-button:hover {
+            border-color: #999;
+            background-color: #f0f0f0;
+        }
+        
+        .tag-filter-button.active {
+            background-color: #18191a;
+            color: #fff;
+            border-color: #18191a;
+        }
+        
+        .tag-filter-button.active:hover {
+            background-color: #18191a;
+            border-color: #18191a;
+        }
+        
+        .tag-filter-checkbox {
+            display: none;
+        }
+        
+        #tag-filters {
+            font-family: Georgia, serif;
+            font-size: 0.7rem;
+        }
+        
+        .project-date {
+            font-size: 0.45rem;
+            color: #999;
+            font-weight: 300;
+            margin-left: 0.5rem;
+        }
+        
+        .tag-filter-button {
+            position: relative;
+        }
+        
+        .tag-filter-button .tag-tooltip {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 0.5rem;
+            padding: 0.4rem 0.6rem;
+            background-color: #18191a;
+            color: #fff;
+            font-size: 0.65rem;
+            border-radius: 4px;
+            white-space: nowrap;
+            z-index: 1000;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            pointer-events: none;
+            max-width: 200px;
+            white-space: normal;
+        }
+        
+        .tag-filter-button .tag-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #18191a;
+        }
+        
+        .tag-filter-button:hover .tag-tooltip {
+            visibility: visible;
+            opacity: 1;
+            }
     </style>
 </head>
 <body>
-    <div class="header-paper">
-        <h1>The Writer's Project</h1>
-        <div class="subtitle">(Work in Progress)</div>
+    <div class="sidebar">
+        <div id="tag-filters">
+            <!-- Tag checkboxes will be inserted here -->
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div class="header-paper">
+            <h1>The Writer(')s Project</h1>
+            <div class="subtitle">(Work in Progress)</div>
     </div>
     
     <div class="projects-grid" id="projects-container">
         <!-- Project cards will be inserted here by JavaScript -->
+        </div>
     </div>
 
     <script>
         // This will be replaced with the actual projects array by the server
         const projects = [];
         
-        // Group projects by tags
-        const projectsByTag = {};
-        const untaggedProjects = [];
-        
+        // Collect all unique tags
+        const allTags = new Set();
         projects.forEach(project => {
+            if (project.tags && typeof project.tags === 'object') {
+                Object.keys(project.tags).forEach(tag => allTags.add(tag));
+            }
+            // Support old series format for display
             if (project.series) {
                 const tags = Array.isArray(project.series) ? project.series : [project.series];
-                tags.forEach(tag => {
-                    if (!projectsByTag[tag]) {
-                        projectsByTag[tag] = [];
+                tags.forEach(tag => allTags.add(tag));
+            }
+        });
+        
+        // State for selected tags
+        const selectedTags = new Set();
+        
+        // Fetch tag descriptions and initialize
+        let tagDescriptions = {};
+        let sortedTags = [];
+        
+        fetch('/api/tag-descriptions')
+            .then(response => response.json())
+            .then(descriptions => {
+                tagDescriptions = descriptions;
+                
+                // Sort tags: first by order in descriptions JSON, then alphabetically
+                const descriptionOrder = Object.keys(tagDescriptions);
+                sortedTags = Array.from(allTags).sort((a, b) => {
+                    const aIndex = descriptionOrder.indexOf(a);
+                    const bIndex = descriptionOrder.indexOf(b);
+                    
+                    // If both are in descriptions, use that order
+                    if (aIndex !== -1 && bIndex !== -1) {
+                        return aIndex - bIndex;
                     }
-                    projectsByTag[tag].push(project);
+                    // If only one is in descriptions, it comes first
+                    if (aIndex !== -1) return -1;
+                    if (bIndex !== -1) return 1;
+                    // If neither is in descriptions, sort alphabetically
+                    return a.localeCompare(b);
                 });
-            } else {
-                untaggedProjects.push(project);
-            }
-        });
-        
-        // Sort projects within each tag by version (most recent first)
-        Object.keys(projectsByTag).forEach(tag => {
-            projectsByTag[tag].sort((a, b) => {
-                if (a.version && b.version) {
-                    return b.version.localeCompare(a.version); // Most recent first
-                }
-                if (a.version && !b.version) return -1;
-                if (!a.version && b.version) return 1;
-                return a.name.localeCompare(b.name);
+                
+                // Now create the tag filters
+                createTagFilters();
+            })
+            .catch(err => {
+                console.error('Error fetching tag descriptions:', err);
+                // Fallback to alphabetical sorting
+                sortedTags = Array.from(allTags).sort();
+                createTagFilters();
             });
-        });
         
-        // Sort untagged projects by version (most recent first)
-        untaggedProjects.sort((a, b) => {
-            if (a.version && b.version) {
-                return b.version.localeCompare(a.version); // Most recent first
+        // Create tag filter checkboxes
+        function createTagFilters() {
+            const tagFiltersContainer = document.getElementById('tag-filters');
+            if (sortedTags.length > 0) {
+                const filterLabel = document.createElement('div');
+                filterLabel.textContent = 'Tags';
+                filterLabel.className = 'tag-filter-label';
+                tagFiltersContainer.appendChild(filterLabel);
+                
+                const checkboxContainer = document.createElement('div');
+                checkboxContainer.className = 'tag-filter-container';
+                
+                sortedTags.forEach(tag => {
+                    const label = document.createElement('label');
+                    label.className = 'tag-filter-button';
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = tag;
+                    checkbox.className = 'tag-filter-checkbox';
+                    checkbox.addEventListener('change', (e) => {
+                        if (e.target.checked) {
+                            selectedTags.add(tag);
+                            label.classList.add('active');
+                        } else {
+                            selectedTags.delete(tag);
+                            label.classList.remove('active');
+                        }
+                        renderProjects();
+                    });
+                    
+                    const tagName = document.createElement('span');
+                    tagName.textContent = tag;
+                    
+                    label.appendChild(checkbox);
+                    label.appendChild(tagName);
+                    
+                    // Add tooltip if description exists
+                    if (tagDescriptions[tag] && tagDescriptions[tag].description) {
+                        const tooltip = document.createElement('span');
+                        tooltip.className = 'tag-tooltip';
+                        tooltip.textContent = tagDescriptions[tag].description;
+                        label.appendChild(tooltip);
+                    }
+                    
+                    checkboxContainer.appendChild(label);
+                });
+                
+                tagFiltersContainer.appendChild(checkboxContainer);
             }
-            if (a.version && !b.version) return -1;
-            if (!a.version && b.version) return 1;
-            return a.name.localeCompare(b.name);
-        });
+            
+            // Initial render after filters are created
+            renderProjects();
+        }
         
-        // Sort tags first alphabeetically
-        let sortedTags = Object.keys(projectsByTag).sort();
-        // Then, sort by our custom list (if not in the list, put at the end)
-        const customTagOrder = ['instrument','poetris', 'field', 'spellcheck', 'concrete', 'EIS'];
-        sortedTags = sortedTags.sort((a, b) => {
-            const aIndex = customTagOrder.indexOf(a);
-            const bIndex = customTagOrder.indexOf(b);
-            return (aIndex === -1 ? Infinity : aIndex) - (bIndex === -1 ? Infinity : bIndex);
-        });
-        // Generate project cards grouped by tags
-        const container = document.getElementById('projects-container');
+        // Function to get version for a specific tag
+        const getTagVersion = (project, tag) => {
+            if (project.tags && project.tags[tag] && project.tags[tag].version) {
+                return project.tags[tag].version;
+            }
+            // Fallback to old version field
+            if (project.version) {
+                return project.version;
+            }
+            return null;
+        };
+        
+        // Function to check if project has a tag
+        const projectHasTag = (project, tag) => {
+            if (project.tags && project.tags[tag]) {
+                return true;
+            }
+            // Support old series format
+            if (project.series) {
+                const tags = Array.isArray(project.series) ? project.series : [project.series];
+                return tags.includes(tag);
+            }
+            return false;
+        };
+        
+        // Function to get all tags for a project
+        const getProjectTags = (project) => {
+            const tags = [];
+            if (project.tags && typeof project.tags === 'object') {
+                tags.push(...Object.keys(project.tags));
+            }
+            // Support old series format
+            if (project.series && !project.tags) {
+                const seriesTags = Array.isArray(project.series) ? project.series : [project.series];
+                tags.push(...seriesTags);
+            }
+            return tags;
+        };
+        
+        // Function to format date nicely
+        const formatDate = (dateString) => {
+            try {
+                const date = new Date(dateString);
+                const options = { year: 'numeric', month: 'short', day: 'numeric' };
+                return date.toLocaleDateString('en-US', options);
+            } catch (e) {
+                return dateString; // Fallback to original string if parsing fails
+            }
+        };
         
         // Function to create a project card
         const createProjectCard = (project) => {
@@ -339,6 +575,14 @@
             nameDiv.className = 'project-name';
             nameDiv.textContent = name;
             
+            // Add date next to title if available (subtle)
+            if (project.date) {
+                const dateSpan = document.createElement('span');
+                dateSpan.className = 'project-date';
+                dateSpan.textContent = formatDate(project.date);
+                nameDiv.appendChild(dateSpan);
+            }
+            
             const descriptionDiv = document.createElement('div');
             descriptionDiv.className = 'project-description';
             descriptionDiv.innerHTML = project.description || '';
@@ -352,24 +596,18 @@
             
             const metadataLines = [];
             
-            // Add version if it exists
-            if (project.version) {
-                metadataLines.push(`v${project.version}`);
-            }
-            
-            // Add series if it exists (with em dash for elegance)
-            if (project.series) {
-                if (Array.isArray(project.series)) {
-                    // If series is an array, join with commas
-                    metadataLines.push(`#${project.series.join(' #')}`);
-                } else {
-                    // If series is a string, display as before
-                    metadataLines.push(`#${project.series}`);
-                }
+            // Add tags with their versions
+            const projectTags = getProjectTags(project);
+            if (projectTags.length > 0) {
+                const tagStrings = projectTags.map(tag => {
+                    const version = getTagVersion(project, tag);
+                    return version ? `#${tag} v${version}` : `#${tag}`;
+                });
+                metadataLines.push(tagStrings.join(' '));
             }
             
             // Add any other custom fields (excluding standard ones)
-            const excludeFields = ['name', 'notes', 'description', 'version', 'series', 'url', 'image', 'dir', 'hide', 'major'];
+            const excludeFields = ['name', 'notes', 'description', 'version', 'series', 'url', 'image', 'dir', 'hide', 'major', 'tags', 'date'];
             Object.entries(project).forEach(([key, value]) => {
                 if (!excludeFields.includes(key) && value !== null && value !== undefined && value !== '') {
                     metadataLines.push(`${key}: ${value}`);
@@ -392,37 +630,55 @@
             return card;
         };
         
-        // Create tag headers and render projects
-        sortedTags.forEach(tag => {
-            // Create tag header (invisible spacer)
-            const tagHeader = document.createElement('div');
-            tagHeader.className = 'tag-header';
-            container.appendChild(tagHeader);
+        // Function to render projects based on selected filters
+        const renderProjects = () => {
+            const container = document.getElementById('projects-container');
+            container.innerHTML = '';
             
-            // Create projects for this tag
-            projectsByTag[tag].forEach((project, index) => {
-                const card = createProjectCard(project);
-                if (index === 0) {
-                    card.setAttribute('data-tag', tag);
+            // Filter projects
+            let filteredProjects = projects;
+            if (selectedTags.size > 0) {
+                filteredProjects = projects.filter(project => {
+                    const projectTags = getProjectTags(project);
+                    return projectTags.some(tag => selectedTags.has(tag));
+                });
+            }
+            
+            // Sort projects: first by date (if exists), then by version
+            filteredProjects.sort((a, b) => {
+                // Sort by date first (most recent first)
+                if (a.date && b.date) {
+                    return new Date(b.date) - new Date(a.date);
                 }
+                if (a.date && !b.date) return -1;
+                if (!a.date && b.date) return 1;
+                
+                // If no date or same date, sort by highest version across all tags
+                const getMaxVersion = (project) => {
+                    const projectTags = getProjectTags(project);
+                    const versions = projectTags.map(tag => getTagVersion(project, tag)).filter(v => v);
+                    if (versions.length === 0) return '';
+                    return versions.sort((x, y) => y.localeCompare(x))[0];
+                };
+                
+                const aVersion = getMaxVersion(a);
+                const bVersion = getMaxVersion(b);
+                
+                if (aVersion && bVersion) {
+                    return bVersion.localeCompare(aVersion);
+                }
+                if (aVersion && !bVersion) return -1;
+                if (!aVersion && bVersion) return 1;
+                
+                return a.name.localeCompare(b.name);
+            });
+            
+            // Render all projects
+            filteredProjects.forEach(project => {
+                const card = createProjectCard(project);
                 container.appendChild(card);
             });
-        });
-        
-        // Add untagged projects at the end
-        if (untaggedProjects.length > 0) {
-            const untaggedHeader = document.createElement('div');
-            untaggedHeader.className = 'tag-header';
-            container.appendChild(untaggedHeader);
-            
-            untaggedProjects.forEach((project, index) => {
-                const card = createProjectCard(project);
-                if (index === 0) {
-                    card.setAttribute('data-tag', 'other');
-                }
-                container.appendChild(card);
-            });
-        }
+        };
     </script>
 </body>
 </html>

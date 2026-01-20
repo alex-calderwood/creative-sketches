@@ -1,8 +1,10 @@
 {
   "Test 1": {
-    "progression": ["sub-1", "sub-2"],
-    "subdirections": {
-      "sub-1": {
+    "name": "The Revolutionary",
+    "progression": ["Hyper", "Concrete", "Three"],
+    "levels": {
+      "Hyper": {
+        "name": "The Revolution Letter",
         "editor": "hyper-sense-4",
         "prompt":
           "A morning assault on the Capital Builing was a failure. The Secratary General of the Revolution has been captured. <br> <br> The people's resistence cannot continue. <br> <br> You, the Second Secratary of Communication, have been assigned the task of wrting a letter, telling the resistence to stand down.",
@@ -15,19 +17,23 @@
           "you're": "I'm",
           "you've": "I've",
           "you'd": "I'd",
-          "you'll": "I'll",
-          "you're": "I'm",
-          "you're": "I'm"
+          "you'll": "I'll"
         }
       }, 
-      "sub-2": {
+      "Concrete": {
+        "name": "Concrete 1",
         "editor": "concrete-directions",
+        "prompt": "The next day, many arrive at your home, they feel that you spoke too singularly, in your own voice. Try the letter again, listening to your people."
+      },
+      "Three": {
+        "editor": "concrete-wall",
         "prompt": "Here it is!"      
       }
     }
   },
   "Test 2": {
-    "subdirections": {
+    "name": "Test 2",
+    "levels": {
       "sub-1": {
         "editor": "dropper-7-eis",
         "prompt": "You are the editor."

@@ -173,7 +173,7 @@
   input, select, .dropdown {
     font-family: var(--font);
     background-color: transparent;
-    border: 2px solid var(--primary-color);
+    border: 1px solid var(--primary-color);
     color: var(--primary-color);
     padding: 6px 10px;
     font-size: 12px;

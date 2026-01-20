@@ -1,345 +1,178 @@
-import { ProjectsHelper } from './utils/projectsHelper.js';
+// Landing page specific initialization
+// Reuses state, directions, and functions from directions-helpers.js
+
 import { GameplaySave } from './GameplaySave.js';
-import { Document } from './Document.js';
 import { Directions } from './Directions.js';
 
-let state = null;
-let selectedDocumentId = null;
-let directions = null;
+let landingDirections = null;
 
-// Load projects on page load
-async function loadProjects() {
-    const visibleEditors = ['hyper-sense-4', 'poetris-beta', 'concrete-directions'];
-    const allProjects = await ProjectsHelper.getVisibleProjects();
-    console.log('allProjects', allProjects);
-    const projects = allProjects.filter(p => visibleEditors.includes(p.url));
-    const projectsList = document.getElementById('projects-list');
-    
-    if (projectsList) {
-        projectsList.innerHTML = projects.map(project => 
-            `<div class="project-nav"><a href="/editors/${project.url}/">${project.name}</a></div>`
-        ).join('');
+// Load and display directions
+async function loadDirections() {
+    try {
+        landingDirections = await Directions.fromFile('/editors/directions/directions.json');
+        displayDirections();
+    } catch (error) {
+        console.error('Error loading directions:', error);
     }
 }
 
-// Initialize projects
-loadProjects();
-
-function updateDirectionsDisplay() {
-    if (!directions) return;
+function displayDirections() {
+    if (!landingDirections) return;
     
-    const directionsDisplay = document.getElementById('directionsDisplay');
-    if (!directionsDisplay) return;
+    const directionsOptions = document.getElementById('directionsOptions');
+    const directionNames = landingDirections.getDirectionNames();
     
-    directionsDisplay.innerHTML = directions.getDirectionNames().map(directionName => {
-        const subdirections = directions.getSubdirections(directionName);
-        
-        return `<div style="margin-bottom: 20px;">
-            <h3>${directionName}</h3>
-            ${Object.entries(subdirections).map(([subName, subData]) => {
-                return `<div style="margin-left: 20px; margin-bottom: 15px;">
-                    <strong>${subName}</strong>
-                    ${Object.entries(subData).map(([key, value]) => {
-                        if (Array.isArray(value)) {
-                            return `<div><em>${key}:</em> <ul>${value.map(v => `<li>${v}</li>`).join('')}</ul></div>`;
-                        } else if (typeof value === 'object') {
-                            return `<div><em>${key}:</em> <pre>${JSON.stringify(value, null, 2)}</pre></div>`;
-                        } else {
-                            return `<div><em>${key}:</em> ${value}</div>`;
-                        }
-                    }).join('')}
-                </div>`;
-            }).join('')}
-        </div>`;
-    }).join('');
-}
-
-function updateStateDisplay() {
-    if (!state) return;
-    
-    const dateCreated = state.getMetadata('dateCreated');
-    const dateModified = state.getMetadata('dateModified');
-    
-    const created = dateCreated ? new Date(dateCreated).toLocaleString() : 'Unknown';
-    const modified = dateModified ? new Date(dateModified).toLocaleString() : 'Unknown';
-    
-    document.getElementById('dateCreated').textContent = `Created: ${created}`;
-    document.getElementById('dateModified').textContent = `Modified: ${modified}`;
-    document.getElementById('saveStatus').textContent = 
-        `${state.getAllDocuments().length} documents`;
-    
-    updateDocumentsList();
-}
-
-function updateDocumentsList() {
-    const documentsListElement = document.getElementById('documentsList');
-    const documentCountElement = document.getElementById('documentCount');
-    if (!documentsListElement || !state) return;
-    
-    const documents = state.getAllDocuments();
-    
-    if (documentCountElement) {
-        documentCountElement.textContent = `(${documents.length})`;
-    }
-    
-    if (documents.length === 0) {
-        documentsListElement.innerHTML = '<p>No documents yet</p>';
+    if (directionNames.length === 0) {
+        directionsOptions.innerHTML = '<p>No directions available</p>';
         return;
     }
     
-    documentsListElement.innerHTML = documents.map(doc => {
-        const title = doc.getField('title') || 'Untitled';
-        const createdAt = doc.getField('createdAt');
-        const sourceEditor = doc.getField('sourceEditor');
-        const createdDate = createdAt ? new Date(createdAt).toLocaleString() : 'Unknown';
-        const isSelected = doc.id === selectedDocumentId ? 'selected' : '';
+    directionsOptions.innerHTML = directionNames.map(directionName => {
+        const direction = landingDirections.getDirection(directionName);
+        const displayName = direction.name || directionName;
+        const description = direction.description || '';
         
         return `
-            <div class="document-item ${isSelected}" onclick="selectDocument('${doc.id}')">
-                <div class="doc-id">${title}</div>
-                <div class="doc-meta">Editor: ${sourceEditor || 'Unknown'}</div>
-                <div class="doc-meta">Created: ${createdDate}</div>
+            <div class="direction-option clickable" onclick="createNewGame('${directionName}')">
+                <strong>${displayName}</strong>
+                ${description ? `<div class="direction-desc">${description}</div>` : ''}
             </div>
         `;
     }).join('');
 }
 
-window.selectDocument = function(documentId) {
-    selectedDocumentId = documentId;
-    updateDocumentsList();
-    showDocumentDetail(documentId);
-};
-
-function showDocumentDetail(documentId) {
-    const detailElement = document.getElementById('documentDetail');
-    if (!detailElement || !state) return;
-    
-    const doc = state.getDocument(documentId);
-    if (!doc) return;
-    
-    const title = doc.getField('title') || 'Untitled';
-    const createdAt = doc.getField('createdAt');
-    const lastModified = doc.getField('lastModified');
-    const sourceEditor = doc.getField('sourceEditor');
-    const content = doc.getField('content') || '';
-    
-    const createdDate = createdAt ? new Date(createdAt).toLocaleString() : 'Unknown';
-    const modifiedDate = lastModified ? new Date(lastModified).toLocaleString() : 'Not saved yet';
-    
-    // Try to parse content to check for image and text
-    let imagePreview = '';
-    let contentPreview = '';
-    try {
-        const parsedContent = JSON.parse(content);
-        if (parsedContent.image) {
-            imagePreview = `<div class="image-preview"><img src="${parsedContent.image}" alt="Document preview" /></div>`;
-        }
-        if (parsedContent.text) {
-            contentPreview = parsedContent.text;
-        } else {
-            contentPreview = content;
-        }
-    } catch (e) {
-        // Content is not JSON, use as-is
-        contentPreview = content;
+// Check and display existing save
+function checkExistingSave() {
+    if (GameplaySave.hasLocalStorage()) {
+        const save = GameplaySave.fromLocalStorage();
+        displaySaveInfo(save);
+        document.getElementById('savesSection').style.display = 'block';
     }
+}
+
+function displaySaveInfo(save) {
+    if (!save) return;
     
-    detailElement.className = 'document-detail';
-    detailElement.style.display = 'block';
-    detailElement.innerHTML = `
-        <div class="detail-section">
-            <input type="text" id="document-title-input" value="${title}" >
-        </div>
-        ${imagePreview}
-        <div class="content-section">
-            <div class="document-content-preview">${contentPreview || '(empty)'}</div>
-        </div>
-        <div class="detail-section">
-            <div class="detail-label">Document ID</div>
-            <div class="detail-value">${documentId}</div>
-        </div>
-        <div class="detail-section">
-            <div class="detail-label">Source Editor</div>
-            <div class="detail-value">${sourceEditor || 'Unknown'}</div>
-        </div>
-        <div class="detail-section">
-            <div class="detail-label">Created</div>
-            <div class="detail-value">${createdDate}</div>
-        </div>
-        <div class="detail-section">
-            <div class="detail-label">Last Modified</div>
-            <div class="detail-value">${modifiedDate}</div>
-        </div>
-        <div class="detail-actions">
-            <button onclick="openDocument('${documentId}')">Open</button>
-            <button onclick="deleteDocument('${documentId}')">Delete</button>
-        </div>
+    const saveInfo = document.getElementById('saveInfo');
+    const dateCreated = save.getMetadata('dateCreated');
+    const dateModified = save.getMetadata('dateModified');
+    const documentCount = save.getAllDocuments().length;
+    const completedLevels = save.getMetadata('completedLevels') || [];
+    
+    const created = dateCreated ? new Date(dateCreated).toLocaleDateString() : 'Unknown';
+    const modified = dateModified ? new Date(dateModified).toLocaleDateString() : 'Unknown';
+    
+    saveInfo.innerHTML = `
+        <div class="save-info-item">Documents: ${documentCount}</div>
+        <div class="save-info-item">Levels completed: ${completedLevels.length}</div>
+        <div class="save-info-item">Created: ${created}</div>
+        <div class="save-info-item">Last played: ${modified}</div>
     `;
-    
-    // Attach blur event to title input
-    const titleInput = document.getElementById('document-title-input');
-    if (titleInput) {
-        titleInput.addEventListener('blur', () => {
-            saveDocumentTitle(documentId, titleInput.value);
-        });
-    }
 }
 
-function saveDocumentTitle(documentId, title) {
-    if (!state) return;
-    
-    const doc = state.getDocument(documentId);
-    if (!doc) return;
-    
-    doc.setField('title', title);
-    state.setMetadata('dateModified', new Date().toISOString());
-    state.saveToLocalStorage();
-    
-    updateStateDisplay();
-}
-
-window.openDocument = async function(documentId) {
-    if (!state) return;
-    
-    const doc = state.getDocument(documentId);
-    if (!doc) return;
-    
-    const sourceEditor = doc.getField('sourceEditor');
-    
-    // Fetch project URL from server
-    const { ProjectsHelper } = await import('./utils/projectsHelper.js');
-    const editorUrl = await ProjectsHelper.getProjectUrl(sourceEditor);
-    
-    if (!editorUrl) {
-        console.error('Unknown editor:', sourceEditor);
-        return;
-    }
-    
-    // Set as current document and navigate
-    state.setMetadata('dateModified', new Date().toISOString());
-    state.saveToLocalStorage();
-    
-    window.location.href = editorUrl;
-};
-
-window.deleteDocument = function(documentId) {
-    if (!state) return;
-    if (!confirm('Are you sure you want to delete this document?')) return;
-    
-    state.removeDocument(documentId);
-    state.setMetadata('dateModified', new Date().toISOString());
-    state.saveToLocalStorage();
-    
-    selectedDocumentId = null;
-    updateStateDisplay();
-    
-    const detailElement = document.getElementById('documentDetail');
-    if (detailElement) {
-        detailElement.className = 'document-detail empty';
-        detailElement.style.display = 'none';
+// Show new game modal
+window.showNewGameModal = function() {
+    if (GameplaySave.hasLocalStorage()) {
+        // Show warning modal if there's an existing save
+        document.getElementById('new-game-warning-modal').style.display = 'flex';
+    } else {
+        // No existing save, go straight to direction selection
+        document.getElementById('direction-selection-modal').style.display = 'flex';
     }
 };
 
-// Initialize detail view as hidden
-function initializeDetailView() {
-    const detailElement = document.getElementById('documentDetail');
-    if (detailElement && !selectedDocumentId) {
-        detailElement.style.display = 'none';
-    }
-}
+// Close warning modal
+window.closeNewGameWarning = function() {
+    document.getElementById('new-game-warning-modal').style.display = 'none';
+};
 
-function loadSaveState() {
+// Proceed with backup
+window.proceedWithBackup = function() {
+    const save = GameplaySave.fromLocalStorage();
+    save.setMetadata('dateModified', new Date().toISOString());
+    save.downloadSave();
+    
+    // Close warning modal and show direction selection
+    document.getElementById('new-game-warning-modal').style.display = 'none';
+    document.getElementById('direction-selection-modal').style.display = 'flex';
+};
+
+// Proceed without backup
+window.proceedWithoutBackup = function() {
+    // Close warning modal and show direction selection
+    document.getElementById('new-game-warning-modal').style.display = 'none';
+    document.getElementById('direction-selection-modal').style.display = 'flex';
+};
+
+// Close direction selection modal
+window.closeDirectionSelection = function() {
+    document.getElementById('direction-selection-modal').style.display = 'none';
+};
+
+// Create new game with selected direction
+window.createNewGame = function(directionName) {
+    const now = new Date().toISOString();
+    const newSave = new GameplaySave();
+    newSave.setMetadata('dateCreated', now);
+    newSave.setMetadata('dateModified', now);
+    newSave.setMetadata('selectedDirection', directionName);
+    newSave.saveToLocalStorage();
+    
+    window.location.href = '/editors/directions/directions-menu.html';
+};
+
+// Continue existing game
+window.continueGame = function() {
+    if (!GameplaySave.hasLocalStorage()) return;
+    window.location.href = '/editors/directions/directions-menu.html';
+};
+
+// Load save file - reuses GameplaySave.loadFromFile
+window.loadSaveFile = function() {
     const fileInput = document.getElementById('fileInput');
     fileInput.click();
-}
+};
 
 document.getElementById('fileInput').addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
+    
     try {
-        state = await GameplaySave.loadFromFile(file);
-        state.setMetadata('dateModified', new Date().toISOString());
-        updateStateDisplay();
-        console.log('Save loaded:', state);
+        const loadedSave = await GameplaySave.loadFromFile(file);
+        loadedSave.setMetadata('dateModified', new Date().toISOString());
+        loadedSave.saveToLocalStorage();
+        
+        displaySaveInfo(loadedSave);
+        document.getElementById('savesSection').style.display = 'block';
+        
+        alert('Save file loaded successfully!');
     } catch (error) {
-        document.getElementById('saveStatus').textContent = 
-            `Error loading save: ${error.message}`;
+        alert(`Error loading save: ${error.message}`);
         console.error('Error loading save:', error);
     }
 });
 
-function restartState() {
-    if (!confirm('Are you sure? This will delete all your documents and create a new save.')) {
+// Download save - reuses GameplaySave.downloadSave
+window.downloadSave = function() {
+    if (!GameplaySave.hasLocalStorage()) {
+        alert('No save to download');
         return;
     }
     
-    const now = new Date().toISOString();
-    state = new GameplaySave();
-    state.setMetadata('dateCreated', now);
-    state.setMetadata('dateModified', now);
-    state.saveToLocalStorage();
-    
-    selectedDocumentId = null;
-    updateStateDisplay();
-    
-    const detailElement = document.getElementById('documentDetail');
-    if (detailElement) {
-        detailElement.style.display = 'none';
-    }
-    
-    console.log('New save created:', state);
-}
+    const save = GameplaySave.fromLocalStorage();
+    save.setMetadata('dateModified', new Date().toISOString());
+    save.downloadSave();
+};
 
-function clearStorage() {
-    if (!confirm('Are you sure? This will clear all localStorage data.')) {
-        return;
-    }
-    
-    localStorage.removeItem('gameplaySave');
-    state = null;
-    selectedDocumentId = null;
-    
-    document.getElementById('dateCreated').textContent = 'Created: No save';
-    document.getElementById('dateModified').textContent = 'Modified: No save';
-    document.getElementById('saveStatus').textContent = 'No save loaded';
-    document.getElementById('documentsList').innerHTML = '<p>No documents yet</p>';
-    document.getElementById('documentCount').textContent = '(0)';
-    
-    const detailElement = document.getElementById('documentDetail');
-    if (detailElement) {
-        detailElement.className = 'document-detail empty';
-        detailElement.style.display = 'none';
-    }
-    
-    console.log('localStorage cleared');
-}
+// About modal
+window.showAbout = function() {
+    document.getElementById('about-modal').style.display = 'flex';
+};
 
-function saveState() {
-    if (!state) {
-        document.getElementById('saveStatus').textContent = 
-            'No save to download. Create or load a save first.';
-        return;
-    }
-    state.setMetadata('dateModified', new Date().toISOString());
-    state.downloadSave();
-    updateStateDisplay();
-}
+window.closeAbout = function() {
+    document.getElementById('about-modal').style.display = 'none';
+};
 
-// Load directions
-Directions.fromFile('./directions.json').then(loadedDirections => {
-    directions = loadedDirections;
-    updateDirectionsDisplay();
-}).catch(error => {
-    console.error('Error loading directions:', error);
-});
-
-// Load from localStorage or create new save
-if (GameplaySave.hasLocalStorage()) {
-    state = GameplaySave.fromLocalStorage();
-    updateStateDisplay();
-} else {
-    restartState();
-}
-
-initializeDetailView();
+// Initialize
+loadDirections();
+checkExistingSave();

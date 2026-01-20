@@ -7,6 +7,7 @@ import { MetaGameControls } from './MetaGameControls.js';
 import { GameplaySave } from './GameplaySave.js';
 import { Directions } from './Directions.js';
 import { Document } from './Document.js';
+import { saveStateWithImage } from './utils/utils.js';
 
 export class MetaGame {
   constructor(projectId) {
@@ -17,11 +18,11 @@ export class MetaGame {
     this.game = null;
     this.save = null;
     this.documentId = null;
-    this.subdirection = null;
-    this.subdirectionKey = null;
+    this.level = null;
+    this.levelKey = null;
     this.directionName = null;
     this.progression = null;
-    this.allSubdirections = null;
+    this.allLevels = null;
     this.loaded = {
       controls: false,
       prompts: false,
@@ -46,11 +47,11 @@ export class MetaGame {
     
     // Load directions to get initial state
     const directions = await Directions.fromFile('/editors/directions/directions.json');
-    this.subdirection = this.findSubdirectionForEditor(directions);
+    this.level = this.findLevelForEditor(directions);
     
     // Don't auto-load - user can use Load button to select a document
     // Just create a new document for this session
-    this.documentId = this.createNewDocument(this.save, this.subdirection);
+    this.documentId = this.createNewDocument(this.save, this.level);
     this.save.saveToLocalStorage();
     
     // Load progression prompts
@@ -86,14 +87,14 @@ export class MetaGame {
     return null;
   }
 
-  createNewDocument(save, subdirection = null) {
+  createNewDocument(save, level = null) {
     const documentId = `doc_${Date.now()}`;
     
-    // Get initial content from subdirection and convert to state format
+    // Get initial content from level and convert to state format
     let initialContent = '';
-    if (subdirection?.['initial-state']) {
+    if (level?.['initial-state']) {
       // Convert initial-state to proper state object format
-      const stateObj = subdirection['initial-state'];
+      const stateObj = level['initial-state'];
       initialContent = JSON.stringify(stateObj);
     }
     
@@ -108,19 +109,19 @@ export class MetaGame {
     return documentId;
   }
 
-  findSubdirectionForEditor(directions) {
+  findLevelForEditor(directions) {
     for (const directionName of directions.getDirectionNames()) {
       const directionData = directions.data[directionName];
-      const subdirections = directions.getSubdirections(directionName);
+      const levels = directions.getLevels(directionName);
       
-      for (const [key, subdirection] of Object.entries(subdirections)) {
-        if (subdirection.editor === this.projectId) {
+      for (const [key, level] of Object.entries(levels)) {
+        if (level.editor === this.projectId) {
           // Store everything we need for progression
           this.directionName = directionName;
-          this.subdirectionKey = key;
+          this.levelKey = key;
           this.progression = directionData.progression || [];
-          this.allSubdirections = subdirections;
-          return subdirection;
+          this.allLevels = levels;
+          return level;
         }
       }
     }
@@ -132,15 +133,15 @@ export class MetaGame {
       Controls: this.loaded.controls,
       Prompts: this.loaded.prompts,
       Submit: this.loaded.submit,
-      InitialState: this.subdirection?.['initial-state'],
+      InitialState: this.level?.['initial-state'],
       Autosave: this.game
     };
     
     const loaded = Object.keys(components).filter(k => components[k]).join(', ') || 'None';
     const notLoadedList = Object.keys(components).filter(k => !components[k]);
     
-    const directionInfo = this.directionName && this.subdirectionKey 
-      ? ` | Direction: ${this.directionName}/${this.subdirectionKey}` 
+    const directionInfo = this.directionName && this.levelKey 
+      ? ` | Direction: ${this.directionName}/${this.levelKey}` 
       : '';
     console.log(`MetaGame [${this.projectId}] Doc: ${this.documentId || 'none'}${directionInfo}`);
     console.log(`  Loaded: ${loaded}`);
@@ -170,7 +171,7 @@ export class MetaGame {
   }
 
   handleNewDocument() {
-    const newDocumentId = this.createNewDocument(this.save, this.subdirection);
+    const newDocumentId = this.createNewDocument(this.save, this.level);
     this.save.saveToLocalStorage();
     console.log("new document", newDocumentId);
     window.location.reload();
@@ -234,11 +235,11 @@ export class MetaGame {
       const directions = await Directions.fromFile('/editors/directions/directions.json');
       
       for (const directionName of directions.getDirectionNames()) {
-        const subdirections = directions.getSubdirections(directionName);
-        const subdirection = Object.values(subdirections).find(sub => sub.editor === this.projectId);
+        const levels = directions.getLevels(directionName);
+        const level = Object.values(levels).find(sub => sub.editor === this.projectId);
         
-        if (subdirection?.prompt) {
-          this.populatePromptDisplay(subdirection.prompt);
+        if (level?.prompt) {
+          this.populatePromptDisplay(level.prompt);
           this.populateSubmitButton();
           this.createModal();
           return;
@@ -292,16 +293,11 @@ export class MetaGame {
   }
 
   async handleSubmit() {
-    // Save the current state
+    // Save the current state with image
     if (this.game && this.save && this.documentId) {
       const state = await this.game.saveState();
       if (state) {
-        const doc = this.save.getDocument(this.documentId);
-        if (doc) {
-          doc.setField('content', JSON.stringify(state));
-          doc.setField('lastModified', new Date().toISOString());
-          this.save.saveToLocalStorage();
-        }
+        await saveStateWithImage(state, this.save, this.documentId);
       }
     }
     
@@ -326,9 +322,9 @@ export class MetaGame {
     const state = await this.game.saveState();
     let text = state?.text || '';
     
-    // Apply replacements from subdirection if available
-    if (this.subdirection?.replacements) {
-      Object.entries(this.subdirection.replacements).forEach(([from, to]) => {
+    // Apply replacements from level if available
+    if (this.level?.replacements) {
+      Object.entries(this.level.replacements).forEach(([from, to]) => {
         const regex = new RegExp(`\\b${from}\\b`, 'gi');
         text = text.replace(regex, to);
       });
@@ -345,47 +341,37 @@ export class MetaGame {
   }
 
   async handleModalContinue() {
-    // Mark current subdirection as completed
-    if (this.save && this.subdirectionKey) {
-      const completedSubdirections = this.save.getMetadata('completedSubdirections') || [];
-      if (!completedSubdirections.includes(this.subdirectionKey)) {
-        completedSubdirections.push(this.subdirectionKey);
-        this.save.setMetadata('completedSubdirections', completedSubdirections);
+    // Mark current level as completed
+    if (this.save && this.levelKey) {
+      const completedLevels = this.save.getMetadata('completedLevels') || [];
+      if (!completedLevels.includes(this.levelKey)) {
+        completedLevels.push(this.levelKey);
+        this.save.setMetadata('completedLevels', completedLevels);
         this.save.saveToLocalStorage();
       }
     }
     
-    // Find next editor in progression
-    const nextEditor = this.findNextEditor();
-    
-    if (nextEditor) {
-      window.location.href = `/editors/${nextEditor}/`;
-    } else {
-      alert('You have completed the progression!');
-      const modal = document.getElementById('complete-modal');
-      if (modal) {
-        modal.style.display = 'none';
-      }
-    }
+    // Navigate to landing page
+    window.location.href = '/editors/directions/';
   }
 
   findNextEditor() {
-    if (!this.progression || !this.subdirectionKey || !this.allSubdirections) {
+    if (!this.progression || !this.levelKey || !this.allLevels) {
       return null;
     }
     
     // Find current position in progression
-    const currentIndex = this.progression.indexOf(this.subdirectionKey);
+    const currentIndex = this.progression.indexOf(this.levelKey);
     
     if (currentIndex === -1 || currentIndex >= this.progression.length - 1) {
       return null; // Last in progression or not found
     }
     
-    // Get next subdirection
+    // Get next level
     const nextKey = this.progression[currentIndex + 1];
-    const nextSubdirection = this.allSubdirections[nextKey];
+    const nextLevel = this.allLevels[nextKey];
     
-    return nextSubdirection?.editor || null;
+    return nextLevel?.editor || null;
   }
 
   /**
