@@ -1,0 +1,20 @@
+{
+  "instrument": {
+    "description": "Musical typing instruments that turn keyboard input into sound"
+  },
+  "poetris": {
+    "description": "Falling word games inspired by Tetris"
+  },
+  "field": {
+    "description": "Words scattered and interacting across a field"
+  },
+  "spellcheck": {
+    "description": "Editors that correct or transform spelling"
+  },
+  "concrete": {
+    "description": "Concrete poetry editors with spatial and visual text"
+  },
+  "directions": {
+    "description": "Text editors exploring directional constraints"
+  }
+}

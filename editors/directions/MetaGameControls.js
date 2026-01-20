@@ -1,4 +1,4 @@
-import { captureScreenshot } from './utils/utils.js';
+import { saveStateWithImage } from './utils/utils.js';
 import { GameplaySave } from './GameplaySave.js';
 
 export class MetaGameControls {
@@ -97,25 +97,9 @@ export class MetaGameControls {
     const state = this.game.saveState();
     if (!state) return;
 
-    // Capture screenshot for manual saves (check for common editor elements)
-    const editorElement = document.querySelector('#editor');
-    if (editorElement) {
-      const image = await captureScreenshot(editorElement.id ? `#${editorElement.id}` : null);
-      if (image) {
-        state.image = image;
-      }
-    } else {
-      console.warn('Image not captured. Perhaps, no #editor element found. Add an element with id="editor" to enable screenshots.');
-    }
-
-    const doc = this.save.getDocument(this.documentId);
-    if (doc) {
-      doc.setField('content', JSON.stringify(state));
-      doc.setField('lastModified', new Date().toISOString());
-      this.save.setMetadata('dateModified', new Date().toISOString());
-      this.save.saveToLocalStorage();
-      this.updateLastSavedDisplay();
-    }
+    // Use shared helper to save state with image
+    await saveStateWithImage(state, this.save, this.documentId);
+    this.updateLastSavedDisplay();
 
     if (this.onSave) {
       this.onSave();

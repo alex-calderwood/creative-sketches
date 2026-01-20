@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Directions</title>
+    <link rel="icon" href="/assets/icons/pentip.png">
+    <link rel="stylesheet" href="directions-menu.css">
+    <script type="module" src="directions-helpers.js"></script>
+</head>
+<body>
+    <div class="header-bar">
+        <h1>Directions</h1>
+    </div>
+
+    <div class="options-bar">
+        <button onclick="openOptionsMenu()" class="options-btn">⚙️ Options</button>
+    </div>
+
+    <div class="games" id="projects-list">
+        <!-- Projects will be loaded dynamically -->
+    </div>
+    
+    <!-- Options Modal -->
+    <div id="options-modal" class="options-modal" style="display: none;">
+        <div class="options-content">
+            <h2>Options</h2>
+            
+        <div class="options-section">
+            <h3>Save Management</h3>
+            <div id="dateCreated"></div>
+            <div id="dateModified"></div>
+            <div id="saveStatus" class="save-status"></div>
+            <input type="file" id="fileInput" accept=".json" style="display: none;">
+            <button onclick="loadSaveState()">Load Save File</button>
+            <button onclick="saveState()">Download Save File</button>
+            <button onclick="restartState()">New Save</button>
+        </div>
+            
+            <div class="options-section">
+                <h3>Reset</h3>
+                <button onclick="clearStorage()">Clear All Data</button>
+            </div>
+            
+            <button onclick="closeOptionsMenu()" class="close-options-btn">Close</button>
+        </div>
+    </div>
+
+    <!-- <div class="directions-section">
+        <h2>Directions</h2>
+        <div id="directionsDisplay"></div>
+    </div> -->
+
+    <div class="content-layout">
+        <div class="document-list">
+            <h2>Documents</h2>
+            <div class="documents-container">
+                <div id="documentsList"></div>
+            </div>
+        </div>
+        <div class="document-detail empty" id="documentDetail">
+            Select a document to view details
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Concrete Editor</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="base-style.css">
+</head>
+<body>
+
+  <div id="game-banner">
+    <div class="text">
+      <a href="/editors/" class="back-link">The Writer's Project</a>
+      <span class="subtitle">$PROJECT_NAME</span>
+    </div>
+
+    <div id="controls" class="controls"></div>
+  </div>
+
+  <div id="prompt-container">
+    <div id="prompt-display" class="meta-game"></div>
+    <div id="submit" class="meta-game"></div>
+  </div>
+
+  <div id="editor-container">
+    <div id="editor"></div>
+  </div>
+
+  <script type="module">
+    import { Game } from './game.js';
+    import { MetaGame } from '/editors/directions/MetaGame.js';
+    
+    const PROJECT_ID = '$PROJECT_ID';
+    console.log('PROJECT_ID:', PROJECT_ID);
+    
+    document.addEventListener('DOMContentLoaded', async () => {
+      const game = new Game();
+      const metaGame = new MetaGame(PROJECT_ID);
+      await metaGame.initialize(game);
+    });
+  </script>
+</body>
+</html>

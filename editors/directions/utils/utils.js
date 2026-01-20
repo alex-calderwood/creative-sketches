@@ -67,3 +67,34 @@ export function dataUrlToBlob(dataUrl) {
   
   return new Blob([u8arr], { type: mime });
 }
+
+/**
+ * Save state with screenshot capture
+ * Shared helper for both MetaGame submit and MetaGameControls save
+ * @param {Object} state - The game state to save
+ * @param {Object} save - The GameplaySave instance
+ * @param {string} documentId - The document ID
+ * @returns {Promise<void>}
+ */
+export async function saveStateWithImage(state, save, documentId) {
+  if (!save || !documentId) return;
+
+  // Capture screenshot for the save
+  const editorElement = document.querySelector('#editor');
+  if (editorElement) {
+    const image = await captureScreenshot(editorElement.id ? `#${editorElement.id}` : null);
+    if (image) {
+      state.image = image;
+    }
+  } else {
+    console.warn('Image not captured. No #editor element found.');
+  }
+
+  const doc = save.getDocument(documentId);
+  if (doc) {
+    doc.setField('content', JSON.stringify(state));
+    doc.setField('lastModified', new Date().toISOString());
+    save.setMetadata('dateModified', new Date().toISOString());
+    save.saveToLocalStorage();
+  }
+}

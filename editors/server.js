@@ -97,6 +97,19 @@ function getProjects() {
         try {
           const aboutData = JSON.parse(data);
           const image = getImagePathSmart(aboutData.image, dir);
+          
+          // Transform old series/version format to new tags format
+          let tags = aboutData.tags || {};
+          
+          // Support backward compatibility: if using old series/version format
+          if (aboutData.series && aboutData.version && !aboutData.tags) {
+            const seriesList = Array.isArray(aboutData.series) ? aboutData.series : [aboutData.series];
+            tags = {};
+            seriesList.forEach(tag => {
+              tags[tag] = { version: aboutData.version };
+            });
+          }
+          
           resolve({ // resolve the outer Promise
             // Include any other fields that might be in the about.json
             ...aboutData,
@@ -105,7 +118,8 @@ function getProjects() {
             url: aboutData.url || dir,
             name: aboutData.name || dir,
             hide: aboutData.hide == true,
-            image: image
+            image: image,
+            tags: tags
           });
         } catch (e) {
           resolve(defaultAbout);
@@ -187,11 +201,22 @@ app.get('/editors', (req, res) => {
 app.use('/editors/directions', serveStatic(path.join(__dirname, 'directions')));
 
 app.get('/editors/directions', (req, res) => {
-  const directionsPath = path.join(__dirname, 'directions', 'landing.html');
+  const directionsPath = path.join(__dirname, 'directions', 'directions-menu.html');
   fs.readFile(directionsPath, 'utf8', (err, data) => {
     if (err) {
       console.error('Error reading direction landing page', err);
       return res.status(500).send('Error loading directions page');
+    }
+    res.send(data);
+  });
+});
+
+app.get('/editors/new-direction', (req, res) => {
+  const landingPath = path.join(__dirname, 'directions', 'landing.html');
+  fs.readFile(landingPath, 'utf8', (err, data) => {
+    if (err) {
+      console.error('Error reading landing page', err);
+      return res.status(500).send('Error loading landing page');
     }
     res.send(data);
   });
@@ -250,6 +275,24 @@ app.post('/editors/api/new-sentence', express.json(), (req, res) => {
 // GET endpoint to fetch all projects
 app.get('/api/projects', (req, res) => {
   res.json(projects);
+});
+
+// GET endpoint to fetch tag descriptions
+app.get('/api/tag-descriptions', (req, res) => {
+  const tagDescriptionsPath = path.join(__dirname, 'tag-descriptions.json');
+  fs.readFile(tagDescriptionsPath, 'utf8', (err, data) => {
+    if (err) {
+      console.error('Error reading tag-descriptions.json:', err);
+      return res.json({});
+    }
+    try {
+      const descriptions = JSON.parse(data);
+      res.json(descriptions);
+    } catch (e) {
+      console.error('Error parsing tag-descriptions.json:', e);
+      res.json({});
+    }
+  });
 });
 
 app.use('/editors/api', synonymsRouter);

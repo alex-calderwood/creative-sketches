@@ -11,8 +11,8 @@ export class Directions {
         return Object.keys(this.data);
     }
 
-    getSubdirections(directionName) {
-        return this.data[directionName]?.subdirections || {};
+    getLevels(directionName) {
+        return this.data[directionName]?.levels || {};
     }
 
     static async fromFile(filepath) {

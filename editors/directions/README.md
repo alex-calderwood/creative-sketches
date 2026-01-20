@@ -237,7 +237,7 @@ To enable prompts and submit workflows, add your editor to `directions.json`:
 ```json
 {
   "My Direction": {
-    "subdirections": {
+    "levels": {
       "task-1": {
         "editor": "my-editor-id",
         "prompt": "Write a story about...",
