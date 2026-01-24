@@ -31,13 +31,11 @@ body {
 
 /* Override MetaGame default styles */
 #prompt-container {
-  display: flex;
   flex-direction: row;
   align-items: center;
   gap: 15px;
   padding: 10px 20px;
-  background-color: #f5f5f5;
-  border-bottom: 1px solid #ccc;
+  display: none;
 }
 
 #prompt-display {
@@ -93,7 +91,6 @@ body {
   font-size: 20pt;
   line-height: 20px;
   outline: none;
-  background-color: transparent;
   caret-color: black;
 }
 
@@ -116,16 +113,18 @@ body {
   margin: 0;
   border: none;
   outline: none;
-  background: transparent;
-
+  /* background: transparent; */
   pointer-events: none;
   z-index: 0;
-  opacity: 0.5;
   user-select: none;
 
   /* dissalow wrapping, just go beyond the bounds */
   white-space: nowrap;
   /* overflow: hidden; */
+}
+
+.wall-element.opaque {
+  background-color: var(--editor-color);
 }
 
 #game-banner {

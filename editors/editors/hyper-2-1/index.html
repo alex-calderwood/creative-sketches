@@ -7,36 +7,12 @@
   <link rel="preload" href="fonts/gomarice_goma_block.ttf" as="font" type="font/ttf" crossorigin>
 
   <!-- <link rel="stylesheet" media="screen" href="https://fontlibrary.org//face/squareantiqua" type="text/css"/> -->
-
   <link rel="stylesheet" href="base-style.css">
   <link rel="stylesheet" href="src/performances/hyper/hyper.css">
   <link rel="stylesheet" href="src/performances/hyper/hyper-block.css">
 
 </head>
 <body>
-  <!-- SVG Sprites -->
-  <div style="display: none;">
-    <svg id="current-markup-sprite" width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 12H12.01M12 6H12.01M12 18H12.01M13 12C13 12.5523 12.5523 13 12 13C11.4477 13 11 12.5523 11 12C11 11.4477 11.4477 11 12 11C12.5523 11 13 11.4477 13 12ZM13 18C13 18.5523 12.5523 19 12 19C11.4477 19 11 18.5523 11 18C11 17.4477 11.4477 17 12 17C12.5523 17 13 17.4477 13 18ZM13 6C13 6.55228 12.5523 7 12 7C11.4477 7 11 6.55228 11 6C11 5.44772 11.4477 5 12 5C12.5523 5 13 5.44772 13 6Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    
-    <!-- Control icons -->
-    <svg id="arrow-left-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <svg id="arrow-right-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <svg id="arrow-up-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 19V5M12 5L5 12M12 5L19 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <svg id="arrow-down-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 5V19M12 19L19 12M12 19L5 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <svg id="spacebar-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="4" y="9" width="16" height="6" rx="1" stroke="currentColor" stroke-width="2"/>
-    </svg>
-  </div> 
 
   <div id="game-banner">
     <div class="text">
@@ -44,35 +20,48 @@
       <span class="subtitle">$PROJECT_NAME</span>
     </div>
 
-    <div class="controls">
-      <button id="options-btn" class="control-btn">Options</button>
-      <button id="new-game-btn" class="control-btn">New</button>
+    <div id="controls" class="controls">
+      <!-- Controls populated by controls.js -->
     </div>
-
-
   </div>
 
-  <!-- <script src="https://unpkg.com/tone"></script> -->
   <script src="./lib/compromise.js"></script>
   
   <!-- Import as ES module -->
   <script type="module">
     import { Game } from './game.js';
+    import { MetaGame } from '/editors/directions/MetaGame.js';
+    
+    const PROJECT_ID = '$PROJECT_ID';
+
+    if (PROJECT_ID.startsWith('$')) {
+      throw new Error('PROJECT_ID is not set');
+    }
     
     // Wait for DOM to be fully loaded before initializing
     document.addEventListener('DOMContentLoaded', async () => {
-      let game = new Game();
-      await game.initialize();
+      // Create game first
+      const game = new Game();
       
+      // MetaGame loads save
+      const metaGame = new MetaGame(PROJECT_ID);
+      await metaGame.initialize(game);
     });
   </script>
   
+  <div id="prompt-container" class="meta-game">
+    <div id="prompt-display" class="meta-game"></div>
+  
+    <div id="submit" class="meta-game"></div>
+  </div>
+
   <div id="editor-container">
     <!-- <div id="editor" contenteditable="true"></div> -->
      <!-- I am doing this to disallow fancy pasting, but eventually I could upgrade to a different (temporary div? hack to allow rich text but not the existing paste format) -->
     <div id="editor" contenteditable="plaintext-only"></div>
     <div id="overlay"></div>
   </div>
+
 
 </body>
 </html>

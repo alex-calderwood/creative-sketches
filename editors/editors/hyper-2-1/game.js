@@ -4,15 +4,28 @@ export class Game {
   constructor(options = {}) {
     this.performance = null;
     this.tickInterval = 2000; // ms between ticks
+    this.save = options.save || null;
+    this.documentId = options.documentId || null;
   }
 
   async initialize(options = {}) {
-    this.performance = new HyperSkipPerformance();
-    this.performance.initialize();
+    if (options.save) {
+      this.save = options.save;
+    }
+    let initialText = null;
+    if (options.documentId) {
+      this.documentId = options.documentId;
+      let doc = this.save.getDocument(this.documentId);
+      let content = doc?.getField('content');
+      initialText = content ? JSON.parse(content).text : '';
+    }
 
-    // Start tick loop
-    // setInterval(() => {
-    //   this.performance.tick();
-    // }, this.tickInterval);
+    this.performance = new HyperSkipPerformance({ initialText });
+    this.performance.initialize();
+  }
+
+  saveState() {
+    if (!this.performance) return null;
+    return this.performance.getState();
   }
 }

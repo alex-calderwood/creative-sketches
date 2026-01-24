@@ -1,3 +1,7 @@
+import { SettingsMixin } from '/editors/vault/01-23-2026/src/performances/SettingsMixin.js';
+import { CustomTextCorpus } from '/editors/vault/01-23-2026/src/corpus/CustomTextCorpus.js';
+import { TextReader } from '/editors/vault/01-23-2026/src/readers/TextReader.js';
+
 // given a dict with weights or probabilities, pick one accordingly
 // assign the remaining probability mass to any key with value -1
 function roll(probabilities) {
@@ -58,10 +62,12 @@ function resizeToken(element, width, height) {
 
 const DELETE_COLOR = "#e83713";
 
-class Dropper {
+export class Dropper extends SettingsMixin(class {}) {
   constructor() {
+    super();
     this.tokenElements = [];
     this.corpus = null;
+    this.reader = null;
     this.colorBy = 'pos'; // Default color by part of speech
 
     this.numColumns = 6;
@@ -149,10 +155,10 @@ class Dropper {
     }
   }
 
-  async initialize(options = {}) {
+  async initialize(params = {}) {
     // Set or update grid dimensions
-    if (options.numColumns) this.numColumns = options.numColumns;
-    if (options.numRows) this.numRows = options.numRows;
+    if (params.numColumns) this.numColumns = params.numColumns;
+    if (params.numRows) this.numRows = params.numRows;
 
     // Calculate cell sizes
     this.cellHeight = this.gridHeight / this.numRows;
@@ -207,18 +213,21 @@ class Dropper {
     this.completedTokensTop = 20;
 
     // Initialize corpus
-    this.corpus = new Corpus();
-    if (options.sourceText) {
-      this.corpus.texts = [options.sourceText];
-      this.corpus.updateFromTexts();
-    } else if (options.corpusFile) {
-      await this.corpus.setCorpusFromFile(options.corpusFile);
+    this.corpus = new CustomTextCorpus();
+    if (params.sourceText) {
+      this.corpus.setCustomText(params.sourceText);
+    } else if (params.corpusFile) {
+      await this.corpus.setTextFromFile(params.corpusFile);
     } else {
-      await this.corpus.setCorpusFromFile(defaultCorpus);
+      await this.corpus.loadTextsFromJSON();
+      await this.corpus.loadRandomText();
     }
 
+    // Initialize reader
+    this.reader = new TextReader(this.corpus);
+
     // Set up controls and event listeners (only on first initialization)
-    if (!options.isReset) {
+    if (!params.isReset) {
       this.setupControls();
       this.watchArrowKeys();
       this.watchSwipes();
@@ -320,11 +329,10 @@ class Dropper {
     // Content strategy control
     const contentStrategySelect = document.getElementById('mode');
     contentStrategySelect.addEventListener('change', (e) => {
-      this.corpus.selectionStrategy(e.target.value);
-      console.log('New content strategy:', this.corpus.mode);
+      // CustomTextCorpus doesn't have selectionStrategy
+      console.log('Content strategy selection not supported with CustomTextCorpus');
       e.target.blur(); // Remove focus after selection
     });
-    this.corpus.selectionStrategy(contentStrategySelect.value);
 
     // Color by control
     const colorBySelect = document.getElementById('color-by');
@@ -381,8 +389,11 @@ class Dropper {
       });
       
       if (texts.length > 0) {
-        this.corpus.texts = texts;
-        this.corpus.updateFromTexts();
+        // Combine all texts for CustomTextCorpus
+        const combinedText = texts.join('\n\n');
+        this.corpus.setCustomText(combinedText);
+        // Reinitialize reader with updated corpus
+        this.reader = new TextReader(this.corpus);
       }
       
       saveCorpusBtn.blur();
@@ -515,43 +526,22 @@ class Dropper {
     // Clear existing content
     container.innerHTML = '';
     
-    // Create a textarea for each text
-    this.corpus.texts.forEach((text, index) => {
-      const textareaDiv = document.createElement('div');
-      textareaDiv.classList.add('corpus-textarea-container');
-      
-      const label = document.createElement('label');
-      label.textContent = `Text ${index + 1}:`;
-      label.classList.add('corpus-textarea-label');
-      
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      textarea.classList.add('corpus-textarea');
-      textarea.dataset.index = index;
-      
-      textareaDiv.appendChild(label);
-      textareaDiv.appendChild(textarea);
-      container.appendChild(textareaDiv);
-    });
+    // Create a single textarea for the corpus text
+    const textareaDiv = document.createElement('div');
+    textareaDiv.classList.add('corpus-textarea-container');
     
-    // If no texts exist, create one empty textarea
-    if (this.corpus.texts.length === 0) {
-      const textareaDiv = document.createElement('div');
-      textareaDiv.classList.add('corpus-textarea-container');
-      
-      const label = document.createElement('label');
-      label.textContent = 'Text 1:';
-      label.classList.add('corpus-textarea-label');
-      
-      const textarea = document.createElement('textarea');
-      textarea.value = '';
-      textarea.classList.add('corpus-textarea');
-      textarea.dataset.index = 0;
-      
-      textareaDiv.appendChild(label);
-      textareaDiv.appendChild(textarea);
-      container.appendChild(textareaDiv);
-    }
+    const label = document.createElement('label');
+    label.textContent = 'Text:';
+    label.classList.add('corpus-textarea-label');
+    
+    const textarea = document.createElement('textarea');
+    textarea.value = this.corpus.text || '';
+    textarea.classList.add('corpus-textarea');
+    textarea.dataset.index = 0;
+    
+    textareaDiv.appendChild(label);
+    textareaDiv.appendChild(textarea);
+    container.appendChild(textareaDiv);
   }
 
   showInstructions() {
@@ -743,24 +733,16 @@ class Dropper {
     let isBeginning = this.state.blockHistory.length < this.numInitialConstraints;
     let blockType =  isBeginning ? 'constraint' : roll(this.probabilities);
 
-    // if we are using the pos strategy, update the constraint 
-    if (this.corpus.selectionStrategy == "pos") {
-      let constraints = this.targetConstraints();
-      constraints = constraints.filter(constraint => constraint != null);
-      console.log("Constraints", constraints);
-      this.corpus.selectionStrategy("pos", {tokenPOSOrder: constraints});
-    }
-
     let tokenData;
     switch (blockType) {
       case "delete":
         tokenData = { text: '←', type: 'delete' };
         break;
       case "constraint":
-        tokenData = this.corpus.getNextConstraint();
+        tokenData = this.getNextConstraint();
         break;
       case "token":
-        tokenData = this.corpus.getNextToken();
+        tokenData = this.getNextToken();
         break;
       case "null":
         throw new Error("generateNextBlock: type is null");
@@ -768,6 +750,47 @@ class Dropper {
 
     this.state.blockHistory.push(tokenData);
     return tokenData;
+  }
+
+  // Get next token from corpus via reader
+  getNextToken() {
+    if (!this.reader || this.corpus.tokens.length === 0) {
+      return { text: 'NO', type: 'token', pos: 'Unknown', source: this.corpus.source };
+    }
+    
+    const token = this.reader.currentToken();
+    this.reader.updateState();
+    
+    let text = token.text || 'NO';
+    // Remove punctuation
+    text = text.replace(/[!"#$%&'()*+,./:;<=>?@[\]^`{|}~]/g, '');
+    
+    return {
+      text: text,
+      type: 'token',
+      pos: token.pos || 'Unknown',
+      source: this.corpus.source
+    };
+  }
+
+  // Get next constraint
+  getNextConstraint() {
+    const POS_TAGS_FOR_CONSTRAINTS = [
+      'noun', 'verb', 'determiner', 'preposition', 'conjunction',
+      'verb', 'adjective', 'word', 'adverb', 'noun', 'propernoun',
+      'conjunction', 'pronoun', 'word'
+    ];
+    
+    const constraintVal = POS_TAGS_FOR_CONSTRAINTS[Math.floor(Math.random() * POS_TAGS_FOR_CONSTRAINTS.length)];
+    
+    return {
+      text: '_',
+      type: 'constraint',
+      constraint: {
+        type: 'pos',
+        value: constraintVal
+      }
+    };
   }
 
   // createCurrentMarkup() {
@@ -1351,40 +1374,3 @@ class Dropper {
     console.log({search, match})
   }
 }
-
-
-let defaultCorpora = [
-  // 'corpora/short/here.txt',
-  // 'corpora/short/sacred_emily.txt',
-  // 'corpora/short/love_breton.txt', 
-  // 'corpora/short/less_time.txt', 
-  // 'corpora/books/nadja.txt',
-  'corpora/short/eis.txt',
-  'corpora/short/eis_wiki.txt',
-
-  // uninteresting
-  // 'corpora/short/art.txt', 
-  // 'corpora/short/harry_potter_ch1.txt', 
-];
-// let [file1, file2] = defaultCorpora.sort(() => 0.5 - Math.random()).slice(0, 2);
-// let defaultCorpus = file1; // Use first file as default
-
-function getNewCorpus() {
-  let order = defaultCorpora.sort(() => 0.5 - Math.random());
-  return order[0];
-}
-
-async function getNewCorpusText(filename) {
-  const assetsFolder = '/editors/assets';
-  const filePath = `${assetsFolder}/${filename}`;
-  const response = await fetch(filePath);
-  return response.text();
-}
-
-let defaultCorpus = getNewCorpus();
-
-// Wait for DOM to be fully loaded before initializing
-document.addEventListener('DOMContentLoaded', async () => {
-  let dropper = new Dropper();
-  await dropper.initialize({ corpusFile: defaultCorpus });
-});

@@ -9,72 +9,163 @@ const SHOW_ALL_EDITORS = false; // Set to true to show all editors below progres
 
 let state = null;
 let selectedDocumentId = null;
+let selectedLevelId = null;
 let directions = null;
 
 
-// Load projects on page load
-async function loadProjects() {
+/**
+ * Get the most recent document image for a specific editor
+ */
+function getMostRecentImageForEditor(editorId) {
+    if (!state) return null;
     
-    const allProjects = await ProjectsHelper.getVisibleProjects();
-    console.log('allProjects', allProjects);
+    // Find all documents from this editor
+    const editorDocs = state.getAllDocuments().filter(doc => 
+        doc.getField('sourceEditor') === editorId
+    );
     
-    // Get progression state with level info
-    const { levelsInOrder } = await getProgressionState();
+    if (editorDocs.length === 0) return null;
     
-    const projectsList = document.getElementById('projects-list');
+    // Sort by most recent
+    editorDocs.sort((a, b) => {
+        const aTime = a.getField('lastModified') || a.getField('createdAt') || '';
+        const bTime = b.getField('lastModified') || b.getField('createdAt') || '';
+        return new Date(bTime) - new Date(aTime);
+    });
     
-    if (projectsList) {
-        const projectsMap = new Map(allProjects.map(p => [p.url, p]));
-        
-        // Render levels in progression order
-        const progressionHTML = levelsInOrder.map(levelInfo => {
-            // Direction header
-            if (levelInfo.isDirectionHeader) {
-                return `<div class="direction-header">${levelInfo.directionName}</div>`;
-            }
-            
-            const project = projectsMap.get(levelInfo.editorId);
-            if (!project) return '';
-            
-            const lockClass = levelInfo.isUnlocked ? '' : 'locked';
-            const lockIcon = levelInfo.isUnlocked ? '' : '🔒 ';
-            
-            // Use level name if available, otherwise use project name
-            const displayName = levelInfo.name || project.name;
-            
-            if (levelInfo.isUnlocked) {
-                return `<a href="/editors/${project.url}/" class="level-box ${lockClass}">
-                    <div class="level-name">${displayName}</div>
-                    <div class="level-editor">${project.name}</div>
-                </a>`;
-            } else {
-                return `<div class="level-box ${lockClass}">
-                    <div class="level-lock">${lockIcon}</div>
-                    <div class="level-name">${displayName}</div>
-                    <div class="level-editor">${project.name}</div>
-                </div>`;
-            }
-        }).join('');
-        
-        // Optionally show all other editors
-        let otherEditorsHTML = '';
-        if (SHOW_ALL_EDITORS) {
-            const usedEditors = levelsInOrder.map(l => l.editorId);
-            const otherProjects = allProjects.filter(p => !usedEditors.includes(p.url));
-            if (otherProjects.length > 0) {
-                otherEditorsHTML = '<hr style="margin: 20px 0;">' + 
-                    '<div style="opacity: 0.6; margin: 10px 20px;">Other Editors:</div>' +
-                    otherProjects.map(project => 
-                        `<div class="project-nav"><a href="/editors/${project.url}/">${project.name}</a></div>`
-                    ).join('');
-            }
-        }
-        
-        projectsList.innerHTML = progressionHTML + otherEditorsHTML;
+    // Get the most recent document's image
+    const mostRecent = editorDocs[0];
+    const content = mostRecent.getField('content');
+    
+    if (!content) return null;
+    
+    try {
+        const parsed = JSON.parse(content);
+        return parsed.image || null;
+    } catch (e) {
+        return null;
     }
 }
 
-async function getProgressionState() {
+function showError(message, ...args) {
+    console.error(message, args);
+    const errorElement = document.getElementById('errors');
+    errorElement.innerHTML = `<div class="error-message">${message}</div>`;
+}
+
+// Load projects on page load
+async function loadLevels() {
+    const allProjects = await ProjectsHelper.getVisibleProjects();
+    
+    // Get the selected direction from save
+    const selectedDirection = state ? state.getMetadata('selectedDirection') : null;
+    
+    if (!selectedDirection) {
+        console.warn('directions-helpers.js: No direction selected', state);
+        return;
+    }
+    
+    // Update header with direction name
+    const directionsHeader = document.getElementById('directions-header');
+    if (directionsHeader && directions) {
+        const directionData = directions.data[selectedDirection];
+        const directionDisplayName = directionData?.name || selectedDirection;
+        directionsHeader.textContent = `Directions: ${directionDisplayName}`;
+    }
+    
+    // Get progression state with level info for the selected direction
+    const { levelsInOrder } = await getProgressionState(selectedDirection);
+    
+    const levelsList = document.getElementById('levels-list');
+    
+    if (!levelsList) {
+        showError('directions-helpers.js: No levels list found', levelsList);
+        return;
+    }
+    const projectsMap = new Map(allProjects.map(p => [p.url, p]));
+    
+    // Render levels in progression order
+    const progressionHTML = levelsInOrder.map(levelInfo => {
+        
+        const project = projectsMap.get(levelInfo.editorId);
+        if (!project) {
+            showError('directions-helpers.js: Project not found', levelInfo);
+            return '';
+        }
+        
+        const lockClass = levelInfo.isUnlocked ? '' : 'locked';
+        const lockIcon = levelInfo.isUnlocked ? '' : '🔒 ';
+        
+        // Use level name if available, otherwise use project name
+        const displayName = levelInfo.name || project.name;
+        
+        // Three states: locked, unlocked-uncompleted, unlocked-completed
+        const isCompleted = levelInfo.isCompleted;
+        const isUnlocked = levelInfo.isUnlocked;
+        const completedClass = isCompleted ? 'completed' : '';
+        const selectedClass = selectedLevelId === levelInfo.editorId ? 'selected' : '';
+        const imageUrl = isCompleted ? getMostRecentImageForEditor(levelInfo.editorId) : null;
+        
+        // State 1: Locked
+        if (!isUnlocked) {
+            return `<div class="level-box ${lockClass}">
+                <div class="level-lock">${lockIcon}</div>
+                <div class="level-name">${displayName}</div>
+                <div class="level-editor">${project.name}</div>
+            </div>`;
+        }
+        
+        // State 2: Unlocked and completed (has image behind the box)
+        if (isCompleted && imageUrl) {
+            // Create a unique ID for this level box to set aspect ratio after image loads
+            const levelBoxId = `level-${levelInfo.editorId.replace(/[^a-zA-Z0-9]/g, '-')}`;
+            
+            // Load image to get actual aspect ratio
+            const img = new Image();
+            img.onload = function() {
+                const aspectRatio = this.width / this.height;
+                const imageElement = document.querySelector(`#${levelBoxId} .level-image-behind`);
+                if (imageElement) {
+                    imageElement.style.aspectRatio = aspectRatio;
+                }
+            };
+            img.src = imageUrl;
+            
+            return `<div class="level-box-wrapper ${selectedClass}" id="${levelBoxId}">
+                <div class="level-box ${completedClass} ${selectedClass}" onclick="selectLevel('${levelInfo.editorId}', '${project.url}')">
+                    <div class="level-name">${displayName}</div>
+                    <div class="level-editor">${project.name}</div>
+                </div>
+                <div class="level-image-behind" style="background-image: url('${imageUrl}');"></div>
+
+            </div>`;
+        }
+        
+        // State 3: Unlocked but uncompleted (no documents yet, no preview)
+        return `<div class="level-box uncompleted ${selectedClass}" onclick="selectLevel('${levelInfo.editorId}', '${project.url}')">
+            <div class="level-name">${displayName}</div>
+            <div class="level-editor">${project.name}</div>
+        </div>`;
+    }).join('');
+    
+    // Optionally show all other editors
+    let otherEditorsHTML = '';
+    if (SHOW_ALL_EDITORS) {
+        const usedEditors = levelsInOrder.map(l => l.editorId);
+        const otherProjects = allProjects.filter(p => !usedEditors.includes(p.url));
+        if (otherProjects.length > 0) {
+            otherEditorsHTML = '<hr style="margin: 20px 0;">' + 
+                '<div style="opacity: 0.6; margin: 10px 20px;">Other Editors:</div>' +
+                otherProjects.map(project => 
+                    `<div class="project-nav"><a href="/editors/${project.url}/">${project.name}</a></div>`
+                ).join('');
+        }
+    }
+    
+    levelsList.innerHTML = progressionHTML + otherEditorsHTML;
+}
+
+async function getProgressionState(selectedDirection) {
     const completedLevels = GameplaySave.hasLocalStorage() 
         ? GameplaySave.fromLocalStorage().getMetadata('completedLevels') || []
         : [];
@@ -84,57 +175,58 @@ async function getProgressionState() {
         const directionsData = await Directions.fromFile('/editors/directions/directions.json');
         const levelsInOrder = [];
         
-        // Build list of levels in progression order
-        for (const directionName of directionsData.getDirectionNames()) {
-            const directionData = directionsData.data[directionName];
-            const directionDisplayName = directionData.name || directionName;
-            const progression = directionData.progression || [];
-            const levels = directionsData.getLevels(directionName);
-            
-            // Find the furthest unlocked position in progression
-            let unlockedIndex = -1;
-            for (let i = 0; i < progression.length; i++) {
-                const levelKey = progression[i];
-                if (completedLevels.includes(levelKey)) {
-                    unlockedIndex = i;
-                }
-            }
-            
-            // Separate unlocked and locked levels
-            const unlockedLevels = [];
-            const lockedLevels = [];
-            
-            for (let i = 0; i < progression.length; i++) {
-                const levelKey = progression[i];
-                const level = levels[levelKey];
-                if (level?.editor) {
-                    const levelInfo = {
-                        key: levelKey,
-                        name: level.name || null,
-                        editorId: level.editor,
-                        isUnlocked: i <= unlockedIndex + 1,
-                        directionName: directionDisplayName
-                    };
-                    
-                    if (levelInfo.isUnlocked) {
-                        unlockedLevels.push(levelInfo);
-                    } else {
-                        lockedLevels.push(levelInfo);
-                    }
-                }
-            }
-            
-            // Add direction header if there are levels
-            if (unlockedLevels.length > 0 || lockedLevels.length > 0) {
-                levelsInOrder.push({
-                    isDirectionHeader: true,
-                    directionName: directionDisplayName
-                });
-            }
-            
-            // Add unlocked first, then locked
-            levelsInOrder.push(...unlockedLevels, ...lockedLevels);
+        // Only process the selected direction
+        if (!selectedDirection) {
+            return { levelsInOrder: [] };
         }
+        
+        const directionData = directionsData.data[selectedDirection];
+        if (!directionData) {
+            console.error('Direction not found:', selectedDirection);
+            showDirectionNotFound();
+            return { levelsInOrder: [] };
+        }
+        
+        const directionDisplayName = directionData.name || selectedDirection;
+        const progression = directionData.progression || [];
+        const levels = directionsData.getLevels(selectedDirection);
+        
+        // Find the furthest unlocked position in progression
+        let unlockedIndex = -1;
+        for (let i = 0; i < progression.length; i++) {
+            const levelKey = progression[i];
+            if (completedLevels.includes(levelKey)) {
+                unlockedIndex = i;
+            }
+        }
+        
+        // Separate unlocked and locked levels
+        const unlockedLevels = [];
+        const lockedLevels = [];
+        
+        for (let i = 0; i < progression.length; i++) {
+            const levelKey = progression[i];
+            const level = levels[levelKey];
+            if (level?.editor) {
+                const levelInfo = {
+                    key: levelKey,
+                    name: level.name || null,
+                    editorId: level.editor,
+                    isUnlocked: i <= unlockedIndex + 1,
+                    isCompleted: completedLevels.includes(levelKey),
+                    directionName: directionDisplayName
+                };
+                
+                if (levelInfo.isUnlocked) {
+                    unlockedLevels.push(levelInfo);
+                } else {
+                    lockedLevels.push(levelInfo);
+                }
+            }
+        }
+        
+        // Add unlocked first, then locked (no direction headers)
+        levelsInOrder.push(...unlockedLevels, ...lockedLevels);
         
         return { levelsInOrder };
     } catch (error) {
@@ -143,8 +235,19 @@ async function getProgressionState() {
     }
 }
 
-// Initialize projects
-loadProjects();
+function showDirectionNotFound() {
+    const directionsHeader = document.getElementById('errors');
+    if (directionsHeader) {
+        directionsHeader.style.display = 'block';
+        directionsHeader.innerHTML = `
+            <div class="error-message" onclick="restartState()">
+                <p>Direction not found. To start a new game, press here.</p>
+            </div>
+        `;
+    }
+}
+
+// Projects will be loaded after directions and state are ready
 
 function updateDirectionsDisplay() {
     if (!directions) return;
@@ -197,69 +300,78 @@ function updateStateDisplay() {
     if (saveStatusElement) {
         saveStatusElement.textContent = `${state.getAllDocuments().length} documents`;
     }
-    
-    updateDocumentsList();
 }
 
-function updateDocumentsList() {
-    const documentsListElement = document.getElementById('documentsList');
-    if (!documentsListElement || !state) return;
+/**
+ * Select a document from previous attempts and make it the current for that editor
+ */
+window.selectDocumentForEditor = function(documentId, editorId) {
+    // Get all documents for this editor
+    const editorDocs = state ? state.getAllDocuments().filter(doc => 
+        doc.getField('sourceEditor') === editorId
+    ) : [];
     
-    let documents = state.getAllDocuments();
-    documents.sort((a, b) => {
-        const aTime = a.getField('lastModified') || a.getField('createdAt');
-        const bTime = b.getField('lastModified') || b.getField('createdAt');
+    // Sort by most recent
+    editorDocs.sort((a, b) => {
+        const aTime = a.getField('lastModified') || a.getField('createdAt') || '';
+        const bTime = b.getField('lastModified') || b.getField('createdAt') || '';
         return new Date(bTime) - new Date(aTime);
     });
-
     
-    if (documents.length === 0) {
-        documentsListElement.innerHTML = '<p>No documents yet</p>';
-        return;
-    }
-    
-    documentsListElement.innerHTML = documents.map(doc => {
-        const title = doc.getField('title') || 'Untitled';
-        const createdAt = doc.getField('createdAt');
-        const sourceEditor = doc.getField('sourceEditor');
-        const createdDate = createdAt ? new Date(createdAt).toLocaleString() : 'Unknown';
-        const isSelected = doc.id === selectedDocumentId ? 'selected' : '';
+    // Re-render the level view with this document as the selected one
+    // Move the selected document to the front
+    const selectedDoc = editorDocs.find(doc => doc.id === documentId);
+    if (selectedDoc) {
+        const otherDocs = editorDocs.filter(doc => doc.id !== documentId);
+        const reorderedDocs = [selectedDoc, ...otherDocs];
         
-        return `
-            <div class="document-item ${isSelected}" onclick="selectDocument('${doc.id}')">
-                <div class="doc-id">${title}</div>
-                <div class="doc-meta">Editor: ${sourceEditor || 'Unknown'}</div>
-                <div class="doc-meta">Created: ${createdDate}</div>
-            </div>
-        `;
-    }).join('');
-}
-
-window.selectDocument = function(documentId) {
-    selectedDocumentId = documentId;
-    updateDocumentsList();
-    showDocumentDetail(documentId);
+        // Find the editor URL
+        ProjectsHelper.getProjectUrl(editorId).then(editorUrl => {
+            renderDocumentView({ 
+                editorId, 
+                editorUrl,
+                documents: reorderedDocs
+            });
+        });
+    }
 };
 
-function showDocumentDetail(documentId) {
-    const detailElement = document.getElementById('documentDetail');
-    if (!detailElement || !state) return;
+/**
+ * Select a level/editor to view its documents
+ */
+window.selectLevel = function(editorId, editorUrl) {
+    selectedLevelId = editorId;
+    selectedDocumentId = null; // Clear document selection
     
-    const doc = state.getDocument(documentId);
-    if (!doc) return;
+    // Update level box styles
+    loadLevels();
     
-    const title = doc.getField('title') || 'Untitled';
-    const createdAt = doc.getField('createdAt');
-    const lastModified = doc.getField('lastModified');
-    const sourceEditor = doc.getField('sourceEditor');
-    const content = doc.getField('content') || '';
+    // Get documents for this editor
+    const editorDocs = state ? state.getAllDocuments().filter(doc => 
+        doc.getField('sourceEditor') === editorId
+    ) : [];
     
-    const createdDate = createdAt ? new Date(createdAt).toLocaleString() : 'Unknown';
-    const modifiedDate = lastModified ? new Date(lastModified).toLocaleString() : 'Not saved yet';
+    // Sort by most recent
+    editorDocs.sort((a, b) => {
+        const aTime = a.getField('lastModified') || a.getField('createdAt') || '';
+        const bTime = b.getField('lastModified') || b.getField('createdAt') || '';
+        return new Date(bTime) - new Date(aTime);
+    });
     
-    // Try to parse content to check for image and text
+    renderDocumentView({ 
+        editorId, 
+        editorUrl,
+        documents: editorDocs 
+    });
+};
+
+/**
+ * Helper function to render document content (image + text preview)
+ */
+function renderDocumentContent(content) {
     let imagePreview = '';
     let contentPreview = '';
+    
     try {
         const parsedContent = JSON.parse(content);
         if (parsedContent.image) {
@@ -271,49 +383,146 @@ function showDocumentDetail(documentId) {
             contentPreview = content;
         }
     } catch (e) {
-        // Content is not JSON, use as-is
         contentPreview = content;
     }
     
-    detailElement.className = 'document-detail';
-    detailElement.style.display = 'block';
-    detailElement.innerHTML = `
-        <div class="detail-section">
-            <input type="text" id="document-title-input" value="${title}" >
+    return { imagePreview, contentPreview };
+}
+
+/**
+ * Helper function to render a single document detail card
+ */
+function renderDocumentCard(doc, editorUrl) {
+    const title = doc.getField('title') || 'Untitled';
+    const content = doc.getField('content') || '';
+    const createdAt = doc.getField('createdAt');
+    const lastModified = doc.getField('lastModified');
+    const sourceEditor = doc.getField('sourceEditor');
+    
+    const createdDate = createdAt ? new Date(createdAt).toLocaleString() : 'Unknown';
+    const modifiedDate = lastModified ? new Date(lastModified).toLocaleString() : 'Not saved yet';
+    
+    const { imagePreview, contentPreview } = renderDocumentContent(content);
+    
+    return `
+        <div class="document-header">
+            <input type="text" class="document-title-input" data-doc-id="${doc.id}" value="${title}">
+            <div class="document-metadata">
+                <div class="metadata-item">
+                    <span class="metadata-label">Created</span>
+                    <span class="metadata-value">${createdDate}</span>
+                </div>
+                <div class="metadata-item">
+                    <span class="metadata-label">Modified</span>
+                    <span class="metadata-value">${modifiedDate}</span>
+                </div>
+                <div class="metadata-item">
+                    <span class="metadata-label">Editor</span>
+                    <span class="metadata-value">${sourceEditor || 'Unknown'}</span>
+                </div>
+            </div>
         </div>
         ${imagePreview}
         <div class="content-section">
             <div class="document-content-preview">${contentPreview || '(empty)'}</div>
         </div>
-        <div class="detail-section">
-            <div class="detail-label">Document ID</div>
-            <div class="detail-value">${documentId}</div>
-        </div>
-        <div class="detail-section">
-            <div class="detail-label">Source Editor</div>
-            <div class="detail-value">${sourceEditor || 'Unknown'}</div>
-        </div>
-        <div class="detail-section">
-            <div class="detail-label">Created</div>
-            <div class="detail-value">${createdDate}</div>
-        </div>
-        <div class="detail-section">
-            <div class="detail-label">Last Modified</div>
-            <div class="detail-value">${modifiedDate}</div>
-        </div>
         <div class="detail-actions">
-            <button onclick="openDocument('${documentId}')">Open</button>
-            <button onclick="deleteDocument('${documentId}')">Delete</button>
+            ${editorUrl ? `<button onclick="editDocument('${doc.id}', '${editorUrl}')">Edit</button>` : `<button onclick="openDocument('${doc.id}')">Open</button>`}
+            <button onclick="deleteDocument('${doc.id}')">Delete</button>
         </div>
     `;
-    
-    // Attach blur event to title input
-    const titleInput = document.getElementById('document-title-input');
-    if (titleInput) {
-        titleInput.addEventListener('blur', () => {
-            saveDocumentTitle(documentId, titleInput.value);
-        });
+}
+
+/**
+ * Helper function to render other documents list
+ */
+function renderOtherDocuments(docs, currentDocId) {
+    if (docs.length === 0) {
+        return '';
     }
+    
+    return `
+        <div class="other-documents">
+            <h4>Other Documents</h4>
+            <div class="compact-doc-list">
+                ${docs.map(doc => {
+                    const title = doc.getField('title') || 'Untitled';
+                    const createdAt = doc.getField('createdAt');
+                    const createdDate = createdAt ? new Date(createdAt).toLocaleDateString() : 'Unknown';
+                    return `
+                        <div class="compact-doc-item" onclick="selectDocument('${doc.id}')">
+                            <span class="compact-doc-title">${title}</span>
+                            <span class="compact-doc-date">${createdDate}</span>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Render document view - unified rendering for both single document and level view
+ */
+function renderDocumentView({ documentId, editorId, editorUrl, documents }) {
+    const detailElement = document.getElementById('documentDetail');
+    if (!detailElement) return;
+    
+    detailElement.className = 'document-detail';
+    detailElement.style.display = 'block';
+    
+    // Case 1: Showing a specific document
+    if (documentId && state) {
+        const doc = state.getDocument(documentId);
+        if (!doc) return;
+        
+        const sourceEditor = doc.getField('sourceEditor');
+        
+        // Get other documents from the same editor
+        const allDocsFromEditor = state.documents.filter(d => 
+            d.getField('sourceEditor') === sourceEditor && d.id !== documentId
+        );
+        
+        detailElement.innerHTML = renderDocumentCard(doc, null) + renderOtherDocuments(allDocsFromEditor, documentId);
+        
+        // Attach blur event to title input
+        const titleInput = detailElement.querySelector('.document-title-input');
+        if (titleInput) {
+            titleInput.addEventListener('blur', () => {
+                saveDocumentTitle(documentId, titleInput.value);
+            });
+        }
+        return;
+    }
+    
+    // Case 2: Showing a level's documents
+    if (editorId && documents !== undefined) {
+        const mostRecentDoc = documents.length > 0 ? documents[0] : null;
+        const otherDocs = documents.slice(1);
+        
+        if (mostRecentDoc) {
+            detailElement.innerHTML = renderDocumentCard(mostRecentDoc, editorUrl) + renderOtherDocuments(otherDocs, mostRecentDoc.id);
+            
+            // Attach blur event to title input
+            const titleInput = detailElement.querySelector('.document-title-input');
+            if (titleInput) {
+                titleInput.addEventListener('blur', () => {
+                    saveDocumentTitle(mostRecentDoc.id, titleInput.value);
+                });
+            }
+        } else {
+            // No documents yet
+            detailElement.innerHTML = `
+                <div class="detail-actions">
+                    <button onclick="replaceDocument('${editorId}', '${editorUrl}')">Begin</button>
+                </div>
+            `;
+        }
+        return;
+    }
+    
+    // No valid parameters, hide
+    detailElement.style.display = 'none';
 }
 
 function saveDocumentTitle(documentId, title) {
@@ -351,6 +560,36 @@ window.openDocument = async function(documentId) {
     state.saveToLocalStorage();
     
     window.location.href = editorUrl;
+};
+
+/**
+ * Edit an existing document (mock function for now)
+ * TODO: Implement document loading/editing in editor
+ */
+window.editDocument = function(documentId, editorUrl) {
+    console.log('Edit document:', documentId, 'in editor:', editorUrl);
+    // Mock: For now, just navigate to the editor
+    // TODO: Set the document as current and load its content
+    if (state) {
+        state.setMetadata('dateModified', new Date().toISOString());
+        state.saveToLocalStorage();
+    }
+    window.location.href = `/editors/${editorUrl}/`;
+};
+
+/**
+ * Replace/create new document in editor (mock function for now)
+ * TODO: Clear current document and start fresh
+ */
+window.replaceDocument = function(editorId, editorUrl) {
+    console.log('Replace/create new document in editor:', editorId, editorUrl);
+    // Mock: For now, just navigate to the editor
+    // TODO: Clear any existing document state
+    if (state) {
+        state.setMetadata('dateModified', new Date().toISOString());
+        state.saveToLocalStorage();
+    }
+    window.location.href = `/editors/${editorUrl}/`;
 };
 
 window.deleteDocument = function(documentId) {
@@ -395,7 +634,7 @@ document.getElementById('fileInput').addEventListener('change', async (e) => {
         state.setMetadata('dateModified', new Date().toISOString());
         state.saveToLocalStorage();
         updateStateDisplay();
-        loadProjects();
+        loadLevels();
         if (saveStatusElement) {
             saveStatusElement.textContent = 'Save file loaded';
         }
@@ -417,32 +656,15 @@ window.closeOptionsMenu = function() {
 };
 
 window.restartState = function() {
-    if (!confirm('Are you sure? This will delete all your documents and create a new save.')) {
+    if (!confirm('Are you sure? This will delete all your documents and start a new game. You may want to first download a backup of your current progress.')) {
         return;
     }
     
-    const now = new Date().toISOString();
-    state = new GameplaySave();
-    state.setMetadata('dateCreated', now);
-    state.setMetadata('dateModified', now);
-    state.saveToLocalStorage();
+    // Clear the save
+    localStorage.removeItem('gameplaySave');
     
-    selectedDocumentId = null;
-    updateStateDisplay();
-    
-    // Reload projects to update progression
-    loadProjects();
-    
-    const detailElement = document.getElementById('documentDetail');
-    if (detailElement) {
-        detailElement.style.display = 'none';
-    }
-    
-    const saveStatusElement = document.getElementById('saveStatus');
-    if (saveStatusElement) {
-        saveStatusElement.textContent = 'New save created';
-    }
-    console.log('New save created:', state);
+    // Redirect to landing page to select a new direction
+    window.location.href = '/editors/directions/landing.html';
 };
 
 window.clearStorage = function() {
@@ -451,39 +673,9 @@ window.clearStorage = function() {
     }
     
     localStorage.removeItem('gameplaySave');
-    state = null;
-    selectedDocumentId = null;
     
-    const dateCreatedElement = document.getElementById('dateCreated');
-    const dateModifiedElement = document.getElementById('dateModified');
-    const saveStatusElement = document.getElementById('saveStatus');
-    
-    if (dateCreatedElement) {
-        dateCreatedElement.textContent = 'Created: No save';
-    }
-    if (dateModifiedElement) {
-        dateModifiedElement.textContent = 'Modified: No save';
-    }
-    if (saveStatusElement) {
-        saveStatusElement.textContent = 'All data cleared';
-    }
-    if (document.getElementById('documentsList')) {
-        document.getElementById('documentsList').innerHTML = '<p>No documents yet</p>';
-    }
-    if (document.getElementById('documentCount')) {
-        document.getElementById('documentCount').textContent = '(0)';
-    }
-    
-    // Reload projects to update progression
-    loadProjects();
-    
-    const detailElement = document.getElementById('documentDetail');
-    if (detailElement) {
-        detailElement.className = 'document-detail empty';
-        detailElement.style.display = 'none';
-    }
-    
-    console.log('localStorage cleared');
+    // Redirect to landing page
+    window.location.href = '/editors/directions/landing.html';
 };
 
 window.saveState = function() {
@@ -503,20 +695,31 @@ window.saveState = function() {
     }
 };
 
-// Load directions
-Directions.fromFile('./directions.json').then(loadedDirections => {
-    directions = loadedDirections;
-    updateDirectionsDisplay();
-}).catch(error => {
-    console.error('Error loading directions:', error);
-});
-
-// Load from localStorage or create new save
-if (GameplaySave.hasLocalStorage()) {
-    state = GameplaySave.fromLocalStorage();
-    updateStateDisplay();
-} else {
-    restartState();
+// Initialize: Load directions first, then state, then projects
+async function initialize() {
+    try {
+        // Load directions
+        directions = await Directions.fromFile('./directions.json');
+        updateDirectionsDisplay();
+        
+        // Load from localStorage - redirect to landing if no save exists
+        if (GameplaySave.hasLocalStorage()) {
+            state = GameplaySave.fromLocalStorage();
+            updateStateDisplay();
+        } else {
+            // No save found, redirect to landing page without confirmation
+            window.location.href = '/editors/directions/landing.html';
+            return;
+        }
+        
+        // Now load projects (requires both directions and state)
+        await loadLevels();
+        
+        initializeDetailView();
+    } catch (error) {
+        console.error('Error initializing:', error);
+    }
 }
 
-initializeDetailView();
+// Start initialization
+initialize();

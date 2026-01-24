@@ -46,4 +46,10 @@ export class Document {
     static fromJSON(json) {
         return new Document(json.id, json.data);
     }
+
+    static getDefaultContentTextField(doc, contentField='content') {
+        let content = doc?.getField(contentField);
+        let initialText = content ? JSON.parse(content).text : '';
+        return initialText;
+    }
 }
