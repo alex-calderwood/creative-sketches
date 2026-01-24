@@ -17,8 +17,32 @@ export class Game {
       verticalCopy: true,
       horizontalCopy: true,
       enableGrid: false,
+      opaque: true,
       ...options,
     }
+
+    this.settings = [
+      { 
+        name: 'verticalCopy', 
+        type: 'boolean', 
+        description: 'Create vertical copies of text elements'
+      },
+      { 
+        name: 'horizontalCopy', 
+        type: 'boolean', 
+        description: 'Create horizontal copies of text elements'
+      },
+      { 
+        name: 'enableGrid', 
+        type: 'boolean', 
+        description: 'Snap text elements to grid'
+      },
+      { 
+        name: 'opaque', 
+        type: 'boolean', 
+        description: 'Make wall elements opaque (blocks interaction)'
+      }
+    ];
   }
   
   /**
@@ -253,6 +277,7 @@ export class Game {
         
           const wallElement = document.createElement('div');
           wallElement.className = 'wall-element';
+          if (this.config.opaque) { wallElement.classList.add('opaque'); }
           wallElement.textContent = text;
           wallElement.style.left = `${left}px`;
           wallElement.style.top = `${top}px`;
@@ -320,8 +345,34 @@ export class Game {
    */
   get performance() {
     return {
-      getAllSettings: () => ({}),
-      updateSetting: () => {}
+      getAllSettings: () => {
+        const result = {};
+        this.settings.forEach((setting) => {
+          result[setting.name] = {
+            ...setting,
+            value: this.config[setting.name]
+          };
+        });
+        return result;
+      },
+      
+      updateSetting: (name, value) => {
+        if (!(name in this.config)) {
+          const validNames = Object.keys(this.config).join(', ');
+          throw new Error(`Invalid setting name: ${name}. Valid names: ${validNames}`);
+        }
+
+        this.config[name] = value;
+        
+        // Refresh all wall elements to apply new settings
+        if (this.grid) {
+          const editableElements = this.grid.querySelectorAll('.editable-element');
+          editableElements.forEach(element => {
+            // Trigger input event to recreate wall elements with new settings
+            element.dispatchEvent(new Event('input'));
+          });
+        }
+      }
     };
   }
 }

@@ -39,7 +39,6 @@ const POS_TAGS_FOR_CONSTRAINTS = [
   'word',
 ]
 
-
 const CLASSIC_POS_ORDER = [
   'linear', 'linear', 'verb', 'verb', 'noun', 'noun', 'adjective', 'verb', 'adverb', 'determiner', 'preposition', 'interjection', 'conjunction', 'propernoun', 'value', 'random', 'random', 'random'
 ];
@@ -60,10 +59,13 @@ let MODES = ['pos', 'focused', 'gramatical', 'letters'];
 
 // The Grammatical Lookahead Reader does 'look ahead' as it reads, but it has also 'looked ahead' in the sense that it has learned something of the grammatical patterning of the text it has read thus far. With this acquired information in store it jumps forwards to tokens that fit equally well within the grammatical structure of the passage it is reading. By also considering the syntagmatic context, it brings tokens back into phrases that might well have contained them and anticipates readings normally still to come, leaving strange lacuna in the text while still preserving aspects of its style.
 
-class Corpus {
+export class Corpus {
   static DEFAULT_POS_ORDER = CLASSIC_POS_ORDER;
   
-    constructor(mode='pos') {
+    constructor(mode='focused', source='unknown') {
+      this.source = source;
+      this.selectionStrategy(mode);
+
       this.posLookup = {
         'linear': [],
         'random': [],
@@ -74,7 +76,6 @@ class Corpus {
       };
       this.posIndex = 0;
 
-      this.selectionStrategy(mode);
 
       this.doc = null;
       this.texts = [];
@@ -91,6 +92,7 @@ class Corpus {
     }
 
     async setCorpusFromFile(filename) {
+      this.source = filename;
       const assetsFolder = '/editors/assets';
       try {
         const filePath = `${assetsFolder}/${filename}`;
@@ -174,6 +176,7 @@ class Corpus {
     }
   
     getNextToken() {
+      console.log("next token", this.mode)
       let tokenObject = {};
       if (this.mode === 'pos') {
         tokenObject = this.getNextTokenPOS();
@@ -191,6 +194,8 @@ class Corpus {
       if (tokenObject.text) {
         tokenObject.text = tokenObject.text.replace(/[!"#$%&'()*+,./:;<=>?@[\]^`{|}~]/g, '');
       }
+
+      tokenObject.source = this.source;
 
       return tokenObject;
     }
@@ -273,9 +278,9 @@ class Corpus {
 
         if (this.posLookup[type] == null) {
           let validTypes = Object.keys(this.posLookup);
-          console.error('order', this.tokenPOSOrder);
-          console.error("validTypes", validTypes);
-          console.log('Invalid Type:', type);
+          console.error('Invalid Type:', type);
+          console.log('order', this.tokenPOSOrder);
+          console.log("validTypes", validTypes);
           type = 'random';
         }
         if (this.indexLookup[type] == null) {

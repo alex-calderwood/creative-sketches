@@ -251,6 +251,12 @@ export class MetaGame {
   }
 
   populatePromptDisplay(promptHtml) {
+    // some editors have a prompt-container
+    const promptContainer = document.getElementById('prompt-container');
+    if (promptContainer) {
+      promptContainer.style.display = 'flex';
+    }
+
     const promptDisplay = document.getElementById('prompt-display');
     if (promptDisplay) {
       promptDisplay.innerHTML = promptHtml;

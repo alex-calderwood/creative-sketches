@@ -12,14 +12,14 @@ export class Game {
     if (options.save) {
       this.save = options.save;
     }
+    let initialText = null;
     if (options.documentId) {
       this.documentId = options.documentId;
+      let doc = this.save.getDocument(this.documentId);
+      let content = doc?.getField('content');
+      initialText = content ? JSON.parse(content).text : '';
     }
 
-    let doc = this.save.getDocument(this.documentId);
-    let content = doc.getField('content');
-    let initialText = content ? JSON.parse(content).text : '';
-    
     this.performance = new HyperSkipPerformance({ initialText });
     this.performance.initialize();
   }
@@ -28,5 +28,4 @@ export class Game {
     if (!this.performance) return null;
     return this.performance.getState();
   }
-
 }

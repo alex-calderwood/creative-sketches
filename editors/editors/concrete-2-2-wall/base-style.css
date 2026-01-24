@@ -1,6 +1,9 @@
 :root {
     --background-color:   #e7e7e7;
     --background-color-2:  #000000;
+    --editor-color: white;
+
+
     --highlight: #ffffff;
     --shadow-color: #e7e7e7;
   
@@ -25,6 +28,7 @@
     --modal-overlay-color: rgba(0, 0, 0, 0.5);
     --primary-light: rgba(12, 11, 95, 0.05);
     --accent-light: rgba(255, 246, 115, 0.3);
+    --primary-muted: color-mix(in srgb, var(--primary-color) 75%, transparent);
   }
   
 /* Back link styling */
@@ -50,16 +54,19 @@
     height: 100%;
 }
 
-/* Subtitle styling */
-.subtitle {
+  /* Subtitle styling */
+  .subtitle {
     margin-left: 15px;
-    font-size: 16px;
-    font-weight: bold;
-    color: var(--primary-color);
-    text-transform: uppercase;
-    font-family: var(--game-font);
-    /* text-shadow: 1px 1px 0px #fff; */
-}
+
+    color: var(--primary-muted);
+    font-style: italic;
+    
+    font-size: 11px;
+    font-weight: normal;
+    font-family: var(--font);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
 
 
 #editor-container {

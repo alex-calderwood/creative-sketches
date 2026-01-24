@@ -31,12 +31,12 @@ body {
 
 /* Override MetaGame default styles */
 #prompt-container {
-  display: flex;
   flex-direction: row;
   align-items: center;
   gap: 15px;
   padding: 10px 20px;
   background-color: transparent;
+  display: none;
 }
 
 #prompt-display {

@@ -80,14 +80,17 @@ export async function saveStateWithImage(state, save, documentId) {
   if (!save || !documentId) return;
 
   // Capture screenshot for the save
-  const editorElement = document.querySelector('#editor');
+  // Prefer #editor-container if it exists (captures absolutely positioned children)
+  // Otherwise fall back to #editor (for editors without a container)
+  const editorElement = document.querySelector('#editor-container') || document.querySelector('#editor');
   if (editorElement) {
-    const image = await captureScreenshot(editorElement.id ? `#${editorElement.id}` : null);
+    const selector = editorElement.id ? `#${editorElement.id}` : null;
+    const image = await captureScreenshot(selector);
     if (image) {
       state.image = image;
     }
   } else {
-    console.warn('Image not captured. No #editor element found.');
+    console.warn('Image not captured. No #editor-container or #editor element found.');
   }
 
   const doc = save.getDocument(documentId);

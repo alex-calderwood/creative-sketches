@@ -1,6 +1,6 @@
-# MetaGame System
+# MetaGame
 
-A unified save/load/progression system for text-based editor games.
+save/load/progression system
 
 ## Table of Contents
 
