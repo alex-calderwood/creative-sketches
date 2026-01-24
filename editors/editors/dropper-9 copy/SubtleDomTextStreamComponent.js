@@ -11,7 +11,7 @@ export class SubtleDomTextStreamComponent extends TextStreamComponent {
     // Set default params
     const defaultParams = {
       from: {
-        left: window.innerWidth - 100,
+        left: window.innerWidth - this.blockWidth,
         top: 200,
       },
       to: {
@@ -38,17 +38,8 @@ export class SubtleDomTextStreamComponent extends TextStreamComponent {
       this.params.to.top = this.params.from.top;
     }
 
-    this.state = {
-      from: this.params.from,
-      to: this.params.to,
-    }
-
   }
 
-  move(to) {
-    this.state.to = to;
-    this.render();
-  }
   
   /**
    * Handle token change events
@@ -117,14 +108,13 @@ export class SubtleDomTextStreamComponent extends TextStreamComponent {
    * Render all tokens
    */
   render() {
-    let {from, to} = this.state;
+      let from = this.params.from;
+      let to = this.params.to;
 
     let newLoc = {
       left: to.left,
       top: to.top,
     }
-
-    let moved = [];
 
     const width = this.blockWidth;
     const height = this.blockHeight;
@@ -138,17 +128,12 @@ export class SubtleDomTextStreamComponent extends TextStreamComponent {
         continue;
       }
 
-      moved.push(curToken.text);
-
       // let speed = 180 * (this.tokens.length + 1 - i) ** 0.5;
       let speed = 300;
       // resizeToken(block, width, height);
-      newLoc.left += width + this.params.spaceWidth;
-
       moveTo(block, newLoc.left, newLoc.top, speed);
+      newLoc.left += width + this.params.spaceWidth;
     }
-
-    console.log("TextStreamComponent.render(): moved", moved.join(', '));
   }
 
   deleteToken(token) {
@@ -185,7 +170,8 @@ export class SubtleDomTextStreamComponent extends TextStreamComponent {
       top, 
       width, 
       height,
-      this.game.colorBy
+      "random"
+
     );
     this.tokensToBlocks[token.id] = block;
     return block;

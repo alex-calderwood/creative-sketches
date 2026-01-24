@@ -102,27 +102,30 @@ export function getScaleModifier(element) {
     return {x: 1, y: 1};
 }
 
-function getColorFromCSS(key) {
-    const root = document.documentElement;
-    const style = getComputedStyle(root);
-    
-    return {
-        bg: style.getPropertyValue(`--color-${key}-bg`).trim(),
-        light: style.getPropertyValue(`--color-${key}-light`).trim(),
-        dark: style.getPropertyValue(`--color-${key}-dark`).trim(),
-        darker: style.getPropertyValue(`--color-${key}-darker`).trim()
-    };
+const DEFAULT_COLORS = {
+    'linear': { bg: '#ff0000', light: '#ff6666', dark: '#cc0000', darker: "#8e40d6" },
+    'random': { bg: "#ffffff", light: "#ffffff", dark: "#ffffff", darker: "#ffffff" },
+
+    'noun': { bg: '#0000ff', light: '#6666ff', dark: '#0000cc', darker: '#EE6A6D' },
+    'adjective': { bg: '#00ff00', light: '#66ff66', dark: '#00cc00', darker: '#798478' },
+    'verb': { bg: '#ffff00', light: '#ffff66', dark: '#cccc00', darker: '#14d2d2' },
+    'adverb': { bg: '#785212', light: '#9a6d2e', dark: '#5a421a', darker: '#FF572E' },
+
+    'determiner': { bg: '#532699', light: '#6e34c3', dark: '#3c1a66', darker: '#67268E' },
+    'preposition': { bg: '#ffff00', light: '#ffff66', dark: '#cccc00', darker: '#9CF600' }, 
+    'interjection': { bg: '#ffff00', light: '#ffff66', dark: '#cccc00', darker: '#506A6D' }, 
+    'conjunction': { bg: '#444444', light: '#666666', dark: '#222222', darker: '#9CF040' }, 
+    'preposition': { bg: '#00ff00', light: '#66ff66', dark: '#00cc00', darker: '#798433' }, 
+    'propernoun': { bg: '#111111', light: '#333333', dark: '#000000', darker: '#8bd90d' },
+    'value': { bg: '#111222', light: '#333444', dark: '#333333', darker: '#555044' },
+
+    'delete': { bg: '#000000', light: '#000000', dark: '#000000', darker: '#a8280e' },  // Black for delete
+    'word': { bg: '#000000', light: '#000000', dark: '#000000', darker: '#FFFFFFC7' }
 }
 
 export function getColor(key) {
     key = key ? key.toLowerCase() : key;
-    let color = getColorFromCSS(key);
-    
-    // Fallback to random if the key doesn't exist in CSS
-    if (!color.bg) {
-        color = getColorFromCSS('random');
-    }
-    
+    let color = DEFAULT_COLORS[key] || DEFAULT_COLORS['random'];
     return color;
 }
 

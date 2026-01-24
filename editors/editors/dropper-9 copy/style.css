@@ -5,83 +5,9 @@
   font-style: normal;
 }
 
-:root {
-  /* Linear and Random */
-  --color-linear-bg: #ff0000;
-  --color-linear-light: #ff6666;
-  --color-linear-dark: #cc0000;
-  --color-linear-darker: #8e40d6;
-
-  --color-random-bg: #ffffff;
-  --color-random-light: #ffffff;
-  --color-random-dark: #ffffff;
-  --color-random-darker: #ffffff;
-
-  /* Parts of Speech */
-  --color-noun-bg: #0000ff;
-  --color-noun-light: #6666ff;
-  --color-noun-dark: #0000cc;
-  --color-noun-darker: #EE6A6D;
-
-  --color-adjective-bg: #00ff00;
-  --color-adjective-light: #66ff66;
-  --color-adjective-dark: #00cc00;
-  --color-adjective-darker: #798478;
-
-  --color-verb-bg: #ffff00;
-  --color-verb-light: #ffff66;
-  --color-verb-dark: #cccc00;
-  --color-verb-darker: #14d2d2;
-
-  --color-adverb-bg: #785212;
-  --color-adverb-light: #9a6d2e;
-  --color-adverb-dark: #5a421a;
-  --color-adverb-darker: #FF572E;
-
-  --color-determiner-bg: #532699;
-  --color-determiner-light: #6e34c3;
-  --color-determiner-dark: #3c1a66;
-  --color-determiner-darker: #67268E;
-
-  --color-preposition-bg: #00ff00;
-  --color-preposition-light: #66ff66;
-  --color-preposition-dark: #00cc00;
-  --color-preposition-darker: #798433;
-
-  --color-interjection-bg: #ffff00;
-  --color-interjection-light: #ffff66;
-  --color-interjection-dark: #cccc00;
-  --color-interjection-darker: #506A6D;
-
-  --color-conjunction-bg: #444444;
-  --color-conjunction-light: #666666;
-  --color-conjunction-dark: #222222;
-  --color-conjunction-darker: #9CF040;
-
-  --color-propernoun-bg: #111111;
-  --color-propernoun-light: #333333;
-  --color-propernoun-dark: #000000;
-  --color-propernoun-darker: #8bd90d;
-
-  --color-value-bg: #111222;
-  --color-value-light: #333444;
-  --color-value-dark: #333333;
-  --color-value-darker: #555044;
-
-  /* Special Types */
-  --color-delete-bg: #000000;
-  --color-delete-light: #000000;
-  --color-delete-dark: #000000;
-  --color-delete-darker: #a8280e;
-
-  --color-word-bg: #000000;
-  --color-word-light: #000000;
-  --color-word-dark: #000000;
-  --color-word-darker: #FFFFFFC7;
-}
-
 body {
   font-family: "Goma";
+
   background-color: #fff673;
   background-size: 100% 30%;
   background-position: center top;

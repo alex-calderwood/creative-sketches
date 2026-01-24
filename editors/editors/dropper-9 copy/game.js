@@ -28,7 +28,7 @@ async function getNewCorpusText(filename) {
 
 let defaultCorpus = getNewCorpus();
 
-import { DropperPerformance } from './DropperPerformance.js';
+import { Dropper } from './dropper.js';
 
 export class Game {
   constructor(options = {}) {
@@ -50,7 +50,7 @@ export class Game {
       initialText = content ? JSON.parse(content).text : '';
     }
 
-    let dropper = new DropperPerformance();
+    let dropper = new Dropper();
     await dropper.initialize({ corpusFile: defaultCorpus });
     console.log('test', dropper);
     
