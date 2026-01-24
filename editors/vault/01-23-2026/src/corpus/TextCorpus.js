@@ -1,7 +1,5 @@
 import { Token } from './Token.js';
 
-// compromise is loaded globally via script tag in index.html
-const nlp = window.nlp;
 
 export class TextCorpus {
       constructor( source='unknown') {

@@ -1,6 +1,11 @@
 import { SettingsMixin } from '/editors/vault/01-23-2026/src/performances/SettingsMixin.js';
 import { CustomTextCorpus } from '/editors/vault/01-23-2026/src/corpus/CustomTextCorpus.js';
 import { TextReader } from '/editors/vault/01-23-2026/src/readers/TextReader.js';
+import { TextStream } from '/editors/vault/01-23-2026/src/streams/TextStream.js';
+import { TextStreamEntity } from '/editors/vault/01-23-2026/src/streams/TextStreamEntity.js';
+import { SubtleDomTextStreamComponent } from './SubtleDomTextStreamComponent.js';
+import { moveTo, getScaleModifier, createBlockAt } from './block.js';
+
 
 // given a dict with weights or probabilities, pick one accordingly
 // assign the remaining probability mass to any key with value -1
@@ -68,6 +73,8 @@ export class Dropper extends SettingsMixin(class {}) {
     this.tokenElements = [];
     this.corpus = null;
     this.reader = null;
+    this.tokenStream = null; // The TextStream managing token data
+    this.tokenStreamEntity = null; // The entity coordinating stream and visuals
     this.colorBy = 'pos'; // Default color by part of speech
 
     this.numColumns = 6;
@@ -103,14 +110,13 @@ export class Dropper extends SettingsMixin(class {}) {
       currentBlockTop: this.gridStartY,
       // 2D array of elements
       grid: Array(this.numColumns).fill().map(() => Array(this.numRows).fill(null)),
-      tokenChain: [],
       constraints: Array(this.numColumns).fill(null),
       blockHistory: [],
     }
 
     // Token chain
-    this.tokenChainLength = 20;
-    this.tokenChainOrigin = {left: this.gridStartX * this.numColumns * this.cellWidth, top: this.gridStartY};
+    this.tokenStreamLength = 20;
+    this.tokenOrigin = {left: this.gridStartX * this.numColumns * this.cellWidth, top: this.gridStartY};
 
     console.log({
       numColumns: this.numColumns,
@@ -171,7 +177,11 @@ export class Dropper extends SettingsMixin(class {}) {
       if (this.state.currentBlock) {
         this.state.currentBlock.remove();
       }
-      this.state.tokenChain.forEach(token => token.remove());
+      
+      // Clear token stream if it exists
+      if (this.tokenStreamEntity) {
+        this.tokenStreamEntity.clear();
+      }
       
       // Clear grid
       for (let x = 0; x < this.state.grid.length; x++) {
@@ -204,7 +214,6 @@ export class Dropper extends SettingsMixin(class {}) {
       currentBlockLeft: this.gridStartX,
       currentBlockTop: this.gridStartY,
       grid: Array(this.numColumns).fill().map(() => Array(this.numRows).fill(null)),
-      tokenChain: [],
       constraints: Array(this.numColumns).fill(null),
       blockHistory: [],
       gameOver: false
@@ -225,6 +234,18 @@ export class Dropper extends SettingsMixin(class {}) {
 
     // Initialize reader
     this.reader = new TextReader(this.corpus);
+
+    // Initialize token stream and visual component
+    this.tokenStream = new TextStream(this.tokenStreamLength, this.reader);
+    const streamComponent = new SubtleDomTextStreamComponent(this, {
+      from: {
+        left: this.tokenOrigin.left,
+        top: this.tokenOrigin.top,
+      },
+      blockWidth: this.cellWidth,
+      blockHeight: this.cellHeight,
+    });
+    this.tokenStreamEntity = new TextStreamEntity(this, this.tokenStream, streamComponent);
 
     // Set up controls and event listeners (only on first initialization)
     if (!params.isReset) {
@@ -628,7 +649,7 @@ export class Dropper extends SettingsMixin(class {}) {
 
     // resizeToken(this.state.currentBlock, this.columnWidths[this.state.curX], this.columnHeights[0]);
     moveTo(this.state.currentBlock, newLeft, newTop, this.arrowSpeed, false, 'ease-in-out');
-    this.moveTokenChain({left: newLeft, top: newTop});
+    this.moveComponent({left: newLeft, top: newTop});
   }
 
 
@@ -752,14 +773,18 @@ export class Dropper extends SettingsMixin(class {}) {
     return tokenData;
   }
 
-  // Get next token from corpus via reader
+  // Get next token from stream entity
   getNextToken() {
-    if (!this.reader || this.corpus.tokens.length === 0) {
-      return { text: 'NO', type: 'token', pos: 'Unknown', source: this.corpus.source };
+    if (!this.tokenStreamEntity) {
+      return { text: 'NO', type: 'token', pos: 'Unknown', source: 'unknown' };
     }
     
-    const token = this.reader.currentToken();
-    this.reader.updateState();
+    // Peek at the first token in the stream without removing it yet
+    const { token } = this.tokenStreamEntity.peek();
+    
+    if (!token) {
+      return { text: 'NO', type: 'token', pos: 'Unknown', source: 'unknown' };
+    }
     
     let text = token.text || 'NO';
     // Remove punctuation
@@ -769,7 +794,7 @@ export class Dropper extends SettingsMixin(class {}) {
       text: text,
       type: 'token',
       pos: token.pos || 'Unknown',
-      source: this.corpus.source
+      source: token.source || 'unknown'
     };
   }
 
@@ -793,97 +818,25 @@ export class Dropper extends SettingsMixin(class {}) {
     };
   }
 
-  // createCurrentMarkup() {
-  //   const markup = document.getElementById('current-markup-sprite').cloneNode(true);
-  //   markup.classList.add('current-markup');
-  //   return markup;
-  // }
-
   nextBlockUp() {
-
-    // fill up the token chain with new tokens from the corpus
-    while (this.state.tokenChain.length < this.tokenChainLength) {
-      let blockData = this.generateNextBlockData();
-      let blockElement = createBlockAt(blockData, this.tokenChainOrigin.left, this.tokenChainOrigin.top, this.cellWidth, this.cellHeight, this.colorBy);
-      this.tokenElements.push(blockElement);
-      this.state.tokenChain.unshift(blockElement);
+    // Pop a token from the stream and get its block representation
+    const { token, block } = this.tokenStreamEntity.pop();
+    
+    if (!token || !block) {
+      console.error("nextBlockUp(): failed to get token/block from stream");
+      return;
     }
 
-    // pop the last token off the token chain and set it as the current token
+    // Set as current block
     this.state.curY = 0;
-    this.state.currentBlock = this.state.tokenChain.pop();
+    this.state.currentBlock = block;
     this.state.currentBlock.classList.add('current-token');
 
     this.drawCurColumn(this.state.curX);
-
-    
-    // Add dots to current token
-    // const markup = this.createCurrentMarkup();
-    // this.state.currentBlock.appendChild(markup);
   }
 
-  moveTokenChain(to) {
-    let from = this.tokenChainOrigin;
-    let newLeft = to.left;
-    let curTop = to.top;
-
-    // const offsetDist = this.cellHeight * 1.2;
-    const center = {
-      left: to.left,
-      top: to.top - 500
-    }
-
-    for (let i = this.state.tokenChain.length - 1; i >= 0; i--) { // for each token
-      let curToken = this.state.tokenChain[i];
-      if (!curToken) {
-        console.error("updateTokenChainLocations curToken is null", i, this.state.tokenChain);
-        continue;
-      }
-
-
-      let scale = (this.state.tokenChain.length - i ) ** 0.5;
-      let newHeight = this.cellHeight * scale;
-
-      curTop -= newHeight;
-
-      let newLoc = {
-        left: newLeft,
-        top: curTop,
-      }
-
-      let speed = 180 * (this.state.tokenChain.length + 1 - i) ** 0.5;
-
-      console.log({text: curToken.textContent, scale, i })
-
-      resizeToken(curToken, this.cellWidth, newHeight);
-      moveTo(curToken, newLoc.left, newLoc.top, speed);
-    }
-
-  // updateTokenChainLocationsOld(end) {
-  //   let start = this.tokenChainOrigin;
-  //   let newLeft = end.left;
-
-  //   for (let i = this.state.tokenChain.length - 1; i >= 0; i--) { // for each token
-  //     let curToken = this.state.tokenChain[i];
-  //     if (!curToken) {
-  //       console.error("updateTokenChainLocations curToken is null", i, this.state.tokenChain);
-  //       continue;
-  //     }
-
-  //     let curWidth = curToken?.getBoundingClientRect()?.width || 0;
-  //     if (!curWidth) {
-  //       console.error("updateTokenChainLocations curWidth is 0", i);
-  //       continue;
-  //     }
-
-  //     newLeft += curWidth;
-  //     let newLoc = {
-  //       left: newLeft,
-  //       top: start.top
-  //     }
-
-  //     moveTo(curToken, newLoc.left, newLoc.top, this.arrowSpeed, false, 'ease-in-out');
-  //   } // end for each token
+  moveComponent(to) {
+    this.tokenStreamEntity.component.move(to);
   }
 
   drawCurColumn(col) {
@@ -941,7 +894,7 @@ export class Dropper extends SettingsMixin(class {}) {
 
     if (doCycle) {
       let loc = {left: this.state.currentBlockLeft, top: this.state.currentBlockTop};
-      this.moveTokenChain(loc);
+      this.moveComponent(loc);
     }
 
     // reset the token
