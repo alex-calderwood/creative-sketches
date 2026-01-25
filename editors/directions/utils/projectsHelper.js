@@ -1,12 +1,12 @@
 /**
  * Projects Helper - Browser-compatible version
- * Fetches project data from the server's /api/projects endpoint
+ * Fetches project data from the server's /editors/api/projects endpoint
  */
 
 export class ProjectsHelper {
   static async getProjects() {
     try {
-      const response = await fetch('/api/projects');
+      const response = await fetch('/editors/api/projects');
       if (!response.ok) {
         throw new Error(`Failed to fetch projects: ${response.statusText}`);
       }
