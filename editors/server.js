@@ -211,16 +211,16 @@ app.get('/editors', (req, res) => {
 // ELO Submission / cohesive narrative
 app.use('/editors/directions', serveStatic(path.join(__dirname, 'directions')));
 
-app.get('/editors/directions', (req, res) => {
-  const directionsPath = path.join(__dirname, 'directions', 'directions-menu.html');
-  fs.readFile(directionsPath, 'utf8', (err, data) => {
-    if (err) {
-      console.error('Error reading direction landing page', err);
-      return res.status(500).send('Error loading directions page');
-    }
-    res.send(data);
-  });
-});
+// app.get('/editors/directions', (req, res) => {
+//   const directionsPath = path.join(__dirname, 'directions', 'directions-menu.html');
+//   fs.readFile(directionsPath, 'utf8', (err, data) => {
+//     if (err) {
+//       console.error('Error reading direction landing page', err);
+//       return res.status(500).send('Error loading directions page');
+//     }
+//     res.send(data);
+//   });
+// });
 
 app.get('/editors/new-direction', (req, res) => {
   const landingPath = path.join(__dirname, 'directions', 'landing.html');
