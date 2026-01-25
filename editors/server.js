@@ -297,6 +297,10 @@ app.get('/api/tag-descriptions', (req, res) => {
 
 app.use('/editors/vault', serveStatic(path.join(__dirname, 'vault')));
 
+app.use('/editors/directions', serveStatic(path.join(__dirname, 'directions')));
+
+app.use('/editors/assets', serveStatic(path.join(__dirname, 'assets')));
+
 app.use('/editors/api', synonymsRouter);
 
 app.listen(port, () => {
