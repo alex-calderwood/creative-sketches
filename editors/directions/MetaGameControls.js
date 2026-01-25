@@ -1,5 +1,5 @@
 import { saveStateWithImage } from './utils/utils.js';
-import { GameplaySave } from './GameplaySave.js';
+import { GameplaySave } from '/editors/directions/GameplaySave.js';
 
 export class MetaGameControls {
   constructor(options = {}) {
