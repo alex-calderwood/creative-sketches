@@ -3,9 +3,8 @@ import { CustomTextCorpus } from '/editors/vault/01-23-2026/src/corpus/CustomTex
 import { TextReader } from '/editors/vault/01-23-2026/src/readers/TextReader.js';
 import { TextStream } from '/editors/vault/01-23-2026/src/streams/TextStream.js';
 import { TextStreamEntity } from '/editors/vault/01-23-2026/src/streams/TextStreamEntity.js';
-import { SubtleDomTextStreamComponent } from './SubtleDomTextStreamComponent.js';
+import { WordTailTextStreamComponent } from './WordTailTextStreamComponent.js';
 import { moveTo, getScaleModifier, createBlockAt } from './block.js';
-
 
 // given a dict with weights or probabilities, pick one accordingly
 // assign the remaining probability mass to any key with value -1
@@ -70,29 +69,11 @@ const DELETE_COLOR = "#e83713";
 export class DropperPerformance extends SettingsMixin(class {}) {
   constructor() {
     super();
-    this.tokenElements = [];
+
     this.corpus = null;
     this.reader = null;
     this.wordTail = null; // The TextSrteamEntity entity coordinating stream and visuals
     this.colorBy = 'pos'; // Default color by part of speech
-
-    this.numColumns = 6;
-    this.numRows = 12;
-
-    // Grid positioning
-    this.gridStartX = 100;
-    this.gridStartY = 100;
-    this.gridEndGap = 40;
-    this.gridWidth = window.innerWidth - this.gridStartX;
-    this.gridHeight = window.innerHeight - this.gridStartY - this.gridEndGap;
-
-    // Individual cell sizing
-    this.cellHeight = this.gridHeight / this.numRows;
-    this.cellWidth = this.gridWidth / this.numColumns;
-
-    // numColumns length, filled with 
-    this.columnWidths = Array(this.numColumns).fill(this.cellWidth);
-    this.columnHeights = Array(this.numRows).fill(this.cellHeight);
 
     this.probabilities = {
       delete: 0.25,
@@ -101,44 +82,19 @@ export class DropperPerformance extends SettingsMixin(class {}) {
     }
     this.numInitialConstraints = 0;
 
-    this.state = {
-      currentBlock: null,
-      curX: 0,
-      curY: 0,
-      currentBlockLeft: this.gridStartX,
-      currentBlockTop: this.gridStartY,
-      // 2D array of elements
-      grid: Array(this.numColumns).fill().map(() => Array(this.numRows).fill(null)),
-      constraints: Array(this.numColumns).fill(null),
-      blockHistory: [],
-    }
-
-    // Token chain
-    this.wordTailLength = 20;
-    this.tokenOrigin = {left: this.gridStartX * this.numColumns * this.cellWidth, top: this.gridStartY};
-
-    console.log({
-      numColumns: this.numColumns,
-      numRows: this.numRows,
-      cellHeight: this.cellHeight,
-      cellWidth: this.cellWidth,
-      gridOffsetX: this.gridStartX,
-      gridOffsetY: this.gridStartY,
-    })
-
+    // Timing properties
     this.tickTime = 100; // ms
     this.dropTimePerBox = 50; // ms
     this.completionTime = 1000; // ms
     this.arrowSpeed = 170; // ms
 
     this.completedMode = 'constraint';
-    this.completedTokensTop = 20;
-    this.completedTokensLineHeight = this.cellHeight;
+    this.wordTailLength = 20;
   }
 
   initializeAnyConstraints() {
     // Create 'word' constraint blocks for each column
-    for (let x = 0; x < this.numColumns; x++) {
+    for (let x = 0; x <this.params.numColumns; x++) {
       // Create an 'any' constraint block with empty text
       const anyBlock = {
         text: 'word',
@@ -150,7 +106,7 @@ export class DropperPerformance extends SettingsMixin(class {}) {
       };
 
       // Create the block element
-      const blockElement = createBlockAt(anyBlock, this.getColumnLeft(x), this.getColumnTop(this.numRows - 1), this.columnWidths[x], this.columnHeights[0], this.colorBy);
+      const blockElement = createBlockAt(anyBlock, this.getColumnLeft(x), this.getColumnTop(this.params.numRows - 1), this.columnWidths[x], this.columnHeights[0], this.colorBy);
       
       // Set it as a constraint for this column
       if (this.state.constraints[x]) {
@@ -161,15 +117,40 @@ export class DropperPerformance extends SettingsMixin(class {}) {
   }
 
   async initialize(params = {}) {
-    // Set or update grid dimensions
-    if (params.numColumns) this.numColumns = params.numColumns;
-    if (params.numRows) this.numRows = params.numRows;
+    this.params = { 
+      sourceText: null, // defaults to sourceText over defaultCorpus if set
+      defaultCorpus: 'corpora/short/eis.txt',
+      numColumns: 6,
+      numRows: 12,
+
+      // Grid positioning
+      gridStartX: 100,
+      gridStartY: 100,
+      gridEndGap: 40,
+
+      ...params
+    }
+
+    this.settings = [
+      { name: 'numColumns', type: 'number', description: 'Number of columns' },
+    ];
+
+    // Grid positioning constants
+    this.params.gridWidth = window.innerWidth - this.params.gridStartX;
+    this.params.gridHeight = window.innerHeight - this.params.gridStartY - this.params.gridEndGap;
 
     // Calculate cell sizes
-    this.cellHeight = this.gridHeight / this.numRows;
-    this.cellWidth = this.gridWidth / this.numColumns;
-    this.columnWidths = Array(this.numColumns).fill(this.cellWidth);
-    this.columnHeights = Array(this.numRows).fill(this.cellHeight);
+    this.params.cellHeight = this.params.gridHeight / this.params.numRows;
+    this.params.cellWidth = this.params.gridWidth / this.params.numColumns;
+
+    this.columnWidths = Array(this.params.numColumns).fill(this.params.cellWidth);
+    this.columnHeights = Array(this.params.numRows).fill(this.params.cellHeight);
+
+    // Token origin
+    this.tokenOrigin = {
+      left: this.params.gridStartX,
+      top: this.params.gridStartY
+    };
 
     // Clear current game state if it exists
     if (this.state) {
@@ -210,22 +191,30 @@ export class DropperPerformance extends SettingsMixin(class {}) {
       currentBlock: null,
       curX: 0,
       curY: 0,
-      currentBlockLeft: this.gridStartX,
-      currentBlockTop: this.gridStartY,
-      grid: Array(this.numColumns).fill().map(() => Array(this.numRows).fill(null)),
-      constraints: Array(this.numColumns).fill(null),
+      currentBlockLeft: this.params.gridStartX,
+      currentBlockTop: this.params.gridStartY,
+      grid: Array(this.params.numColumns).fill().map(() => Array(this.params.numRows).fill(null)),
+      constraints: Array(this.params.numColumns).fill(null),
       blockHistory: [],
       gameOver: false
     };
 
-    this.completedTokensTop = 20;
+    console.log('DropperPerformance params', this.params);
+    console.log({
+      numColumns:this.params.numColumns,
+      numRows: this.params.numRows,
+      cellHeight: this.params.cellHeight,
+      cellWidth: this.params.cellWidth,
+      gridOffsetX: this.params.gridStartX,
+      gridOffsetY: this.params.gridStartY,
+    });
 
     // Initialize corpus
     this.corpus = new CustomTextCorpus();
-    if (params.sourceText) {
-      this.corpus.setCustomText(params.sourceText);
-    } else if (params.corpusFile) {
-      await this.corpus.setTextFromFile(params.corpusFile);
+    if (this.params.sourceText) {
+      this.corpus.setCustomText(this.params.sourceText);
+    } else if (this.params.corpusFile) {
+      await this.corpus.setTextFromFile(this.params.corpusFile);
     } else {
       await this.corpus.loadTextsFromJSON();
       await this.corpus.loadRandomText();
@@ -236,20 +225,16 @@ export class DropperPerformance extends SettingsMixin(class {}) {
 
     // Initialize token stream and visual component (wordTail)
     let tokenStream = new TextStream(this.wordTailLength, this.reader);
-    const streamComponent = new SubtleDomTextStreamComponent(this, {
-      from: {
-        left: this.tokenOrigin.left,
-        top: this.tokenOrigin.top,
-      },
-      blockWidth: this.cellWidth,
-      blockHeight: this.cellHeight,
+    const streamComponent = new WordTailTextStreamComponent(this, {
+      to: this.tokenOrigin,
+      blockWidth: this.params.cellWidth,
+      blockHeight: this.params.cellHeight,
     });
     // an 'Entity' is a wrapper holding the token stream (the words) and component (visual representation)
     this.wordTail = new TextStreamEntity(this, tokenStream, streamComponent);
 
     // Set up controls and event listeners (only on first initialization)
-    if (!params.isReset) {
-      this.setupControls();
+    if (!this.params.isReset) {
       this.watchArrowKeys();
       this.watchSwipes();
       await this.initializeSounds();
@@ -273,11 +258,11 @@ export class DropperPerformance extends SettingsMixin(class {}) {
   }
 
   getColumnLeft(x) {
-    return this.gridStartX + this.columnWidths.slice(0, x).reduce((sum, width) => sum + width, 0);
+    return this.params.gridStartX + this.columnWidths.slice(0, x).reduce((sum, width) => sum + width, 0);
   }
 
   getColumnTop(y) {
-    return this.gridStartY + this.columnHeights.slice(0, y).reduce((sum, height) => sum + height, 0);
+    return this.params.gridStartY + this.columnHeights.slice(0, y).reduce((sum, height) => sum + height, 0);
   }
 
   getColumnRect(x, y) {
@@ -289,256 +274,6 @@ export class DropperPerformance extends SettingsMixin(class {}) {
       right: this.getColumnLeft(x + 1), // we can optimize this
       bottom: this.getColumnTop(y + 1),
     }
-  }
-
-  setupControls() {
-    // Instructions button
-    const instructionsBtn = document.getElementById('instructions-btn');
-    instructionsBtn.addEventListener('click', () => {
-      this.showInstructions();
-      instructionsBtn.blur(); // Remove focus after clicking
-    });
-
-    // Submit button
-    const submitBtn = document.getElementById('submit-poem');
-    submitBtn.addEventListener('click', () => {
-      this.endGame();
-      submitBtn.blur();
-    });
-
-    // End game modal controls
-    const endGameModal = document.getElementById('end-game-modal');
-    const closeEndGameBtn = document.getElementById('close-end-game-modal');
-    const closeEndGameBtnFooter = document.getElementById('close-end-game-btn');
-    const newGameFromEndBtn = document.getElementById('new-game-from-end');
-
-    // Close end game modal handlers
-    closeEndGameBtn.addEventListener('click', () => {
-      endGameModal.style.display = 'none';
-      closeEndGameBtn.blur();
-    });
-
-    closeEndGameBtnFooter.addEventListener('click', () => {
-      endGameModal.style.display = 'none';
-      closeEndGameBtnFooter.blur();
-    });
-
-    // Start new game from end game modal
-    newGameFromEndBtn.addEventListener('click', () => {
-      const newGameModal = document.getElementById('new-game-modal');
-      endGameModal.style.display = 'none';
-      newGameModal.style.display = 'flex';
-      newGameFromEndBtn.blur();
-    });
-
-    // Close end game modal when clicking outside
-    endGameModal.addEventListener('click', (e) => {
-      if (e.target === endGameModal) {
-        endGameModal.style.display = 'none';
-      }
-    });
-
-    // Delete ratio control
-    const deleteRatioSelect = document.getElementById('delete-ratio');
-    deleteRatioSelect.addEventListener('change', (e) => {
-      this.probabilities.delete = parseFloat(e.target.value);
-      console.log('New delete probability:', this.probabilities.delete);
-      e.target.blur(); // Remove focus after selection
-    });
-    this.probabilities.delete = parseFloat(deleteRatioSelect.value);
-  
-    // Content strategy control
-    const contentStrategySelect = document.getElementById('mode');
-    contentStrategySelect.addEventListener('change', (e) => {
-      // CustomTextCorpus doesn't have selectionStrategy
-      console.log('Content strategy selection not supported with CustomTextCorpus');
-      e.target.blur(); // Remove focus after selection
-    });
-
-    // Color by control
-    const colorBySelect = document.getElementById('color-by');
-    colorBySelect.addEventListener('change', (e) => {
-      this.colorBy = e.target.value;
-      e.target.blur(); // Remove focus after selection
-    });
-    this.colorBy = colorBySelect.value;
-    console.log('New color by:', this.colorBy);
-  
-    // Add corpus button handler
-    const addCorpusBtn = document.getElementById('add-corpus-btn');
-    const saveCorpusBtn = document.getElementById('save-corpus');
-    
-    // Initialize corpus container with current texts
-    this.updateCorpusContainer();
-
-    addCorpusBtn.addEventListener('click', () => {
-      const container = document.getElementById('corpora-container');
-      const textareaCount = container.querySelectorAll('textarea').length;
-      
-      const textareaDiv = document.createElement('div');
-      textareaDiv.classList.add('corpus-textarea-container');
-      
-      const label = document.createElement('label');
-      label.textContent = `Text ${textareaCount + 1}:`;
-      label.classList.add('corpus-textarea-label');
-      
-      const textarea = document.createElement('textarea');
-      textarea.value = '';
-      textarea.classList.add('corpus-textarea');
-      textarea.dataset.index = textareaCount;
-      
-      textareaDiv.appendChild(label);
-      textareaDiv.appendChild(textarea);
-      container.appendChild(textareaDiv);
-      
-      // Focus on the new textarea
-      setTimeout(() => textarea.focus(), 100);
-      addCorpusBtn.blur();
-    });
-
-    // Save corpus handler
-    saveCorpusBtn.addEventListener('click', () => {
-      const container = document.getElementById('corpora-container');
-      const textareas = container.querySelectorAll('textarea');
-      const texts = [];
-      
-      textareas.forEach(textarea => {
-        const text = textarea.value.trim();
-        if (text) {
-          texts.push(text);
-        }
-      });
-      
-      if (texts.length > 0) {
-        // Combine all texts for CustomTextCorpus
-        const combinedText = texts.join('\n\n');
-        this.corpus.setCustomText(combinedText);
-        // Reinitialize reader with updated corpus
-        this.reader = new TextReader(this.corpus);
-      }
-      
-      saveCorpusBtn.blur();
-    });
-
-    // Instructions modal controls
-    const instructionsModal = document.getElementById('instructions-modal');
-    const closeInstructionsBtn = document.getElementById('close-instructions-modal');
-    const closeInstructionsBtnFooter = document.getElementById('close-instructions-btn');
-
-    // Close instructions modal handlers
-    closeInstructionsBtn.addEventListener('click', () => {
-      instructionsModal.style.display = 'none';
-      closeInstructionsBtn.blur();
-    });
-
-    closeInstructionsBtnFooter.addEventListener('click', () => {
-      instructionsModal.style.display = 'none';
-      closeInstructionsBtnFooter.blur();
-    });
-
-    // Close instructions modal when clicking outside
-    instructionsModal.addEventListener('click', (e) => {
-      if (e.target === instructionsModal) {
-        instructionsModal.style.display = 'none';
-      }
-    });
-
-    // Options modal controls
-    const optionsBtn = document.getElementById('options-btn');
-    const optionsModal = document.getElementById('options-modal');
-    const closeOptionsBtn = document.getElementById('close-options-modal');
-    const closeOptionsBtnFooter = document.getElementById('close-options-btn');
-
-    // Open options modal
-    optionsBtn.addEventListener('click', () => {
-      optionsModal.style.display = 'flex';
-      optionsBtn.blur();
-    });
-
-    // Close options modal handlers
-    closeOptionsBtn.addEventListener('click', () => {
-      optionsModal.style.display = 'none';
-      closeOptionsBtn.blur();
-    });
-
-    closeOptionsBtnFooter.addEventListener('click', () => {
-      optionsModal.style.display = 'none';
-      closeOptionsBtnFooter.blur();
-    });
-
-    // Close options modal when clicking outside
-    optionsModal.addEventListener('click', (e) => {
-      if (e.target === optionsModal) {
-        optionsModal.style.display = 'none';
-      }
-    });
-
-    // New Game modal controls
-    const newGameBtn = document.getElementById('new-game-btn');
-    const newGameModal = document.getElementById('new-game-modal');
-    const closeNewGameBtn = document.getElementById('close-new-game-modal');
-    const closeNewGameBtnFooter = document.getElementById('close-new-game-btn');
-    const startNewGameBtn = document.getElementById('start-new-game-btn');
-
-    // Open new game modal
-    newGameBtn.addEventListener('click', async () => {
-      const sourceTextArea = document.getElementById('new-game-source');
-      let file = getNewCorpus();
-      let text = await getNewCorpusText(file);
-      sourceTextArea.value = text;
-      newGameModal.style.display = 'flex';
-      newGameBtn.blur();
-    });
-
-    // Close new game modal handlers
-    closeNewGameBtn.addEventListener('click', () => {
-      newGameModal.style.display = 'none';
-      closeNewGameBtn.blur();
-    });
-
-    closeNewGameBtnFooter.addEventListener('click', () => {
-      newGameModal.style.display = 'none';
-      closeNewGameBtnFooter.blur();
-    });
-
-    // Close new game modal when clicking outside
-    newGameModal.addEventListener('click', (e) => {
-      if (e.target === newGameModal) {
-        newGameModal.style.display = 'none';
-      }
-    });
-
-    // Start new game handler
-    startNewGameBtn.addEventListener('click', async () => {
-      const numColumns = parseInt(document.getElementById('new-game-columns').value);
-      const numRows = parseInt(document.getElementById('new-game-rows').value);
-      const sourceText = document.getElementById('new-game-source').value.trim();
-
-      await this.initialize({
-        numColumns,
-        numRows,
-        sourceText,
-        isReset: true
-      });
-      newGameModal.style.display = 'none';
-      document.getElementById('end-game-modal').style.display = 'none';
-      startNewGameBtn.blur();
-    });
-
-    // Close any modal with Escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        if (instructionsModal.style.display === 'flex') {
-          instructionsModal.style.display = 'none';
-        }
-        if (optionsModal.style.display === 'flex') {
-          optionsModal.style.display = 'none';
-        }
-        if (newGameModal.style.display === 'flex') {
-          newGameModal.style.display = 'none';
-        }
-      }
-    });
   }
 
   updateCorpusContainer() {
@@ -571,8 +306,8 @@ export class DropperPerformance extends SettingsMixin(class {}) {
   }
 
   isGridFull() {
-    for (let x = 0; x < this.numColumns; x++) {
-      for (let y = 0; y < this.numRows; y++) {
+    for (let x = 0; x <this.params.numColumns; x++) {
+      for (let y = 0; y < this.params.numRows; y++) {
         if (this.state.grid[x][y] === null) {
           return false;
         }
@@ -653,7 +388,7 @@ export class DropperPerformance extends SettingsMixin(class {}) {
 
 
   moveRight() {
-    if (this.state.curX == this.numColumns - 1) {
+    if (this.state.curX ==this.params.numColumns - 1) {
       this.state.curX = 0;
     } else {
       this.state.curX += 1;
@@ -665,7 +400,7 @@ export class DropperPerformance extends SettingsMixin(class {}) {
 
   moveLeft() {
     if (this.state.curX == 0) {
-      this.state.curX = this.numColumns - 1;
+      this.state.curX =this.params.numColumns - 1;
     } else {
       this.state.curX -= 1;
     }
@@ -715,7 +450,7 @@ export class DropperPerformance extends SettingsMixin(class {}) {
 
     this.nextBlockUp();
     let loc = {left: this.state.currentBlockLeft, top: this.state.currentBlockTop};
-    moveTo(this.state.currentBlock, loc.left, loc.top, this.arrowSpeed, false, 'ease-in-out');
+    // // moveTo(this.state.currentBlock, loc.left, loc.top, this.arrowSpeed, false, 'ease-in-out');
     this.moveWordTail(loc);
 
     // Check for completed lines
@@ -804,7 +539,7 @@ export class DropperPerformance extends SettingsMixin(class {}) {
     // console.log("Current line:", tokens);
 
     let constraints =  this.targetConstraints();
-    let constraintValues = this.getConstraintsFromWordsInRow(this.numRows - 1);
+    let constraintValues = this.getConstraintsFromWordsInRow(this.params.numRows - 1);
 
     // console.log("Line constraints", constraintValues);
     // console.log("Target constraints:", constraints);
@@ -825,6 +560,9 @@ export class DropperPerformance extends SettingsMixin(class {}) {
     this.state.currentBlock.classList.add('current-token');
 
     this.drawCurColumn(this.state.curX);
+
+    // Move the new current block
+    moveTo(block, this.state.currentBlockLeft, this.state.currentBlockTop, this.arrowSpeed, false, 'ease-in-out');
   }
 
   moveWordTail(to) {
@@ -877,7 +615,7 @@ export class DropperPerformance extends SettingsMixin(class {}) {
 
   collectCompletedTokens(row) {
     let completedTokens = [];
-    for (let x = 0; x < this.numColumns; x++) {
+    for (let x = 0; x <this.params.numColumns; x++) {
       let token = this.state.grid[x][row];
       if (token) {
         completedTokens.push({ token, x, y: row });
@@ -896,14 +634,14 @@ export class DropperPerformance extends SettingsMixin(class {}) {
   }
 
   removeCompletedTokensFromGrid(row) {
-    for (let x = 0; x < this.numColumns; x++) {
+    for (let x = 0; x <this.params.numColumns; x++) {
       this.state.grid[x][row] = null;
     }
   }
 
   shiftTokensDown(row) {
     for (let y = row - 1; y >= 0; y--) {
-      for (let x = 0; x < this.numColumns; x++) {
+      for (let x = 0; x <this.params.numColumns; x++) {
         let token = this.state.grid[x][y];
         if (token) {
           let newY = y + 1;
@@ -963,8 +701,6 @@ export class DropperPerformance extends SettingsMixin(class {}) {
       this.removeOriginalTokens(completedTokens);
     }, this.completionTime);
 
-    // Move down for the next completed line
-    this.completedTokensTop += this.completedTokensLineHeight;
   }
 
   createPermanentTokens(completedTokens) {
@@ -1009,7 +745,6 @@ export class DropperPerformance extends SettingsMixin(class {}) {
   }
 
   updateConstraintVisuals(completedConstraints) {
-    console.log('completed', {completedConstraints})
     for (let i = 0; i < completedConstraints.completed.length; i++) {
       if (completedConstraints.completed[i]) {
         this.state.constraints[i].classList.add('completed');
@@ -1025,7 +760,7 @@ export class DropperPerformance extends SettingsMixin(class {}) {
 
   getConstraintsFromWordsInRow(row) {
     let constraints = [];
-    for (let x = 0; x < this.numColumns; x++) {
+    for (let x = 0; x <this.params.numColumns; x++) {
       let token = this.state.grid[x][row];
       constraints.push(this.getConstraintValue(token));
     }
@@ -1056,7 +791,7 @@ export class DropperPerformance extends SettingsMixin(class {}) {
   }
 
   getCompletedConstraints() {
-    let y = this.numRows - 1;
+    let y = this.params.numRows - 1;
     let actual = this.getConstraintsFromWordsInRow(y);
     let target = this.targetConstraints();
     let completed = [];
@@ -1074,7 +809,7 @@ export class DropperPerformance extends SettingsMixin(class {}) {
     let lineCompleted = this.checkLineSatisfied(constraintState.actual, constraintState.target);
 
     if (lineCompleted) {
-      completedLines.push(this.numRows - 1);
+      completedLines.push(this.params.numRows - 1);
     }
     return completedLines;
   }
@@ -1082,9 +817,9 @@ export class DropperPerformance extends SettingsMixin(class {}) {
 
   getFullLines() {
     let completedLines = [];
-    for (let y = 0; y < this.numRows; y++) {
+    for (let y = 0; y < this.params.numRows; y++) {
       let complete = true;
-      for (let x = 0; x < this.numColumns; x++) {
+      for (let x = 0; x <this.params.numColumns; x++) {
         if (this.state.grid[x][y] == null) {
           complete = false;
           break;
@@ -1100,13 +835,12 @@ export class DropperPerformance extends SettingsMixin(class {}) {
   _dropAndUpdateGrid(element) {
     let x = this.state.curX;
     let y = this.collide(x);
-    if (y < 0) {
-      console.log('no space to drop', x, y)
+    if (y < 1) {
+      console.warn('no space to drop', x, y)
       return [false, 0];
     }
 
     let newTop = this.getColumnTop(y);
-    
     let dropTime = this.dropTimePerBox * Math.abs(element.offsetTop - newTop) / this.getColumnHeight(0);
 
     // move the token to the bottom using a quadratic gravity
@@ -1134,7 +868,7 @@ export class DropperPerformance extends SettingsMixin(class {}) {
     console.log(`Resizing column ${col} to width: ${width}`);
     this.columnWidths[col] = width;
     let height = this.getColumnHeight(0);
-    for (let y = 0; y < this.numRows; y++) {
+    for (let y = 0; y < this.params.numRows; y++) {
       let token = this.state.grid[col][y];
       if (token) {
         resizeToken(token, width, height);
@@ -1148,7 +882,7 @@ export class DropperPerformance extends SettingsMixin(class {}) {
     this.columnHeights[row] = height;
     let width = this.getColumnWidth(0);
 
-    for (let x = 0; x < this.numColumns; x++) {
+    for (let x = 0; x <this.params.numColumns; x++) {
       let token = this.state.grid[x][row];
       if (token) {
         resizeToken(token, width, height);
@@ -1158,13 +892,13 @@ export class DropperPerformance extends SettingsMixin(class {}) {
   }
 
   addColumn(col, width) {
-    this.numColumns += 1;
-    let newCol = Array(this.numRows).fill(null);
+   this.params.numColumns += 1;
+    let newCol = Array(this.params.numRows).fill(null);
     this.state.grid.splice(col, 0, newCol);
     this.columnWidths.splice(col, 0, width);
 
-    for (let y = 0; y < this.numRows; y++) {
-      for (let x = col + 1; x < this.numColumns; x++) {
+    for (let y = 0; y < this.params.numRows; y++) {
+      for (let x = col + 1; x <this.params.numColumns; x++) {
         let token = this.state.grid[x][y];
         if (token) {
           moveTo(token, this.getColumnLeft(x), token.offsetTop, this.dropTimePerBox);
@@ -1183,7 +917,7 @@ export class DropperPerformance extends SettingsMixin(class {}) {
 
   applyConstraint(col) {
     // we want to move this to the bottom
-    let y = this.numRows - 1;
+    let y = this.params.numRows - 1;
 
     // remove prev constraint element
     if (this.state.constraints[col]) {
@@ -1191,7 +925,6 @@ export class DropperPerformance extends SettingsMixin(class {}) {
     }
 
     this.state.constraints[col] = this.state.currentBlock;
-
 
     moveTo(this.state.currentBlock, this.state.currentBlockLeft, this.getColumnTop(y), this.dropTimePerBox);
 
@@ -1201,7 +934,7 @@ export class DropperPerformance extends SettingsMixin(class {}) {
   applyDelete(col) {
     // Find the bottommost token in the column
     let bottommostY = -1;
-    for (let y = this.numRows - 1; y >= 0; y--) {
+    for (let y = this.params.numRows - 1; y >= 0; y--) {
       if (this.state.grid[col][y] != null) {
         bottommostY = y;
         break;
@@ -1238,18 +971,18 @@ export class DropperPerformance extends SettingsMixin(class {}) {
   }
 
   collide(x) {
-    for (let y = 0; y < this.numRows; y++) {
+    for (let y = 0; y < this.params.numRows; y++) {
       if (this.state.grid[x][y] != null) {
-        return [y - 1, this.state.grid[x][y]];
+        return y - 1;
       }
     }
-    return this.numRows - 1;
+    return this.params.numRows - 1;
   }
 
   bottomLine() {
     let bottom = [];
-    for (let x = 0; x < this.numColumns; x++) {
-      let token = this.state.grid[x][this.numRows - 1];
+    for (let x = 0; x <this.params.numColumns; x++) {
+      let token = this.state.grid[x][this.params.numRows - 1];
       bottom.push(token);
     }
     return bottom;

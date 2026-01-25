@@ -131,7 +131,6 @@ export function setColor(blockElt, color) {
 }
 
 export function createBlockAt(token, left, top, width, height, colorBy = "pos") {
-    console.log('createBlockAt', token, left, top, width, height, colorBy);
     let text = token.text;
     let wordType = token.type;
 

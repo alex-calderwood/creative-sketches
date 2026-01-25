@@ -1,6 +1,5 @@
 import { Token } from './Token.js';
 
-
 export class TextCorpus {
       constructor( source='unknown') {
         this.source = source;
@@ -13,7 +12,8 @@ export class TextCorpus {
        * Override the square brackets to get an ith token
        **/
       getToken(i) {
-        return this.tokens[i];
+        let token = this.tokens[i];
+        return Token.fromToken(token);
       }
 
       async setTextFromFile(filename) {
@@ -21,7 +21,7 @@ export class TextCorpus {
         const assetsFolder = '/editors/assets';
         try {
           const filePath = `${assetsFolder}/${filename}`;
-          console.log('Loading corpus from:', filePath);
+          console.log('TextCorpus Loading corpus from:', filePath);
           const response = await fetch(filePath);
           let text = await response.text();
           this.setText(text);
@@ -36,9 +36,6 @@ export class TextCorpus {
         // Use comprimise to tokenize the text
         this.doc = nlp(text);
 
-
-        // print out the type that this.doc.terms()
-        console.log("this.doc.terms()", typeof this.doc.terms());
         // Store all tokens with their POS info
         this.tokens = this.doc.terms().map((parentTerm) => {
           return parentTerm.terms().map((subTerm, idx) => {
@@ -58,14 +55,10 @@ export class TextCorpus {
             });
           });
         }).flat().filter(token => token.text && token.text.trim().length > 0); // Filter out empty tokens
-
-        console.log("this.tokens", this.tokens);
-        window.tokens = this.tokens;
       }
 
     head(N=100) {
         let head = this.tokens.slice(0, N);
-        console.log("TextCorpus.head():", head);
         return head;
     }
 

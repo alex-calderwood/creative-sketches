@@ -1,7 +1,7 @@
 import { TextStreamComponent } from '/editors/vault/01-23-2026/src/streams/TextStreamComponent.js';
 import { createBlockAt, updateBlockColor, moveTo } from './block.js';
 
-export class SubtleDomTextStreamComponent extends TextStreamComponent {
+export class WordTailTextStreamComponent extends TextStreamComponent {
   constructor(game, params={}) {
     super(game);
 
@@ -10,8 +10,8 @@ export class SubtleDomTextStreamComponent extends TextStreamComponent {
 
     // Set default params
     const defaultParams = {
-      from: {
-        left: window.innerWidth - 100,
+      from: { // Currently only used for spawning the tokens
+        left: window.innerWidth + 100,
         top: 200,
       },
       to: {
@@ -30,13 +30,10 @@ export class SubtleDomTextStreamComponent extends TextStreamComponent {
     // };
     this.params = { ...defaultParams, ...params };
 
-    this.blockWidth = params.blockWidth;
-    this.blockHeight = params.blockHeight;
-
     // If from.top was specified but to.top wasn't, match them
-    if (params.from?.top !== undefined && params.to?.top === undefined) {
-      this.params.to.top = this.params.from.top;
-    }
+    // if (params.from?.top !== undefined && params.to?.top === undefined) {
+    //   this.params.to.top = this.params.from.top;
+    // }
 
     this.state = {
       from: this.params.from,
@@ -56,8 +53,6 @@ export class SubtleDomTextStreamComponent extends TextStreamComponent {
    * @param {Object} event - The event data
    */
   onChange(index, event) {
-    console.log("TextStreamComponent.onChange()", index, event);
-
     if (event?.token == null) {
       console.error("TextStreamComponent.onChange(): no token in event", event);
       return;
@@ -73,7 +68,6 @@ export class SubtleDomTextStreamComponent extends TextStreamComponent {
     }
 
     const {left, top} = previousBlock.style;
-    console.log("TextStreamComponent.onChange(): previousBlock", left, top);
     let block = this.blockFromToken(event.token, left, top);
     this.deleteToken(previousToken);
 
@@ -118,7 +112,6 @@ export class SubtleDomTextStreamComponent extends TextStreamComponent {
    */
   render() {
     let {from, to} = this.state;
-
     let newLoc = {
       left: to.left,
       top: to.top,
@@ -126,8 +119,8 @@ export class SubtleDomTextStreamComponent extends TextStreamComponent {
 
     let moved = [];
 
-    const width = this.blockWidth;
-    const height = this.blockHeight;
+    const width = this.params.blockWidth;
+    const height = this.params.blockHeight;
 
     // for (let i = this.tokens.length - 1; i >= 0; i--) { // for each token
     for (let i = 0; i < this.tokens.length; i++) { // for each token
@@ -147,8 +140,6 @@ export class SubtleDomTextStreamComponent extends TextStreamComponent {
 
       moveTo(block, newLoc.left, newLoc.top, speed);
     }
-
-    console.log("TextStreamComponent.render(): moved", moved.join(', '));
   }
 
   deleteToken(token) {
@@ -176,8 +167,8 @@ export class SubtleDomTextStreamComponent extends TextStreamComponent {
   blockFromToken(token, left=null, top=null, width=null, height=null) {
     left = left ?? this.params.from.left;
     top = top ?? this.params.from.top;
-    width = width ?? this.blockWidth;
-    height = height ?? this.blockHeight;
+    width = width ?? this.params.blockWidth;
+    height = height ?? this.params.blockHeight;
     
     const block = createBlockAt(
       token,

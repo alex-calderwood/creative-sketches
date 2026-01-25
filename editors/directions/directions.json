@@ -42,9 +42,10 @@
     "progression": ["Waste"],
     "levels": {
       "Waste": {
-        "name": "Waste",
+        "name": "Waste 2",
         "editor": "poetris-direction",
-        "prompt": "Use your wasted words to compose something new."
+        "prompt": "Use your wasted words to compose something new.",
+        "sourceText": "This is an example "
       }
     }
   }

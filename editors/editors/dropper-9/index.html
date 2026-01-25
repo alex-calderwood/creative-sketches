@@ -50,6 +50,7 @@
       
       // MetaGame loads save
       const metaGame = new MetaGame(PROJECT_ID);
+      // initializes the game
       await metaGame.initialize(game);
     });
   </script>
@@ -84,113 +85,6 @@
     </div>
   </div>
 
-  <!-- Options Modal -->
-  <div id="options-modal" class="modal" style="display: none;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Game Options</h3>
-        <button id="close-options-modal" class="close-btn">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div class="option-group">
-          <label for="delete-ratio">Delete Ratio:</label>
-          <select id="delete-ratio">
-            <option value="0.0 ">0%</option>
-            <option value="0.1">10%</option>
-            <option value="0.2">20%</option>
-            <option value="0.3" selected>30%</option>
-            <option value="0.4">40%</option>
-            <option value="0.5">50%</option>
-            <option value="0.6">60%</option>
-            <option value="0.7">70%</option>
-            <option value="0.8">80%</option>
-            <option value="0.9">90%</option>
-          </select>
-          <p class="option-description">Controls how often delete blocks (←) appear. Higher values create more dynamic, shifting compositions.</p>
-        </div>
-
-        <div class="option-group">
-          <label for="mode">Content Strategy:</label>
-          <select id="mode">
-            <option value="pos">Part of Speech</option>
-            <option value="letters">Letters</option>
-            <option value="focused" selected>Focused</option>
-          </select>
-          <p class="option-description">Choose how words are selected. Part of Speech selects words based on a grammatical pattern. Focused linearlly traverses words (matching the definition of the Focused Reader in The Reader's Project). Letters splits the text into letters rather than words.</p>
-        </div>
-
-        <div class="option-group">
-          <label for="color-by">Color By:</label>
-          <select id="color-by">
-            <option value="pos" selected>Part of Speech</option>
-            <option value="type">Type</option>
-          </select>
-          <p class="option-description">How should blocks be colored?. POS indicates grammatical structure, Type indicates block functions (this is mostly unncessary in this version).</p>
-        </div>
-
-        <div class="option-group">
-          <label>Source Texts:</label>
-          <p class="option-description">Modify the source text that generates your word blocks.</p>
-          <div id="corpora-container">
-            <!-- Dynamic corpora will be added here -->
-          </div>
-          <div class="corpus-controls">
-            <button id="add-corpus-btn" class="control-btn">Add Text</button>
-            <button id="save-corpus" class="control-btn">Save Changes</button>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button id="close-options-btn" class="control-btn">Close</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- New Game Modal -->
-  <div id="new-game-modal" class="modal" style="display: none;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>New Game</h3>
-        <button id="close-new-game-modal" class="close-btn">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div class="option-group">
-          <label for="new-game-columns">Number of Columns:</label>
-          <select id="new-game-columns">
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6" selected>6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-          </select>
-          <p class="option-description">Sets the width of the game grid. More columns allow for wider compositions.</p>
-        </div>
-
-        <div class="option-group">
-          <label for="new-game-rows">Number of Rows:</label>
-          <select id="new-game-rows">
-            <option value="8">8</option>
-            <option value="10">10</option>
-            <option value="12" selected>12</option>
-            <option value="14">14</option>
-            <option value="16">16</option>
-          </select>
-          <p class="option-description">Sets the height of the game grid. More rows give more space to work with.</p>
-        </div>
-
-        <div class="option-group">
-          <label for="new-game-source">Source Text:</label>
-          <textarea id="new-game-source" class="corpus-textarea" placeholder="Enter your source text here..."></textarea>
-          <!-- <p class="option-description">The text that will be used to generate the game.</p> -->
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button id="start-new-game-btn" class="control-btn">Start Game</button>
-        <button id="close-new-game-btn" class="control-btn">Cancel</button>
-      </div>
-    </div>
-  </div>
-
   <!-- End Game Modal -->
   <div id="end-game-modal" class="modal" style="display: none;">
     <div class="modal-content">
@@ -212,3 +106,4 @@
   <button id="submit-poem" class="control-btn submit-btn" style="display: none;">Submit Poem</button>
 </body>
 </html>
+

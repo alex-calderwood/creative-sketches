@@ -30,7 +30,6 @@ export class TextReader extends Reader {
     updateState() {
         this.state.index = this.state.index + 1;
         if (this.state.index >= this.corpus.tokens.length) {
-            console.log("TextReader.updateState(): Resetting index to 0");
             this.state.index = 0;
         }
     }

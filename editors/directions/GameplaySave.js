@@ -46,6 +46,10 @@ export class GameplaySave {
         return this.metadata[key];
     }
 
+    getSelectedDirection() {
+        return this?.metadata?.selectedDirection || null;
+    }
+
     // Serialize to JSON string
     write() {
         const saveData = {
