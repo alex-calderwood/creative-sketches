@@ -16,6 +16,8 @@ COPY server.js ./
 COPY editors/ ./editors/
 COPY assets/ ./assets/
 COPY words/ ./words/
+COPY directions/ ./directions/
+COPY vault/ ./vault/
 
 # Debug - list what's in the container
 RUN ls -la
