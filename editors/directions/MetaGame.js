@@ -42,13 +42,19 @@ export class MetaGame {
     }
     
     this.game = game;
-    
     this.save = this.loadSave();
+
+    this.directionName = this?.save?.getSelectedDirection();
+
+    if (!this.directionName) {
+      console.error('No selected direction', this);
+      return;
+    }
     
     // Load directions to get initial state
     const directions = await Directions.fromFile('/editors/directions/directions.json');
-    this.level = this.findLevelForEditor(directions);
-    
+    this.level = this.findLevelForEditor(this.directionName, directions);
+
     // Don't auto-load - user can use Load button to select a document
     // Just create a new document for this session
     this.documentId = this.createNewDocument(this.save, this.level);
@@ -59,7 +65,11 @@ export class MetaGame {
     await this.loadAndDisplayPrompts();
     
     //  initialize game with save and document (after prompt is displayed)
-    await this.game.initialize({ save: this.save, documentId: this.documentId });
+    await this.game.initialize({ 
+      save: this.save, 
+      documentId: this.documentId,
+      level: this.level
+    });
 
     // Initialize controls
     this.controls = new MetaGameControls({
@@ -109,22 +119,21 @@ export class MetaGame {
     return documentId;
   }
 
-  findLevelForEditor(directions) {
-    for (const directionName of directions.getDirectionNames()) {
-      const directionData = directions.data[directionName];
-      const levels = directions.getLevels(directionName);
-      
-      for (const [key, level] of Object.entries(levels)) {
-        if (level.editor === this.projectId) {
-          // Store everything we need for progression
-          this.directionName = directionName;
-          this.levelKey = key;
-          this.progression = directionData.progression || [];
-          this.allLevels = levels;
-          return level;
-        }
+  findLevelForEditor(directionName, directions) {
+    const directionData = directions.data[directionName];
+    const levels = directions.getLevels(directionName);
+
+    for (const [key, level] of Object.entries(levels)) {
+      if (level.editor === this.projectId) {
+        // Store everything we need for progression
+        this.directionName = directionName;
+        this.levelKey = key;
+        this.progression = directionData.progression || [];
+        this.allLevels = levels;
+        return level;
       }
     }
+    console.error('No level found for direction', directionName, this);
     return null;
   }
 
@@ -173,7 +182,7 @@ export class MetaGame {
   handleNewDocument() {
     const newDocumentId = this.createNewDocument(this.save, this.level);
     this.save.saveToLocalStorage();
-    console.log("new document", newDocumentId);
+    console.log("MetaGame.handleNewDocument():", newDocumentId);
     window.location.reload();
   }
 
