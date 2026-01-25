@@ -286,7 +286,7 @@ app.post('/editors/api/new-sentence', express.json(), (req, res) => {
 });
 
 // GET endpoint to fetch all projects
-app.get('/api/projects', (req, res) => {
+app.get('/editors/api/projects', (req, res) => {
   res.json(projects);
 });
 
