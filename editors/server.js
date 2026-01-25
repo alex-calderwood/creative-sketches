@@ -176,6 +176,17 @@ getProjects().then(projectList => {
   app.use('/editors/assets', serveStatic(path.join(__dirname, 'assets')));
 });
 
+
+app.use('/editors/vault', serveStatic(path.join(__dirname, 'vault')));
+
+app.use('/editors/api', synonymsRouter);
+
+// Serve all assets from the root assets directory
+app.use('/assets', serveStatic(path.join(__dirname, 'assets')));
+// Also serve assets from the editors/assets path for backward compatibility
+app.use('/editors/assets', serveStatic(path.join(__dirname, 'assets')));
+
+
 // Project Directory
 app.get('/editors', (req, res) => {
   // Read the index.html template
@@ -294,18 +305,6 @@ app.get('/api/tag-descriptions', (req, res) => {
     }
   });
 });
-
-app.use('/editors/vault', serveStatic(path.join(__dirname, 'vault')));
-
-app.use('/editors/directions', serveStatic(path.join(__dirname, 'directions')));
-
-// Serve all assets from the root assets directory
-app.use('/assets', serveStatic(path.join(__dirname, 'assets')));
-
-// Also serve assets from the editors/assets path for backward compatibility
-app.use('/editors/assets', serveStatic(path.join(__dirname, 'assets')));
-
-app.use('/editors/api', synonymsRouter);
 
 app.listen(port, () => {
   console.log(`Available projects: ${projects.map(p => p.name).join(', ')}`);
