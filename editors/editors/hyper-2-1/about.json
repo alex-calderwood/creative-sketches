@@ -1,11 +1,13 @@
 {
-    "name": "Hypersense 2",
+    "name": "Hypersense Editor 2.1",
     "description": "A first experiment in using text streams as buffers to record a multiplicity of what the writer was writing. In this version, words are replaced by their 'synonyms' according to the WordNet ontology.",
     "notes": "",
-    "version": "2",
-    "series": ["hyper"],
-    "url": "hyper-sense-2",
+    "tags": {
+        "hyper": {"version": "3"},
+        "directions": {"version": "6"}
+    },
+    "url": "hyper-sense-2-1",
     "image": "hyper.png",
-    "date": "Dec 21, 2025",
+    "date": "2025-12-22",
     "major": false
 }

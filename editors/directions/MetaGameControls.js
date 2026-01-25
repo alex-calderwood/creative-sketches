@@ -185,7 +185,6 @@ export class MetaGameControls {
       
       item.appendChild(docId);
       item.appendChild(docCreated);
-      
       item.addEventListener('click', () => {
         this.loadSaveWithDocument(loadedSave, doc.id);
         modal.remove();

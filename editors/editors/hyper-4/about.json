@@ -1,9 +1,11 @@
 {
-    "name": "Hyperfracture",
+    "name": "Hyperfracture Editor",
     "description": "Integrating fracture aesthetics. In this version, words are replaced by their 'synonyms' according to the WordNet ontology.",
     "notes": "",
-    "version": "4",
-    "series": ["hyper", "fracture"],
+    "tags": {
+        "hyper": {"version": "4"},
+        "fracture": {"version": "2"}
+    },
     "url": "hyper-4",
     "image": "hyper.png",
     "major": false

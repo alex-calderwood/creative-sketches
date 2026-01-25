@@ -55,10 +55,22 @@ export class MetaGame {
     const directions = await Directions.fromFile('/editors/directions/directions.json');
     this.level = this.findLevelForEditor(this.directionName, directions);
 
-    // Don't auto-load - user can use Load button to select a document
-    // Just create a new document for this session
-    this.documentId = this.createNewDocument(this.save, this.level);
-    this.save.saveToLocalStorage();
+
+    // Check if there is a current document id and it matches this editor
+    if (this.save.getSelectedDocumentId()) {
+      let documentId = this.save.getSelectedDocumentId();
+      // check that the document is of the same level
+      let doc = this.save.getDocument(documentId);
+      if (doc && doc.getField('sourceEditor') === this.projectId) {
+        this.documentId = documentId;
+      }
+    }
+
+    if (!this.documentId) {
+      this.documentId = this.createNewDocument(this.save, this.level);
+      console.log('MetaGame.initialize() no selected document id, created new document', this.documentId);
+      this.save.saveToLocalStorage();
+    }
     
     // Load progression prompts
     await this.loadTemplate();
@@ -181,8 +193,9 @@ export class MetaGame {
 
   handleNewDocument() {
     const newDocumentId = this.createNewDocument(this.save, this.level);
+    this.save.setMetadata('selectedDocumentId', newDocumentId);
+
     this.save.saveToLocalStorage();
-    console.log("MetaGame.handleNewDocument():", newDocumentId);
     window.location.reload();
   }
 

@@ -988,13 +988,25 @@ export class DropperPerformance extends SettingsMixin(class {}) {
     return bottom;
   }
 
-  bottomTokens() {
-    let bottom = this.bottomLine();
-  }
-
   matches(bottomTokens) {
     let search = bottomTokens.map(token => token == '' ? '.' : token).join(' ');
     let match = this.corpus.doc.match(bottomTokens.join(' ')).terms().out('array');
     console.log({search, match})
+  }
+
+  /// return a serialization that can reconstruct the state
+  getState() {
+    let state = {
+      numColumns: this.params.numColumns,
+      numRows: this.params.numRows,
+      cellHeight: this.params.cellHeight,
+      cellWidth: this.params.cellWidth,
+      gridOffsetX: this.params.gridStartX,
+      gridOffsetY: this.params.gridStartY,
+      grid: this.state.grid,
+      text: this.getCompletedPoemText(),
+    }
+    console.log("getState" , state);
+    return state;
   }
 }
