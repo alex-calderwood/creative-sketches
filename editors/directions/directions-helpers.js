@@ -1,6 +1,5 @@
 import { ProjectsHelper } from './utils/projectsHelper.js';
-import { GameplaySave } from './GameplaySave.js';
-import { Document } from './Document.js';
+import { GameplaySave } from '/editors/directions/GameplaySave.js';
 import { Directions } from './Directions.js';
 
 

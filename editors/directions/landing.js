@@ -1,8 +1,8 @@
 // Landing page specific initialization
 // Reuses state, directions, and functions from directions-helpers.js
 
-import { GameplaySave } from './GameplaySave.js';
-import { Directions } from './Directions.js';
+import { GameplaySave } from '/editors/directions/GameplaySave.js';
+import { Directions } from '/editors/directions/Directions.js';
 
 let landingDirections = null;
 
