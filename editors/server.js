@@ -176,17 +176,6 @@ getProjects().then(projectList => {
   app.use('/editors/assets', serveStatic(path.join(__dirname, 'assets')));
 });
 
-
-app.use('/editors/vault', serveStatic(path.join(__dirname, 'vault')));
-
-app.use('/editors/api', synonymsRouter);
-
-// Serve all assets from the root assets directory
-app.use('/assets', serveStatic(path.join(__dirname, 'assets')));
-// Also serve assets from the editors/assets path for backward compatibility
-app.use('/editors/assets', serveStatic(path.join(__dirname, 'assets')));
-
-
 // Project Directory
 app.get('/editors', (req, res) => {
   // Read the index.html template
@@ -211,16 +200,16 @@ app.get('/editors', (req, res) => {
 // ELO Submission / cohesive narrative
 app.use('/editors/directions', serveStatic(path.join(__dirname, 'directions')));
 
-// app.get('/editors/directions', (req, res) => {
-//   const directionsPath = path.join(__dirname, 'directions', 'directions-menu.html');
-//   fs.readFile(directionsPath, 'utf8', (err, data) => {
-//     if (err) {
-//       console.error('Error reading direction landing page', err);
-//       return res.status(500).send('Error loading directions page');
-//     }
-//     res.send(data);
-//   });
-// });
+app.get('/editors/directions', (req, res) => {
+  const directionsPath = path.join(__dirname, 'directions', 'directions-menu.html');
+  fs.readFile(directionsPath, 'utf8', (err, data) => {
+    if (err) {
+      console.error('Error reading direction landing page', err);
+      return res.status(500).send('Error loading directions page');
+    }
+    res.send(data);
+  });
+});
 
 app.get('/editors/new-direction', (req, res) => {
   const landingPath = path.join(__dirname, 'directions', 'landing.html');
@@ -232,6 +221,19 @@ app.get('/editors/new-direction', (req, res) => {
     res.send(data);
   });
 });
+
+
+
+app.use('/editors/vault', serveStatic(path.join(__dirname, 'vault')));
+
+app.use('/editors/api', synonymsRouter);
+
+// Serve all assets from the root assets directory
+app.use('/assets', serveStatic(path.join(__dirname, 'assets')));
+// Also serve assets from the editors/assets path for backward compatibility
+app.use('/editors/assets', serveStatic(path.join(__dirname, 'assets')));
+
+
 
 const larderSentencesPath = path.join(__dirname, 'editors', 'larder', 'sentences.json');
 
