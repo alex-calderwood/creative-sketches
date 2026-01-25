@@ -299,6 +299,10 @@ app.use('/editors/vault', serveStatic(path.join(__dirname, 'vault')));
 
 app.use('/editors/directions', serveStatic(path.join(__dirname, 'directions')));
 
+// Serve all assets from the root assets directory
+app.use('/assets', serveStatic(path.join(__dirname, 'assets')));
+
+// Also serve assets from the editors/assets path for backward compatibility
 app.use('/editors/assets', serveStatic(path.join(__dirname, 'assets')));
 
 app.use('/editors/api', synonymsRouter);
