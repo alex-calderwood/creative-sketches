@@ -3,11 +3,11 @@
  * Only shows progression elements if save exists in localStorage and direction matches editor
  */
 
-import { MetaGameControls } from './MetaGameControls.js';
+import { MetaGameControls } from '/editors/directions/MetaGameControls.js';
 import { GameplaySave } from './GameplaySave.js';
-import { Directions } from './Directions.js';
-import { Document } from './Document.js';
-import { saveStateWithImage } from './utils/utils.js';
+import { Directions } from '/editors/directions/Directions.js';
+import { Document } from '/editors/directions/Document.js';
+import { saveStateWithImage } from '/editors/directions/utils/utils.js';
 
 export class MetaGame {
   constructor(projectId) {
