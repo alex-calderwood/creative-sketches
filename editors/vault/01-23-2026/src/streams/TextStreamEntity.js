@@ -47,8 +47,9 @@ export class TextStreamEntity {
 
   clear() {
     this.component.empty();
-    // TextStream doesn't have a clear method either, so we'll skip it
-    // this.textStream.clear();
+    if (this?.textStream?.clear) {
+      this.textStream.clear();
+    }
   }
 
   tokenToComponent(token) {

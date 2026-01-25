@@ -50,6 +50,10 @@ export class GameplaySave {
         return this?.metadata?.selectedDirection || null;
     }
 
+    getSelectedDocumentId() {
+        return this?.metadata?.selectedDocumentId || null;
+    }
+
     // Serialize to JSON string
     write() {
         const saveData = {

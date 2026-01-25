@@ -1,0 +1,10 @@
+{
+    "name": "Poetris Beta",
+    "description": "Poetris - the current beta or in progress version of the sketch.",
+    "notes": "",
+    "version": "9",
+    "series": ["game", "poetris"],
+    "url": "poetris-direction",
+    "image": "column.png",
+    
+}

@@ -1,13 +1,13 @@
 {
   "revolutionary": {
     "name": "The Revolutionary",
-    "progression": ["Hyper", "Concrete", "Three"],
+    "progression": ["Hyper", "Concrete", "Three", "Waste"],
     "levels": {
       "Hyper": {
         "name": "The Revolution Letter",
         "editor": "hyper-sense-directions",
         "prompt":
-          "A morning assault on the Capital Builing was a failure. The leader of the revolution has been captured. You, a reporter who has been covering the revolution, have been assigned to write the news brief, keeping in mind the many readers and their perspectives.",
+          "A morning assault on the Capitol Building was a failure. The leader of the revolution has been captured. You, a reporter who has been covering the revolution, have been assigned to write the news brief. <b> Keep in mind the many readers and their perspectives.",
         "initial-state": {
           "text": "People of the Nation,\n\n"
         },
@@ -33,7 +33,8 @@
       "Waste": {
         "name": "Waste",
         "editor": "poetris-direction",
-        "prompt": "Use your wasted words to compose something new."
+        "prompt": "Use your wasted words to compose something new.",
+        "sourceText": "This is an example "
       }
     }
   },

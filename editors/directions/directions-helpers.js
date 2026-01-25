@@ -66,11 +66,11 @@ async function loadLevels() {
     }
     
     // Update header with direction name
-    const directionsHeader = document.getElementById('directions-header');
-    if (directionsHeader && directions) {
+    const subtitleElement = document.querySelector('.subtitle');
+    if (subtitleElement && directions) {
         const directionData = directions.data[selectedDirection];
         const directionDisplayName = directionData?.name || selectedDirection;
-        directionsHeader.textContent = `Directions: ${directionDisplayName}`;
+        subtitleElement.textContent = directionDisplayName;
     }
     
     // Get progression state with level info for the selected direction
@@ -108,44 +108,53 @@ async function loadLevels() {
         
         // State 1: Locked
         if (!isUnlocked) {
-            return `<div class="level-box ${lockClass}">
-                <div class="level-lock">${lockIcon}</div>
+            return `<div class='level-box-wrapper ${lockClass}' id='level-${levelInfo.editorId.replace(/[^a-zA-Z0-9]/g, '-')}'>
+                <div class='level-box ${lockClass}'>
+                    <div class='level-lock'>${lockIcon}</div>
+                    <div class='level-name'>${displayName}</div>
+                    <div class='level-editor'>${project.name}</div>
+                </div>
+            </div>`;
+        }
+
+        // Create a unique ID for this level box to set aspect ratio after image loads
+        const levelBoxId = `level-${levelInfo.editorId.replace(/[^a-zA-Z0-9]/g, '-')}`;
+        
+        // Load image to get actual aspect ratio
+        const img = new Image();
+        img.onload = function() {
+            const aspectRatio = this.width / this.height;
+            const imageElement = document.querySelector(`#${levelBoxId} .level-image-behind`);
+            if (imageElement) {
+                imageElement.style.aspectRatio = aspectRatio;
+            }
+        };
+        img.src = imageUrl;
+        
+        // Check if this level is selected and has no documents
+        const isSelected = selectedLevelId === levelInfo.editorId;
+        const editorDocs = state ? state.getAllDocuments().filter(doc => 
+            doc.getField('sourceEditor') === levelInfo.editorId
+        ) : [];
+        const hasNoDocuments = editorDocs.length === 0;
+        const buttonName = hasNoDocuments ? 'Begin' : 'Overwrite';
+        const beginButton = isSelected 
+            ? `<button class="level-begin-action" onclick="replaceDocument('${levelInfo.editorId}', '${project.url}')">${buttonName}</button>` 
+            : '';
+        
+        const clickHandler = isSelected ? '' : `onclick="selectLevel('${levelInfo.editorId}', '${project.url}')"`;
+        const hoverHandler = isSelected ? '' : `onmouseover="selectLevel('${levelInfo.editorId}', '${project.url}')"`;
+        
+        return `<div class="level-box-wrapper ${selectedClass}" id="${levelBoxId}">
+            <div class="level-box ${completedClass} ${selectedClass}" ${clickHandler} ${hoverHandler}>
                 <div class="level-name">${displayName}</div>
                 <div class="level-editor">${project.name}</div>
-            </div>`;
-        }
-        
-        // State 2: Unlocked and completed (has image behind the box)
-        if (isCompleted && imageUrl) {
-            // Create a unique ID for this level box to set aspect ratio after image loads
-            const levelBoxId = `level-${levelInfo.editorId.replace(/[^a-zA-Z0-9]/g, '-')}`;
-            
-            // Load image to get actual aspect ratio
-            const img = new Image();
-            img.onload = function() {
-                const aspectRatio = this.width / this.height;
-                const imageElement = document.querySelector(`#${levelBoxId} .level-image-behind`);
-                if (imageElement) {
-                    imageElement.style.aspectRatio = aspectRatio;
-                }
-            };
-            img.src = imageUrl;
-            
-            return `<div class="level-box-wrapper ${selectedClass}" id="${levelBoxId}">
-                <div class="level-box ${completedClass} ${selectedClass}" onclick="selectLevel('${levelInfo.editorId}', '${project.url}')">
-                    <div class="level-name">${displayName}</div>
-                    <div class="level-editor">${project.name}</div>
-                </div>
-                <div class="level-image-behind" style="background-image: url('${imageUrl}');"></div>
+                ${beginButton}
+            </div>
+            ${isCompleted && imageUrl ? `<div class="level-image-behind" style="background-image: url('${imageUrl}');"></div>` : ''}
 
-            </div>`;
-        }
-        
-        // State 3: Unlocked but uncompleted (no documents yet, no preview)
-        return `<div class="level-box uncompleted ${selectedClass}" onclick="selectLevel('${levelInfo.editorId}', '${project.url}')">
-            <div class="level-name">${displayName}</div>
-            <div class="level-editor">${project.name}</div>
         </div>`;
+        
     }).join('');
     
     // Optionally show all other editors
@@ -510,13 +519,6 @@ function renderDocumentView({ documentId, editorId, editorUrl, documents }) {
                     saveDocumentTitle(mostRecentDoc.id, titleInput.value);
                 });
             }
-        } else {
-            // No documents yet
-            detailElement.innerHTML = `
-                <div class="detail-actions">
-                    <button onclick="replaceDocument('${editorId}', '${editorUrl}')">Begin</button>
-                </div>
-            `;
         }
         return;
     }
@@ -567,13 +569,16 @@ window.openDocument = async function(documentId) {
  * TODO: Implement document loading/editing in editor
  */
 window.editDocument = function(documentId, editorUrl) {
-    console.log('Edit document:', documentId, 'in editor:', editorUrl);
     // Mock: For now, just navigate to the editor
     // TODO: Set the document as current and load its content
     if (state) {
+        state.setMetadata('selectedDocumentId', documentId);
         state.setMetadata('dateModified', new Date().toISOString());
         state.saveToLocalStorage();
     }
+
+    console.log('Edit document:', documentId, 'in editor:', editorUrl);
+
     window.location.href = `/editors/${editorUrl}/`;
 };
 
@@ -596,18 +601,29 @@ window.deleteDocument = function(documentId) {
     if (!state) return;
     if (!confirm('Are you sure you want to delete this document?')) return;
     
+    // remove the level-image-behind
+    // TODO we shouldn't be uisng the editorId but the level id
+    let editorId = state.getDocument(documentId).getField('sourceEditor');
+    const levelImageBehind = document.querySelector(`#level-${editorId} .level-image-behind`);
+    if (levelImageBehind) {
+        levelImageBehind.remove();
+    }
+    
+    // remove the detail image
+    const detailElement = document.getElementById('documentDetail');
+    if (detailElement) {
+        detailElement.className = 'document-detail empty';
+        detailElement.style.display = 'none';
+    }
+
     state.removeDocument(documentId);
     state.setMetadata('dateModified', new Date().toISOString());
     state.saveToLocalStorage();
     
     selectedDocumentId = null;
     updateStateDisplay();
-    
-    const detailElement = document.getElementById('documentDetail');
-    if (detailElement) {
-        detailElement.className = 'document-detail empty';
-        detailElement.style.display = 'none';
-    }
+
+
 };
 
 // Initialize detail view as hidden

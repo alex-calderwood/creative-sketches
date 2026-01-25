@@ -77,12 +77,15 @@ export function dataUrlToBlob(dataUrl) {
  * @returns {Promise<void>}
  */
 export async function saveStateWithImage(state, save, documentId) {
-  if (!save || !documentId) return;
+  if (!save || !documentId) {
+    console.error('saveStateWithImage: save or documentId is missing', save, documentId);
+    return;
+  }
 
   // Capture screenshot for the save
   // Prefer #editor-container if it exists (captures absolutely positioned children)
   // Otherwise fall back to #editor (for editors without a container)
-  const editorElement = document.querySelector('#editor-container') || document.querySelector('#editor');
+  const editorElement = getPhotographableElement();
   if (editorElement) {
     const selector = editorElement.id ? `#${editorElement.id}` : null;
     const image = await captureScreenshot(selector);
@@ -94,10 +97,27 @@ export async function saveStateWithImage(state, save, documentId) {
   }
 
   const doc = save.getDocument(documentId);
-  if (doc) {
-    doc.setField('content', JSON.stringify(state));
-    doc.setField('lastModified', new Date().toISOString());
-    save.setMetadata('dateModified', new Date().toISOString());
-    save.saveToLocalStorage();
+  if (!doc) {
+    console.error('saveStateWithImage: document not found', documentId);
+    return;
   }
+
+  console.log('saveStateWithImage: saving state', state);
+  doc.setField('content', JSON.stringify(state));
+  doc.setField('lastModified', new Date().toISOString());
+  save.setMetadata('dateModified', new Date().toISOString());
+  save.saveToLocalStorage();
+
+  console.log('saveStateWithImage: saved state', save);
+}
+
+
+function getPhotographableElement() {
+  let editorElement = document.querySelector('#editor-container') || document.querySelector('#editor');
+
+  if (!editorElement) {
+    editorElement = document.querySelector(".photo-region");
+  }
+
+  return editorElement;
 }
