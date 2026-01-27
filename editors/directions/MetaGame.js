@@ -19,7 +19,7 @@ export class MetaGame {
     this.save = null;
     this.documentId = null;
     this.level = null;
-    this.levelKey = null;
+    this.levelId = null;
     this.directionName = null;
     this.progression = null;
     this.allLevels = null;
@@ -28,6 +28,8 @@ export class MetaGame {
       prompts: false,
       submit: false
     };
+
+    console.log("MetaGame: Project ID", projectId);
   }
 
   /**
@@ -38,6 +40,7 @@ export class MetaGame {
     // If no save exists, skip MetaGame and just run game standalone
     if (!GameplaySave.hasLocalStorage()) {
       await game.initialize();
+      console.log("No local storage found, skipping MetaGame");
       return;
     }
     
@@ -53,18 +56,47 @@ export class MetaGame {
     
     // Load directions to get initial state
     const directions = await Directions.fromFile('/editors/directions/directions.json');
-    this.level = this.findLevelForEditor(this.directionName, directions);
+    console.log('MetaGame.initialize() selected document id', this.save.getSelectedDocumentId());
 
-
+    // Get levelId - either from selected document or from save metadata
+    let levelId = null;
+    
     // Check if there is a current document id and it matches this editor
     if (this.save.getSelectedDocumentId()) {
       let documentId = this.save.getSelectedDocumentId();
-      // check that the document is of the same level
       let doc = this.save.getDocument(documentId);
       if (doc && doc.getField('sourceEditor') === this.projectId) {
         this.documentId = documentId;
+        // Get the level key from the document
+        levelId = doc.getField('levelId');
       }
     }
+
+    // If no levelId from document, check save metadata
+    if (!levelId) {
+      levelId = this.save.getMetadata('selectedlevelId');
+    }
+
+    // Use the levelId to load the correct level
+    if (levelId) {
+      this.levelId = levelId;
+      this.level = this.getLevelForKey(this.directionName, levelId, directions);
+      
+      // Verify that the level's editor matches this editor
+      if (this.level && this.level.editor !== this.projectId) {
+        console.error('Level editor mismatch', {
+          levelId,
+          levelEditor: this.level.editor,
+          currentEditor: this.projectId
+        });
+        this.level = null;
+        this.levelId = null;
+      }
+      
+    }
+
+    this.allLevels = directions.getLevels(this.directionName);
+    this.progression = directions.data[this.directionName].progression || [];
 
     if (!this.documentId) {
       this.documentId = this.createNewDocument(this.save, this.level);
@@ -77,7 +109,8 @@ export class MetaGame {
     await this.loadAndDisplayPrompts();
     
     //  initialize game with save and document (after prompt is displayed)
-    await this.game.initialize({ 
+    await this.game.initialize({
+      directionName: this.directionName,
       save: this.save, 
       documentId: this.documentId,
       level: this.level
@@ -124,6 +157,7 @@ export class MetaGame {
       createdAt: new Date().toISOString(),
       content: initialContent,
       sourceEditor: this.projectId,
+      levelId: this.levelId,  // Store the level key in the document
       title: 'Untitled'
     });
     save.addDocument(document);
@@ -131,22 +165,9 @@ export class MetaGame {
     return documentId;
   }
 
-  findLevelForEditor(directionName, directions) {
-    const directionData = directions.data[directionName];
+  getLevelForKey(directionName, levelId, directions) {
     const levels = directions.getLevels(directionName);
-
-    for (const [key, level] of Object.entries(levels)) {
-      if (level.editor === this.projectId) {
-        // Store everything we need for progression
-        this.directionName = directionName;
-        this.levelKey = key;
-        this.progression = directionData.progression || [];
-        this.allLevels = levels;
-        return level;
-      }
-    }
-    console.error('No level found for direction', directionName, this);
-    return null;
+    return levels.find(level => level.id === levelId) || null;
   }
 
   logLoadedComponents() {
@@ -161,10 +182,11 @@ export class MetaGame {
     const loaded = Object.keys(components).filter(k => components[k]).join(', ') || 'None';
     const notLoadedList = Object.keys(components).filter(k => !components[k]);
     
-    const directionInfo = this.directionName && this.levelKey 
-      ? ` | Direction: ${this.directionName}/${this.levelKey}` 
+    const directionInfo = this.directionName && this.levelId 
+      ? ` | Direction: ${this.directionName}/${this.levelId}` 
       : '';
-    console.log(`MetaGame [${this.projectId}] Doc: ${this.documentId || 'none'}${directionInfo}`);
+      // need to add the levelid to this
+    console.log(`MetaGame [${this.projectId}] Level: ${this.levelId} Doc: ${this.documentId || 'none'}${directionInfo}`);
     console.log(`  Loaded: ${loaded}`);
     if (notLoadedList.length > 0) {
       console.log(`  Not loaded: ${notLoadedList.join(', ')}`);
@@ -258,7 +280,7 @@ export class MetaGame {
       
       for (const directionName of directions.getDirectionNames()) {
         const levels = directions.getLevels(directionName);
-        const level = Object.values(levels).find(sub => sub.editor === this.projectId);
+        const level = levels.find(sub => sub.editor === this.projectId);
         
         if (level?.prompt) {
           this.populatePromptDisplay(level.prompt);
@@ -298,6 +320,8 @@ export class MetaGame {
       const submitButton = document.getElementById('submit-button');
       if (submitButton) {
         submitButton.addEventListener('click', () => this.handleSubmit());
+      } else {
+        console.error('No submit button found');
       }
     }
   }
@@ -370,10 +394,10 @@ export class MetaGame {
 
   async handleModalContinue() {
     // Mark current level as completed
-    if (this.save && this.levelKey) {
+    if (this.save && this.levelId) {
       const completedLevels = this.save.getMetadata('completedLevels') || [];
-      if (!completedLevels.includes(this.levelKey)) {
-        completedLevels.push(this.levelKey);
+      if (!completedLevels.includes(this.levelId)) {
+        completedLevels.push(this.levelId);
         this.save.setMetadata('completedLevels', completedLevels);
         this.save.saveToLocalStorage();
       }
@@ -384,12 +408,12 @@ export class MetaGame {
   }
 
   findNextEditor() {
-    if (!this.progression || !this.levelKey || !this.allLevels) {
+    if (!this.progression || !this.levelId || !this.allLevels) {
       return null;
     }
     
     // Find current position in progression
-    const currentIndex = this.progression.indexOf(this.levelKey);
+    const currentIndex = this.progression.indexOf(this.levelId);
     
     if (currentIndex === -1 || currentIndex >= this.progression.length - 1) {
       return null; // Last in progression or not found
@@ -397,7 +421,7 @@ export class MetaGame {
     
     // Get next level
     const nextKey = this.progression[currentIndex + 1];
-    const nextLevel = this.allLevels[nextKey];
+    const nextLevel = this.allLevels.find(level => level.id === nextKey);
     
     return nextLevel?.editor || null;
   }

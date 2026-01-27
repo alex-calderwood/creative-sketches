@@ -1,4 +1,4 @@
-import { DropperPerformance } from './DropperPerformance.js';
+import { SpellcheckPerformance } from './SpellcheckPerformance.js';
 
 export class Game {
   constructor() {
@@ -11,7 +11,7 @@ export class Game {
     this.documentId = options?.documentId;
     this.level = options?.level;
     this.directionName = options?.directionName;
-
+    
     let initialState = null;
     if (options.documentId) {
       let doc = this.save.getDocument(this.documentId);
@@ -19,32 +19,35 @@ export class Game {
       initialState = content ? JSON.parse(content) : null;
     }
 
-    let getEdits = () => {
-      let edits = this.save?.getEdits(this.directionName);
-      if (!edits) {
-        return null;
-      }
-
-      console.log("edits", edits);
-      return edits.map(edit => edit.text).join(' ');
-    }
-
-    let edits = getEdits();
-
-    console.log("directionName", this.directionName, "edits", edits);
-
-    this.performance = new DropperPerformance();
+  
+    this.performance = new SpellcheckPerformance();
     await this.performance.initialize({ 
-      corpusFile: this?.level?.corpusFile,
-      sourceText: edits || this?.level?.sourceText,
-      initialState: initialState,
+        checkDelay: 500,
+        squiggleColor: 'red',
+        dict: 'scowl',
+        reverse: true,
+        initialState: initialState,
+        onEdit: this.onEdit.bind(this),
       ...options
     });
+
+    this.performance.setElement(document.querySelector('#editor'));
+    this.performance.fromSCOWL();
   }
 
   // Called by MetaGame.js
   saveState() {
     if (!this.performance) return null;
+    if (!this.performance.getState) {
+        console.error("SpellcheckPerformance.getState is not implemented");
+        return null;
+    }
     return this.performance.getState();
   }
+
+  onEdit(edit) {
+    console.log("onEdit", edit);
+    this.save.addEdit({text: edit.text, directionName: this.directionName});
+    }
 }
+

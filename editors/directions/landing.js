@@ -131,6 +131,8 @@ window.continueGame = function() {
 window.loadSaveFile = function() {
     const fileInput = document.getElementById('fileInput');
     fileInput.click();
+    // call continueGame
+    window.continueGame();
 };
 
 document.getElementById('fileInput').addEventListener('change', async (e) => {
