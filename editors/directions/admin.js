@@ -30,12 +30,15 @@ function renderAdminView() {
     if (!adminContent) return;
     
     let html = '';
+
+    const allUnlocked = state?.getMetadata('allUnlocked') || false;
     
-    // Danger Zone
+    // Utilities
     html += `
         <div class="admin-section danger-zone">
             <h3>Utilities</h3>
             <button onclick="clearStorage()" class="danger-btn">Clear All Data</button>
+            ${allUnlocked ? '<button onclick="unlockAllLevels(false)" class="danger-btn">Un-Unlock All Levels</button>' : '<button onclick="unlockAllLevels(true)" class="danger-btn">Unlock All Levels</button>'}
         </div>
     `;
     
@@ -84,22 +87,20 @@ function renderAdminView() {
         directionNames.forEach(dirName => {
             const direction = directions.getDirection(dirName);
             const levels = directions.getLevels(dirName);
-            const levelNames = Object.keys(levels);
             
             html += `
                 <div class="direction-card">
                     <h4>${dirName}</h4>
                     <div><strong>Display Name:</strong> ${direction.name || 'N/A'}</div>
                     <div><strong>Progression:</strong> ${direction.progression ? direction.progression.join(' → ') : 'N/A'}</div>
-                    <div><strong>Levels:</strong> ${levelNames.length}</div>
+                    <div><strong>Levels:</strong> ${levels.length}</div>
                     <details style="margin-top: 1rem;">
                         <summary>View Level Details</summary>
                         <div style="padding-left: 1rem; padding-top: 1rem;">
-                            ${levelNames.map(levelName => {
-                                const level = levels[levelName];
+                            ${levels.map(level => {
                                 return `
                                     <div class="level-detail">
-                                        <strong>${levelName}</strong>
+                                        <strong>${level.name}</strong>
                                         <div style="margin-top: 0.5rem;"><strong>Name:</strong> ${level.name || 'N/A'}</div>
                                         <div><strong>Editor:</strong> ${level.editor || 'N/A'}</div>
                                         <div><strong>Prompt:</strong> ${level.prompt || 'N/A'}</div>
@@ -208,6 +209,15 @@ window.clearStorage = function() {
         alert('All data cleared. Redirecting to main page...');
         window.location.href = 'directions-menu.html';
     }
+};
+
+/**
+ * Unlock all levels
+ */
+window.unlockAllLevels = function(unlock=true) {
+    state.setMetadata('allUnlocked', unlock);
+    state.saveToLocalStorage();
+    renderAdminView();
 };
 
 /**

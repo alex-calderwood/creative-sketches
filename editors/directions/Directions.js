@@ -4,7 +4,7 @@ export class Directions {
     }
 
     getDirection(directionName) {
-        return this.data[directionName];
+    return this.data[directionName];
     }
 
     getDirectionNames() {
@@ -12,7 +12,18 @@ export class Directions {
     }
 
     getLevels(directionName) {
-        return this.data[directionName]?.levels || {};
+        let levels = this.data[directionName]?.levels || [];
+        return levels.map(level => {
+            return {
+                ...level,
+                id: level.id || this.nameToId(level.name),
+            };
+        });
+    }
+
+    nameToId(name) {
+        // make it html safe
+        return name.toLowerCase().replace(/[^a-zA-Z0-9]/g, '-');
     }
 
     static async fromFile(filepath) {

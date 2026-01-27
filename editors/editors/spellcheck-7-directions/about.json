@@ -1,0 +1,11 @@
+{
+    "name": "Antichecker Editor",
+    "description": "This spellchecker is updated to use the directions narrativization.",
+    "tags": {
+        "spellcheck": {"version": "7"},
+        "expand": {"version": "2"}
+    },
+    "image": "spellcheck.png",
+    "url": "spellcheck-directions",
+    "date": "2026-01-26"
+}

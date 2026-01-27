@@ -22,13 +22,21 @@
         </div>
 
         <!-- Existing Saves -->
-        <div class="landing-section" id="savesSection" style="display: none;">
-            <h2>Continue Game</h2>
-            <div id="saveInfo"></div>
-            <div class="button-group">
-                <button onclick="continueGame()">Continue</button>
-                <button onclick="loadSaveFile()">Load Save</button>
-                <button onclick="downloadSave()">Download Save</button>
+        <div class="landing-section" >
+                <h2>Continue Game</h2>
+                <div id="savesSection" style="display: none;">
+                <div id="saveInfo"></div>
+                <div class="button-group">
+                    <button onclick="continueGame()">Continue</button>
+                    <button onclick="downloadSave()">Download Save File</button>
+                </div>
+            </div>
+
+            <div id="loadSection">
+                <div id="saveInfo"></div>
+                <div class="button-group">
+                    <button onclick="loadSaveFile()">Load From Save File</button>
+                </div>
             </div>
         </div>
 

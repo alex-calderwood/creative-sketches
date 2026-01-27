@@ -54,6 +54,29 @@ export class GameplaySave {
         return this?.metadata?.selectedDocumentId || null;
     }
 
+    addEdit(edit) {
+        if (this.metadata.edits) {
+            this.metadata.edits.push(edit);
+        } else {
+            this.metadata.edits = [edit];
+        }
+    }
+
+    getEdits(directionName=null, levelId=null, editorId=null) {
+        if (directionName === null && levelId === null && editorId === null) {
+            console.error("getEdits() no query");
+            return [];
+        }
+        if (!this.metadata.edits) {
+            console.error("getEdits() no edits");
+            return [];
+        }
+        console.log("getEdits() directionName", directionName, this.metadata.edits);
+        return this.metadata.edits.filter(
+            edit => edit.levelId === levelId || edit.editorId === editorId || edit.directionName === directionName
+        );
+    }
+
     // Serialize to JSON string
     write() {
         const saveData = {
