@@ -198,21 +198,21 @@ app.get('/editors', (req, res) => {
 });
 
 // ELO Submission / cohesive narrative
-app.use('/editors/directions', serveStatic(path.join(__dirname, 'directions')));
+app.use('/editors/drifts', serveStatic(path.join(__dirname, 'drifts')));
 
-app.get('/editors/directions', (req, res) => {
-  const directionsPath = path.join(__dirname, 'directions', 'directions-menu.html');
-  fs.readFile(directionsPath, 'utf8', (err, data) => {
+app.get('/editors/drifts', (req, res) => {
+  const driftsPath = path.join(__dirname, 'drifts', 'drifts-menu.html');
+  fs.readFile(driftsPath, 'utf8', (err, data) => {
     if (err) {
-      console.error('Error reading direction landing page', err);
-      return res.status(500).send('Error loading directions page');
+      console.error('Error reading drift landing page', err);
+      return res.status(500).send('Error loading drifts page');
     }
     res.send(data);
   });
 });
 
-app.get('/editors/new-direction', (req, res) => {
-  const landingPath = path.join(__dirname, 'directions', 'landing.html');
+app.get('/editors/new-drift', (req, res) => {
+  const landingPath = path.join(__dirname, 'drifts', 'landing.html');
   fs.readFile(landingPath, 'utf8', (err, data) => {
     if (err) {
       console.error('Error reading landing page', err);

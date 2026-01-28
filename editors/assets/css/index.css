@@ -27,16 +27,28 @@ body {
     background-attachment: scroll;
     background-repeat: repeat-y;
     margin: 0px;
-    height: 90vh;
-    align-items: flex-start;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .main-content {
     flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
+    min-height: 0;
+    overflow: hidden;
 }
+
+.side-by-side {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    min-height: 0;
+    gap: 1rem;
+}
+
 
 .header {  
     width: var(--width-1);
@@ -77,7 +89,7 @@ body {
     }
 }
 
-.directions-link {
+.drifts-link {
     width: var(--width-1);
     font-family: var(--header-font);
     color: var(--header-color);
@@ -88,7 +100,7 @@ body {
 
     
 }
-.directions-link a {
+.drifts-link a {
     color: var(--header-color);
     font-weight: var(--header-font-weight);
     font-size: 1rem;
@@ -103,7 +115,7 @@ body {
     border-radius: 3px;
     background-color: #fff;
 }
-.directions-link p {
+.drifts-link p {
     font-size: 0.5rem;
     color: var(--header-color);
     margin: auto auto;
@@ -462,33 +474,28 @@ body {
 }
 
 .document-detail {
-    width: var(--width-1);
-    margin: 2rem auto;
-    padding: 2rem;
+    width: 40%;
+    height: 100%;
     background-color: white;
-    /* border-radius: var(--border-radius);
-    border: 0.5px solid var(--header-color); */
     font-family: var(--header-font);
     color: var(--text-color);
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.spacer {
+    height: 20vh;
 }
 
 .detail-actions.empty button {
-        width: 100%;
+    width: 100%;
 }
 
 .document-detail.empty {
-    opacity: 0.5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--header-color);
-    font-size: 0.7rem;
-    font-style: italic;
+    
 }
 
 .document-header {
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
     border-bottom: 0.5px solid var(--header-color);
 }
 
@@ -506,7 +513,9 @@ body {
 }
 
 .document-title-input {
-    width: 100%;
+    width: 4rem;
+    /* elipses */
+    text-overflow: ellipsis;
     padding: 0.6rem 0;
     border: none;
     font-size: 1rem;
@@ -514,7 +523,10 @@ body {
     background: transparent;
     font-family: var(--header-font);
     color: var(--text-color);
-    margin-bottom: 0.8rem;
+}
+
+.document-title-input:focus {
+    width: 100%;
 }
 
 .document-title-input:focus {
@@ -627,7 +639,7 @@ body {
 
 .image-preview {
     margin: 1.5rem 0;
-    max-width: 100%;
+    max-width: calc(100% - 2rem);
     text-align: center;
 }
 
@@ -638,35 +650,24 @@ body {
 }
 
 .levels-container {
+    width: 60%;
     display: flex;
     flex-wrap: wrap;
-    gap: 1.5rem;
+    row-gap: 0rem;
+    column-gap: 1.5rem;
     justify-content: center;
+    overflow-y: auto;
+    height: 100%;
+    align-content: flex-start;
 }
 
 .level-box-wrapper {
     position: relative;
-    width: 12rem;
-    height: 4rem;
-    margin-bottom: 30vh;
-
+    height: 20rem;
+    width: calc(20rem * 8.5 / 11);
+    margin-bottom: 3rem;
 }
 
-.level-image-behind {
-    position: relative;
-    width: 85%;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    border-radius: var(--border-radius);
-    transform: rotate(-3deg);
-    z-index: 0;
-    transition: transform 0.3s ease;
-}
-
-.level-box-wrapper:hover .level-image-behind {
-    transform: rotate(-4deg) translateY(4px);
-}
 
 .level-box {
     width: 100%;
@@ -679,12 +680,30 @@ body {
     background-color: white;
     border-radius: var(--border-radius);
     border: 0.5px solid var(--header-color);
-    transition: all 0.3s ease;
     position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
     cursor: pointer;
     font-family: var(--header-font);
 }
 
+.level-image-inside {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: top;
+    /* opacity: 0.3; */
+    z-index: 0;
+    border-radius: var(--border-radius);
+}
+
+.level-box > *:not(.level-image-inside) {
+    position: relative;
+    z-index: 1;
+}
 
 .level-box.locked {
     opacity: 0.4;
@@ -693,21 +712,27 @@ body {
 
 .level-box.selected {
     border: 1.4px solid var(--header-color);
-    transform: scale(1.05);
 }
 
 .level-box-wrapper.selected .level-box {
     border: 1.4px solid var(--header-color);
-    transform: scale(1.05);
 }
 
 .level-box:not(.locked):hover {
-    transform: scale(1.05);
     box-shadow: 0 4px 16px rgba(0,0,0,0.1);
 }
 
 .level-box.completed:hover {
-    transform: scale(1.05);
+
+}
+
+.level-info {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
 .level-name {
@@ -729,7 +754,7 @@ body {
     font-size: 0.8rem;
 }
 
-.direction-header {
+.drift-header {
     width: 100%;
     font-size: 1rem;
     font-weight: var(--header-font-weight);
@@ -851,7 +876,7 @@ button:active {
     background-color: #f0f0f0;
 }
 
-.direction-option {
+.drift-option {
     padding: 1rem;
     margin: 0.5rem 0;
     background-color: var(--accent-color);
@@ -860,17 +885,17 @@ button:active {
     font-size: 0.6rem;
 }
 
-.direction-option.clickable {
+.drift-option.clickable {
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
-.direction-option.clickable:hover {
+.drift-option.clickable:hover {
     transform: scale(1.02);
     box-shadow: 0 4px 16px rgba(0,0,0,0.1);
 }
 
-.direction-desc {
+.drift-desc {
     margin-top: 0.5rem;
     font-size: 0.5rem;
     color: var(--header-color);

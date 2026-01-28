@@ -14,7 +14,7 @@
   "concrete": {
     "description": "Concrete poetry editors with spatial and visual text"
   },
-  "directions": {
-    "description": "Text editors exploring directional constraints"
+  "drifts": {
+    "description": "Text editors exploring driftal constraints"
   }
 }

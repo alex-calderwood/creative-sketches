@@ -24,14 +24,15 @@
   </div>
 
   <div id="editor-container">
-    <div id="editor" spellcheck="false" ></div>
+    <div id="editor"></div>
   </div>
 
   <script type="module">
-    import { Game } from './src/game.js';
+    import { Game } from './game.js';
     import { MetaGame } from '/editors/drifts/MetaGame.js';
     
     const PROJECT_ID = '$PROJECT_ID';
+    console.log('PROJECT_ID:', PROJECT_ID);
     
     document.addEventListener('DOMContentLoaded', async () => {
       const game = new Game();

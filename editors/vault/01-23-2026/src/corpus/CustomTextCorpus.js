@@ -12,6 +12,7 @@ export class CustomTextCorpus extends TextCorpus {
     this.exclude = exclude;
     this.include = include;
     this.texts = [];
+    return this;
   }
 
   /**
@@ -89,8 +90,9 @@ export class CustomTextCorpus extends TextCorpus {
    * Set custom user-provided text
    */
   setCustomText(text, title = 'Custom Text') {
-    this.setText(text);
     this.source = title;
+    this.setText(text);
+    return this;
   }
 
   /**

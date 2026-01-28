@@ -4,9 +4,9 @@
     "notes": "",
     "tags": {
         "hyper": {"version": "5"},
-        "directions": {"version": "6"}
+        "drifts": {"version": "6"}
     },
-    "url": "hyper-sense-directions",
+    "url": "hyper-sense-drifts",
     "image": "hyper.png",
     "date": "2026-01-20",
     "major": true
