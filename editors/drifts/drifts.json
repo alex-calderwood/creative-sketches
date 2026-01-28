@@ -1,0 +1,63 @@
+{
+  "revolutionary": {
+    "name": "The Revolutionary",
+    "progression": ["letter", "concrete", "social", "four", "waste"],
+    "levels": [
+      {
+        "id": "letter",
+        "name": "The Revolution Letter",
+        "editor": "hyper-sense-drifts",
+        "prompt":
+          "A morning assault on the Capitol Building was a failure. The leader of the revolution has been captured. You, a reporter who has been covering the revolution, have been assigned to write the news brief. <b> Keep in mind the many readers and their perspectives.",
+        "initial-state": {
+          "text": "People of the Nation,\n\n"
+        },
+        "replacements": {
+          "you": "I",
+          "your": "my",
+          "you're": "I'm",
+          "you've": "I've",
+          "you'd": "I'd",
+          "you'll": "I'll"
+        }
+      }, 
+      {
+        "id": "concrete",
+        "name": "Many Voices in Space",
+        "editor": "concrete-drifts",
+        "prompt": "Many voices have rallied around your last post. You note their diverse reactions in your journal. (Explore this editor by writing in different locations.)"
+      },
+      {
+        "id": "social",
+        "name": "Social Imagination",
+        "editor": "concrete-wall",
+        "prompt": "As the news continues to proliferate, you imagine your words overlapping and merging with the many voices of the day. Illustrate this in words."      
+      },
+      {
+        "id": "four",
+        "name": "Four-Dimensional Word Play",
+        "editor": "concrete-wall",
+        "prompt": "As the news continues to proliferate, you imagine your words overlapping and merging with the many voices of the day. Illustrate this in words."      
+      }
+    ]
+  },
+  "Next": {
+    "name": "Next",
+    "progression": ["one", "waste"],
+    "levels": [
+      {
+        "id": "one",
+        "name": "Gathering Waste",
+        "editor": "spellcheck-drifts",
+        "prompt": "Are any words a waste?"     
+      },
+      {
+        "id": "waste",
+        "name": "Waste",
+        "editor": "poetris-drift",
+        "prompt": "Use your wasted words to compose something new.",
+        "sourceText": "Runoff is the flow of water across the earth, and is a major component in the hydrological cycle. Runoff that flows over land before reaching a watercourse is referred to as surface runoff or overland flow. Once in a watercourse, runoff is referred to as streamflow, channel runoff, or river runoff. Urban runoff is surface runoff created by urbanization. A detailed diagram depicting the global water cycle. The direction of movement of water between reservoirs tends towards upwards movement through evapotranspiration and downward movement through gravity. The diagram also shows how human water use impacts where water is stored and how it moves. The water cycle (or hydrologic cycle or hydrological cycle) is a biogeochemical cycle that involves the continuous change in form of water on, above and below the surface of the Earth across different reservoirs. The mass of water on Earth remains fairly constant over time. However, the partitioning of the water into the major reservoirs of ice, fresh water, salt water and atmospheric water is variable and depends on climatic variables. The water moves from one reservoir to another, such as from river to ocean, or from the ocean to the atmosphere due to a variety of physical and chemical processes. The processes that drive these movements, or fluxes, are evaporation, transpiration, condensation, precipitation, sublimation, infiltration, surface runoff, and subsurface flow. In doing so, the water goes through different phases: liquid, solid (ice) and vapor. The ocean plays a key role in the water cycle as it is the source of 86% of global evaporation. The water cycle is driven by energy exchanges in the form of heat transfers between different phases. The energy released or absorbed during a phase change can result in temperature changes. Heat is absorbed as water transitions from the liquid to the vapor phase through evaporation. This heat is also known as the latent heat of vaporization. Conversely, when water condenses or melts from solid ice it releases energy and heat. On a global scale, water plays a critical role in transferring heat from the tropics to the poles via ocean circulation."
+      }
+    ]
+  }
+}

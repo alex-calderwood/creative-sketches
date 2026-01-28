@@ -1,9 +1,0 @@
-{
-    "name": "Wall Editor",
-    "description": "A very simple text editor for creating concrete poetry on a grid. Updated to use the directions narrativization.",
-    "series": ["concrete", "directions"],
-    "version": "2",
-    "image": "thing.png",
-    "url": "concrete-directions",
-    "date": "2026-01-16"
-}
