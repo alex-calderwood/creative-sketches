@@ -7,7 +7,7 @@ import { MetaGameControls } from '/editors/drifts/MetaGameControls.js';
 import { GameplaySave } from '/editors/drifts/GameplaySave.js';
 import { Drifts } from '/editors/drifts/Drifts.js';
 import { Document } from '/editors/drifts/Document.js'
-import { saveStateWithImage, setChosenDocumentForLevel } from '/editors/drifts/utils/utils.js';
+import { saveStateWithImage, retrieveTextFromDrift, setChosenDocumentForLevel, getChosenDocumentForLevel} from '/editors/drifts/utils/utils.js';
 
 
 export class MetaGame {
@@ -107,14 +107,19 @@ export class MetaGame {
     
     // Load progression prompts
     await this.loadTemplate();
-    await this.loadAndDisplayPrompts();
+    await this.loadAndDisplayPrompts(this.save, this.level);
+    await this.populateSubmitButton();
+    await this.createModal();
+
+    let settingsOverride = this?.level?.settings || {};
     
     //  initialize game with save and document (after prompt is displayed)
     await this.game.initialize({
       driftName: this.driftName,
       save: this.save, 
       documentId: this.documentId,
-      level: this.level
+      level: this.level,
+      ...settingsOverride,
     });
 
     // Initialize controls
@@ -148,9 +153,13 @@ export class MetaGame {
     
     // Get initial content from level and convert to state format
     let initialContent = '';
-    if (level?.['initial-state']) {
-      // Convert initial-state to proper state object format
-      const stateObj = level['initial-state'];
+
+    if (level?.['initialState']) {
+      // Convert initialState to proper state object format
+      const stateObj = level['initialState'];
+      if (stateObj?.text?.queryType != null) {
+        stateObj.text = retrieveTextFromDrift(save, stateObj?.text);
+      }
       initialContent = JSON.stringify(stateObj);
     }
     
@@ -176,7 +185,7 @@ export class MetaGame {
       Controls: this.loaded.controls,
       Prompts: this.loaded.prompts,
       Submit: this.loaded.submit,
-      InitialState: this.level?.['initial-state'],
+      InitialState: this.level?.['initialState'],
       Autosave: this.game
     };
     
@@ -275,25 +284,25 @@ export class MetaGame {
     }
   }
 
-  async loadAndDisplayPrompts() {
+  async loadAndDisplayPrompts(save, level) {
     try {
-      const drifts = await Drifts.fromFile('/editors/drifts/drifts.json');
+      let prompt = this.getPromptFromLevel(save, level);
       
-      for (const driftName of drifts.getDriftNames()) {
-        const levels = drifts.getLevels(driftName);
-        const level = levels.find(sub => sub.editor === this.projectId);
-        
-        if (level?.prompt) {
-          this.populatePromptDisplay(level.prompt);
-          this.populateSubmitButton();
-          this.createModal();
-          return;
-        }
+      if (prompt) {
+        this.populatePromptDisplay(prompt);
       }
+      
+      return;
     } catch (error) {
       console.error('Error loading prompts:', error);
     }
   }
+
+  getPromptFromLevel(save, level) {
+    let prompt = retrieveTextFromDrift(save, level?.prompt);
+    return prompt;
+  }
+
 
   populatePromptDisplay(promptHtml) {
     // some editors have a prompt-container
@@ -304,8 +313,8 @@ export class MetaGame {
 
     const promptDisplay = document.getElementById('prompt-display');
     if (promptDisplay) {
-      promptDisplay.innerHTML = promptHtml;
-      promptDisplay.style.display = 'block';
+      
+      promptDisplay.innerHTML = promptHtml?.replaceAll("\n", "<br><br>");
       this.loaded.prompts = true;
     }
   }

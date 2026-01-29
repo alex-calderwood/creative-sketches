@@ -130,10 +130,9 @@ export class HyperSkipTextStreamComponent extends TextStreamComponent {
       clearTimeout(this.popTimeoutId);
       this.popTimeoutId = null;
     }
-    
-    for (let tokenId in this.tokensToBlocks) {
-      let token = this.tokensToBlocks[tokenId];
-      token.remove();
+    for (let token of this.tokens) {
+      let block = this.tokensToBlocks[token.id];
+      block.remove();
     }
     this.tokensToBlocks = {};
     this.tokens = [];
@@ -216,7 +215,7 @@ export class HyperSkipTextStreamComponent extends TextStreamComponent {
       let curToken = this.tokens[i];
       let block = this.tokensToBlocks[curToken.id];
       if (!block) {
-        console.error("TextStreamComponent.render(): null token at index", i, this.tokens);
+        console.error("TextStreamComponent.render(): null block at index", i, this.tokens, this.tokensToBlocks);
         continue;
       }
 
@@ -251,6 +250,7 @@ export class HyperSkipTextStreamComponent extends TextStreamComponent {
   }
 
   blockFromToken(token, left=null, top=null, width=null, height=null) {
+
     left = left ?? this.params.from.left;
     top = top ?? this.params.from.top;
     width = width ?? this.params.blockWidth;
@@ -269,11 +269,11 @@ export class HyperSkipTextStreamComponent extends TextStreamComponent {
     // Block's position will now be relative to container
     if (this.container && block) {
       this.container.appendChild(block);
+      this.tokensToBlocks[token.id] = block;
     } else {
-      console.error("TextStreamComponent.blockFromToken(): no container or block", {container: this.container, block})
+      console.error("TextStreamComponent.blockFromToken(): no container or block", {container: this.container, block, token})
     }
 
-    this.tokensToBlocks[token.id] = block;
     return block;
   }
   
@@ -287,9 +287,10 @@ export class HyperSkipTextStreamComponent extends TextStreamComponent {
     
     // Recreate container after empty()
     this.createContainer();
-    
+
     // Add each token to our tracking
     tokens.forEach(token => {
+
       this.blockFromToken(token);
       this.tokens.push(token);
     });

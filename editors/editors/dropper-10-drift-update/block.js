@@ -11,6 +11,8 @@
 const DELETE_SCALE_MOD = {x: 0.1, y: 0.1};
 const I_SCALE_MOD = {x: 0.7, y: 1};
 
+const PARENT = document.querySelector("#game");
+
 /**
  * Convert a MIDI note (0-127) to an HSV hue value (0-360)
  * @param {number} note - MIDI note number (0-127)
@@ -115,7 +117,6 @@ function getColorFromCSS(key) {
 }
 
 export function getColor(key) {
-    console.log('getColor() called with key:', key);
     key = key ? key.toLowerCase() : key;
     
     let color = getColorFromCSS(key);
@@ -149,7 +150,6 @@ function getColorKeyFromHash(key) {
 // a standard JS hash function to create a deterministic number from the key.
 // This is DJB2: fast, robust, and widely used for string hashing.
 function getHash(key) {
-    console.log('getHash() called with key:', key);
     let hash = 5381;
     for (let i = 0; i < key.length; i++) {
         hash = ((hash << 5) + hash) + key.charCodeAt(i); // hash * 33 + char
@@ -178,8 +178,6 @@ export function createBlockAt(token, left, top, width, height, colorBy = "pos") 
         blockElt.classList.add(wordType);
     }
 
-    console.log('createBlockAt() called with wordType:', token)
-
     let colorKey;
     if (wordType === "constraint" && token.constraint) {
         let constraintType = token.constraint.type;
@@ -202,7 +200,7 @@ export function createBlockAt(token, left, top, width, height, colorBy = "pos") 
     blockElt.style.width = `${width}px`;
     blockElt.style.fontSize = `${height}px`;
 
-    document.body.appendChild(blockElt);
+    PARENT.appendChild(blockElt);
 
     const blockWordElement =  document.createElement('div');
     blockWordElement.classList.add('block-word');
@@ -373,7 +371,7 @@ export function moveTo(element, leftPx, topPx, speed=500, resetTransform=false, 
     newElement.style.width = `${width}px`;
     newElement.style.height = `${height}px`;
   
-    document.body.appendChild(newElement); 
+    PARENT.appendChild(newElement); 
   
     word.ghost = newElement;
   

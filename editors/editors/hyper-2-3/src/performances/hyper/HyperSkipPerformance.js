@@ -11,7 +11,7 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
         super();
         this.params = { 
             streamLength: 3,
-            baseWidth: BasicEditor.calcBaseWidth(this),
+            baseHeight: BasicEditor.calcBaseHeight(this),
 
             hideEditorText: true,  // whether to hide the editor text
             drawOutlines: false,
@@ -167,11 +167,12 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
     }
 
     getState() {
-        let text = this.editor?.innerText || '';
+        let original = this.editor?.innerText || '';
         let alternate = this.getAlternateText() || '';
         let save = {
-            text: text,
-            alternate: alternate
+            text: alternate,
+            alternate: alternate,
+            original: original,
         };
         return save;
     }

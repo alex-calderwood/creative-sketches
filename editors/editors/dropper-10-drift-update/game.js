@@ -29,6 +29,9 @@ export class Game {
     }
 
     let edits = getEdits();
+    if (!edits.length) {
+      edits = this?.level?.editsBackup
+    }
 
     this.performance = new DropperPerformance();
     await this.performance.initialize({ 
@@ -40,7 +43,7 @@ export class Game {
           // kind: 'corpusFile',
         },
         {
-          name: 'edits',
+          name: 'mistake',
           text: edits,
         },
       ],

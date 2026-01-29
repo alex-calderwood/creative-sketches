@@ -1,7 +1,7 @@
 import { ProjectsHelper } from './utils/projectsHelper.js';
 import { GameplaySave } from '/editors/drifts/GameplaySave.js';
 import { Drifts } from './Drifts.js';
-import { setChosenDocumentForLevel } from './utils/utils.js';
+import { setChosenDocumentForLevel, getChosenDocumentForLevel } from './utils/utils.js';
 
 
 // Debug views
@@ -11,21 +11,6 @@ let save = null;
 let selectedDocumentId = null;
 let selectedLevelId = null;
 let drifts = null;
-
-/**
- * Get the chosen document for a level from metadata
- */
-function getChosenDocumentForLevel(save, levelId) {
-    if (!save) return null;
-    
-    const chosenDocuments = save.getMetadata('chosenDocuments') || {};
-    const chosenDocId = chosenDocuments[levelId];
-    
-    if (!chosenDocId) return null;
-    
-    return save.getDocument(chosenDocId);
-}
-
 
 
 function showError(message, ...args) {
@@ -441,6 +426,8 @@ function renderDocumentCard(doc, level, editorUrl) {
     const isChosen = chosenDoc && chosenDoc.id === doc.id;
     const selectButtonText = isChosen ? '✓ Chosen' : 'Select Document';
     const selectButtonClass = isChosen ? 'chosen-document' : '';
+
+    console.log(contentPreview)
     
     return `
         ${imagePreview}

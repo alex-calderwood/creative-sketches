@@ -136,6 +136,8 @@ export class DropperPerformance extends SettingsMixin(class {}) {
       { name: 'numRows', type: 'number', description: 'Number of rows' },
     ];
 
+    this.parent = document.querySelector("#game");
+
     // Grid positioning constants
     this.params.gridWidth = window.innerWidth - this.params.gridStartX;
     this.params.gridHeight = window.innerHeight - this.params.gridStartY - this.params.gridEndGap;
@@ -381,7 +383,7 @@ export class DropperPerformance extends SettingsMixin(class {}) {
 
     this.state.currentBlockLeft = newLeft;
 
-    this.drawCurColumn(this.state.curX);
+    this.drawColumnIndicator(this.state.curX);
 
     // resizeToken(this.state.currentBlock, this.columnWidths[this.state.curX], this.columnHeights[0]);
     moveTo(this.state.currentBlock, newLeft, newTop, this.arrowSpeed, false, 'ease-in-out');
@@ -602,7 +604,7 @@ export class DropperPerformance extends SettingsMixin(class {}) {
     this.state.currentBlock = block;
     this.state.currentBlock.classList.add('current-token');
 
-    this.drawCurColumn(this.state.curX);
+    this.drawColumnIndicator(this.state.curX);
 
     // Move the new current block
     moveTo(block, this.state.currentBlockLeft, this.state.currentBlockTop, this.arrowSpeed, false, 'ease-in-out');
@@ -612,14 +614,14 @@ export class DropperPerformance extends SettingsMixin(class {}) {
     this.wordTail.component.move(to);
   }
 
-  drawCurColumn(col) {
+  drawColumnIndicator(col) {
     let columnElt;
     // get it or create it 
     columnElt = document.querySelector('.column');
     if (!columnElt) {
       columnElt = document.createElement('div');
       columnElt.classList.add('column');
-      document.body.appendChild(columnElt);
+      this.parent.appendChild(columnElt);
     }
 
     let colColor;

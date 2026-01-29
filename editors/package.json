@@ -10,7 +10,7 @@
     "server": "node server.js",
     "wordhoard-server": "python words/synonyms.py",
     "get-synonyms": "node words/synonyms-cli.js",
-    "servers": "concurrently \"node server.js\" \"python words/synonyms.py\"",
+    "servers": "concurrently \"python words/synonyms.py\" \"node server.js\" ",
     "kill-servers": "lsof -ti:3008,3019 | xargs kill -9 2>/dev/null || true"
   },
   "keywords": [],

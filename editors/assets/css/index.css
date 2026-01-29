@@ -38,6 +38,9 @@ body {
     flex-direction: column;
     align-items: stretch;
     min-height: 0;
+}
+
+.main-content.drifts {
     overflow: hidden;
 }
 
@@ -48,7 +51,6 @@ body {
     min-height: 0;
     gap: 1rem;
 }
-
 
 .header {  
     width: var(--width-1);
@@ -64,6 +66,14 @@ body {
         font-size: 1rem;
         margin-bottom: 0.5rem;
     }
+}
+
+.subheader {
+    width: var(--width-1);
+    margin: 0 auto;
+    padding: 1rem 0;
+    font-family: var(--header-font);
+    color: var(--header-color);
 }
 
 .subtitle {
@@ -97,9 +107,8 @@ body {
     display: flex;
     flex-direction: row;
     margin-bottom: 1rem;
-
-    
 }
+
 .drifts-link a {
     color: var(--header-color);
     font-weight: var(--header-font-weight);
@@ -626,6 +635,8 @@ body {
     border-radius: var(--border-radius);
     margin: 1rem 0;
     border: 0.5px solid var(--header-color);
+    /* need to show /n */
+    white-space: pre-line;
 }
 
 #document-title-input {
@@ -841,7 +852,7 @@ button:active {
 
 .landing-container {
     max-width: var(--width-1);
-    margin: 2rem auto;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
 }

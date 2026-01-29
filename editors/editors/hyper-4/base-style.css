@@ -38,8 +38,8 @@ body {
   box-sizing: border-box;
   font-family: var(--font);
   background-color: var(--background-color);
-  color: var(--text-color-1);
-  border-bottom: 2px solid var(--text-color-1);
+  color: var(--text-color);
+  border-bottom: 2px solid var(--text-color);
 
   padding: 0.5vh 1vw;
   z-index: 1000;
@@ -89,12 +89,12 @@ body {
 
 .modal-content {
   background: var(--background-color);
-  border: 2px solid var(--text-color-1);
+  border: 2px solid var(--text-color);
   min-width: 250px;
 }
 
 .modal-header {
-  background: var(--text-color-1);
+  background: var(--text-color);
   color: var(--background-color);
   padding: 8px 12px;
   display: flex;
@@ -127,7 +127,7 @@ body {
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  color: var(--text-color-1);
+  color: var(--text-color);
   font-size: 14px;
 }
 
@@ -136,8 +136,8 @@ body {
   width: 80px;
   padding: 4px 8px;
   background: transparent;
-  border: 1px solid var(--text-color-1);
-  color: var(--text-color-1);
+  border: 1px solid var(--text-color);
+  color: var(--text-color);
   font-size: 14px;
 }
 
@@ -148,7 +148,7 @@ body {
 
 .modal-body select option {
   background: var(--background-color);
-  color: var(--text-color-1);
+  color: var(--text-color);
 }
 
 .modal-footer {
@@ -158,14 +158,14 @@ body {
 }
 
 .submit-btn {
-  background: var(--text-color-1);
+  background: var(--text-color);
   color: var(--background-color);
-  border: 2px solid var(--text-color-1);
+  border: 2px solid var(--text-color);
   padding: 6px 20px;
   cursor: pointer;
 }
 
 .submit-btn:hover {
   background: transparent;
-  color: var(--text-color-1);
+  color: var(--text-color);
 }

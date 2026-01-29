@@ -241,7 +241,7 @@ To enable prompts and submit workflows, add your editor to `drifts.json`:
       "task-1": {
         "editor": "my-editor-id",
         "prompt": "Write a story about...",
-        "initial-state": {
+        "initialState": {
           "text": "Once upon a time,\n\n"
         }
       }
@@ -253,7 +253,7 @@ To enable prompts and submit workflows, add your editor to `drifts.json`:
 When a save exists and the editor is configured in drifts.json:
 - Prompt appears in `#prompt-display`
 - Submit button appears in `#submit`
-- New documents start with `initial-state.text`
+- New documents start with `initialState.text`
 
 ## Behavior Without Save
 
@@ -274,7 +274,7 @@ MetaGame uses these CSS variables (define in your stylesheet):
   --font: 'Your Font', sans-serif;
   --primary-color: #000;
   --background-color: #fff;
-  --text-color-1: #000;
+  --text-color: #000;
   --button-color: #000;
   --highlight: #eee;
 }

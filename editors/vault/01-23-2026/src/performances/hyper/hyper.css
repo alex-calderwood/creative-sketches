@@ -10,7 +10,7 @@
 :root[data-theme="dark"] {
     --background-color: #000000;
     --background-color-2: #000000;
-    --text-color-1: #ffffff;
+    --text-color: #ffffff;
     --text-color-2: #000000;
     --primary-color: #ffffff;
     --accent-color: #ffffff;
@@ -30,7 +30,7 @@
 :root[data-theme="light"] {
     --background-color: #ffffff;
     --background-color-2: #ffffff;
-    --text-color-1: #000000;
+    --text-color: #000000;
     --text-color-2: #ffffff;
     --primary-color: #000000;
     --accent-color: #000000;
@@ -308,7 +308,7 @@
   
   .modal-body {
     font-family: Garamond, "EB Garamond", "Adobe Garamond Pro", serif;
-    color: var(--text-color-1);
+    color: var(--text-color);
     padding: 5px;
     gap: 2px;
     font-size: 16px;
@@ -322,21 +322,21 @@
     flex-direction: column;
     gap: 8px;
     padding: 16px;
-    border-left: 2px solid var(--text-color-1);
+    border-left: 2px solid var(--text-color);
     margin-left: 8px;
   }
   
   .option-group label {
     font-family: var(--font);
-    color: var(--text-color-1);
+    color: var(--text-color);
     font-size: 16px;
   }
   
   .option-group select {
     font-family: var(--font);
     background-color: transparent;
-    border: 2px solid var(--text-color-1);
-    color: var(--text-color-1);
+    border: 2px solid var(--text-color);
+    color: var(--text-color);
     padding: 8px;
     font-size: 14px;
     cursor: pointer;
@@ -352,7 +352,7 @@
   
   .option-description {
     font-family: Garamond, "EB Garamond", "Adobe Garamond Pro", serif;
-    color: var(--text-color-1);
+    color: var(--text-color);
     font-size: 14px;
     line-height: 1.5;
     margin: 4px 0 0 0;
@@ -392,7 +392,7 @@
     display: block;
     margin-bottom: 8px;
     font-weight: bold;
-    color: var(--text-color-1);
+    color: var(--text-color);
   }
   
   .modal-body textarea {
@@ -501,7 +501,7 @@
     min-height: 100%;
     box-sizing: border-box;
     background-color: var(--background-color);
-    color: var(--text-color-1);
+    color: var(--text-color);
     font-family: var(--game-font);
     font-size: 16px;
     border: 1.2px solid var(--primary-color);
@@ -516,7 +516,7 @@
 
   #editor.text-hidden {
     color: transparent;
-    caret-color: var(--text-color-1);
+    caret-color: var(--text-color);
   }
 
   #overlay {
@@ -532,5 +532,5 @@
 
   .word-overlay {
     font-family: var(--game-font);
-    color: var(--text-color-1);
+    color: var(--text-color);
   }

@@ -62,9 +62,13 @@
     <!-- Drift Selection Modal -->
     <div id="drift-selection-modal" class="options-modal" style="display: none;">
         <div class="options-content">
-            <h2>Choose a Drift</h2>
+            <h2>Which Drift would you like to play?</h2>
             <div class="new-game-section">
                 <div id="driftsOptions"></div>
+            </div>
+            <div class="new-game-section">
+                <h3>Or, interact with the full suite of editors in sandbox mode</h3>
+                <button class="options-link" onclick="window.location.href='/editors'">The Writer's Project</button>
             </div>
             <button onclick="closeDriftSelection()" class="close-options-btn">Cancel</button>
         </div>
@@ -76,14 +80,19 @@
             <h2>About Drifts</h2>
             <p>Drifts is a creative writing game.</p>
 
-            <p>You can choose how to interpret the prompts it will provide to you. It works best when you come to it with a poetic disposition.</p>
+            <p>The game is intended to be used as a way to disrupt your own creative writing practice. Your experience will be shaped by your interpretation of the prompts. You will have a different experience if you know what to expect, so you may want to try a few runs before committing to each page.</p>
                 
             <p>It's your choice to approach the prompts however you like. Your writing may be altered by the various text editors that you encounter. The game works best when you 'write for' the changing medium and allow it to shape the drift you pursue.</p>
                 
+            <h2>Data Policy</h2>
+            <p>No data is sent to any servers. Gameplay state is saved locally in the browser's local storage. To avoid losing your creations,
+                download your save file regularly.</p>
+        
             <h2>Credits</h2>
             <p><b>Created by</b> Alex Calderwood</p>
             <p><b>Advised by</b> Noah Wardrip-Fruin and Michael Mateas.</p>
             <p><b>Special Thanks</b> to members of The Expressive Intelligence Studio and the ongoing advice and feedback from Nate Laffan, Henry Zhou, Jack Kelly, Allen Riley, Samantha Gorman, Kyle Gonzolez, Mimi Rapoport, Celine Lafosse, Shi Johnson-Bey, Annika Berry, and Rachel Firpo.</p>
+        
             <button onclick="closeAbout()" class="close-options-btn">Close</button>
         </div>
     </div>

@@ -21,11 +21,11 @@ export class Game {
   
     this.performance = new SpellcheckPerformance();
     await this.performance.initialize({ 
+        initialState: initialState,
         checkDelay: 500,
         squiggleColor: 'red',
         dict: 'scowl',
         reverse: true,
-        initialState: initialState,
         onEdit: this.onEdit.bind(this),
       ...options
     });

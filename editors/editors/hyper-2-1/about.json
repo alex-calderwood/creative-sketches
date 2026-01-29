@@ -1,5 +1,5 @@
 {
-    "name": "Hypersense Editor 2.1",
+    "name": "Hypersense Editor",
     "description": "A first experiment in using text streams as buffers to record a multiplicity of what the writer was writing. In this version, words are replaced by their 'synonyms' according to the WordNet ontology.",
     "notes": "",
     "tags": {

@@ -141,7 +141,7 @@ function renderAdminView() {
                                         <div style="margin-top: 0.5rem;"><strong>Name:</strong> ${level.name || 'N/A'}</div>
                                         <div><strong>Editor:</strong> ${level.editor || 'N/A'}</div>
                                         <div><strong>Prompt:</strong> ${level.prompt || 'N/A'}</div>
-                                        ${level['initial-state'] ? `<details style="margin-top: 0.5rem;"><summary>Initial State</summary><pre>${JSON.stringify(level['initial-state'], null, 2)}</pre></details>` : ''}
+                                        ${level['initialState'] ? `<details style="margin-top: 0.5rem;"><summary>Initial State</summary><pre>${JSON.stringify(level['initialState'], null, 2)}</pre></details>` : ''}
                                         ${level.replacements ? `<details style="margin-top: 0.5rem;"><summary>Replacements</summary><pre>${JSON.stringify(level.replacements, null, 2)}</pre></details>` : ''}
                                     </div>
                                 `;

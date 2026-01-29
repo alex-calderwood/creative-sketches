@@ -4,7 +4,7 @@
     --highlight: #ffffff;
     --shadow-color: #c0c0c0;
 
-    --button-color: var(--text-color-1);
+    --button-color: var(--text-color);
   
     /* --game-font: 'Goma'; */
     --game-font: 'SquareAntiqua';
@@ -12,7 +12,7 @@
     --font: Arial, sans-serif;
     --font-2: 'Garamond', 'EB Garamond', 'Adobe Garamond Pro', serif;
 
-    --text-color-1: #ffffff;
+    --text-color: #ffffff;
     --text-color-2: #000000;
 
     --primary-color: #ffffff;
@@ -277,7 +277,7 @@
   
   .modal-body {
     font-family: Garamond, "EB Garamond", "Adobe Garamond Pro", serif;
-    color: var(--text-color-1);
+    color: var(--text-color);
     padding: 5px;
     gap: 2px;
     font-size: 16px;
@@ -291,21 +291,21 @@
     flex-direction: column;
     gap: 8px;
     padding: 16px;
-    border-left: 2px solid var(--text-color-1);
+    border-left: 2px solid var(--text-color);
     margin-left: 8px;
   }
   
   .option-group label {
     font-family: var(--font);
-    color: var(--text-color-1);
+    color: var(--text-color);
     font-size: 16px;
   }
   
   .option-group select {
     font-family: var(--font);
     background-color: transparent;
-    border: 2px solid var(--text-color-1);
-    color: var(--text-color-1);
+    border: 2px solid var(--text-color);
+    color: var(--text-color);
     padding: 8px;
     font-size: 14px;
     cursor: pointer;
@@ -321,7 +321,7 @@
   
   .option-description {
     font-family: Garamond, "EB Garamond", "Adobe Garamond Pro", serif;
-    color: var(--text-color-1);
+    color: var(--text-color);
     font-size: 14px;
     line-height: 1.5;
     margin: 4px 0 0 0;
@@ -361,7 +361,7 @@
     display: block;
     margin-bottom: 8px;
     font-weight: bold;
-    color: var(--text-color-1);
+    color: var(--text-color);
   }
   
   .modal-body textarea {

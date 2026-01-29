@@ -149,6 +149,27 @@ export class Game {
     }
   }
 
+  denyFocus(target) {
+    console.log("deny", target, this);
+      let textContent = target?.textContent;
+      if (!textContent) return;
+      let spaces = (textContent.match(/ /g) || []).length;
+      if (spaces >= 3) {
+
+        // Create hidden div to capture subsequent input
+        const hiddenDiv = document.createElement('div');
+        hiddenDiv.contentEditable = true;
+        hiddenDiv.style.position = 'absolute';
+        hiddenDiv.style.opacity = '0';
+        hiddenDiv.style.pointerEvents = 'none';
+        
+        // Add to DOM and focus
+        document.querySelector("#editor").appendChild(hiddenDiv);
+        // console.log(target.textContent)
+        hiddenDiv.focus({ preventScroll: true });
+    }
+  }
+
   /**
    * Attach event listeners to an editable element
    * @param {HTMLElement} element - The element to attach listeners to
@@ -157,7 +178,10 @@ export class Game {
     const charHeight = 30;
     
     element.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
+      if (e.key === ' ') {
+          this.denyFocus(e.target);
+      }
+      else if (e.key === 'Enter') {
         e.preventDefault();
         const newElement = document.createElement('div');
         newElement.className = 'editable-element';
@@ -168,7 +192,7 @@ export class Game {
         this.grid.appendChild(newElement);
         newElement.focus();
       }
-    });
+    })
   }
 
   /**
