@@ -1,47 +1,4 @@
 {
-  "revolutionary": {
-    "name": "Revolution",
-    "description":"Invent a fictional narrative about a failed revolution. A bit of a journaling game where you construct the plot by writing texts into a text editor that is actively warping your message.",
-    "progression": ["letter", "concrete", "horizontal", "vertical"],
-    "levels": [
-      {
-        "id": "letter",
-        "name": "Breaking News",
-        "editor": "hyper-sense-drifts",
-        "prompt":
-          "The morning assault on the Capitol Building was a failure. <br><br> The popular leader of the revolution has been captured. <br><br>You are a reporter who has been covering the revolution, who has have been assigned to write the news brief. <br><br> Keep in mind the many readers and their perspectives.",
-        "initialState": {
-          "text": "ANDALUSIA CITY (AP) 8:08am \n\n\n"
-        }
-      }, 
-      {
-        "id": "concrete",
-        "name": "Responses",
-        "editor": "wall",
-        "prompt": "Many voices have rallied around your last post. You note their diverse reactions in your journal. <br> This editor allows you to write anywhere."
-      },
-      {
-        "id": "horizontal",
-        "name": "Proliferation",
-        "editor": "wall-reproduction",
-        "prompt": "You continue to reflect on how your words have been amplified.",     
-        "settings": {
-          "verticalCopy": false,
-          "horizontalCopy": true
-        }
-      },
-      {
-        "id": "vertical",
-        "name": "Vertical Movement",
-        "editor": "wall-reproduction",
-        "prompt": "How do your words get reproduced, quoted, and modified?",     
-        "settings": {
-          "verticalCopy": true,
-          "horizontalCopy": false
-        }
-      }
-    ]
-  },
   "Recycling": {
     "name": "Wastewriting",
     "description": "In this drift, each page uses material from your last one. It can be thought of as an experiment in treating the words you produce as a kind of sculptable material. How do different seeds affect what you come up with?",
@@ -93,6 +50,49 @@
             "queryType": "levelText",
             "fromLevel": "second-poetris"
           }
+        }
+      }
+    ]
+  },
+  "revolutionary": {
+    "name": "Revolution",
+    "description":"Invent a fictional narrative about a failed revolution. A bit of a journaling game where you construct the plot by writing texts into a text editor that is actively warping your message.",
+    "progression": ["letter", "concrete", "horizontal", "vertical"],
+    "levels": [
+      {
+        "id": "letter",
+        "name": "Breaking News",
+        "editor": "hyper-sense-drifts",
+        "prompt":
+          "The morning assault on the Capitol Building was a failure. <br><br> The popular leader of the revolution has been captured. <br><br>You are a reporter who has been covering the revolution. You have been assigned the news brief detailing what has happened and what will be likely to follow. <br><br> Keep in mind the many readers and their perspectives.",
+        "initialState": {
+          "text": "ANDALUSIA CITY (AP) 8:08am \n\n\n"
+        }
+      }, 
+      {
+        "id": "concrete",
+        "name": "Responses",
+        "editor": "wall",
+        "prompt": "Many voices have rallied around your last post. You note their diverse reactions in your journal. <br> This editor allows you to write anywhere."
+      },
+      {
+        "id": "horizontal",
+        "name": "Proliferation",
+        "editor": "wall-reproduction",
+        "prompt": "You continue to reflect on how your words have been amplified.",     
+        "settings": {
+          "verticalCopy": false,
+          "horizontalCopy": true
+        }
+      },
+      {
+        "id": "vertical",
+        "name": "Vertical Movement",
+        "editor": "wall-reproduction",
+        "prompt": "How do your words get reproduced, quoted, and modified?",     
+        "settings": {
+          "verticalCopy": true,
+          "horizontalCopy": false
         }
       }
     ]
