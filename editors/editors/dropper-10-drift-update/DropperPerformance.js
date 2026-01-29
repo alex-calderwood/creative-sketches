@@ -377,7 +377,17 @@ export class DropperPerformance extends SettingsMixin(class {}) {
     await soundManager.initialize();
   }
 
+  onStart() {
+    const controlIcons = document.getElementById('control-icons');
+    if (controlIcons) {
+      controlIcons.classList.add('hidden');
+    }
+  }
+
   onMove() {
+
+    this.onStart();
+
     let newLeft = this.getColumnRect(this.state.curX, 0).left;
     let newTop  = this.state.currentBlock.offsetTop;
 

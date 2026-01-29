@@ -1,5 +1,19 @@
 <!-- Controls Section HTML/CSS -->
 <style>
+
+  #game-banner {
+    width: 100%;
+    height: 4vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border-bottom: 1.5px solid var(--text-color);
+  }
+
+  .subtitle {
+    font-style: italic;
+  }
+
   .controls-wrapper {
     display: flex;
     align-items: center;
@@ -82,11 +96,6 @@
     margin-top: 15px;
     width: 100%;
   }
-
-  .settings-icon {
-
-  }
-
 
   .controls-wrapper:hover .settings-icon {
     display: none;
@@ -179,6 +188,36 @@
   }
 
 </style>
+
+<div
+
+
+<div id="game-banner">
+  <div class="text">
+    <a href="/editors/" id="back-link" class="back-link">The Writer's Project</a>
+    <span class="subtitle"></span>
+  </div>
+  <div class="controls-wrapper">
+    <div class="last-saved-info">
+      <div id="last-saved" class="doc-info last-saved"></div>
+      <div id="document-id" class="doc-info document-id"></div>
+    </div>
+    <div class="settings-icon control-btn">Settings</div>
+    <div class="controls-buttons">
+      <div class="button-pair">
+        <button id="load-btn" class="control-btn">Load</button>
+        <button id="upload-btn" class="control-btn">Upload</button>
+      </div>
+      <div class="button-pair">
+        <button id="save-btn" class="control-btn">Save</button>
+        <button id="download-btn" class="control-btn">Download</button>
+      </div>
+      <button id="new-game-btn" class="control-btn">New</button>
+      <button id="settings-btn" class="control-btn">Settings</button>
+    </div>
+    <input type="file" id="file-input" accept=".json" style="display: none;">
+  </div>
+</div>
 
 <div id="controls-template">
   <div class="controls-wrapper">

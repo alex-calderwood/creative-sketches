@@ -3,6 +3,9 @@ import { GameplaySave } from '/editors/drifts/GameplaySave.js';
 
 export class MetaGameControls {
   constructor(options = {}) {
+    this.projectId = options.projectId || null;
+    this.projectName = options.projectName || null;
+    this.backLink = options.backLink || null;
     this.game = options.game || null;
     this.save = options.save || null;
     this.documentId = options.documentId || null;
@@ -27,13 +30,12 @@ export class MetaGameControls {
       if (style) {
         document.head.appendChild(style.cloneNode(true));
       }
-      
-      // Store the template content
-      const template = doc.querySelector('#controls-template');
-      if (template) {
-        this.templateHTML = template.innerHTML;
+
+      const gameBanner = doc.querySelector('#game-banner');
+      if (gameBanner) {
+        this.gameBannerHTML = gameBanner.innerHTML;
       }
-      
+
       this.templateLoaded = true;
     } catch (error) {
       console.error('Failed to load controls template:', error);
@@ -48,10 +50,25 @@ export class MetaGameControls {
   }
 
   render() {
-    const controlsContainer = document.getElementById('controls');
-    if (!controlsContainer) return;
+    // const controlsContainer = document.getElementById('controls');
+    // if (!controlsContainer) return;
 
-    controlsContainer.innerHTML = this.templateHTML || '';
+    // controlsContainer.innerHTML = this.templateHTML || '';
+
+    const gameBanner = document.getElementById('game-banner');
+    if (gameBanner) {
+      gameBanner.innerHTML = this.gameBannerHTML || '';
+      console.log("tes", this.game);
+      let subtitle = document.querySelector('.subtitle');
+      if (subtitle) {
+        subtitle.textContent = this.projectName;
+      }
+      let backLink = document.getElementById('back-link');
+      if (backLink) {
+        backLink.href = this.backLink.href;
+        backLink.textContent = this.backLink.text;
+      }
+    }
   }
 
   attachEventListeners() {

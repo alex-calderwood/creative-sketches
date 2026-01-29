@@ -1,4 +1,5 @@
 import { DropperPerformance } from './DropperPerformance.js';
+// import { CustomTextCorpus } from '/editors/vault/corpus/CustomTextCorpus.js'
 
 export class Game {
   constructor() {
@@ -28,25 +29,25 @@ export class Game {
       return edits.map(edit => edit.text).join(' ');
     }
 
-    let edits = getEdits();
-    if (!edits.length) {
-      edits = this?.level?.editsBackup
-    }
-
-    this.performance = new DropperPerformance();
-    await this.performance.initialize({ 
-      corpusFile: this?.level?.corpusFile,
-      sourceTexts: [
+    let sourceTexts = null;
+    let edits = this.save != null ? getEdits() : [];
+    if (edits.length) {
+      sourceTexts = [
         {
           name: 'interlace',
           text: this?.level?.sourceText,
-          // kind: 'corpusFile',
         },
         {
           name: 'mistake',
           text: edits,
         },
-      ],
+      ]
+    }
+
+    this.performance = new DropperPerformance();
+    await this.performance.initialize({ 
+      corpusFile: this?.level?.corpusFile,
+      sourceTexts: sourceTexts,
       initialState: initialState,
       ...options
     });
