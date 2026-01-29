@@ -73,7 +73,7 @@
         "id": "concrete",
         "name": "Responses",
         "editor": "wall",
-        "prompt": "Many voices have rallied around your last post. You note their diverse reactions in your journal. <br> This editor allows you to write anywhere."
+        "prompt": "Many voices have rallied around your last post. You note their diverse reactions in your journal. <br> They don't seem to say more than four words at a time."
       },
       {
         "id": "horizontal",

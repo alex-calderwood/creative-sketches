@@ -424,7 +424,7 @@ function renderDocumentCard(doc, level, editorUrl) {
     // Check if this document is the chosen one for its level
     const chosenDoc = getChosenDocumentForLevel(save, levelId);
     const isChosen = chosenDoc && chosenDoc.id === doc.id;
-    const selectButtonText = isChosen ? '✓ Chosen' : 'Select Document';
+    const selectButtonText = isChosen ? '✓ Chosen' : 'Choose Document';
     const selectButtonClass = isChosen ? 'chosen-document' : '';
 
     console.log(contentPreview)
