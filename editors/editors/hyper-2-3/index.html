@@ -33,9 +33,10 @@
     import { MetaGame } from '/editors/drifts/MetaGame.js';
     
     const PROJECT_ID = '$PROJECT_ID';
+    const PROJECT_NAME = '$PROJECT_NAME';
 
     if (PROJECT_ID.startsWith('$')) {
-      throw new Error('PROJECT_ID is not set');
+      console.error('PROJECT_ID is not set');
     }
     
     // Wait for DOM to be fully loaded before initializing
@@ -44,7 +45,7 @@
       const game = new Game();
       
       // MetaGame loads save
-      const metaGame = new MetaGame(PROJECT_ID);
+      const metaGame = new MetaGame(PROJECT_ID, PROJECT_NAME);
       await metaGame.initialize(game);
     });
   </script>

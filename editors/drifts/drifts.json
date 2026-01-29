@@ -28,7 +28,7 @@
         "prompt": {
           "queryType": "levelText",
           "preface": "In your last entry, you composed this poem:\n",
-          "suffix": "\nTake a moment to reflect on it. Does it feel intentional? What does it say?",
+          "suffix": "\nTake a moment to reflect on it. Where does that inspiration come from?",
           "fromLevel": "playing"
         }     
       },
@@ -38,7 +38,8 @@
         "editor": "poetris-drift",
         "prompt": "Use your wasted words to compose something new, again.",
         "editsBackup": "It is an historically sufficiently determined little pedagogy which manifests itself most visibly. A pedagogy that tells the pupil that there is nothing outside of the text, but that within it, in its interstices, in its white spaces and unspokennesses, the reserve of the origin reigns; it is not at all necessary to search elsewhere, for exactly here, to be sure not in the words, but in words as erasures, in their grill, \"the meaning of being\" speaks itself. A pedagogy that conversely gives to the voice of the teacher that unlimited sovereignty which permits them to read the text indefinitely",
-        "sourceText": "Recycling the word. A strange noun full of verb, noun bending to verb, strange idea of repeating repetition, repetition bending to noun, to fixity, the plastic box full of plastic boxes […] For a poet at midcareer, recycling is a nerve-wracking emblem of “repeating repetition”: year after year, the same emotional ruts, linguistic loop-de-loops, and formula-bound relationships. But recycling also inspires thrifty formal innovations. One poem repeats, five times over, the increasingly self-referential sentence: “There’s love in the way the panels are pried up and replaced.” Often when you think you’re at the end of something, you’re at the beginning of something else. There is no such thing as ‘away’. When we throw anything away it must go somewhere. When you put the whole picture together, recycling is the right thing to do. We cannot solve our problems with the same thinking we used when we created them. We do not inherit the Earth from our ancestors; we borrow it from our children. We never know the worth of water till the well is dry. Buy less, choose well. At its core, the issue of a clean environment is a matter of public health."
+        "sourceText": "Recycling the word. A strange noun full of verb, noun bending to verb, strange idea of repeating repetition, repetition bending to noun, to fixity, the plastic box full of plastic boxes […] For a poet at midcareer, recycling is a nerve-wracking emblem of “repeating repetition”: year after year, the same emotional ruts, linguistic loop-de-loops, and formula-bound relationships. But recycling also inspires thrifty formal innovations. One poem repeats, five times over, the increasingly self-referential sentence: “There’s love in the way the panels are pried up and replaced.” Often when you think you’re at the end of something, you’re at the beginning of something else. There is no such thing as ‘away’. When we throw anything away it must go somewhere. When you put the whole picture together, recycling is the right thing to do. We cannot solve our problems with the same thinking we used when we created them. We do not inherit the Earth from our ancestors; we borrow it from our children. We never know the worth of water till the well is dry. Buy less, choose well. At its core, the issue of a clean environment is a matter of public health.",
+        "corpusFile": "corpora/short/nothing_but_text.txt"
       },
       {
         "id": "5",
@@ -93,6 +94,21 @@
         "settings": {
           "verticalCopy": true,
           "horizontalCopy": false
+        }
+      }
+    ]
+  },
+  "tests": {
+    "name": "Tests",
+    "description": "Tests",
+    "progression": ["template"],
+    "levels": [
+      {
+        "id": "template",
+        "name": "Template",
+        "editor": "test-template",
+        "initialState": {
+          "text": "Hello, world!"
         }
       }
     ]

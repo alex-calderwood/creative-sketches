@@ -77,23 +77,24 @@
     <!-- About Modal -->
     <div id="about-modal" class="options-modal" style="display: none;">
         <div class="options-content">
-            <h2>About Drifts</h2>
-            <p>Drifts is a creative writing game.</p>
-
-            <p>The game is intended to be used as a way to disrupt your own creative writing practice. Your experience will be shaped by your interpretation of the prompts. You will have a different experience if you know what to expect, so you may want to try a few runs before committing to each page.</p>
+            
+            <h2>How to Play Drifts</h2>
+            <p>Drifts is a creative writing game, so there are many different ways to approach it.</p>
                 
-            <p>It's your choice to approach the prompts however you like. Your writing may be altered by the various text editors that you encounter. The game works best when you 'write for' the changing medium and allow it to shape the drift you pursue.</p>
+            <p>One approach is to play the game as way to disrupt your own creative writing practice. A generally rewarding way to play is to always try to produce the most interesting document you can. Your experience will be shaped by how you choose to interpret the prompts, to 'lean in' or out of their suggestions. The game works best when you 'write for' the changing medium and allow the systems you encounter to shape your approach.</p>
+
+            <p>Understanding how a given editor works will change the way you use it. Sometimes an editor is meant to offer resistance or surprise, but on the other hand, using it with more expertise may lead to better results. You may want to experiment with a few attempts at authoring it before continuing to that page. You can always return later to continue experimenting.</p>
                 
             <h2>Data Policy</h2>
-            <p>No data is sent to any servers. Gameplay state is saved locally in the browser's local storage. To avoid losing your creations,
-                download your save file regularly.</p>
+            <p>No usage data or user-created documents are stored on our server. Gameplay state is saved locally in the browser's local storage. To avoid losing your creations, download your save file regularly.</p>
         
             <h2>Credits</h2>
             <p><b>Created by</b> Alex Calderwood</p>
             <p><b>Advised by</b> Noah Wardrip-Fruin and Michael Mateas.</p>
-            <p><b>Special Thanks</b> to members of The Expressive Intelligence Studio and the ongoing advice and feedback from Nate Laffan, Henry Zhou, Jack Kelly, Allen Riley, Samantha Gorman, Kyle Gonzolez, Mimi Rapoport, Celine Lafosse, Shi Johnson-Bey, Annika Berry, and Rachel Firpo.</p>
+            <p><b>Special Thanks</b> to members of The Expressive Intelligence Studio and the ongoing advice and feedback from Samantha Gorman, Nate Laffan, Henry Zhou, Jack Kelly, Allen Riley, Kyle Gonzolez, Mimi Rapoport, Celine Lafosse, Shi Johnson-Bey, Annika Berry, and Rachel Firpo.</p>
         
-            <button onclick="closeAbout()" class="close-options-btn">Close</button>
+            <button onclick="showDriftSelection()" id="begin-game-btn">Begin Game</button>
+            <button onclick="closeAbout()" id="close-about-btn" class="close-options-btn">Close</button>
         </div>
     </div>
 

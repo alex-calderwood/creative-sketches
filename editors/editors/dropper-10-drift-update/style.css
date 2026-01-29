@@ -11,6 +11,7 @@
   --primary-color: rgb(252, 255, 217);
   --accent-color:  #4a48b2;
   --text-color: var(--accent-color);
+  --secondary-color: #fdaa1b;
 
   /* Linear and Random */
   --color-linear-bg: #ff0000;
@@ -683,4 +684,58 @@ input[type="checkbox"] {
   background-color: rgba(255, 246, 115, 0.3);
   border-left: 3px solid var(--accent-color);
   margin: 10px 0;
+}
+
+/* Control Icons */
+.control-icons {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5em;
+  z-index: 1500;
+  opacity: 0.4;
+  transition: opacity 5s ease;
+  color: var(--accent-color);
+}
+
+.control-icons.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.control-icon-row {
+  display: flex;
+  gap: 0.5em;
+  justify-content: center;
+}
+
+.control-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: var(--highlight);
+  border-radius: 0.375em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background-color: var(--secondary-color);
+}
+
+.control-icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.control-icon.spacebar {
+  width: 9rem;
+}
+
+.control-icon span {
+  font-family: var(--font-2);
+  font-size: 0.6rem;
+  margin-top: 0.125em;
 }

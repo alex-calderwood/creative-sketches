@@ -1,11 +1,10 @@
 {
-    "name": "Antichecker Editor",
+    "name": "Template",
     "description": "This spellchecker is updated to use the drifts progression logic.",
     "tags": {
-        "spellcheck": {"version": "7"},
-        "expand": {"version": "2"}
+        "template": {"version": "1"}
     },
     "image": "mistakes.png",
-    "url": "spellcheck-drifts",
+    "url": "test-template",
     "date": "2026-01-26"
 }

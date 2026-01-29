@@ -7,14 +7,16 @@ import { MetaGameControls } from '/editors/drifts/MetaGameControls.js';
 import { GameplaySave } from '/editors/drifts/GameplaySave.js';
 import { Drifts } from '/editors/drifts/Drifts.js';
 import { Document } from '/editors/drifts/Document.js'
+import { Modal } from '/editors/drifts/Modal.js';
 import { saveStateWithImage, retrieveTextFromDrift, setChosenDocumentForLevel, getChosenDocumentForLevel} from '/editors/drifts/utils/utils.js';
 
-
 export class MetaGame {
-  constructor(projectId) {
+  constructor(projectId, projectName) {
     this.projectId = projectId;
+    this.projectName = projectName;
+    this.backLink = null;
     this.templateLoaded = false;
-    this.modalHTML = null;
+    this.modal = null;
     this.controls = null;
     this.game = null;
     this.save = null;
@@ -30,7 +32,7 @@ export class MetaGame {
       submit: false
     };
 
-    console.log("MetaGame: Project ID", projectId);
+    console.log("MetaGame: Project ID", projectId, "Project Name", projectName);
   }
 
   /**
@@ -39,11 +41,11 @@ export class MetaGame {
    */
   async initialize(game) {
     // If no save exists, skip MetaGame and just run game standalone
-    if (!GameplaySave.hasLocalStorage()) {
-      await game.initialize();
-      console.log("No local storage found, skipping MetaGame");
-      return;
-    }
+    // if (!GameplaySave.hasLocalStorage()) {
+    //   await game.initialize();
+    //   console.log("No local storage found, skipping MetaGame");
+    //   return;
+    // }
     
     this.game = game;
     this.save = this.loadSave();
@@ -99,12 +101,26 @@ export class MetaGame {
     this.allLevels = drifts.getLevels(this.driftName);
     this.progression = drifts.data[this.driftName].progression || [];
 
+
+    // Get initial content from level and convert to state format
+    let initialState = null;
+    if (this.level?.['initialState']) {
+      // Convert initialState to proper state object format
+      const stateObj = this.level['initialState'];
+      if (stateObj?.text?.queryType != null) {
+        stateObj.text = retrieveTextFromDrift(save, stateObj?.text);
+      }
+      initialState = stateObj;
+    }
+    
+
     if (!this.documentId) {
-      this.documentId = this.createNewDocument(this.save, this.level);
+      this.documentId = this.createNewDocument(this.save, initialState);
       console.log('MetaGame.initialize() no selected document id, created new document', this.documentId);
       this.save.saveToLocalStorage();
     }
-    
+
+
     // Load progression prompts
     await this.loadTemplate();
     await this.loadAndDisplayPrompts(this.save, this.level);
@@ -112,6 +128,18 @@ export class MetaGame {
     await this.createModal();
 
     let settingsOverride = this?.level?.settings || {};
+
+    if(this.level) {
+      this.backLink = {
+        href: '/editors/new-drift',
+        text: "Drifts"
+      };
+    } else {
+      this.backLink = {
+        href: '/editors/',
+        text: 'The Writer\'s Project'
+      };
+    }
     
     //  initialize game with save and document (after prompt is displayed)
     await this.game.initialize({
@@ -119,14 +147,18 @@ export class MetaGame {
       save: this.save, 
       documentId: this.documentId,
       level: this.level,
+      initialState: initialState,
       ...settingsOverride,
     });
 
     // Initialize controls
     this.controls = new MetaGameControls({
+      projectId: this.projectId,
+      projectName: this.projectName || this.projectId,
       game: this.game,
       save: this.save,
       documentId: this.documentId,
+      backLink: this.backLink,
       onNewDocument: () => this.handleNewDocument()
     });
 
@@ -148,19 +180,12 @@ export class MetaGame {
     return null;
   }
 
-  createNewDocument(save, level = null) {
+  createNewDocument(save, initialState = null) {
     const documentId = `doc_${Date.now()}`;
     
-    // Get initial content from level and convert to state format
     let initialContent = '';
-
-    if (level?.['initialState']) {
-      // Convert initialState to proper state object format
-      const stateObj = level['initialState'];
-      if (stateObj?.text?.queryType != null) {
-        stateObj.text = retrieveTextFromDrift(save, stateObj?.text);
-      }
-      initialContent = JSON.stringify(stateObj);
+    if (initialState) {
+      initialContent = JSON.stringify(initialState);
     }
     
     const document = new Document(documentId, {
@@ -224,7 +249,7 @@ export class MetaGame {
   }
 
   handleNewDocument() {
-    const newDocumentId = this.createNewDocument(this.save, this.level);
+    const newDocumentId = this.createNewDocument(this.save);
     this.save.setMetadata('selectedDocumentId', newDocumentId);
 
     this.save.saveToLocalStorage();
@@ -270,12 +295,6 @@ export class MetaGame {
       const style = doc.querySelector('style');
       if (style) {
         document.head.appendChild(style.cloneNode(true));
-      }
-      
-      // Store the modal template
-      const template = doc.querySelector('#modal-template');
-      if (template) {
-        this.modalHTML = template.innerHTML;
       }
       
       this.templateLoaded = true;
@@ -336,49 +355,29 @@ export class MetaGame {
     }
   }
 
-  createModal() {
-    if (this.modalHTML) {
-      document.body.insertAdjacentHTML('beforeend', this.modalHTML);
-      
-      // Attach modal event listeners
-      const modalCancel = document.getElementById('modal-cancel');
-      const modalContinue = document.getElementById('modal-continue');
-      
-      if (modalCancel) {
-        modalCancel.addEventListener('click', () => this.handleModalCancel());
-      }
-      
-      if (modalContinue) {
-        modalContinue.addEventListener('click', () => this.handleModalContinue());
-      }
-    }
+  async createModal() {
+    const buttons = [
+      { text: 'Cancel', handler: () => this.handleModalCancel() },
+      { text: 'Continue', handler: () => this.handleModalContinue() }
+    ];
+    
+    const content = '<h1>Your submission</h1><div id="alternate-text"></div>';
+    this.modal = new Modal('complete-modal', content, buttons);
+    await this.modal.create();
   }
 
   async handleSubmitDocument() {
-    // Save the current state with image
-    if (this.game && this.save && this.documentId) {
-      // set the current document as the level's current 
-      setChosenDocumentForLevel(this.save, this.levelId, this.documentId);
-
-      const state = await this.game.saveState();
-      if (state) {
-        await saveStateWithImage(state, this.save, this.documentId);
-      }
+    // Get the alternate text and populate modal
+    const alternateText = await this.getAlternateText();
+    const alternateTextElement = this.modal.element.querySelector('#alternate-text');
+    if (alternateTextElement && alternateText) {
+      alternateTextElement.textContent = alternateText;
     }
     
     // Show the modal
-    const modal = document.getElementById('complete-modal');
-    if (modal) {
-      // Get the alternate text (processed version)
-      const alternateText = await this.getAlternateText();
-      const alternateTextElement = document.getElementById('alternate-text');
-      if (alternateTextElement && alternateText) {
-        alternateTextElement.textContent = alternateText;
-      }
-      
-      modal.style.display = 'flex';
-    }
+    this.modal.show();
   }
+
 
   async getAlternateText() {
     // Get the current state text
@@ -406,6 +405,17 @@ export class MetaGame {
   }
 
   async handleModalContinue() {
+    // Save the current state with image (this is the actual submission)
+    if (this.game && this.save && this.documentId) {
+      // set the current document as the level's current 
+      setChosenDocumentForLevel(this.save, this.levelId, this.documentId);
+
+      const state = await this.game.saveState();
+      if (state) {
+        await saveStateWithImage(state, this.save, this.documentId);
+      }
+    }
+
     // Mark current level as completed
     if (this.save && this.levelId) {
       const completedLevels = this.save.getMetadata('completedLevels') || [];

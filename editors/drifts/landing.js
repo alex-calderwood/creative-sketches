@@ -72,6 +72,7 @@ function displaySaveInfo(save) {
 
 // Show new game modal
 window.showNewGameModal = function() {
+
     if (GameplaySave.hasLocalStorage()) {
         // Show warning modal if there's an existing save
         document.getElementById('new-game-warning-modal').style.display = 'flex';
@@ -94,13 +95,28 @@ window.proceedWithBackup = function() {
     
     // Close warning modal and show drift selection
     document.getElementById('new-game-warning-modal').style.display = 'none';
-    document.getElementById('drift-selection-modal').style.display = 'flex';
+    
+    // document.getElementById('drift-selection-modal').style.display = 'flex';
+    document.getElementById('about-modal').style.display = 'flex';
+    document.getElementById('begin-game-btn').style.display = 'flex';
+    document.getElementById('close-about-btn').style.display = 'none';
+
 };
 
 // Proceed without backup
 window.proceedWithoutBackup = function() {
     // Close warning modal and show drift selection
     document.getElementById('new-game-warning-modal').style.display = 'none';
+    // document.getElementById('drift-selection-modal').style.display = 'flex';
+    document.getElementById('about-modal').style.display = 'flex';
+    document.getElementById('begin-game-btn').style.display = 'flex';
+    document.getElementById('close-about-btn').style.display = 'none';
+
+};
+
+// Show drift selection modal
+window.showDriftSelection = function() {
+    document.getElementById('about-modal').style.display = 'none';
     document.getElementById('drift-selection-modal').style.display = 'flex';
 };
 
@@ -169,6 +185,8 @@ window.downloadSave = function() {
 // About modal
 window.showAbout = function() {
     document.getElementById('about-modal').style.display = 'flex';
+    document.getElementById('close-about-btn').style.display = 'flex';
+    document.getElementById('begin-game-btn').style.display = 'none';
 };
 
 window.closeAbout = function() {

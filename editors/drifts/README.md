@@ -65,7 +65,7 @@ Your editor needs these elements:
     
     document.addEventListener('DOMContentLoaded', async () => {
       const game = new Game();
-      const metaGame = new MetaGame(PROJECT_ID);
+      const metaGame = new MetaGame(PROJECT_ID, PROJECT_NAME);
       await metaGame.initialize(game);
     });
   </script>

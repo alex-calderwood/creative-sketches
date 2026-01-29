@@ -5,7 +5,7 @@
 
     --header-font: 'Plus Jakarta Sans', sans-serif;
     --header-color: #656565;
-    --header-font-weight: 350;
+    --header-font-weight: 300;
     --thick-font-weight: 600;
     
     --accent-color: #f4f4f4;
@@ -797,6 +797,7 @@ button:active {
     transform: translateY(0);
 }
 
+
 .options-modal {
     position: fixed;
     inset: 0;
@@ -813,6 +814,7 @@ button:active {
     max-width: 25rem;
     border-radius: var(--border-radius);
     font-family: var(--header-font);
+    font-size: small;
 }
 
 .options-content h2 {

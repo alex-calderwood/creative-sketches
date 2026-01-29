@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Concrete Editor</title>
+  <title>$PROJECT_NAME</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="base-style.css">
 </head>
@@ -23,16 +23,27 @@
     <div id="submit" class="meta-game"></div>
   </div>
 
-  <div id="editor-container">
-    <div id="editor" spellcheck="false" ></div>
+  <div id="editor-container" class="editor-container">
+    <div id="editor" class="editor" spellcheck="false" contenteditable="true"></div>
+    <div id="overlay" class="overlay"></div>
   </div>
 
   <script type="module">
     import { Game } from './src/game.js';
     import { MetaGame } from '/editors/drifts/MetaGame.js';
-    
+
     const PROJECT_ID = '$PROJECT_ID';
     const PROJECT_NAME = '$PROJECT_NAME';
+    if (PROJECT_ID.startsWith('$')) {
+      console.error('PROJECT_ID is not set');
+    }
+
+    // let initialState = null;
+    // if (params.documentId) {
+    //   let doc = this.save.getDocument(this.documentId);
+    //   let content = doc?.getField('content');
+    //   initialState = content ? JSON.parse(content) : null;
+    // }
     
     document.addEventListener('DOMContentLoaded', async () => {
       const game = new Game();

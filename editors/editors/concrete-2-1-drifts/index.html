@@ -32,11 +32,11 @@
     import { MetaGame } from '/editors/drifts/MetaGame.js';
     
     const PROJECT_ID = '$PROJECT_ID';
-    console.log('PROJECT_ID:', PROJECT_ID);
-    
+    const PROJECT_NAME = '$PROJECT_NAME';
+
     document.addEventListener('DOMContentLoaded', async () => {
       const game = new Game();
-      const metaGame = new MetaGame(PROJECT_ID);
+      const metaGame = new MetaGame(PROJECT_ID, PROJECT_NAME);
       await metaGame.initialize(game);
     });
   </script>
