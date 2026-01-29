@@ -55,30 +55,19 @@ function getTextWidth(element, startIndex=0, endIndex=null) {
 }
 
 function enlargeWord(word) {
+  let xVariation = 0;
+  let yMin = 0;
+  let yVariation = 200;
+  let scaleMin = 1;
+  let scaleVariation = 3;
 
   const { rect, element: editor } = word;
-  console.log('editor', editor);
-  let editorBounds = editor.getBoundingClientRect();
-  const { left, top, width, height } = rect;
+  let dX = (Math.random() - 0.5) * xVariation;
+  let dY = Math.random() * yVariation + yMin;
 
-  let newLeft = Math.random() * editorBounds.width;
-  let newTop  = Math.random() * editorBounds.height;
+  let scale = (Math.random() * scaleVariation) + scaleMin;
 
-  let dX = newLeft - left;
-  let dY = newTop - top;
-
-
-  let scaleMod = 0.1;
-  let editorWidth = editorBounds.width;
-  let editorHeight = editorBounds.height * 0.8;
-  // let textWidth = getTextWidth(word.element, word.startIndex, word.endIndex);
-
-  // scale to the width of the editor
-  let scaleX = scaleMod * editorWidth / width;
-  let scaleY = scaleMod * editorHeight / height;
-  let scale = Math.min(scaleX, scaleY);
-
-  let newWordElement = animateToRelative(word, dX, dY, scale, 200);
+  let newWordElement = animateWithGhost(word, dX, dY, scale, 10 * 1000);
 
   enlargedWords.push(word);
   return newWordElement;
@@ -106,42 +95,62 @@ function moveGhostElement(element, leftPx, topPx, speed=500) {
   element.animate(animationFrames, timing);
 }
 
-function animateToRelative(word, dX, dY, scale, speed=500) {
+function animateWithGhost(word, dX, dY, scale, speed=500) {
   const { text, rect, node, startIndex, endIndex, element: editor } = word;
 
   let overlay = document.getElementById('overlay');
    
-  const timing = {
-    duration: speed,
-    iterations: 1,
-    fill: "forwards" 
-  };
 
-  const animationFrames = [
-    { color: "red" },
-    { transform: `translateX(${dX}px) translateY(${dY}px) scale(${scale})` },
-  ];
-  
   const newElement = document.createElement('div');
   newElement.classList.add('move');
   newElement.textContent = text;
   const { left, top, width, height } = rect;
 
-  newElement.style.left = `${left}px`;
-  newElement.style.top = `${top}px`;
+  let editorBounds = editor.getBoundingClientRect();
+  let relLeft = left - editorBounds.left;
+  let relTop = top - editorBounds.top;
+
+  newElement.style.opacity = `50%`;
+  newElement.style.left = `${relLeft}px`;
+  newElement.style.top = `${relTop}px`;
   newElement.style.width = `${width}px`;
   newElement.style.height = `${height}px`;
-  
-  // make not selectable
-  newElement.highlight = false;
-  newElement.selectable = false;
-  // document.body.appendChild(newElement); 
+
   overlay.appendChild(newElement);
 
-  word.ghost = newElement;
+  // This is a weird hack to get around the fact that we ned to set the animation distance using the style in order for the
+  // image capturer to recognize it (it doesn't play these animations)
+  // We need to set the translateX to the place we want it to be seen, but immediately put it back to the start to make the next
+  // animation appear to begin at the start
+  newElement.style.transform = `translateX(${dX}px) translateY(${dY}px) scale(${scale})`
+  const animationFrames2 = [
+    { transform: `translateX(${0}px) translateY(${0}px) scale(${1})` },
+  ];
+  const immediate = {
+    duration: 0,
+    iterations: 1,
+  }
+  newElement.animate(animationFrames2, immediate);
+  // end hack
+
+  const timing = {
+    duration: speed,
+    iterations: '1',
+    fill: "forwards",
+    easing: "ease-out",
+  };
+  const animationFrames = [
+    { transform: `translateX(${0}px) translateY(${0}px) scale(${1})`, opacity: "0%" },
+    { transform: `translateX(${dX}px) translateY(${dY}px) scale(${scale})`, opacity: '90%'},
+    { transform: `translateX(${0}px) translateY(${0}px) scale(${1})` },
+  ];
 
   // https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API
   newElement.animate(animationFrames, timing);
+
+  // make not selectable
+  newElement.highlight = false;
+  word.ghost = newElement;
 }
 
 

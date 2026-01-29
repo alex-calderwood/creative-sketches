@@ -4,7 +4,7 @@
  */
 
 export class Game {
-  constructor(options = {}) {
+  constructor(config = {}) {
     this.grid = null;
     this.initialized = false;
     this.save = null;
@@ -13,13 +13,26 @@ export class Game {
     this.charHeight = 30;
     this.elementIdCounter = 0;
 
+    this.initialize(config)
+  }
+
+  /**
+   * Initialize the game with optional save and document
+   * @param {Object} config - Initialization options
+   * @param {GameplaySave} config.save - The save instance
+   * @param {string} config.documentId - The document ID to load
+   */
+  async initialize(config = {}) {
     this.config = {
       verticalCopy: true,
       horizontalCopy: true,
       enableGrid: false,
       opaque: true,
-      ...options,
+      ...config,
     }
+
+
+    console.log("config", this.config, config)
 
     this.settings = [
       { 
@@ -43,40 +56,9 @@ export class Game {
         description: 'Make wall elements opaque (blocks interaction)'
       }
     ];
-  }
-  
-  /**
-   * Measure character dimensions based on actual rendered text
-   */
-  measureCharDimensions() {
-    // Create a temporary element with the same class as editable elements
-    const temp = document.createElement('div');
-    temp.className = 'editable-element';
-    temp.style.position = 'absolute';
-    temp.style.visibility = 'hidden';
-    temp.textContent = 'M'; // Use M as it's typically the widest character
-    
-    this.grid.appendChild(temp);
-    
-    // Get computed styles to read actual CSS values
-    const computedStyle = window.getComputedStyle(temp);
-    const rect = temp.getBoundingClientRect();
-    
-    this.charWidth = Math.ceil(rect.width);
-    this.charHeight = Math.ceil(parseFloat(computedStyle.lineHeight)) || rect.height;
-    
-    this.grid.removeChild(temp);
-  }
 
-  /**
-   * Initialize the game with optional save and document
-   * @param {Object} options - Initialization options
-   * @param {GameplaySave} options.save - The save instance
-   * @param {string} options.documentId - The document ID to load
-   */
-  async initialize(options = {}) {
-    this.save = options.save || null;
-    this.documentId = options.documentId || null;
+    this.save = config.save || null;
+    this.documentId = config.documentId || null;
     
     this.grid = document.getElementById('editor');
     if (!this.grid) {
@@ -102,6 +84,30 @@ export class Game {
     
     this.initialized = true;
   }
+  
+  /**
+   * Measure character dimensions based on actual rendered text
+   */
+  measureCharDimensions() {
+    // Create a temporary element with the same class as editable elements
+    const temp = document.createElement('div');
+    temp.className = 'editable-element';
+    temp.style.position = 'absolute';
+    temp.style.visibility = 'hidden';
+    temp.textContent = 'M'; // Use M as it's typically the widest character
+    
+    this.grid.appendChild(temp);
+    
+    // Get computed styles to read actual CSS values
+    const computedStyle = window.getComputedStyle(temp);
+    const rect = temp.getBoundingClientRect();
+    
+    this.charWidth = Math.ceil(rect.width);
+    this.charHeight = Math.ceil(parseFloat(computedStyle.lineHeight)) || rect.height;
+    
+    this.grid.removeChild(temp);
+  }
+
 
   /**
    * Attach click handler to grid for creating new elements

@@ -4,7 +4,7 @@
     --highlight: #ffffff;
     --shadow-color: #c0c0c0;
 
-    --button-color: var(--text-color-1);
+    --button-color: var(--text-color);
   
     /* --game-font: 'Goma'; */
     --game-font: 'SquareAntiqua';
@@ -12,7 +12,7 @@
     --font: Arial, sans-serif;
     --font-2: 'Garamond', 'EB Garamond', 'Adobe Garamond Pro', serif;
 
-    --text-color-1: #ffffff;
+    --text-color: #ffffff;
     --text-color-2: #000000;
 
     --primary-color: #ffffff;
@@ -314,7 +314,7 @@
     width: 100%;
     height: 100%;
     background-color: var(--background-color);
-    color: var(--text-color-1);
+    color: var(--text-color);
     font-family: var(--game-font);
     font-size: 16px;
     /* border: 1.2px solid var(--primary-color); */
@@ -326,7 +326,7 @@
 
   #editor.text-hidden {
     color: transparent;
-    caret-color: var(--text-color-1);
+    caret-color: var(--text-color);
   }
 
   #overlay {
@@ -407,7 +407,7 @@
     height: 100%;
     padding: 10px;
     box-sizing: border-box;
-    color: var(--text-color-1);
+    color: var(--text-color);
     white-space: pre-wrap;
     word-wrap: break-word;
     line-height: 1.5;

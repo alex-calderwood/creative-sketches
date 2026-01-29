@@ -1,7 +1,9 @@
+
 /**
  * Projects Helper - Browser-compatible version
  * Fetches project data from the server's /editors/api/projects endpoint
  */
+
 
 export class ProjectsHelper {
   static async getProjects() {

@@ -1,62 +1,99 @@
 {
   "revolutionary": {
-    "name": "The Revolutionary",
-    "progression": ["letter", "concrete", "social", "four", "waste"],
+    "name": "Revolution",
+    "description":"Invent a fictional narrative about a failed revolution. A bit of a journaling game where you construct the plot by writing texts into a text editor that is actively warping your message.",
+    "progression": ["letter", "concrete", "horizontal", "vertical"],
     "levels": [
       {
         "id": "letter",
-        "name": "The Revolution Letter",
+        "name": "Breaking News",
         "editor": "hyper-sense-drifts",
         "prompt":
-          "A morning assault on the Capitol Building was a failure. The leader of the revolution has been captured. You, a reporter who has been covering the revolution, have been assigned to write the news brief. <b> Keep in mind the many readers and their perspectives.",
-        "initial-state": {
-          "text": "People of the Nation,\n\n"
-        },
-        "replacements": {
-          "you": "I",
-          "your": "my",
-          "you're": "I'm",
-          "you've": "I've",
-          "you'd": "I'd",
-          "you'll": "I'll"
+          "The morning assault on the Capitol Building was a failure. <br><br> The popular leader of the revolution has been captured. <br><br>You are a reporter who has been covering the revolution, who has have been assigned to write the news brief. <br><br> Keep in mind the many readers and their perspectives.",
+        "initialState": {
+          "text": "ANDALUSIA CITY (AP) 8:08am \n\n\n"
         }
       }, 
       {
         "id": "concrete",
-        "name": "Many Voices in Space",
-        "editor": "concrete-drifts",
-        "prompt": "Many voices have rallied around your last post. You note their diverse reactions in your journal. (Explore this editor by writing in different locations.)"
+        "name": "Responses",
+        "editor": "wall",
+        "prompt": "Many voices have rallied around your last post. You note their diverse reactions in your journal. <br> This editor allows you to write anywhere."
       },
       {
-        "id": "social",
-        "name": "Social Imagination",
-        "editor": "concrete-wall",
-        "prompt": "As the news continues to proliferate, you imagine your words overlapping and merging with the many voices of the day. Illustrate this in words."      
+        "id": "horizontal",
+        "name": "Proliferation",
+        "editor": "wall-reproduction",
+        "prompt": "You continue to reflect on how your words have been amplified.",     
+        "settings": {
+          "verticalCopy": false,
+          "horizontalCopy": true
+        }
       },
       {
-        "id": "four",
-        "name": "Four-Dimensional Word Play",
-        "editor": "concrete-wall",
-        "prompt": "As the news continues to proliferate, you imagine your words overlapping and merging with the many voices of the day. Illustrate this in words."      
+        "id": "vertical",
+        "name": "Vertical Movement",
+        "editor": "wall-reproduction",
+        "prompt": "How do your words get reproduced, quoted, and modified?",     
+        "settings": {
+          "verticalCopy": true,
+          "horizontalCopy": false
+        }
       }
     ]
   },
-  "Next": {
-    "name": "Next",
-    "progression": ["one", "waste"],
+  "Recycling": {
+    "name": "Wastewriting",
+    "description": "In this drift, each page uses material from your last one. It can be thought of as an experiment in treating the words you produce as a kind of sculptable material. How do different seeds affect what you come up with?",
+    "progression": ["1", "playing", "3", "second-poetris", "5"],
     "levels": [
       {
-        "id": "one",
+        "id": "1",
         "name": "Gathering Waste",
         "editor": "spellcheck-drifts",
-        "prompt": "Are any words a waste?"     
+        "prompt": "Is it wasteful to make mistakes?",
+        "settings": {
+          "reverse": false
+        }
       },
       {
-        "id": "waste",
-        "name": "Waste",
+        "id": "playing",
+        "name": "Playing with Waste",
         "editor": "poetris-drift",
         "prompt": "Use your wasted words to compose something new.",
-        "sourceText": "Runoff is the flow of water across the earth, and is a major component in the hydrological cycle. Runoff that flows over land before reaching a watercourse is referred to as surface runoff or overland flow. Once in a watercourse, runoff is referred to as streamflow, channel runoff, or river runoff. Urban runoff is surface runoff created by urbanization. A detailed diagram depicting the global water cycle. The direction of movement of water between reservoirs tends towards upwards movement through evapotranspiration and downward movement through gravity. The diagram also shows how human water use impacts where water is stored and how it moves. The water cycle (or hydrologic cycle or hydrological cycle) is a biogeochemical cycle that involves the continuous change in form of water on, above and below the surface of the Earth across different reservoirs. The mass of water on Earth remains fairly constant over time. However, the partitioning of the water into the major reservoirs of ice, fresh water, salt water and atmospheric water is variable and depends on climatic variables. The water moves from one reservoir to another, such as from river to ocean, or from the ocean to the atmosphere due to a variety of physical and chemical processes. The processes that drive these movements, or fluxes, are evaporation, transpiration, condensation, precipitation, sublimation, infiltration, surface runoff, and subsurface flow. In doing so, the water goes through different phases: liquid, solid (ice) and vapor. The ocean plays a key role in the water cycle as it is the source of 86% of global evaporation. The water cycle is driven by energy exchanges in the form of heat transfers between different phases. The energy released or absorbed during a phase change can result in temperature changes. Heat is absorbed as water transitions from the liquid to the vapor phase through evaporation. This heat is also known as the latent heat of vaporization. Conversely, when water condenses or melts from solid ice it releases energy and heat. On a global scale, water plays a critical role in transferring heat from the tropics to the poles via ocean circulation."
+        "sourceText": "Runoff is the flow of water across the earth, and is a major component in the hydrological cycle. Runoff that flows over land before reaching a watercourse is referred to as surface runoff or overland flow. Once in a watercourse, runoff is referred to as streamflow, channel runoff, or river runoff. Urban runoff is surface runoff created by urbanization. A detailed diagram depicting the global water cycle. The direction of movement of water between reservoirs tends towards upwards movement through evapotranspiration and downward movement through gravity. The diagram also shows how human water use impacts where water is stored and how it moves. The water cycle (or hydrologic cycle or hydrological cycle) is a biogeochemical cycle that involves the continuous change in form of water on, above and below the surface of the Earth across different reservoirs. The mass of water on Earth remains fairly constant over time. However, the partitioning of the water into the major reservoirs of ice, fresh water, salt water and atmospheric water is variable and depends on climatic variables. The water moves from one reservoir to another, such as from river to ocean, or from the ocean to the atmosphere due to a variety of physical and chemical processes. The processes that drive these movements, or fluxes, are evaporation, transpiration, condensation, precipitation, sublimation, infiltration, surface runoff, and subsurface flow. In doing so, the water goes through different phases: liquid, solid (ice) and vapor. The ocean plays a key role in the water cycle as it is the source of 86% of global evaporation. The water cycle is driven by energy exchanges in the form of heat transfers between different phases. The energy released or absorbed during a phase change can result in temperature changes. Heat is absorbed as water transitions from the liquid to the vapor phase through evaporation. This heat is also known as the latent heat of vaporization. Conversely, when water condenses or melts from solid ice it releases energy and heat. On a global scale, water plays a critical role in transferring heat from the tropics to the poles via ocean circulation.",
+        "editsBackup": "It is an historically sufficiently determined little pedagogy which manifests itself most visibly. A pedagogy that tells the pupil that there is nothing outside of the text, but that within it, in its interstices, in its white spaces and unspokennesses, the reserve of the origin reigns; it is not at all necessary to search elsewhere, for exactly here, to be sure not in the words, but in words as erasures, in their grill, \"the meaning of being\" speaks itself. A pedagogy that conversely gives to the voice of the teacher that unlimited sovereignty which permits them to read the text indefinitely"
+      },
+      {
+        "id": "3",
+        "name": "Intention",
+        "editor": "spellcheck-drifts",
+        "prompt": {
+          "queryType": "levelText",
+          "preface": "In your last entry, you composed this poem:\n",
+          "suffix": "\nTake a moment to reflect on it. Does it feel intentional? What does it say?",
+          "fromLevel": "playing"
+        }     
+      },
+      {
+        "id": "second-poetris",
+        "name": "Composing with waste again",
+        "editor": "poetris-drift",
+        "prompt": "Use your wasted words to compose something new, again.",
+        "editsBackup": "It is an historically sufficiently determined little pedagogy which manifests itself most visibly. A pedagogy that tells the pupil that there is nothing outside of the text, but that within it, in its interstices, in its white spaces and unspokennesses, the reserve of the origin reigns; it is not at all necessary to search elsewhere, for exactly here, to be sure not in the words, but in words as erasures, in their grill, \"the meaning of being\" speaks itself. A pedagogy that conversely gives to the voice of the teacher that unlimited sovereignty which permits them to read the text indefinitely",
+        "sourceText": "Recycling the word. A strange noun full of verb, noun bending to verb, strange idea of repeating repetition, repetition bending to noun, to fixity, the plastic box full of plastic boxes […] For a poet at midcareer, recycling is a nerve-wracking emblem of “repeating repetition”: year after year, the same emotional ruts, linguistic loop-de-loops, and formula-bound relationships. But recycling also inspires thrifty formal innovations. One poem repeats, five times over, the increasingly self-referential sentence: “There’s love in the way the panels are pried up and replaced.” Often when you think you’re at the end of something, you’re at the beginning of something else. There is no such thing as ‘away’. When we throw anything away it must go somewhere. When you put the whole picture together, recycling is the right thing to do. We cannot solve our problems with the same thinking we used when we created them. We do not inherit the Earth from our ancestors; we borrow it from our children. We never know the worth of water till the well is dry. Buy less, choose well. At its core, the issue of a clean environment is a matter of public health."
+      },
+      {
+        "id": "5",
+        "name": "Testing",
+        "editor": "hyper-sense-drifts",
+        "prompt": "Would you like to edit your poem?",
+        "initialState": {
+          "text": {
+            "queryType": "levelText",
+            "fromLevel": "second-poetris"
+          }
+        }
       }
     ]
   }

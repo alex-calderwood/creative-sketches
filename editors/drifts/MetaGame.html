@@ -4,31 +4,29 @@
   } */
 
 #prompt-container {
-  flex-drift: row;
+  flex-direction: row;
   align-items: center;
   gap: 15px;
-  padding: 10px 20px;
   background-color: transparent;
   display: none;
-  flex-drift: row;
+  height: fit-content;
 }
 
 #prompt-display {
   padding: 10px;
   margin: 0;
-  color: var(--text-color-1);
+  color: var(--text-color);
   text-align: left;
   font-family: var(--font-2);
-  flex: 1;
 }
 
 #submit-button {
   pointer-events: all;
   background: var(--background-color);
-  border: 1px solid var(--text-color-1);
+  border: 1px solid var(--text-color);
   padding: 8px 16px;
   border-radius: 0.5em;
-  color: var(--text-color-1);
+  color: var(--text-color);
   font-family: var(--font);
   font-size: 12px;
   cursor: pointer;
@@ -54,20 +52,21 @@
   }
 
   .modal-content {
+    color: var(--text-color);
     background-color: var(--background-color);
-    border: 1px solid var(--text-color-1);
+    border: 1px solid var(--text-color);
     border-radius: 0.5em;
     padding: 2em;
     max-width: 8.5in;
     max-height: 80vh;
     overflow-y: auto;
     display: flex;
-    flex-drift: column;
+    flex-direction: column;
     gap: 2em;
   }
 
   #alternate-text {
-    color: var(--text-color-1);
+    color: var(--text-color);
     font-family: var(--font);
     font-size: 16px;
     white-space: pre-wrap;
@@ -82,10 +81,10 @@
 
   .modal-buttons button {
     background: var(--background-color);
-    border: 1px solid var(--text-color-1);
+    border: 1px solid var(--text-color);
     padding: 0.5em 1em;
     border-radius: 0.5em;
-    color: var(--text-color-1);
+    color: var(--text-color);
     font-family: var(--font);
     font-size: 16px;
     cursor: pointer;
@@ -94,11 +93,15 @@
   .modal-buttons button:hover {
     opacity: 0.7;
   }
+
 </style>
 
 <template id="modal-template">
   <div id="complete-modal" class="modal meta-game" style="display: none;">
     <div class="modal-content">
+      <h1>
+        Your submission
+      </h1>
       <div id="alternate-text"></div>
       <div class="modal-buttons">
         <button id="modal-cancel">Cancel</button>

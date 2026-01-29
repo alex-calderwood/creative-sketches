@@ -21,12 +21,14 @@ export class SpellcheckPerformance extends SettingsMixin(class {}) {
         ...BasicEditor.settings,
       ]
 
+      this.textState = {
+          misspellings: [],
+          wordCount: 0,
+          text: "",
+          ...params.initialState
+      }
       
       this.editor = null;
-      this.textState = {
-        misspellings: [],
-        wordCount: 0,
-      }
       this.isChecking = false;    
       this.checkNeeded = false;
       this.eventTarget = new EventTarget();
@@ -46,17 +48,15 @@ export class SpellcheckPerformance extends SettingsMixin(class {}) {
         this.fromSCOWL();
       }
 
-
       this.setElement(document.querySelector('#editor'));
 
-      console.log("editor", this.editor);
+      // this.editor.innerText = this.textState.text;
 
       // set the size 
       BasicEditor.onSettingChanged(this, 'width', this.params.width, null);
 
       // set the darm mode
       BasicEditor.onSettingChanged(this, 'darkmode', this.params.darkmode, null);
-
 
     }
 
@@ -120,10 +120,11 @@ export class SpellcheckPerformance extends SettingsMixin(class {}) {
 
     getState() {
       let text = getTextWithWhitespace(this.editor);
-      return {
-        text,
+      let state = {
         ...this.textState,
+        text,
       }
+      return state;
     }
 
     // Set the element to check for spelling

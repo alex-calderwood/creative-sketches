@@ -32,8 +32,8 @@ body {
   box-sizing: border-box;
   font-family: var(--font);
   background-color: var(--background-color);
-  color: var(--text-color-1);
-  border-bottom: 2px solid var(--text-color-1);
+  color: var(--text-color);
+  border-bottom: 2px solid var(--text-color);
 
   padding: 0.5vh 1vw;
   z-index: 1000;
