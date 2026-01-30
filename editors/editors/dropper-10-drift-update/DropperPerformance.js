@@ -86,10 +86,10 @@ export class DropperPerformance extends SettingsMixin(class {}) {
     this.tickTime = 100; // ms
     this.dropTimePerBox = 50; // ms
     this.completionTime = 1000; // ms
-    this.arrowSpeed = 170; // ms
+    this.arrowSpeed = 900; // ms
 
     this.completedMode = 'constraint';
-    this.wordTailLength = 20;
+    this.wordTailLength =30;
   }
 
   initializeAnyConstraints() {
@@ -117,6 +117,9 @@ export class DropperPerformance extends SettingsMixin(class {}) {
   }
 
   async initialize(params = {}) {
+    this.parent = document.querySelector("#game");
+    this.parentRect = this.parent.getBoundingClientRect();
+
     this.params = { 
       sourceTexts: null, // defaults to sourceText over defaultCorpus if set
       defaultCorpus: 'corpora/short/eis.txt',
@@ -124,8 +127,8 @@ export class DropperPerformance extends SettingsMixin(class {}) {
       numRows: 12,
 
       // Grid positioning
-      gridStartX: 100,
-      gridStartY: 100,
+      gridStartX: this.parentRect.width / 4,
+      gridStartY: this.parentRect.height / 4,
       gridEndGap: 40,
 
       ...params
@@ -136,11 +139,10 @@ export class DropperPerformance extends SettingsMixin(class {}) {
       { name: 'numRows', type: 'number', description: 'Number of rows' },
     ];
 
-    this.parent = document.querySelector("#game");
 
     // Grid positioning constants
-    this.params.gridWidth = window.innerWidth - this.params.gridStartX;
-    this.params.gridHeight = window.innerHeight - this.params.gridStartY - this.params.gridEndGap;
+    this.params.gridWidth =  this.parentRect.width - this.params.gridStartX;
+    this.params.gridHeight = this.parentRect.height - this.params.gridStartY - this.params.gridEndGap;
 
     // Calculate cell sizes
     this.params.cellHeight = this.params.gridHeight / this.params.numRows;
@@ -216,6 +218,7 @@ export class DropperPerformance extends SettingsMixin(class {}) {
     // Initialize token stream and visual component (wordTail)
     let tokenStream = new TextStream(this.wordTailLength, this.reader);
     const streamComponent = new WordTailTextStreamComponent(this, {
+      ...this.params,
       to: this.tokenOrigin,
       blockWidth: this.params.cellWidth,
       blockHeight: this.params.cellHeight,
@@ -396,14 +399,14 @@ export class DropperPerformance extends SettingsMixin(class {}) {
     this.drawColumnIndicator(this.state.curX);
 
     // resizeToken(this.state.currentBlock, this.columnWidths[this.state.curX], this.columnHeights[0]);
-    moveTo(this.state.currentBlock, newLeft, newTop, this.arrowSpeed, false, 'ease-in-out');
+    moveTo(this.state.currentBlock, newLeft, newTop, this.arrowSpeed / 4, false, 'ease-in-out');
     this.moveWordTail({left: newLeft, top: newTop});
   }
 
 
   moveRight() {
     if (this.state.curX ==this.params.numColumns - 1) {
-      this.state.curX = 0;
+      // this.state.curX = 0;
     } else {
       this.state.curX += 1;
     }
@@ -414,7 +417,7 @@ export class DropperPerformance extends SettingsMixin(class {}) {
 
   moveLeft() {
     if (this.state.curX == 0) {
-      this.state.curX =this.params.numColumns - 1;
+      // this.state.curX =this.params.numColumns - 1;
     } else {
       this.state.curX -= 1;
     }
@@ -617,7 +620,7 @@ export class DropperPerformance extends SettingsMixin(class {}) {
     this.drawColumnIndicator(this.state.curX);
 
     // Move the new current block
-    moveTo(block, this.state.currentBlockLeft, this.state.currentBlockTop, this.arrowSpeed, false, 'ease-in-out');
+    moveTo(block, this.state.currentBlockLeft, this.state.currentBlockTop, this.arrowSpeed / 4, false, 'ease-in-out');
   }
 
   moveWordTail(to) {
@@ -642,13 +645,12 @@ export class DropperPerformance extends SettingsMixin(class {}) {
     }
 
     columnElt.style.setProperty('--col-color', colColor);
+    columnElt.style.setProperty('--col-speed', this.arrowSpeed / 4 + 'ms');
 
     // draw the column
     columnElt.style.left = this.getColumnLeft(col) + 'px';
-    columnElt.style.top = '0px';
+    columnElt.style.top =  this.params.gridStartY - this.params.cellHeight + 'px';
     columnElt.style.width = this.columnWidths[col] + 'px';
-    // bottom of the screen
-    columnElt.style.height = '1000px';
   }
 
   moveCompletedLine(completedLines) {
