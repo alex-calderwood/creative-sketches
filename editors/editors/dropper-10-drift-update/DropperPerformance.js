@@ -646,10 +646,11 @@ export class DropperPerformance extends SettingsMixin(class {}) {
 
     columnElt.style.setProperty('--col-color', colColor);
     columnElt.style.setProperty('--col-speed', this.arrowSpeed / 4 + 'ms');
+    columnElt.style.setProperty('--col-height', this.params.cellHeight + 'px');
 
     // draw the column
     columnElt.style.left = this.getColumnLeft(col) + 'px';
-    columnElt.style.top =  this.params.gridStartY - this.params.cellHeight + 'px';
+    columnElt.style.top =  this.params.gridStartY -  this.params.gridEndGap + 'px';
     columnElt.style.width = this.columnWidths[col] + 'px';
   }
 
