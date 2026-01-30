@@ -218,7 +218,7 @@ body {
   width: 100%;
   height: 100%;
   background-color: var(--col-color);
-  transition: left 0.2s ease-in-out, top 0.2s ease-in-out;
+  transition: left var(--col-speed) ease-in-out, top var(--col-speed) ease-in-out;
   /* totally flat shadow */
   /* box-shadow: 4px 0px #b96c1a; */
   /* right border */

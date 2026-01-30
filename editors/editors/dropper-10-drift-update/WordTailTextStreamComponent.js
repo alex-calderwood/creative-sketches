@@ -112,6 +112,7 @@ export class WordTailTextStreamComponent extends TextStreamComponent {
    * Render all tokens
    */
   render() {
+    return this.renderNew();
     let {from, to} = this.state;
     let newLoc = {
       left: to.left,
@@ -140,6 +141,54 @@ export class WordTailTextStreamComponent extends TextStreamComponent {
       newLoc.left += width + this.params.spaceWidth;
 
       moveTo(block, newLoc.left, newLoc.top, speed);
+    }
+  }
+
+  renderNew() {
+    let {from, to} = this.state;
+    let newLoc = {
+      left: to.left,
+      top: to.top,
+    }
+
+    let moved = [];
+
+    const width = this.params.blockWidth;
+    const height = this.params.blockHeight;
+
+    let row = 0;
+
+    // for (let i = this.tokens.length - 1; i >= 0; i--) { // for each token
+    for (let i = 0; i < this.tokens.length; i++) { // for each token
+      let curToken = this.tokens[i];
+      let block = this.tokensToBlocks[curToken.id];
+      if (!block) {
+        console.error("TextStreamComponent.render(): null token at index", i, this.tokens);
+        continue;
+      }
+
+      moved.push(curToken.text);
+
+      // let speed = 180 * (this.tokens.length + 1 - i) ** 0.5;
+      let speed = this.game.arrowSpeed;
+      
+      let newLeft = 0;
+      if (row % 2 == 0) {
+        newLeft = newLoc.left + width;
+      } else {
+        newLeft = newLoc.left - width;
+      }
+
+      if ((newLeft >= window.innerWidth || newLeft <= this.params.gridStartX) && (row < 2)) {
+        row ++;
+        newLoc.left = newLoc.left;
+      } else {
+        newLoc.left = newLeft;
+      }
+
+      newLoc.top = to.top - (row * height);
+
+      moveTo(block, newLoc.left, newLoc.top, speed * (i+1) / this.tokens.length * 3, false, 'ease-in-out');
     }
   }
 
