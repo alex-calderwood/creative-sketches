@@ -145,8 +145,15 @@ export class Game {
   onNewTokens(newTokens) {
     if (!newTokens || newTokens.length === 0) return;
 
-    for (const token of newTokens) {
-      this.animateWord(token, 0, window.innerHeight + 100, 1, 3000);
+    let newText = newTokens.map(token => token.text).join(' ');
+
+    // create a popup
+    let text = `You wrote '${newText}'. Are you sure?`
+    let confirmed = window.confirm(text);
+    if (confirmed) {
+      // do nothing
+    } else {
+      this.editor.textContent = this.editor.textContent.replace(newWords, '');
     }
   }
 
