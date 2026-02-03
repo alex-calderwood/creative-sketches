@@ -58,11 +58,12 @@ body {
 
 #editor-container {
   position: relative;
-  height: 100vh;
+  /* height: 100vh; */
+  height: var(--editor-height);
   aspect-ratio: 8.5/11;
   width: auto;
   margin: 4rem auto;
-  box-sizing: border-box;
+  border: 1.2px solid var(--primary-color);
 }
 
 #editor {
@@ -76,11 +77,9 @@ body {
   color: var(--text-color);
   font-family: var(--game-font);
   font-size: 16px;
-  border: 1.2px solid var(--primary-color);
   padding: calc(100% / 8.5);
   outline: none;
   overflow: auto;
-  line-height: 1.5;
 }
 
 #overlay {
@@ -91,11 +90,10 @@ body {
   height: 100%;
   pointer-events: none;
   z-index: 100;
-  padding: calc(100% / 8.5);
+  /* padding: calc(100% / 8.5); */
   box-sizing: border-box;
 }
   
-
 #game-banner {
   width: 100%;
   height: 4vh;
@@ -129,3 +127,19 @@ body {
   color: var(--text-color);
 }
 
+.move {
+  /* absolute means positioned to its nearest positioned ancestor */
+  position: absolute; 
+  font-family: var(--game-font);
+  pointer-events: none;
+  z-index: 1001;
+  width: var(--word-width);
+  height: var(--word-height);
+  font-size: 16px;
+  /* opacity:  */
+  /* text-decoration-color: var(--delete-color); */
+  /* color: var(--delete-color) !important; */
+  /* not selectable */
+  user-select: none;
+  -webkit-user-select: none;
+}
