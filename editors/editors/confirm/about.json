@@ -1,0 +1,10 @@
+{
+    "name": "Confirmation Editor",
+    "description": "This editor makes sure you meant what you wrote.",
+    "tags": {
+        "confirm": {"version": "1"}
+    },
+    "image": "confirm.png",
+    "url": "confirm",
+    "date": "2026-02-03"
+}
