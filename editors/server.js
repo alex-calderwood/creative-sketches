@@ -61,6 +61,7 @@ function getProjects() {
   // Create an array of promises for reading about.json files
   const projectPromises = projectDirs.map(dir => {
     const aboutPath = path.join(editorsDir, dir, 'about.json');
+    // Default to data that doesn't require the about.json
     const defaultAbout = {
       url: dir,
       dir: dir,
@@ -95,6 +96,7 @@ function getProjects() {
           return;
         }
         try {
+          // Get the data from the actual about.json
           const aboutData = JSON.parse(data);
           const image = getImagePathSmart(aboutData.image, dir);
           
@@ -135,7 +137,6 @@ function getProjects() {
 let projects = [];
 getProjects().then(projectList => {
   projects = projectList.filter(project => !project.hide);
-
   // Set up static serving for each project directory
   // First serve static files from the editors directory itself
   app.use('/editors', serveStatic(path.join(__dirname, 'editors')));
@@ -144,7 +145,7 @@ getProjects().then(projectList => {
     const projectPath = path.join(__dirname, 'editors', project.dir);
     // Create a router for this project
     const projectRouter = express.Router();
-    
+
     // Apply history API fallback for SPAs if needed
     projectRouter.use(history());
 

@@ -100,7 +100,6 @@ function animateWithGhost(word, dX, dY, scale, speed=500) {
 
   let overlay = document.getElementById('overlay');
    
-
   const newElement = document.createElement('div');
   newElement.classList.add('move');
   newElement.textContent = text;

@@ -282,6 +282,9 @@ export class MetaGameControls {
     content.appendChild(title);
     
     Object.values(settings).forEach(setting => {
+      const id = setting.id || setting.name;
+      const name = setting.name || setting.id;
+
       const settingDiv = document.createElement('div');
       settingDiv.className = 'setting-item';
       
@@ -291,7 +294,7 @@ export class MetaGameControls {
       
       const label = document.createElement('label');
       label.className = 'setting-label';
-      label.textContent = setting.name;
+      label.textContent = name;
       settingDiv.appendChild(label);
       
       if (setting.type === 'boolean') {
@@ -299,7 +302,7 @@ export class MetaGameControls {
         checkbox.type = 'checkbox';
         checkbox.checked = setting.value;
         checkbox.addEventListener('change', () => {
-          this.game.performance.updateSetting(setting.name, checkbox.checked);
+          this.game.performance.updateSetting(id, checkbox.checked);
         });
         settingDiv.appendChild(checkbox);
       } else if (setting.type === 'number') {
@@ -308,7 +311,7 @@ export class MetaGameControls {
         input.value = setting.value;
         input.className = 'setting-input';
         input.addEventListener('change', () => {
-          this.game.performance.updateSetting(setting.name, parseFloat(input.value));
+          this.game.performance.updateSetting(id, parseFloat(input.value));
         });
         settingDiv.appendChild(input);
       } else if (setting.type === 'select') {
@@ -322,7 +325,7 @@ export class MetaGameControls {
         });
         select.value = setting.value;
         select.addEventListener('change', () => {
-          this.game.performance.updateSetting(setting.name, select.value);
+          this.game.performance.updateSetting(id, select.value);
         });
         settingDiv.appendChild(select);
       } else {
@@ -331,7 +334,7 @@ export class MetaGameControls {
         input.value = setting.value;
         input.className = 'setting-input';
         input.addEventListener('change', () => {
-          this.game.performance.updateSetting(setting.name, input.value);
+          this.game.performance.updateSetting(id, input.value);
         });
         settingDiv.appendChild(input);
       }
