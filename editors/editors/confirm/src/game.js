@@ -1,4 +1,5 @@
 import { iterateContentEditableWords, newWords } from './textIterator.js';
+import { Modal } from '/editors/vault/01-23-2026/src/components/Modal.js';
 
 export class Game {
   constructor() {
@@ -43,6 +44,9 @@ export class Game {
 
     // Set the overlay css to match most of the values of the editor
     this.syncOverlay();
+
+    this.modal = new Modal('confirm');
+    this.modal.create();
 
     // To support backward's compatability, MetaGame expects game to have a .performance property
     // with certain functions: loadState, getAllSettings, should document better
@@ -147,14 +151,32 @@ export class Game {
 
     let newText = newTokens.map(token => token.text).join(' ');
 
-    // create a popup
-    let text = `You wrote '${newText}'. Are you sure?`
-    let confirmed = window.confirm(text);
-    if (confirmed) {
-      // do nothing
-    } else {
-      this.editor.textContent = this.editor.textContent.replace(newWords, '');
-    }
+    let content = `
+      <div class="cancel-icon">
+        !
+        <svg class="wavy-line" viewBox="0 0 100 20" preserveAspectRatio="none">
+          <path d="M 0,10 Q 10,5 20,10 T 40,10 T 60,10 T 80,10 T 100,10" stroke="red" stroke-width="4" fill="none"/>
+        </svg>
+      </div>
+      <p class="new-text">${newText}</p>
+      <p>Are you sure?</p>
+    `;
+
+
+    this.modal.show(content).then(confirmed => {
+      if (confirmed) {
+        // do nothing
+      } else {
+        this.editor.textContent = this.editor.textContent.replace(newWords, '');
+      }
+
+
+      // set the focus back
+      setTimeout(() => {
+        this.editor.focus();
+      }, 0);
+      
+    });
   }
 
   // Perform the actual spell check (returns a promise)

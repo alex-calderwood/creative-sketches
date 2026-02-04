@@ -1,0 +1,33 @@
+.new-text {
+    background-color: var(--accent-color);
+    padding: 0.5em;
+    border-radius: 0.5em;
+}
+
+.cancel-icon {
+    display: block;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    border: 7px solid red;
+    margin: 0 auto 20px auto;
+    position: relative;
+    background-color: white;
+    color: red;
+    font-size: 7em;
+    font-weight: 900;
+    text-align: center;
+    line-height: 1em;
+    font-family: 'Courier New', monospace;
+    overflow: hidden;
+}
+
+.wavy-line {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 141.42%;
+    height: auto;
+    transform: translate(-50%, -50%) rotate(45deg);
+    pointer-events: none;
+}

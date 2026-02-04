@@ -1,0 +1,134 @@
+const CSS_PATH = '/editors/vault/01-23-2026/src/components/Modal.css';
+export class Modal {
+    
+    static templateHTML = null;
+    static stylesLoaded = false;
+
+    constructor(id, content = '', buttons = null) {
+        this.id = id;
+        this.content = content;
+        this.buttons = buttons;
+        this.element = null;
+
+        if (buttons === null) {
+            this.buttons = this.defaultButtons();
+        }
+    }
+
+    hide() {
+        if (this.element) {
+            this.element.style.display = 'none';
+            // Remove keyboard event listener
+            document.removeEventListener('keydown', this.keydownHandler, true);
+        } else {
+            console.error('Modal not found');
+        }
+    }
+
+    destroy() {
+        if (this.element) {
+            this.element.remove();
+            this.element = null;
+        }
+    }
+
+    async create() {
+        await Modal.loadStyles();
+        
+        // Create modal element directly
+        this.element = document.createElement('div');
+        this.element.id = this.id;
+        this.element.className = 'modal meta-game';
+        this.element.style.display = 'none';
+        
+        // Create content
+        const buttonHTML = this.buttons.map(btn => {
+            const btnId = btn.class ? `class="${btn.class}"` : '';
+            return `<button ${btnId} data-action="${btn.text.toLowerCase()}">${btn.text}</button>`
+        }).join('');
+        
+        this.element.innerHTML = `
+            <div class="content-container">
+                <div class="modal-content">
+                    ${this.content}
+                </div>
+                <div class="modal-buttons">${buttonHTML}</div>
+            </div>
+        `;
+        
+        // Attach to DOM
+        document.body.appendChild(this.element);
+        
+        // Add event listeners
+        this.buttons.forEach(btn => {
+            const button = this.element.querySelector(`[data-action="${btn.text.toLowerCase()}"]`);
+            if (button && btn.handler) {
+                button.addEventListener('click', btn.handler);
+            }
+        });
+        
+        // Add keyboard event listener for modal
+        this.keydownHandler = (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            
+            if (e.key === 'Enter') {
+                // Find and click the Continue button
+                const continueButton = this.element.querySelector('[data-action="continue"]');
+                if (continueButton) {
+                    continueButton.click();
+                }
+            }
+        };
+    }
+
+    show(newContent = null) {
+        if (this.element) {
+            this.element.style.display = 'flex';
+            if (newContent) {
+                this.element.querySelector('.modal-content').innerHTML = newContent;
+            }
+            // Add keyboard event listener to block other events
+            document.addEventListener('keydown', this.keydownHandler, true);
+        } else {
+            console.error('Modal not found');
+        }
+        return new Promise((resolve, reject) => {
+            // Store resolve function to call from button handlers
+            this._resolve = resolve;
+        });
+    }
+
+    static async loadStyles() {
+        if (Modal.stylesLoaded) return;
+        
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = CSS_PATH;
+        document.head.appendChild(link);
+        
+        Modal.stylesLoaded = true;
+    }
+
+    defaultButtons() {
+        return [
+            { text: 'Cancel', handler: () => {
+                this.onCancel(); 
+                this.hide();
+                if (this._resolve) this._resolve(false);
+            }},
+            { 
+                text: 'Continue', 
+                class: 'continue-button',
+                handler: () => {
+                this.onContinue(); 
+                this.hide();
+                if (this._resolve) this._resolve(true);
+            }}
+        ];
+    }
+
+    // Overridable
+    onCancel() { }
+    onContinue() { }
+}

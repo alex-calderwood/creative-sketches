@@ -21,6 +21,7 @@ function escapeHtml(text) {
 }
 
 function injectProjectInfoIntoHtml(html, project) {
+  console.log('project', project);
   const replacements = {
     '$PROJECT_NAME': project.name,
     '$PROJECT_ID': project.url
@@ -156,7 +157,10 @@ getProjects().then(projectList => {
 
       const indexPath = path.join(projectPath, 'index.html');
       fs.readFile(indexPath, 'utf8', (err, html) => {
-        if (err) return next();
+        if (err) {
+          console.error('Error reading index.html:', err);
+          return next();
+        }
         res.type('html').send(injectProjectInfoIntoHtml(html, project));
       });
     });

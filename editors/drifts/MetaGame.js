@@ -7,7 +7,7 @@ import { MetaGameControls } from '/editors/drifts/MetaGameControls.js';
 import { GameplaySave } from '/editors/drifts/GameplaySave.js';
 import { Drifts } from '/editors/drifts/Drifts.js';
 import { Document } from '/editors/drifts/Document.js'
-import { Modal } from '/editors/drifts/Modal.js';
+import { Modal } from '/editors/vault/01-23-2026/src/components/Modal.js';
 import { saveStateWithImage, retrieveTextFromDrift, setChosenDocumentForLevel, getChosenDocumentForLevel} from '/editors/drifts/utils/utils.js';
 
 export class MetaGame {
@@ -356,13 +356,10 @@ export class MetaGame {
   }
 
   async createModal() {
-    const buttons = [
-      { text: 'Cancel', handler: () => this.handleModalCancel() },
-      { text: 'Continue', handler: () => this.handleModalContinue() }
-    ];
-    
     const content = '<h1>Your submission</h1><div id="alternate-text"></div>';
-    this.modal = new Modal('complete-modal', content, buttons);
+    this.modal = new Modal('complete-modal', content);
+    this.modal.onCancel = () => this.handleModalCancel();
+    this.modal.onContinue = () => this.handleModalContinue();
     await this.modal.create();
   }
 
