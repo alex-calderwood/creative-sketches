@@ -164,9 +164,19 @@ body {
     border: 0.5px solid var(--header-color);
 
     transform-origin: center center;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem;
+    overflow: hidden;
+}
 
-
+.page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--bg-color, white);
+    z-index: 0;
 }
 
 .page a {
@@ -182,7 +192,7 @@ body {
 .project-name {
     padding: 0.6rem;
     font-size: 0.6rem;
-    color: #18191a;
+    color: var(--text-color, #18191a);
     transition: all 0.3s ease;
     font-family: 'Georgia', serif;
     font-weight: 600;
@@ -190,7 +200,7 @@ body {
 .project-description {
     padding: 0 0.6rem 0.6rem;
     font-size: 0.5rem;
-    color: #050505;
+    color: var(--text-color, #050505);
     transition: all 0.3s ease;
     font-family: 'Georgia', serif;
 }
@@ -198,7 +208,7 @@ body {
     padding: 0 0.6rem 0.6rem;
     font-family: 'Georgia', serif;
     font-size: 0.45rem;
-    color: #888;
+    color: var(--text-color, #888);
     line-height: 1.4;
     transition: all 0.3s ease;
     font-style: italic;
@@ -207,23 +217,25 @@ body {
     margin-bottom: 0.1rem;
 }
 .project-image {
-    position: absolute;
-    width: calc(100% - 2rem);
-    height: calc(100% - 1rem);
+    width: 100%;
+    max-height: 60%;
     object-fit: contain;
     opacity: 1.0;
-    z-index: 0;
-    top: 0.5rem;
-    left: 1rem;
+    flex-shrink: 0;
+    order: 0;
+    align-self: flex-start;
+    position: relative;
+    z-index: 1;
 }
 .project-content {
     position: relative;
-    z-index: 1;
     display: flex;
     flex-direction: column;
     transition: all 0.3s ease;
+    flex: 1;
+    min-height: 0;
     order: 1;
-    background-color: rgba(255, 255, 255, 0.95);
+    z-index: 1;
 }
 
 .tag-header {
@@ -361,9 +373,10 @@ body {
 
 .project-date {
     font-size: 0.45rem;
-    color: #999;
+    color: var(--text-color, #999);
     font-weight: 300;
     margin-left: 0.5rem;
+    opacity: 0.7;
 }
 
 .tag-filter-button {

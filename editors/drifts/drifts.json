@@ -8,7 +8,11 @@
         "id": "1",
         "name": "Gathering Waste",
         "editor": "spellcheck-drifts",
-        "prompt": "Is it wasteful to make mistakes?",
+        "prompt": "Xin Liu writes:\n\"The figure of the (bio)degradable for Derrida sheds light on the strange kinship between waste, which is dissolved, assimilated, circulated and whose identity is broken open and apart, and the masterpiece, which precisely resists the process of assimilation and decomposition. Interestingly, the use of the text – its contribution to the culture/memory/tradition that also conditions its intelligibility and significance – necessitates its dissolvement and assimilation.\nWrite something wasteful.",
+        "promptTODO": {
+          "queryType": "levelText",
+          "fromLevel": "waste"
+        },
         "settings": {
           "reverse": false
         }
@@ -27,8 +31,8 @@
         "editor": "spellcheck-drifts",
         "prompt": {
           "queryType": "levelText",
-          "preface": "In your last entry, you composed this poem:\n",
-          "suffix": "\nTake a moment to reflect on it. Where does that inspiration come from?",
+          "preface": "In your last entry, you composed:\n",
+          "suffix": "\nHow can you make this more bioavailable?",
           "fromLevel": "playing"
         }     
       },

@@ -1,4 +1,5 @@
 import { Token } from './Token.js';
+// import { getCorpusFile } from '/editors/vault/01-23-2026/src/getCorpusFile.js';
 
 export class TextCorpus {
       constructor( source='unknown') {
@@ -23,12 +24,15 @@ export class TextCorpus {
           const filePath = `${assetsFolder}/${filename}`;
           console.log('TextCorpus Loading corpus from:', filePath);
           const response = await fetch(filePath);
-          let text = await response.text();
-          this.setText(text);
+          let fileText = await response.text();
+          // let {source, text} = getCorpusFile(fileText);
+          this.setText(fileText);
         } catch (error) {
           console.error('Error loading corpus:', filename, error);
         }
       }
+
+      
   
       setText(text) {
         this.text = text;
