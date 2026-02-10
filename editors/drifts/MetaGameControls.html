@@ -44,6 +44,10 @@
     transform: scale(0.98);
   }
 
+  #instructions-btn {
+    display: none;
+  }
+
   .document-selector-modal {
     position: fixed;
     top: 0;
@@ -97,10 +101,6 @@
     width: 100%;
   }
 
-  .controls-wrapper:hover .settings-icon {
-    display: none;
-
-  }
 
   .setting-item {
     margin-bottom: 15px;
@@ -149,7 +149,7 @@
     opacity: 0.6;
     font-size: 0.9em;
     display: flex;
-    flex-drift: row;
+    flex-direction: row;
     gap: 4px;
   }
 
@@ -163,7 +163,8 @@
   }
 
   .controls-buttons {
-    display: none;
+    /* display: none; */
+    display:flex;
     gap: 8px;
   }
 
@@ -202,8 +203,11 @@
       <div id="last-saved" class="doc-info last-saved"></div>
       <div id="document-id" class="doc-info document-id"></div>
     </div>
-    <div class="settings-icon control-btn">Settings</div>
     <div class="controls-buttons">
+      <button id="instructions-btn" class="control-btn">Instructions</button>
+      <button id="new-game-btn" class="control-btn">New Document</button>
+      <button id="settings-btn" class="control-btn">Settings</button>
+
       <div class="button-pair">
         <button id="load-btn" class="control-btn">Load</button>
         <button id="upload-btn" class="control-btn">Upload</button>
@@ -212,20 +216,17 @@
         <button id="save-btn" class="control-btn">Save</button>
         <button id="download-btn" class="control-btn">Download</button>
       </div>
-      <button id="new-game-btn" class="control-btn">New</button>
-      <button id="settings-btn" class="control-btn">Settings</button>
     </div>
     <input type="file" id="file-input" accept=".json" style="display: none;">
   </div>
 </div>
 
-<div id="controls-template">
+<!-- <div id="controls-template">
   <div class="controls-wrapper">
     <div class="last-saved-info">
       <div id="last-saved" class="doc-info last-saved"></div>
       <div id="document-id" class="doc-info document-id"></div>
     </div>
-    <div class="settings-icon control-btn">Settings</div>
     <div class="controls-buttons">
       <div class="button-pair">
         <button id="load-btn" class="control-btn">Load</button>
@@ -240,4 +241,4 @@
     </div>
     <input type="file" id="file-input" accept=".json" style="display: none;">
   </div>
-</div>
+</div> -->

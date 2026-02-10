@@ -1,5 +1,7 @@
 import { saveStateWithImage } from './utils/utils.js';
 import { GameplaySave } from '/editors/drifts/GameplaySave.js';
+import { Modal } from '/editors/vault/01-23-2026/src/components/Modal.js';
+
 
 export class MetaGameControls {
   constructor(options = {}) {
@@ -10,8 +12,11 @@ export class MetaGameControls {
     this.save = options.save || null;
     this.documentId = options.documentId || null;
     this.onNewDocument = options.onNewDocument || null;
+    this.instructions = options.instructions || null;
     this.onSave = options.onSave || null;
     this.templateLoaded = false;
+
+    this.modal = null;
   }
 
   async loadTemplate() {
@@ -37,6 +42,7 @@ export class MetaGameControls {
       }
 
       this.templateLoaded = true;
+
     } catch (error) {
       console.error('Failed to load controls template:', error);
     }
@@ -45,20 +51,17 @@ export class MetaGameControls {
   async initialize() {
     await this.loadTemplate();
     this.render();
+    this.createModal();
+    await this.loadInstructions();
+
     this.attachEventListeners();
     this.updateLastSavedDisplay();
   }
 
   render() {
-    // const controlsContainer = document.getElementById('controls');
-    // if (!controlsContainer) return;
-
-    // controlsContainer.innerHTML = this.templateHTML || '';
-
     const gameBanner = document.getElementById('game-banner');
     if (gameBanner) {
       gameBanner.innerHTML = this.gameBannerHTML || '';
-      console.log("tes", this.game);
       let subtitle = document.querySelector('.subtitle');
       if (subtitle) {
         subtitle.textContent = this.projectName;
@@ -77,6 +80,7 @@ export class MetaGameControls {
     const loadBtn = document.getElementById('load-btn');
     const uploadBtn = document.getElementById('upload-btn');
     const newGameBtn = document.getElementById('new-game-btn');
+    const instructionsBtn = document.getElementById('instructions-btn');
     const fileInput = document.getElementById('file-input');
     const settingsBtn = document.getElementById('settings-btn');
     if (saveBtn) {
@@ -105,6 +109,10 @@ export class MetaGameControls {
 
     if (settingsBtn) {
       settingsBtn.addEventListener('click', () => this.showSettings());
+    }
+
+    if (instructionsBtn) {
+      instructionsBtn.addEventListener('click', () => this.showInstructions());
     }
   }
 
@@ -265,6 +273,35 @@ export class MetaGameControls {
   updateDocumentId(documentId) {
     this.documentId = documentId;
     this.updateLastSavedDisplay();
+  }
+
+  loadInstructions() {
+    if (!this.instructions) {
+      let elt = document.querySelector('#instruction-text');
+      if (elt) {
+        this.instructions = elt.textContent
+      };
+    }
+    console.log("loading", this.instructions)
+    if (this.instructions) {
+      let btn = document.getElementById('instructions-btn');
+      if (btn) {
+        btn.style.display = 'block';
+      }
+      console.log("loading", btn)
+    }
+  }
+
+  showInstructions() {
+    if (this.instructions) {
+        const content = '<h1>Instructions</h1>' + this.instructions ;
+        this.modal.show(content);
+    }
+  }
+
+  async createModal() {
+    this.modal = new Modal('complete-modal');
+    await this.modal.create();
   }
 
   showSettings() {

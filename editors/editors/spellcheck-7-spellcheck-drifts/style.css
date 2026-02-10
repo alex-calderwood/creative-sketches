@@ -114,8 +114,8 @@ body {
   left: 0;
   width: 75vw;
   height: 10vh;
-  margin-top: 1vh;
-  margin-left: 20vw;
+  margin: 0 auto;
+  width: 80vh;
 }
 
 #prompt-display {
@@ -289,7 +289,6 @@ body {
 
 .modal-content {
   background-color: var(--background-color);
-  border: 2px solid var(--highlight);
   width: 90%;
   overflow: auto;
 }
