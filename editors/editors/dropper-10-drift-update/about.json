@@ -1,8 +1,8 @@
 {
-    "name": "Poetris Beta",
+    "name": "Poetris Drift",
     "description": "Poetris - the current beta or in progress version of the sketch.",
     "notes": "",
-    "version": "9",
+    "version": "10",
     "series": ["game", "poetris"],
     "url": "poetris-drift",
     "image": "poetris-10.png",

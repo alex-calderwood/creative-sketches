@@ -161,3 +161,19 @@ body {
   outline: none;
   overflow: hidden;
 }
+
+.prompt-container {
+  top: 0;
+  left: 0;
+  width: 75vw;
+  height: 10vh;
+  margin: 3vh auto;
+  width: 80vh;
+}
+
+#prompt-display {
+  text-align: left;
+  margin-top: 0px;
+  font-size: 14pt;
+  color: var(--text-color);
+}
