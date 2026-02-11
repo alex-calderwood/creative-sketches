@@ -168,6 +168,10 @@
     gap: 8px;
   }
 
+  .save-related {
+    display: none;
+  }
+
   .button-pair {
     display: flex;
     gap: 0;
@@ -209,12 +213,12 @@
       <button id="settings-btn" class="control-btn">Settings</button>
 
       <div class="button-pair">
-        <button id="load-btn" class="control-btn">Load</button>
-        <button id="upload-btn" class="control-btn">Upload</button>
+        <button id="load-btn" class="control-btn save-related">Load</button>
+        <button id="upload-btn" class="control-btn save-related">Upload</button>
       </div>
       <div class="button-pair">
-        <button id="save-btn" class="control-btn">Save</button>
-        <button id="download-btn" class="control-btn">Download</button>
+        <button id="save-btn" class="control-btn save-related">Save</button>
+        <button id="download-btn" class="control-btn save-related">Download</button>
       </div>
     </div>
     <input type="file" id="file-input" accept=".json" style="display: none;">

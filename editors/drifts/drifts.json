@@ -8,13 +8,13 @@
         "id": "1",
         "name": "Gathering Waste",
         "editor": "spellcheck-drifts",
-        "prompt": "Xin Liu writes:\n\"The figure of the (bio)degradable for Derrida sheds light on the strange kinship between waste, which is dissolved, assimilated, circulated and whose identity is broken open and apart, and the masterpiece, which precisely resists the process of assimilation and decomposition. Interestingly, the use of the text – its contribution to the culture/memory/tradition that also conditions its intelligibility and significance – necessitates its dissolvement and assimilation.\nWrite something wasteful.",
+        "prompt": "Xin Liu writes:\n\"The figure of the (bio)degradable for Derrida sheds light on the strange kinship between waste, which is dissolved, assimilated, circulated and whose identity is broken open and apart, and the masterpiece, which precisely resists the process of assimilation and decomposition. Interestingly, the use of the text – its contribution to the culture/memory/tradition that also conditions its intelligibility and significance – necessitates its dissolvement and assimilation.\nCan you write something wasteful? (Bio)degradable?",
         "promptTODO": {
           "queryType": "levelText",
           "fromLevel": "waste"
         },
         "settings": {
-          "reverse": false
+          "reverse": true
         }
       },
       {
@@ -22,8 +22,8 @@
         "name": "Playing with Waste",
         "editor": "poetris-drift",
         "prompt": "Use your wasted words to compose something new.",
-        "sourceText": "Runoff is the flow of water across the earth, and is a major component in the hydrological cycle. Runoff that flows over land before reaching a watercourse is referred to as surface runoff or overland flow. Once in a watercourse, runoff is referred to as streamflow, channel runoff, or river runoff. Urban runoff is surface runoff created by urbanization. A detailed diagram depicting the global water cycle. The direction of movement of water between reservoirs tends towards upwards movement through evapotranspiration and downward movement through gravity. The diagram also shows how human water use impacts where water is stored and how it moves. The water cycle (or hydrologic cycle or hydrological cycle) is a biogeochemical cycle that involves the continuous change in form of water on, above and below the surface of the Earth across different reservoirs. The mass of water on Earth remains fairly constant over time. However, the partitioning of the water into the major reservoirs of ice, fresh water, salt water and atmospheric water is variable and depends on climatic variables. The water moves from one reservoir to another, such as from river to ocean, or from the ocean to the atmosphere due to a variety of physical and chemical processes. The processes that drive these movements, or fluxes, are evaporation, transpiration, condensation, precipitation, sublimation, infiltration, surface runoff, and subsurface flow. In doing so, the water goes through different phases: liquid, solid (ice) and vapor. The ocean plays a key role in the water cycle as it is the source of 86% of global evaporation. The water cycle is driven by energy exchanges in the form of heat transfers between different phases. The energy released or absorbed during a phase change can result in temperature changes. Heat is absorbed as water transitions from the liquid to the vapor phase through evaporation. This heat is also known as the latent heat of vaporization. Conversely, when water condenses or melts from solid ice it releases energy and heat. On a global scale, water plays a critical role in transferring heat from the tropics to the poles via ocean circulation.",
-        "editsBackup": "It is an historically sufficiently determined little pedagogy which manifests itself most visibly. A pedagogy that tells the pupil that there is nothing outside of the text, but that within it, in its interstices, in its white spaces and unspokennesses, the reserve of the origin reigns; it is not at all necessary to search elsewhere, for exactly here, to be sure not in the words, but in words as erasures, in their grill, \"the meaning of being\" speaks itself. A pedagogy that conversely gives to the voice of the teacher that unlimited sovereignty which permits them to read the text indefinitely"
+        "sourceText": "the strange kinship between waste, which is dissolved, assimilated, circulated and whose identity is broken open and apart, and the masterpiece, which precisely resists the process of assimilation and decomposition. Interestingly, the use of the text – its contribution to the culture/memory/tradition that also conditions its intelligibility and significance – necessitates its dissolvement and assimilation.\nCan you write something wasteful? (Bio)degradable Runoff is the flow of water across the earth, and is a major component in the hydrological cycle. Runoff that flows over land before reaching a watercourse is referred to as surface runoff or overland flow. Once in a watercourse, runoff is referred to as streamflow, channel runoff, or river runoff. Urban runoff is surface runoff created by urbanization. A detailed diagram depicting the global water cycle. The direction of movement of water between reservoirs tends towards upwards movement through evapotranspiration and downward movement through gravity. The diagram also shows how human water use impacts where water is stored and how it moves. The water cycle (or hydrologic cycle or hydrological cycle) is a biogeochemical cycle that involves the continuous change in form of water on, above and below the surface of the Earth across different reservoirs. The mass of water on Earth remains fairly constant over time. However, the partitioning of the water into the major reservoirs of ice, fresh water, salt water and atmospheric water is variable and depends on climatic variables. The water moves from one reservoir to another, such as from river to ocean, or from the ocean to the atmosphere due to a variety of physical and chemical processes. The processes that drive these movements, or fluxes, are evaporation, transpiration, condensation, precipitation, sublimation, infiltration, surface runoff, and subsurface flow. In doing so, the water goes through different phases: liquid, solid (ice) and vapor. The ocean plays a key role in the water cycle as it is the source of 86% of global evaporation. The water cycle is driven by energy exchanges in the form of heat transfers between different phases. The energy released or absorbed during a phase change can result in temperature changes. Heat is absorbed as water transitions from the liquid to the vapor phase through evaporation. This heat is also known as the latent heat of vaporization. Conversely, when water condenses or melts from solid ice it releases energy and heat. On a global scale, water plays a critical role in transferring heat from the tropics to the poles via ocean circulation.",
+        "editsBackup": "Recycling the word. A strange noun full of verb, noun bending to verb, strange idea of repeating repetition, repetition bending to noun, to fixity, the plastic box full of plastic boxes It is an historically sufficiently determined little pedagogy which manifests itself most visibly. A pedagogy that tells the pupil that there is nothing outside of the text, but that within it, in its interstices, in its white spaces and unspokennesses, the reserve of the origin reigns; it is not at all necessary to search elsewhere, for exactly here, to be sure not in the words, but in words as erasures, in their grill, \"the meaning of being\" speaks itself. A pedagogy that conversely gives to the voice of the teacher that unlimited sovereignty which permits them to read the text indefinitely"
       },
       {
         "id": "3",
@@ -31,10 +31,13 @@
         "editor": "spellcheck-drifts",
         "prompt": {
           "queryType": "levelText",
-          "preface": "In your last entry, you composed:\n",
-          "suffix": "\nHow can you make this more bioavailable?",
+          "preface": "You wrote:\n",
+          "suffix": "\n Reflect on this poem. How does it make itself (bio)available to you?",
           "fromLevel": "playing"
-        }     
+        },
+        "settings": {
+          "reverse": false
+        }
       },
       {
         "id": "second-poetris",
@@ -47,9 +50,9 @@
       },
       {
         "id": "5",
-        "name": "Testing",
+        "name": "Edit",
         "editor": "hyper-sense-drifts",
-        "prompt": "Would you like to edit your poem?",
+        "prompt": "Edit your last poem. Will you free it of waste? Or add more?",
         "initialState": {
           "text": {
             "queryType": "levelText",
@@ -60,31 +63,31 @@
     ]
   },
   "revolutionary": {
-    "name": "Revolution",
-    "description":"Invent a fictional narrative about a failed revolution. A bit of a journaling game where you construct the plot by writing texts into a text editor that is actively warping your message.",
+    "name": "Media and Message",
+    "description":"Play with reinterpretatin of texts",
     "progression": ["letter", "concrete", "horizontal", "vertical"],
     "levels": [
       {
         "id": "letter",
-        "name": "Breaking News",
+        "name": "First experiment",
         "editor": "hyper-sense-drifts",
         "prompt":
-          "The morning assault on the Capitol Building was a failure. <br><br> The popular leader of the revolution has been captured. <br><br>You are a reporter who has been covering the revolution. You have been assigned the news brief detailing what has happened and what will be likely to follow. <br><br> Keep in mind the many readers and their perspectives.",
-        "initialState": {
+          "This editor will replace your writing with synonyms (according to the commonly used WordNet ontology). What can you produce? Perhaps now you choose a topic, or freewrite, and allow what emerges to guide you through the next editors. You attention to what words are selected (\"That's not my meaning\"!).",
+        "initialStateOLD": {
           "text": "ANDALUSIA CITY (AP) 8:08am \n\n\n"
         }
       }, 
       {
         "id": "concrete",
-        "name": "Responses",
+        "name": "Wall Text",
         "editor": "wall",
-        "prompt": "Many voices have rallied around your last post. You note their diverse reactions in your journal. <br> They don't seem to say more than four words at a time."
+        "prompt": "Can you get at some idea or theme that came up with this new medium? <br> You may have a challenge writing than four words at a time, but you can write anywhere (click around)."
       },
       {
         "id": "horizontal",
-        "name": "Proliferation",
+        "name": "Horizontal Movement",
         "editor": "wall-reproduction",
-        "prompt": "You continue to reflect on how your words have been amplified.",     
+        "prompt": "Your ideas may repeat themselves here. As before, click around the page. ",     
         "settings": {
           "verticalCopy": false,
           "horizontalCopy": true
@@ -94,7 +97,7 @@
         "id": "vertical",
         "name": "Vertical Movement",
         "editor": "wall-reproduction",
-        "prompt": "How do your words get reproduced, quoted, and modified?",     
+        "prompt": "Here your ideas will be duplicated.",     
         "settings": {
           "verticalCopy": true,
           "horizontalCopy": false
@@ -102,8 +105,42 @@
       }
     ]
   },
+  "Resistence": {
+    "id": "resistence",
+    "name": "Resistence",
+    "description": "A sequence where the editors resist you, and you have to resist back.",
+    "progression": ["template"],
+    "levels": [
+      {
+        "id": "template",
+        "name": "Template",
+        "editor": "test-template",
+        "prompt": "This is a test prompt",
+        "initialState": {
+          "text": "Hello, world!"
+        }
+      }
+    ]
+  },
+  "Creation": {
+    "id": "creation",
+    "name": "Creative Flow",
+    "description": "A progression where you are challenged to flow through different ideas.",
+    "progression": ["template"],
+    "levels": [
+      {
+        "id": "template",
+        "name": "Template",
+        "editor": "test-template",
+        "prompt": "This is a test prompt",
+        "initialState": {
+          "text": "Hello, world!"
+        }
+      }
+    ]
+  },
   "tests": {
-    "name": "Tests",
+    "name": "Template Tests",
     "description": "Tests",
     "progression": ["template"],
     "levels": [
@@ -111,6 +148,7 @@
         "id": "template",
         "name": "Template",
         "editor": "test-template",
+        "prompt": "This is a test prompt",
         "initialState": {
           "text": "Hello, world!"
         }

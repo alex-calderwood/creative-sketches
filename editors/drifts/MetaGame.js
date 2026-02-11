@@ -54,19 +54,18 @@ export class MetaGame {
 
     if (!this.driftName) {
       console.error('No selected drift', this);
-      return;
     }
     
     // Load drifts to get initial state
     const drifts = await Drifts.fromFile('/editors/drifts/drifts.json');
-    console.log('MetaGame.initialize() selected document id', this.save.getSelectedDocumentId());
 
     // Get levelId - either from selected document or from save metadata
     let levelId = null;
     
     // Check if there is a current document id and it matches this editor
-    if (this.save.getSelectedDocumentId()) {
+    if (this.save?.getSelectedDocumentId()) {
       let documentId = this.save.getSelectedDocumentId();
+      console.log('MetaGame.initialize() selected document id', this.save.getSelectedDocumentId());
       let doc = this.save.getDocument(documentId);
       if (doc && doc.getField('sourceEditor') === this.projectId) {
         this.documentId = documentId;
@@ -77,7 +76,7 @@ export class MetaGame {
 
     // If no levelId from document, check save metadata
     if (!levelId) {
-      levelId = this.save.getMetadata('selectedlevelId');
+      levelId = this.save?.getMetadata('selectedlevelId');
     }
 
     // Use the levelId to load the correct level
@@ -95,12 +94,15 @@ export class MetaGame {
         this.level = null;
         this.levelId = null;
       }
-      
     }
 
-    this.allLevels = drifts.getLevels(this.driftName);
-    this.progression = drifts.data[this.driftName].progression || [];
-
+    if (this.driftName) {
+      this.allLevels = drifts.getLevels(this.driftName);
+      this.progression = drifts.data[this.driftName].progression || [];
+    } else {
+      this.allLevels = null;
+      this.progression = null;
+    }
 
     // Get initial content from level and convert to state format
     let initialState = null;
@@ -108,18 +110,16 @@ export class MetaGame {
       // Convert initialState to proper state object format
       const stateObj = this.level['initialState'];
       if (stateObj?.text?.queryType != null) {
-        stateObj.text = retrieveTextFromDrift(save, stateObj?.text);
+        stateObj.text = retrieveTextFromDrift(this.save, stateObj?.text);
       }
       initialState = stateObj;
     }
     
-
-    if (!this.documentId) {
+    if (!this.documentId && this.save) {
       this.documentId = this.createNewDocument(this.save, initialState);
       console.log('MetaGame.initialize() no selected document id, created new document', this.documentId);
       this.save.saveToLocalStorage();
     }
-
 
     // Load progression prompts
     await this.loadTemplate();
@@ -249,10 +249,12 @@ export class MetaGame {
   }
 
   handleNewDocument() {
-    const newDocumentId = this.createNewDocument(this.save);
-    this.save.setMetadata('selectedDocumentId', newDocumentId);
+    if (this.save) {
+      const newDocumentId = this.createNewDocument(this.save);
+      this.save.setMetadata('selectedDocumentId', newDocumentId);
 
-    this.save.saveToLocalStorage();
+      this.save.saveToLocalStorage();
+    }
     window.location.reload();
   }
 

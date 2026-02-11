@@ -62,7 +62,7 @@ body {
   height: var(--editor-height);
   aspect-ratio: 8.5/11;
   width: auto;
-  margin: 4rem auto;
+  margin: 2rem auto;
   border: 1.2px solid var(--primary-color);
 }
 
@@ -111,13 +111,13 @@ body {
 }
 
 /* Override MetaGame default styles */
-#prompt-container {
+.prompt-container {
   top: 0;
   left: 0;
   width: 75vw;
   height: 10vh;
-  margin-top: 1vh;
-  margin-left: 20vw;
+  margin: 0 auto;
+  width: 80vh;
 }
 
 #prompt-display {

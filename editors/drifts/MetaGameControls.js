@@ -71,6 +71,17 @@ export class MetaGameControls {
         backLink.href = this.backLink.href;
         backLink.textContent = this.backLink.text;
       }
+
+      if(this.save) {
+        this.unhideSaveRealtedButtons();
+      }
+    }
+  }
+
+  unhideSaveRealtedButtons() {
+    let saveButtons = document.querySelectorAll('.save-related');
+    for(let button of saveButtons) {
+      button.style.display = 'block';
     }
   }
 
@@ -279,16 +290,14 @@ export class MetaGameControls {
     if (!this.instructions) {
       let elt = document.querySelector('#instruction-text');
       if (elt) {
-        this.instructions = elt.textContent
+        this.instructions = elt.innerHTML;
       };
     }
-    console.log("loading", this.instructions)
     if (this.instructions) {
       let btn = document.getElementById('instructions-btn');
       if (btn) {
         btn.style.display = 'block';
       }
-      console.log("loading", btn)
     }
   }
 
