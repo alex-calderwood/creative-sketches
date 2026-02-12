@@ -125,6 +125,7 @@ export class DropperPerformance extends SettingsMixin(class {}) {
       defaultCorpus: 'corpora/short/eis.txt',
       numColumns: 6,
       numRows: 12,
+      corpusOverride: null, // user specifiable corpus (in settings)
 
       // Grid positioning
       gridStartX: this.parentRect.width / 4,
@@ -137,6 +138,7 @@ export class DropperPerformance extends SettingsMixin(class {}) {
     this.settings = [
       { name: 'numColumns', type: 'number', description: 'Number of columns' },
       { name: 'numRows', type: 'number', description: 'Number of rows' },
+      { id: 'corpusOverride', name: "Corpus", type: 'text', description: 'Override the text used for the game.'},
     ];
 
 
@@ -209,22 +211,7 @@ export class DropperPerformance extends SettingsMixin(class {}) {
 
     this.corpora = await this.initializeCorpora();
 
-    if (this.wordTail) { this.wordTail.clear(); }
-
-    console.log('corpora', this.corpora);
-    // Initialize reader
-    this.reader = new MultiTextReader(this.corpora);
-
-    // Initialize token stream and visual component (wordTail)
-    let tokenStream = new TextStream(this.wordTailLength, this.reader);
-    const streamComponent = new WordTailTextStreamComponent(this, {
-      ...this.params,
-      to: this.tokenOrigin,
-      blockWidth: this.params.cellWidth,
-      blockHeight: this.params.cellHeight,
-    });
-    // an 'Entity' is a wrapper holding the token stream (the words) and component (visual representation)
-    this.wordTail = new TextStreamEntity(this, tokenStream, streamComponent);
+    this.initializeWordTail();
 
     // Set up controls and event listeners (only on first initialization)
     if (!this.params.isReset) {
@@ -247,9 +234,33 @@ export class DropperPerformance extends SettingsMixin(class {}) {
     this.initializeAnyConstraints();
   }
 
+  // uses this.corpora to initialize the word tail
+  initializeWordTail() {
+    if (this.wordTail) { this.wordTail.clear(); }
+
+    // Initialize reader
+    this.reader = new MultiTextReader(this.corpora);
+
+    // Initialize token stream and visual component (wordTail)
+    let tokenStream = new TextStream(this.wordTailLength, this.reader);
+    const streamComponent = new WordTailTextStreamComponent(this, {
+      ...this.params,
+      to: this.tokenOrigin,
+      blockWidth: this.params.cellWidth,
+      blockHeight: this.params.cellHeight,
+    });
+    // an 'Entity' is a wrapper holding the token stream (the words) and component (visual representation)
+    this.wordTail = new TextStreamEntity(this, tokenStream, streamComponent);
+  }
+
   async initializeCorpora() {
     let corpora = [];
-    if (this.params.sourceTexts) {
+    
+    if (this.params.corpusOverride) {
+      let corpus = new CustomTextCorpus().setCustomText(this.params.corpusOverride);
+      corpora.push(corpus);
+      this.colorBy = 'pos';
+    } else if (this.params.sourceTexts) {
       for (let sourceText of this.params.sourceTexts) {
         console.log('sourceText', sourceText);
         let corpus = sourceText.kind === 'corpusFile' ?
@@ -261,11 +272,13 @@ export class DropperPerformance extends SettingsMixin(class {}) {
       let corpus = new CustomTextCorpus();
       await corpus.setTextFromFile(this.params.corpusFile);
       corpora.push(corpus);
+      this.colorBy = 'pos';
     } else {
       let corpus = new CustomTextCorpus();
       await corpus.loadTextsFromJSON();
       await corpus.loadRandomText();
       corpora.push(corpus);
+      this.colorBy = 'pos';
     }
     return corpora;
   }
@@ -276,6 +289,8 @@ export class DropperPerformance extends SettingsMixin(class {}) {
         this.params.numColumns = value;
     } else if (name === 'numRows') {
       this.params.numRows = value;
+    } else if (name === 'corpusOverride') {
+      this.params.corpusOverride = value;
     }
     
     this.initialize(this.params);

@@ -25,36 +25,36 @@
  * 
  */
 export const SettingsMixin = (Base) => class extends Base {
-    getSetting(name) {
-        if (!(name in this.params)) {
+    getSetting(key) {
+        if (!(key in this.params)) {
             let validNames = Object.keys(this.params).join(', ');
-            throw new Error(`Invalid setting name: ${name}. Valid names: ${validNames}`);
+            throw new Error(`Invalid setting key: ${key}. Valid keys: ${validNames}`);
         }
-        return this.params[name];
+        return this.params[key];
     }
 
-    updateSetting(name, value) {
-        if (!(name in this.params)) {
+    updateSetting(key, value) {
+        if (!(key in this.params)) {
             let validNames = Object.keys(this.params).join(', ');
-            throw new Error(`Invalid setting name: ${name}. Valid names: ${validNames}`);
+            throw new Error(`Invalid setting key: ${key}. Valid keys: ${validNames}`);
         }
 
-        let oldValue = this.params[name];
-        this.params[name] = value;
+        let oldValue = this.params[key];
+        this.params[key] = value;
         
         // Call hook for specific setting behaviors
         if (this.onSettingChanged) {
-            this.onSettingChanged(name, value, oldValue);
+            this.onSettingChanged(key, value, oldValue);
         }
     }
 
     getAllSettings() {
         let settings = {};
         this.settings.forEach((setting) => {
-            const { name } = setting;
-            settings[name] = {
+            let key = setting?.id || setting?.name;
+            settings[key] = {
                 ...setting,
-                value: this.getSetting(name),
+                value: this.getSetting(key),
             };
         });
         return settings;
