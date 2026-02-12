@@ -188,6 +188,12 @@ body {
   height: 100%;
 }
 
+#instruction-text {
+  font-family: var(--font-2);
+  user-select: none;
+  color: red;
+}
+
 /* Subtitle styling */
 .subtitle {
   margin-left: 15px;
