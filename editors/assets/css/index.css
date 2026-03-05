@@ -556,6 +556,20 @@ body {
     border-bottom: 0.5px solid var(--header-color);
 }
 
+.page-tag {
+    padding: 0.3rem 0.5rem;
+    color: var(--header-color);
+    user-select: none;
+    display: inline-block;
+    padding: 0.15rem 0.25rem;
+    font-size: 0.6rem;
+    font-weight: 400;
+    font-style: normal;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    background-color: var(--accent-color);
+}
+
 .document-metadata {
     display: flex;
     gap: 1.5rem;

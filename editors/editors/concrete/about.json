@@ -1,7 +1,11 @@
 {
     "name": "Concrete Editor",
     "description": "A very simple text editor for creating concrete poetry on a grid.",
-    "series": ["concrete"],
-    "version": "4",
-    "image": "thing.png"
+    "tags": {
+        "concrete": {"version": "1"}
+    },
+    "version": "1",
+    "image": "thing.png",
+    "date": "2025-01-01",
+    "url": "concrete-1"
 }

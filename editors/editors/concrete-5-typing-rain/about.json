@@ -1,8 +1,11 @@
 {
-    "name": "Typing Rain",
+    "name": "Letter Rain",
     "description": "Inspired by Romy Achituv & Camille Utterback's <a href=\"https://camilleutterback.com/projects/text-rain/\">Text Rain.</a>",
-    "version": "5",
-    "series": ["concrete", "drips"],
+    "tags": {
+        "concrete": {"version": "5"},
+        "rain": {"version": "2"}
+    },
     "url": "concrete-rain-type",
-    "image": "rain.png"
+    "image": "rain.png",
+    "date": "2025-01-01"
 }

@@ -1,8 +1,10 @@
 {
     "name": "Dripchecker (English)",
     "description": "This is an experimint in making the spellchecker an experience. What does it mean to be 'right' when you're righting? How can we think threw the effect of the spelchecker on the righter?",
-    "version": "3",
-    "series": ["spellcheck", "drips"],
+    "tags": {
+        "spellcheck": {"version": "3"},
+        "rain": {"version": "4"}
+    },
     "url": "english-checker",
     "image": "spellcheck.png"
 }

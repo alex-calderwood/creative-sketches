@@ -4,5 +4,6 @@
     "notes": "",
     "version": "7",
     "series": ["game", "poetris"],
-    "url": "poetris-eis-demo"
+    "url": "poetris-eis-demo",
+    "major": false
 }
