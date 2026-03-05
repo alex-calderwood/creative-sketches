@@ -265,7 +265,9 @@
             if (projectTags.length > 0) {
                 const tagStrings = projectTags.map(tag => {
                     const version = getTagVersion(project, tag);
-                    return version ? `#${tag} v${version}` : `#${tag}`;
+                    let s = version ? `${tag} v${version}` : `${tag}`;
+                    let html = `<span class="page-tag">${s}</span>`;
+                    return html;
                 });
                 metadataLines.push(tagStrings.join(' '));
             }
