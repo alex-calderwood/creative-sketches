@@ -1,10 +1,10 @@
 {
-    "name": "Hyper",
-    "description": "A first experiment in using text streams as buffers to record a multiplicity of what the writer was writing. In this version, we see the past things the writer has written.",
+    "name": "Ticker",
+    "description": "A first experiment in using text streams as buffers to record a multiplicity of what the writer was writing. In this version, we see a delayed stream of words that repeat, showing the trace of word fragments",
     "notes": "",
     "version": "1",
     "series": ["hyper"],
-    "url": "hyper",
+    "url": "ticker",
     "image": "hyper.png",
     "major": false
 }

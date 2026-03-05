@@ -1,13 +1,13 @@
 {
     "name": "Hypersense Editor",
-    "description": "A first experiment in using text streams as buffers to record a multiplicity of what the writer was writing. In this version, words are replaced by their 'synonyms' according to the WordNet ontology.",
+    "description": "Another experiment in using text streams as buffers to record a possibility space of meaning. This one is a little buggy. Ask yourself, is that what I meant to say? If not, perhaps you will find it interesting anyway. I use it to critique the WordNet ontology, from which it draws its synonyms..",
     "notes": "",
     "tags": {
         "hyper": {"version": "3"},
         "drifts": {"version": "6"}
     },
     "url": "hyper-sense-2-1",
-    "image": "hyper.png",
+    "image": "smell.png",
     "date": "2025-12-22",
     "major": false
 }
