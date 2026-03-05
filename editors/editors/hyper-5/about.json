@@ -1,11 +1,11 @@
 {
-    "name": "Hyperfracture v5",
+    "name": "Hyperpane",
     "description": "This fractured editor replaces words with their synonyms according to the WordNet ontology.",
     "notes": "",
     "version": "5",
     "series": ["hyper", "fracture"],
-    "url": "hyper-5",
-    "image": "hyper.png",
+    "url": "hyperpane",
+    "image": "hyper-5.png",
     "major": false,
     "date": "2026-01-13"
 }

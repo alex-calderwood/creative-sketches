@@ -1,10 +1,11 @@
 {
     "name": "Template",
-    "description": "This spellchecker is updated to use the drifts progression logic.",
+    "description": "This is a template for new editors. Soon, this will be the open sourced, available to extend.",
     "tags": {
         "template": {"version": "1"}
     },
-    "image": "mistakes.png",
-    "url": "test-template",
-    "date": "2026-01-26"
+    "image": "template.png",
+    "url": "template",
+    "date": "2026-01-26",
+    "major": false
 }

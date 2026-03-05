@@ -814,7 +814,7 @@ button:active {
 .options-modal {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -824,10 +824,12 @@ button:active {
 .options-content {
     background: white;
     padding: 2rem;
-    max-width: 25rem;
+    max-width: 40rem;
     border-radius: var(--border-radius);
     font-family: var(--header-font);
     font-size: small;
+    overflow: auto;
+    max-height: 80%;
 }
 
 .options-content h2 {

@@ -113,6 +113,8 @@ export class MetaGame {
         stateObj.text = retrieveTextFromDrift(this.save, stateObj?.text);
       }
       initialState = stateObj;
+    } else if (this.level == null) {
+      console.log("no initial state or level", this.level, this.save);
     }
     
     if (!this.documentId && this.save) {
@@ -206,6 +208,8 @@ export class MetaGame {
   }
 
   logLoadedComponents() {
+    console.log("loading initial", this.level)
+
     const components = {
       Controls: this.loaded.controls,
       Prompts: this.loaded.prompts,
