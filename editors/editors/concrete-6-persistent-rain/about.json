@@ -1,8 +1,12 @@
 {
-    "name": "Persistent Rain",
+    "name": "Word Rain",
     "description": "Inspired by Romy Achituv & Camille Utterback's <a href=\"https://camilleutterback.com/projects/text-rain/\">Text Rain.</a>",
     "version": "6",
-    "series": ["concrete", "drips"],
+    "tags": {
+        "concrete": {"version": "6"},
+        "rain": {"version": "3"}
+    },
     "url": "persistent-rain",
-    "image": "concrete-rain.png"
+    "image": "concrete-rain.png",
+    "date": "2025-03-04"
 }

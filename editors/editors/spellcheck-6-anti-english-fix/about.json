@@ -1,9 +1,10 @@
 {
-    "name": "Antichecker games",
-    "description": "",
+    "name": "Boldchecker",
+    "description": "Playing with picking out mistakes and highlighting for you. This experiment saves your mispellings in a handy sidebar.",
     "notes": "",
-    "version": "7",
-    "series": ["spellcheck", "expand"],
-    "url": "anticorrect-7",
-    "image": "spellcheck.png"
+    "tags": {
+        "spellcheck": {"version": "6"}
+    },
+    "url": "anticorrect-bold",
+    "image": "undo.png"
 }

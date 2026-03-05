@@ -2,8 +2,9 @@
     "name": "Sluggish",
     "description": "This editor highlights your writing (and your mistakes) on repeat, with a delay. Inspired partly by Midst (https://midst.press/), and a conversation with Jeremy Douglass about ELC 1.0 (Word by Word Poems).",
     "notes": "",
-    "version": "2",
-    "series": ["history"],
+    "tags": {
+        "history": {"version": "2"}
+    },
     "url": "sluggish",
     "image": "sluggish.png",
     "date": "2026-03-03"

@@ -1,10 +1,12 @@
 {
-    "name": "Crystal Field",
-    "description": "Words come at you and you place them into a growing crystal/grid/poem.",
+    "name": "Crystal",
+    "description": "Words come at you and you place them into a growing crystal/grid/poem. Partially inspired by Crystallography. ",
     "notes": "",
-    "version": "2",
-    "series": ["game", "field", "concrete"],
-    "url": "field-2",
+    "tags": {
+        "game": {"version": "3"},
+        "field": {"version": "2"},
+    },
+    "url": "crystal-field",
     "image": "field/age.png",
     "major": true
 }
