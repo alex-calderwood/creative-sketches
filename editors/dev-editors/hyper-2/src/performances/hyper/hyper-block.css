@@ -1,6 +1,6 @@
 .block {
     font-family: var(--game-font);
-    color: var(--text-color-1);
+    color: var(--text-color);
     text-align: center;
     box-sizing: border-box;
     position: relative;
