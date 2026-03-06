@@ -11,9 +11,10 @@ import { Modal } from '/editors/vault/01-23-2026/src/components/Modal.js';
 import { saveStateWithImage, retrieveTextFromDrift, setChosenDocumentForLevel, getChosenDocumentForLevel} from '/editors/drifts/utils/utils.js';
 
 export class MetaGame {
-  constructor(projectId, projectName) {
+  constructor(projectId, projectName, params = {}) {
     this.projectId = projectId;
     this.projectName = projectName;
+    this.options = params;
     this.backLink = null;
     this.templateLoaded = false;
     this.modal = null;
@@ -29,7 +30,8 @@ export class MetaGame {
     this.loaded = {
       controls: false,
       prompts: false,
-      submit: false
+      submit: false,
+      settingsBar: false
     };
 
     console.log("MetaGame: Project ID", projectId, "Project Name", projectName);
@@ -161,11 +163,13 @@ export class MetaGame {
       save: this.save,
       documentId: this.documentId,
       backLink: this.backLink,
+      useSettingsBar: this.options.useSettingsBar,
       onNewDocument: () => this.handleNewDocument()
     });
 
     await this.controls.initialize();
-    this.loaded.controls = this.controls?.templateLoaded,
+    this.loaded.controls = this.controls?.templateLoaded;
+    this.loaded.settingsBar = this.controls?.settingsBarLoaded;
     
     // Setup autosave
     this.setupAutosave();
@@ -212,6 +216,7 @@ export class MetaGame {
 
     const components = {
       Controls: this.loaded.controls,
+      SettingsBar: this.loaded.settingsBar,
       Prompts: this.loaded.prompts,
       Submit: this.loaded.submit,
       InitialState: this.level?.['initialState'],

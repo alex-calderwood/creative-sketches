@@ -16,9 +16,9 @@ export class Game {
     };
 
     this.settings = [
-      { id: 'fontSize', name: 'Font Size', type: 'number', description: 'Font size for the editor text (px)' },
-      { id: 'scale', name: 'Scale', default: 100, type: 'select', description: 'The editor scale (in percent)', options: [25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300] },
-      { id: 'darkmode', name: 'Dark Mode', default: false, type: 'boolean', description: 'Dark mode for the editor' },
+      { id: 'fontSize', inBar: true, name: 'Font Size', type: 'number', description: 'Font size for the editor text (px)' },
+      { id: 'scale', inBar: true, name: 'Scale', default: 100, type: 'select', description: 'The editor scale (in percent)', options: [25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300] },
+      { id: 'darkmode', inBar: true, name: 'Dark Mode', default: false, type: 'boolean', description: 'Dark mode for the editor' },
     ]
 
     

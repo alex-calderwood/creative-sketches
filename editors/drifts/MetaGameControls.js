@@ -2,21 +2,23 @@ import { saveStateWithImage } from './utils/utils.js';
 import { GameplaySave } from '/editors/drifts/GameplaySave.js';
 import { Modal } from '/editors/vault/01-23-2026/src/components/Modal.js';
 
-
 export class MetaGameControls {
-  constructor(options = {}) {
-    this.projectId = options.projectId || null;
-    this.projectName = options.projectName || null;
-    this.backLink = options.backLink || null;
-    this.game = options.game || null;
-    this.save = options.save || null;
-    this.documentId = options.documentId || null;
-    this.onNewDocument = options.onNewDocument || null;
-    this.instructions = options.instructions || null;
-    this.onSave = options.onSave || null;
+  constructor(params = {}) {
+    this.projectId = params.projectId || null;
+    this.projectName = params.projectName || null;
+    this.backLink = params.backLink || null;
+    this.game = params.game || null;
+    this.save = params.save || null;
+    this.documentId = params.documentId || null;
+    this.onNewDocument = params.onNewDocument || null;
+    this.instructions = params.instructions || null;
+    this.onSave = params.onSave || null;
     this.templateLoaded = false;
 
     this.modal = null;
+    this.settingsBarLoaded = false;
+    this.useSettingsBar = params.useSettingsBar !== false;
+  
   }
 
   async loadTemplate() {
@@ -51,6 +53,7 @@ export class MetaGameControls {
   async initialize() {
     await this.loadTemplate();
     this.render();
+    this.renderSettingsBar();
     this.createModal();
     await this.loadInstructions();
 
@@ -74,6 +77,13 @@ export class MetaGameControls {
 
       if(this.save) {
         this.unhideSaveRealtedButtons();
+      }
+
+      let settingsBar = document.getElementById('settings-bar');
+      if (!settingsBar) {
+        settingsBar = document.createElement('div');
+        settingsBar.id = 'settings-bar';
+        gameBanner.insertAdjacentElement('afterend', settingsBar);
       }
     }
   }
@@ -313,87 +323,120 @@ export class MetaGameControls {
     await this.modal.create();
   }
 
-  showSettings() {
+  createSettingElement(setting) {
+    const id = setting.id || setting.name;
+    const name = setting.name || setting.id;
+
+    const settingDiv = document.createElement('div');
+    settingDiv.className = 'setting-item';
+
+    if (setting.description) {
+      settingDiv.setAttribute('data-tooltip', setting.description);
+    }
+
+    const label = document.createElement('label');
+    label.className = 'setting-label';
+    label.textContent = name;
+    settingDiv.appendChild(label);
+
+    if (setting.type === 'boolean') {
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.checked = setting.value;
+      checkbox.addEventListener('change', () => {
+        this.game.performance.updateSetting(id, checkbox.checked);
+      });
+      settingDiv.appendChild(checkbox);
+    } else if (setting.type === 'number') {
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.value = setting.value;
+      input.className = 'setting-input';
+      input.addEventListener('change', () => {
+        this.game.performance.updateSetting(id, parseFloat(input.value));
+      });
+      settingDiv.appendChild(input);
+    } else if (setting.type === 'select') {
+      const select = document.createElement('select');
+      select.className = 'setting-input';
+      setting.options.forEach(option => {
+        const optionEl = document.createElement('option');
+        optionEl.value = option;
+        optionEl.textContent = option;
+        select.appendChild(optionEl);
+      });
+      select.value = setting.value;
+      select.addEventListener('change', () => {
+        this.game.performance.updateSetting(id, select.value);
+      });
+      settingDiv.appendChild(select);
+    } else {
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.value = setting.value;
+      input.className = 'setting-input';
+      input.addEventListener('change', () => {
+        this.game.performance.updateSetting(id, input.value);
+      });
+      settingDiv.appendChild(input);
+    }
+
+    return settingDiv;
+  }
+
+  renderSettingsBar() {
+    if (!this.useSettingsBar) return;
+
+    const settingsBar = document.getElementById('settings-bar');
+    if (!settingsBar || !this.game?.performance) return;
+
     const settings = this.game.performance.getAllSettings();
+    const barSettings = Object.values(settings).filter(s => s.inBar);
+    if (barSettings.length === 0) return;
+
+    settingsBar.innerHTML = '';
+    barSettings.forEach(setting => {
+      settingsBar.appendChild(this.createSettingElement(setting));
+    });
+
+    settingsBar.style.display = 'flex';
+    this.settingsBarLoaded = true;
+  }
+
+  showSettings() {
+    if (!this.game?.performance) return;
+
+    const settings = this.game.performance.getAllSettings();
+    const allSettings = Object.values(settings);
+    if (allSettings.length === 0) return;
     
+
     const modal = document.createElement('div');
     modal.className = 'document-selector-modal';
-    
+
     const content = document.createElement('div');
     content.className = 'document-selector-content';
-    
+
     const title = document.createElement('div');
     title.className = 'settings-title';
     title.textContent = 'Settings';
     content.appendChild(title);
-    
-    Object.values(settings).forEach(setting => {
-      const id = setting.id || setting.name;
-      const name = setting.name || setting.id;
 
-      const settingDiv = document.createElement('div');
-      settingDiv.className = 'setting-item';
-      
-      if (setting.description) {
-        settingDiv.setAttribute('data-tooltip', setting.description);
-      }
-      
-      const label = document.createElement('label');
-      label.className = 'setting-label';
-      label.textContent = name;
-      settingDiv.appendChild(label);
-      
-      if (setting.type === 'boolean') {
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.checked = setting.value;
-        checkbox.addEventListener('change', () => {
-          this.game.performance.updateSetting(id, checkbox.checked);
-        });
-        settingDiv.appendChild(checkbox);
-      } else if (setting.type === 'number') {
-        const input = document.createElement('input');
-        input.type = 'number';
-        input.value = setting.value;
-        input.className = 'setting-input';
-        input.addEventListener('change', () => {
-          this.game.performance.updateSetting(id, parseFloat(input.value));
-        });
-        settingDiv.appendChild(input);
-      } else if (setting.type === 'select') {
-        const select = document.createElement('select');
-        select.className = 'setting-input';
-        setting.options.forEach(option => {
-          const optionEl = document.createElement('option');
-          optionEl.value = option;
-          optionEl.textContent = option;
-          select.appendChild(optionEl);
-        });
-        select.value = setting.value;
-        select.addEventListener('change', () => {
-          this.game.performance.updateSetting(id, select.value);
-        });
-        settingDiv.appendChild(select);
-      } else {
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.value = setting.value;
-        input.className = 'setting-input';
-        input.addEventListener('change', () => {
-          this.game.performance.updateSetting(id, input.value);
-        });
-        settingDiv.appendChild(input);
-      }
-      
-      content.appendChild(settingDiv);
+    // sort to show the ones that don't occur in the bar first
+    allSettings.sort((a, b) => {
+      return a.inBar ? 1 : -1;
     });
     
+    allSettings.forEach(setting => {
+      content.appendChild(this.createSettingElement(setting));
+    });
+
     const closeBtn = document.createElement('button');
     closeBtn.className = 'control-btn cancel-btn';
     closeBtn.textContent = 'Close';
     closeBtn.addEventListener('click', () => modal.remove());
     content.appendChild(closeBtn);
-    
+
     modal.appendChild(content);
     document.body.appendChild(modal);
   }

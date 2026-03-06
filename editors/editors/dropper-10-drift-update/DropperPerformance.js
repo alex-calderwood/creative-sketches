@@ -136,9 +136,9 @@ export class DropperPerformance extends SettingsMixin(class {}) {
     }
 
     this.settings = [
-      { name: 'numColumns', type: 'number', description: 'Number of columns' },
-      { name: 'numRows', type: 'number', description: 'Number of rows' },
-      { id: 'corpusOverride', name: "Corpus", type: 'text', description: 'Override the text used for the game.'},
+      { name: 'numColumns', type: 'number', description: 'Warning: will delete your current state. Number of columns' },
+      { name: 'numRows', type: 'number', description: 'Warning: will delete your current state. Number of rows' },
+      { id: 'corpusOverride', inBar: true, name: "Corpus", type: 'text', description: 'Override the text used for the game.'},
     ];
 
 

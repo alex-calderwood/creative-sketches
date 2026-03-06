@@ -132,7 +132,8 @@ export class DropperPerformance extends SettingsMixin(class {}) {
     }
 
     this.settings = [
-      { name: 'numColumns', type: 'number', description: 'Number of columns' },
+      { name: 'numColumns', type: 'number', description: 'Warning: will delete your current state. Number of columns' },
+      // { name: 'numRows', type: 'number', description: 'Warning: will delete your current state. Number of rows' },
     ];
 
     // Grid positioning constants
