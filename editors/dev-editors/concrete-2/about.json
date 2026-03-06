@@ -1,6 +1,9 @@
 {
     "name": "Concrete Falls",
     "description": "Some things come back.",
-    "version": "2",
-    "series": "concrete"
+    "tags": {
+        "concrete": {"version": "2"}
+    },
+    "url": "concrete-falls",
+    "date": "2025-01-01"
 }
