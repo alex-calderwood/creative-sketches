@@ -20,10 +20,10 @@ export class Game {
     };
 
     this.settings = [
-      { id: 'redact', name: 'Redact Text', default: true, type: 'boolean', description: 'Redact the hidden text. When false, the hidden text will be slightly visible.' },
-      { id: 'fontSize', name: 'Font Size', type: 'number', description: 'Font size for the editor text (px)' },
-      { id: 'scale', name: 'Scale', default: 100, type: 'select', description: 'The editor scale (in percent)', options: [25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300] },
-      { id: 'darkmode', name: 'Dark Mode', default: false, type: 'boolean', description: 'Dark mode for the editor' },
+      { id: 'redact', name: 'Redact Text', default: true, type: 'boolean', description: 'Redact the hidden text. When false, the hidden text will be slightly visible.', 'inBar': true },
+      { id: 'fontSize', name: 'Font Size', type: 'number', description: 'Font size for the editor text (px)', },
+      { id: 'scale', name: 'Scale', default: 100, type: 'select', description: 'The editor scale (in percent)', options: [25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300]},
+      { id: 'darkmode', inBar: true, name: 'Dark Mode', default: false, type: 'boolean', description: 'Dark mode for the editor',  'inBar': true  },
       { id: 'debug', name: 'Debug', default: false, type: 'boolean', description: 'Debug mode for the editor' },
     ]
 
@@ -437,7 +437,6 @@ export class Game {
 
 
   getAllSettings() {
-    console.log('getAllSettings', this.settings);
     return this.settings.map(setting => ({
       ...setting,
       value: this.params[setting.id]
