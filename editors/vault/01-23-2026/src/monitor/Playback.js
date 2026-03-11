@@ -96,6 +96,9 @@ export class Playback extends Emitter() {
     if (next >= this.monitor.getTokenCount()) return null;
     this.tokenIndex = next;
     const token = this.monitor.getTokenAt(next);
+    token.currentRect = token.alive
+      ? this.monitor.getCurrentRect(token.currentStartPos, token.currentEndPos - token.currentStartPos)
+      : null;
     this.keystrokeIndex = token.keystrokeIndex;
     this._emit('position', this.getCurrentState());
     return token;
@@ -156,13 +159,23 @@ export class Playback extends Emitter() {
 
   // Advances whichever of the next token or next char has the earlier timestamp.
   // Always uses recorded streams (ignores active mode) to ensure timestamps exist.
+  // Each returned item has: rect (original), currentRect (live position or null), alive.
   next() {
     const nextToken = this.monitor.getTokenAt(this.tokenIndex + 1);
     const nextChar  = this.monitor.getCharAt(this.charIndex + 1);
     if (!nextToken && !nextChar) return null;
     const useToken = nextToken && (!nextChar || nextToken.timestamp <= nextChar.timestamp);
-    if (useToken) { this.tokenIndex++; return { item: nextToken, type: 'token' }; }
+    if (useToken) {
+      this.tokenIndex++;
+      nextToken.currentRect = nextToken.alive
+        ? this.monitor.getCurrentRect(nextToken.currentStartPos, nextToken.currentEndPos - nextToken.currentStartPos)
+        : null;
+      return { item: nextToken, type: 'token' };
+    }
     this.charIndex++;
+    nextChar.currentRect = nextChar.alive
+      ? this.monitor.getCurrentRect(nextChar.currentPos)
+      : null;
     return { item: { ...nextChar, index: this.charIndex }, type: 'char' };
   }
 
@@ -194,19 +207,70 @@ export class Playback extends Emitter() {
     };
   }
 
-  // Temporal playback
-  play(speed = 1.0) {
+  /**
+   * Advances a stream on a timer, calling onItem for each result.
+   *   stream:   'mixed' (default) | 'keystrokes' | 'tokens' | 'chars'
+   *   interval: number (fixed ms) or 'timestamp' (use recorded deltas)
+   *   loop:     reset to start when exhausted (default true)
+   *   min/max:  clamp for timestamp-derived delays
+   */
+  play(onItem, { stream = 'mixed', loop = true, interval = 500, min = 4, max = 2000 } = {}) {
     this.pause();
-    const advance = () => {
-      const current = this.nextKeystroke();
-      if (!current) { this.pause(); this._emit('done'); return; }
-      const next = this.monitor.getKeystrokeAt(this.keystrokeIndex + 1);
-      if (!next) { this._emit('done'); return; }
-      const delay = (next.timestamp - current.timestamp) / speed;
-      this._playTimer = setTimeout(advance, delay);
+    const fixedDelay = typeof interval === 'number' ? interval : 500;
+
+    const advance = {
+      mixed:      () => this.next(),
+      keystrokes: () => this.nextKeystroke(),
+      tokens:     () => this.nextToken(),
+      chars:      () => this.nextChar(),
+    }[stream];
+
+    const resetFn = {
+      mixed:      () => { this.goToToken(-1); this.goToChar(-1); },
+      keystrokes: () => this.goToKeystroke(-1),
+      tokens:     () => this.goToToken(-1),
+      chars:      () => this.goToChar(-1),
+    }[stream];
+
+    const hasItems = {
+      mixed:      () => this.monitor.getTokenCount() + this.monitor.getCharCount() > 0,
+      keystrokes: () => this.monitor.getKeystrokeCount() > 0,
+      tokens:     () => (this.mode === 'active' ? this.monitor.getActiveTokenCount() : this.monitor.getTokenCount()) > 0,
+      chars:      () => (this.mode === 'active' ? this.monitor.getActiveCharCount() : this.monitor.getCharCount()) > 0,
+    }[stream];
+
+    const tick = () => {
+      const result = advance();
+      if (!result) {
+        if (loop && hasItems()) resetFn();
+        this._playTimer = setTimeout(tick, fixedDelay);
+        return;
+      }
+      if (onItem) onItem(result);
+      let delay = fixedDelay;
+      if (interval === 'timestamp') {
+        const currentTs = stream === 'mixed' ? result.item.timestamp : result.timestamp;
+        let nextTs = null;
+        if (stream === 'mixed') {
+          const nt = this.getTokenAtOffset(1);
+          const nc = this.getCharAtOffset(1);
+          if (nt && nc) nextTs = Math.min(nt.timestamp, nc.timestamp);
+          else nextTs = (nt || nc)?.timestamp ?? null;
+        } else if (stream === 'keystrokes') {
+          nextTs = this.getKeystrokeAtOffset(1)?.timestamp;
+        } else if (stream === 'tokens') {
+          nextTs = this.getTokenAtOffset(1)?.timestamp;
+        } else {
+          nextTs = this.getCharAtOffset(1)?.timestamp;
+        }
+        delay = nextTs != null ? nextTs - currentTs : fixedDelay;
+        delay = Math.max(min, Math.min(delay, max));
+      }
+      this._playTimer = setTimeout(tick, delay);
     };
+
     this._emit('play');
-    advance();
+    this._playTimer = setTimeout(tick, fixedDelay);
   }
 
   pause() {
@@ -228,109 +292,5 @@ export class Playback extends Emitter() {
   destroy() {
     this.pause();
     this._listeners = {};
-  }
-
-  /**
-   * Repeatedly advances a playback's keystroke stream, calling onKeystroke for each.
-   * interval: number (fixed ms between calls) or 'timestamp' (use recorded timestamp deltas).
-   * loop: if true, resets to start when the stream is exhausted.
-   */
-  static iterateKeystrokes(playback, onKeystroke, { loop = true, interval = 500, min=10, max=2000} = {}) {
-    const fixedDelay = typeof interval === 'number' ? interval : 500;
-
-    const tick = () => {
-      const event = playback.nextKeystroke();
-      if (!event) {
-        if (loop && playback.monitor.getKeystrokeCount() > 0) playback.goToKeystroke(-1);
-        setTimeout(tick, fixedDelay);
-        return;
-      }
-      onKeystroke(event);
-      let delay = fixedDelay;
-      if (interval === 'timestamp') {
-        const next = playback.getKeystrokeAtOffset(1);
-        delay = next ? Math.min(next.timestamp - event.timestamp, max) : min;
-      }
-      setTimeout(tick, delay);
-    };
-
-    setTimeout(tick, fixedDelay);
-  }
-
-  /**
-   * Repeatedly advances a playback's token stream, calling onToken for each.
-   * interval: number (fixed ms between calls) or 'timestamp' (use recorded token timestamp deltas).
-   * loop: if true, resets to start when the stream is exhausted.
-   */
-  static iterateTokens(playback, onToken, { loop = true, interval = 500 } = {}) {
-    const getCount = () => playback.mode === 'active'
-      ? playback.monitor.getActiveTokenCount()
-      : playback.monitor.getTokenCount();
-
-    const fixedDelay = typeof interval === 'number' ? interval : 500;
-
-    const tick = () => {
-      const token = playback.nextToken();
-      if (!token) {
-        if (loop && getCount() > 0) playback.goToToken(-1);
-        setTimeout(tick, fixedDelay);
-        return;
-      }
-      onToken(token);
-      let delay = fixedDelay;
-      if (interval === 'timestamp') {
-        const next = playback.getTokenAtOffset(1);
-        delay = next ? next.timestamp - token.timestamp : 500;
-      }
-      setTimeout(tick, delay);
-    };
-
-    setTimeout(tick, fixedDelay);
-  }
-
-  /**
-   * Repeatedly calls playback.next() (interleaved chars+tokens by timestamp),
-   * calling onItem({ item, type }) for each.
-   */
-  static iterate(playback, onItem, { loop = true, interval = 500, min=4, max=2000} = {}) {
-    const getCount = () => {
-      const tokens = playback.mode === 'active'
-        ? playback.monitor.getActiveTokenCount()
-        : playback.monitor.getTokenCount();
-      const chars = playback.mode === 'active'
-        ? playback.monitor.getActiveCharCount()
-        : playback.monitor.getCharCount();
-      return tokens + chars;
-    };
-
-    const fixedDelay = typeof interval === 'number' ? interval : 500;
-
-    const tick = () => {
-      const result = playback.next();
-      if (!result) {
-        if (loop && getCount() > 0) {
-          playback.goToToken(-1);
-          playback.goToChar(-1);
-        }
-        setTimeout(tick, fixedDelay);
-        return;
-      }
-      onItem(result);
-      let delay = fixedDelay;
-      if (interval === 'timestamp') {
-        const nextToken = playback.getTokenAtOffset(1);
-        const nextChar = playback.getCharAtOffset(1);
-        const currentTs = result.item.timestamp;
-        let nextTs = null;
-        if (nextToken && nextChar) nextTs = Math.min(nextToken.timestamp, nextChar.timestamp);
-        else if (nextToken) nextTs = nextToken.timestamp;
-        else if (nextChar) nextTs = nextChar.timestamp;
-        delay = nextTs != null ? nextTs - currentTs : fixedDelay;
-        delay = Math.max(min, Math.min(delay, max));
-      }
-      setTimeout(tick, delay);
-    };
-
-    setTimeout(tick, fixedDelay);
   }
 }
