@@ -15,17 +15,18 @@ export class Game {
       initialState: null,
       continuousCheck: false,
       debug: false,
+      redact: false,
       ...params
     };
 
     this.settings = [
-      { id: 'fontSize', inBar: true, name: 'Font Size', type: 'number', description: 'Font size for the editor text (px)' },
-      { id: 'scale', inBar: true, name: 'Scale', default: 100, type: 'select', description: 'The editor scale (in percent)', options: [25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300] },
-      { id: 'darkmode', inBar: true, name: 'Dark Mode', default: false, type: 'boolean', description: 'Dark mode for the editor' },
+      { id: 'redact', name: 'Redact Text', default: true, type: 'boolean', description: 'Redact the hidden text. When false, the hidden text will be slightly visible.', 'inBar': true },
+      { id: 'fontSize', name: 'Font Size', type: 'number', description: 'Font size for the editor text (px)', },
+      { id: 'scale', name: 'Scale', default: 100, type: 'select', description: 'The editor scale (in percent)', options: [25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300]},
+      { id: 'darkmode', inBar: true, name: 'Dark Mode', default: false, type: 'boolean', description: 'Dark mode for the editor',  'inBar': true  },
       { id: 'debug', name: 'Debug', default: false, type: 'boolean', description: 'Debug mode for the editor' },
     ]
 
-    
     // Initialize basic text editor
     this.editor = document.getElementById('editor');
     if (!this.editor) {
@@ -83,6 +84,8 @@ export class Game {
       this.setScale(value);
     } else if (name === 'darkmode') {
       Game.setColors(value);
+    } else {
+      this.params[name] = value;
     }
   }
 
@@ -140,6 +143,7 @@ export class Game {
 
   onNewKeystroke(evt) {
     this.showLetterLast(evt);
+    this.wrapTextWithSpans(document.getElementById('overlay'));
   }
 
   onNewToken(token) {
@@ -276,51 +280,50 @@ export class Game {
     if (!rect) return;
     const overlay = document.getElementById('overlay');
 
-    // remove the overlay nodes
-    // overlay.innerHTML = '';
-
-    // encapsulate each text element with a span
-    // for (const textNode of overlay.childNodes) {
-    //     console.log(textNode);
-    //     const span = document.createElement('span');
-    //     span.textContent = textNode.textContent;
-    //     span.style.position = 'absolute';
-    //     span.style.left = textNode.getBoundingClientRect().left + 'px';
-    //     span.style.top = textNode.getBoundingClientRect().top + 'px';
-    //     span.style.transform = 'translateX(0px) translateY(0px) scale(1)';
-    //     span.style.backgroundColor = 'black';
-    //     span.style.color = 'white';
-    //     span.style.zIndex = '9999';
-    //     overlay.appendChild(span);
-    // }
-
+    this.wrapTextWithSpans(overlay);
 
     // make a span for the character that was just typed
     const span = document.createElement('span');
     span.textContent = char;
+    span.classList.add('visible');
     span.style.position = 'absolute';
     span.style.left = rect.left + 'px';
     span.style.top = rect.top + 'px';
     span.style.transform = 'translateX(0px) translateY(0px) scale(1)';
-    // span.color = 'black !important';
-    // span.style.zIndex = '9999';
     overlay.appendChild(span);
 
     // fade out
     span.animate([
-      { opacity: 1 },
-      { opacity: 1 },
+      { opacity: 1, offset: 0.75 },
       { opacity: 0 },
     ], {
       duration: duration,
       iterations: 1,
       fill: 'forwards',
-      easing: 'ease-out',
+      easing: 'ease-in',
     });
     setTimeout(() => {
       span.remove();
     }, duration + 100);
 
+  }
+
+  wrapTextWithSpans(overlay) {
+    const words = iterateContentEditableWords(this.editor).filter(w => w.rect);
+    const existing = [...overlay.querySelectorAll('.overlay-text')];
+
+    words.forEach((word) => {
+      const span = document.createElement('span');
+      span.classList.add('overlay-text');
+      span.classList.add(this.params.redact ? 'redact' : 'faded');
+      span.textContent = word.text;
+      span.style.left = word.rect.left + 'px';
+      span.style.top = word.rect.top + 'px';
+      span.style.width = word.rect.width + 'px';
+      span.style.height = word.rect.height + 'px';
+      overlay.appendChild(span);
+    });
+    for (let i = words.length; i < existing.length; i++) existing[i].remove();
   }
 
   _startKeystrokeDisplay() {
@@ -434,7 +437,6 @@ export class Game {
 
 
   getAllSettings() {
-    console.log('getAllSettings', this.settings);
     return this.settings.map(setting => ({
       ...setting,
       value: this.params[setting.id]

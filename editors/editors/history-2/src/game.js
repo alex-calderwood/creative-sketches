@@ -1,6 +1,6 @@
-import { iterateContentEditableWords, getMatchingToken, getTextNodeAtOffset } from './textIterator.js';
-import { Monitor } from './Monitor.js';
-import { Playback } from './Playback.js';
+import { iterateContentEditableWords, getMatchingToken, getTextNodeAtOffset } from '/editors/vault/01-23-2026/src/document/textIterator.js';
+import { Monitor }  from '/editors/vault/01-23-2026/src/monitor/Monitor.js';
+import { Playback } from '/editors/vault/01-23-2026/src/monitor/Playback.js';
 
 export class Game {
   constructor() {
@@ -16,12 +16,14 @@ export class Game {
       continuousCheck: false,
       debug: false,
       redact: false,
+      tokens: false,
       ...params
     };
 
     this.settings = [
       { id: 'redact', name: 'Redact Text', default: true, type: 'boolean', description: 'Redact the hidden text. When false, the hidden text will be slightly visible.', 'inBar': true },
       { id: 'fontSize', name: 'Font Size', type: 'number', description: 'Font size for the editor text (px)', },
+      { id: 'tokens', name: "Words", type: 'boolean', description: 'Show tokens', default: true, 'inBar': true },
       { id: 'scale', name: 'Scale', default: 100, type: 'select', description: 'The editor scale (in percent)', options: [25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300]},
       { id: 'darkmode', inBar: true, name: 'Dark Mode', default: false, type: 'boolean', description: 'Dark mode for the editor',  'inBar': true  },
       { id: 'debug', name: 'Debug', default: false, type: 'boolean', description: 'Debug mode for the editor' },
@@ -49,7 +51,6 @@ export class Game {
     // Set the overlay css to match most of the values of the editor
     this.syncOverlay();
     this.monitor.on('keystroke', (keystroke) => this.onNewKeystroke(keystroke));
-    // this.monitor.on('token', (token) => this.onNewToken(token));
     this._startKeystrokeDisplay();
 
     // To support backward's compatability, MetaGame expects game to have a .performance property
@@ -84,6 +85,12 @@ export class Game {
       this.setScale(value);
     } else if (name === 'darkmode') {
       Game.setColors(value);
+    } else if (name === 'debug') {
+      this.params.debug = value;
+      this._startDebugDisplays();
+    } else if (name === 'tokens') {
+      this.params.tokens = value;
+      this._startMainPlayback();
     } else {
       this.params[name] = value;
     }
@@ -142,16 +149,16 @@ export class Game {
   }
 
   onNewKeystroke(evt) {
-    this.showLetterLast(evt);
+    this.showRecentLetter(evt);
     this.wrapTextWithSpans(document.getElementById('overlay'));
   }
 
   onNewToken(token) {
-    const words = iterateContentEditableWords(this.editor);
-    const match = getMatchingToken(words, token);
-    if (match) {
-      // this.showLetterLast(match);
-    }
+    // const words = iterateContentEditableWords(this.editor);
+    // const match = getMatchingToken(words, token);
+    // if (match) {
+    //   // this.showLetterLast(match);
+    // }
   }
 
   animateWord(word, dX, dY, scale, speed=500) {
@@ -258,7 +265,7 @@ export class Game {
     newElement.style.left = `${rect.left - overlayRect.left}px`;
   }
 
-  showLetterLast(char) {
+  showRecentLetter(char) {
     const editor = this.editor;
     let node = editor;
     while (node && node.nodeType !== Node.TEXT_NODE) {
@@ -273,10 +280,10 @@ export class Game {
     const rect = range.getBoundingClientRect();
     const overlayRect = overlay.getBoundingClientRect();
 
-    this.doShowLetter(lastChar, {left: rect.left - overlayRect.left, top: rect.top - overlayRect.top})
+    this.showLetter(lastChar, {left: rect.left - overlayRect.left, top: rect.top - overlayRect.top})
   }
 
-  doShowLetter(char, rect, duration = 2000) {
+  showLetter(char, rect, duration = 2000) {
     if (!rect) return;
     const overlay = document.getElementById('overlay');
 
@@ -327,6 +334,37 @@ export class Game {
   }
 
   _startKeystrokeDisplay() {
+    this._mainPlayback = new Playback(this.monitor);
+    this._startMainPlayback();
+  }
+
+  _startMainPlayback() {
+    this._mainPlayback.pause();
+    this._mainPlayback.reset();
+
+    if (this.params.tokens) {
+      this._mainPlayback.play((token) => {
+        this.showLetter(token.text, token.currentRect || token.rect);
+      }, { stream: 'tokens', loop: true, interval: 'timestamp' });
+    } else {
+      this._mainPlayback.play(({ item, type }) => {
+        if (type === 'char') {
+          this.showLetter(item.ch, item.currentRect || item.rect);
+        }
+      }, { loop: true, interval: 'timestamp' });
+    }
+
+    // Debug: separate playbacks for chars, tokens, events
+    this._startDebugDisplays();
+  }
+
+  _startDebugDisplays() {
+    if (this._debugEls) this._debugEls.forEach(el => el.remove());
+    if (this._debugPlaybacks) this._debugPlaybacks.forEach(p => p.pause());
+    this._debugEls = [];
+    this._debugPlaybacks = [];
+    if (!this.params.debug) return;
+
     const makeEl = (bottom, color) => {
       const el = document.createElement('div');
       Object.assign(el.style, {
@@ -336,105 +374,37 @@ export class Game {
         zIndex: '9999', minWidth: '60px', pointerEvents: 'none',
       });
       document.body.appendChild(el);
+      this._debugEls.push(el);
       return el;
     };
 
-    // const charEl        = makeEl(12, '#0f0');
-    const activeCharEl  = this.params.debug ? makeEl(48, '#8f8') : null;
-    // const eventEl       = makeEl(84,  '#ff0');
-    // const tokenEl       = makeEl(120,  '#0ff');
-    // const activeTokenEl = makeEl(156,  '#8ff');
-    const mixedEl       = this.params.debug ? makeEl(192,  '#fff') : null;
+    const charEl  = makeEl(12, '#0f0');
+    const tokenEl = makeEl(48, '#0ff');
+    const eventEl = makeEl(84, '#ff0');
 
-    const charPlayback        = new Playback(this.monitor);
-    const activeCharPlayback  = new Playback(this.monitor, { mode: 'active' });
-    const eventPlayback       = new Playback(this.monitor);
-    const tokenPlayback       = new Playback(this.monitor);
-    const activeTokenPlayback = new Playback(this.monitor, { mode: 'active' });
-    const mixedPlayback       = new Playback(this.monitor);
+    const charP = new Playback(this.monitor);
+    charP.play((char) => {
+      const ch = /\s/.test(char.ch) ? '␣' : char.ch;
+      charEl.textContent = `char [${charP.charIndex}] ${ch}  ${char.alive ? '●' : '○'}`;
+    }, { stream: 'chars', interval: 500 });
 
-    // Characters: all inserted chars (history)
-    // setInterval(() => {
-    //   const char = charPlayback.nextChar();
-    //   if (!char && this.monitor.getCharCount() > 0) { charPlayback.goToChar(-1); return; }
-    //   if (char) {
-    //     charEl.textContent = `char [${charPlayback.charIndex}] ${/\s/.test(char.ch) ? '␣' : char.ch}`;
-    //   }
-    // }, 500);
+    const tokenP = new Playback(this.monitor);
+    tokenP.play((token) => {
+      tokenEl.textContent = `token [${tokenP.tokenIndex}] ${token.text}  ${token.alive ? '●' : '○'}`;
+    }, { stream: 'tokens', interval: 800 });
 
-    if (this.params.debug) {
-      // Characters: active only (current document)
-      setInterval(() => {
-        const char = activeCharPlayback.nextChar();
-        if (!char && this.monitor.getActiveCharCount() > 0) { activeCharPlayback.goToChar(-1); return; }
-        if (char) {
-          activeCharEl.textContent = `char* [${activeCharPlayback.charIndex}] ${/\s/.test(char.ch) ? '␣' : char.ch}`;
-          // this.doShowLetter(char.ch, char.rect)
-        }
-      }, 500);
-    }
+    const eventP = new Playback(this.monitor);
+    eventP.play((event) => {
+      let label = event.data ?? '';
+      if (event.type === 'delete') label = '⌫';
+      else if (event.type === 'undo') label = '↩';
+      else if (event.type === 'redo') label = '↪';
+      if (/\s/.test(label)) label = '␣';
+      eventEl.textContent = `event [${event.index}] ${event.type} ${label}`;
+    }, { stream: 'keystrokes', interval: 'timestamp', min: 50, max: 1000 });
 
-    // Events: all events including deletes + mirror playback
-    // const mirror = document.getElementById('editor-mirror');
-    // if (mirror) mirror.style.whiteSpace = 'pre-wrap';
-
-    // Playback.iterateKeystrokes(eventPlayback, (event) => {
-    //   let label = event.data ?? '';
-    //   if (event.type === 'delete') label = '⌫';
-    //   else if (event.type === 'undo') label = '↩';
-    //   else if (event.type === 'redo') label = '↪';
-    //   if (/\s/.test(label)) label = '␣';
-    //   // eventEl.textContent = `event [${event.index}] ${event.type} ${label}`;
-    //   if (mirror) mirror.textContent = event.textSnapshot;
-    // }, { loop: true, interval: 'timestamp' });
-
-
-    // Tokens: all completed words (history)
-    // setInterval(() => {
-    //   const token = tokenPlayback.nextToken();
-    //   if (!token && this.monitor.getTokenCount() > 0) { tokenPlayback.goToToken(-1); return; }
-    //   if (token) {
-    //     tokenEl.textContent = `token [${token.tokenIndex}] ${token.text}`;
-
-    //     if (!token.active) {
-    //       tokenEl.style.color = 'red';
-    //     } else {
-    //       tokenEl.style.color = '#0ff'
-    //     }
-    //   }
-    // }, 500);
-
-    // Tokens: active only (still in document)
-    // Playback.iterateTokens(activeTokenPlayback, (token) => {
-    //   activeTokenEl.textContent = `token* [${activeTokenPlayback.tokenIndex}] ${token.text}`;
-    //   // const words = iterateContentEditableWords(this.editor);
-    //   // const match = getMatchingToken(words, token);
-    //   // this.animateWord(match, 0, -10, 1, 3000);
-    // }, { loop: true, interval:'timestamp' });
-
-    // Chars + tokens: interleaved by timestamp
-    Playback.iterate(mixedPlayback, ({ item, type }) => {
-      if (type === 'token') {
-
-        const words = iterateContentEditableWords(this.editor);
-        const match = getMatchingToken(words, item);
-        // if (match) this.animateWord(match, 0, -10, 1, 3000);
-        if (this.params.debug) {
-          mixedEl.textContent = `mixed [${mixedPlayback.tokenIndex}] ${item.text}`;
-          mixedEl.style.color = '#0ff';
-        }
-      } else {
-        this.doShowLetter(item.ch, item.rect)
-        
-        if (this.params.debug) {
-          mixedEl.textContent = `mixed [${mixedPlayback.charIndex}] ${item.ch}`;
-          mixedEl.style.color = '#0f0';
-        }
-      }
-
-    }, { loop: true, interval: 'timestamp' });
+    this._debugPlaybacks = [charP, tokenP, eventP];
   }
-
 
   getAllSettings() {
     return this.settings.map(setting => ({

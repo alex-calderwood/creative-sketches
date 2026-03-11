@@ -1,19 +1,31 @@
 import { Emitter } from './Emitter.js';
-import { getGlobalTextOffset, getEditableText, getTextNodeAtOffset } from './textIterator.js';
+import { getGlobalTextOffset, getEditableText, getTextNodeAtOffset } from '../document/textIterator.js';
 
 /**
  * Attaches to a contenteditable element and records all edits in real time.
- * Maintains three streams derived from the event log:
  *
- * events       — every keystroke (insert, delete, undo, redo), each with a text snapshot
- * tokens       — completed words, appended as the user types past a word boundary
- * activeTokens — subset of tokens still intact in the current document text
- * chars        — every inserted character, in insertion order
+ * Streams:
+ *   events       — every keystroke (insert, delete, undo, redo), each with a text snapshot
+ *   tokens       — completed words, appended as the user types past a word boundary
+ *   activeTokens — subset of tokens still intact in the current document text
+ *   chars        — every inserted character, in insertion order
+ *   charIds      — maps current document positions to chars[] indices (mirrors this.text)
+ *
+ * Each char carries both its original location (rect, originalPos) and can be
+ * looked up at its current document position via charIds. Tokens store their
+ * constituent charIndices for the same purpose.
+ *
+ * Provenance queries:
+ *   getCharCurrentPos(charIndex)  → current doc offset (-1 if deleted)
+ *   getCharOriginAt(docPos)       → the chars[] entry that produced this position
+ *   getCurrentRect(docPos, len)   → live DOM rect at a current document position
+ *   getTokenCurrentPos(token)     → { startPos, endPos } in current document
+ *
+ * Enriched accessors (getCharAt, getTokenAt, getActiveCharAt) return objects
+ * with both original and current position data.
  *
  * Emits: 'keystroke' on each edit, 'token' when a new word is completed.
  * Use import/export to persist and restore session data.
- * 
- * Example: const monitor = new Monitor(document.querySelector('#editor')); // attaches and begins recording edits
  */
 export class Monitor extends Emitter() {
   constructor(editorElement) {
@@ -24,6 +36,7 @@ export class Monitor extends Emitter() {
     this.tokens = [];
     this.activeTokens = [];
     this.chars = [];
+    this.charIds = [];   // charIds[docPos] = index into this.chars (mirrors this.text)
     this.text = '';
     this.startTime = Date.now();
 
@@ -154,14 +167,35 @@ export class Monitor extends Emitter() {
 
     if (event.type === 'insert' && event.data) {
       const baseOffset = cursorAfter - event.data.length;
+      const firstCharIndex = this.chars.length;
+      const newIds = [];
       let i = 0;
       for (const ch of event.data) {
         this.chars.push({
           ch, timestamp: event.timestamp, keystrokeIndex: event.index,
+          originalPos: baseOffset + i,
           rect: this._getRect(baseOffset + i, baseOffset + i + ch.length),
         });
+        newIds.push(firstCharIndex + i);
         i += ch.length;
       }
+      const splicePos = this._selectionLength > 0 ? this._selStart : baseOffset;
+      this.charIds.splice(splicePos, this._selectionLength, ...newIds);
+    }
+
+    if (event.type === 'delete') {
+      this.charIds.splice(cursorAfter, event.data.length);
+    }
+
+    if (event.type === 'undo' || event.type === 'redo') {
+      const prevSnapshot = this.events.length >= 2
+        ? this.events[this.events.length - 2].textSnapshot : '';
+      this._patchCharIdsFromDiff(prevSnapshot, this.text, event);
+    }
+
+    if (this.charIds.length !== this.text.length) {
+      console.warn(`charIds/text length mismatch (${this.charIds.length} vs ${this.text.length}), rebuilding`);
+      this._rebuildCharIds();
     }
 
     this._emit('keystroke', event);
@@ -172,6 +206,69 @@ export class Monitor extends Emitter() {
 
     if (event.type === 'delete' || event.type === 'undo' || event.type === 'redo') {
       this._validateTokens();
+    }
+  }
+
+  _diffTexts(oldText, newText) {
+    let pre = 0;
+    while (pre < oldText.length && pre < newText.length && oldText[pre] === newText[pre]) pre++;
+    let suf = 0;
+    while (suf < oldText.length - pre && suf < newText.length - pre &&
+           oldText[oldText.length - 1 - suf] === newText[newText.length - 1 - suf]) suf++;
+    return {
+      prefix: pre,
+      oldFrom: pre, oldTo: oldText.length - suf,
+      newFrom: pre, newTo: newText.length - suf,
+    };
+  }
+
+  _patchCharIdsFromDiff(oldText, newText, event) {
+    const d = this._diffTexts(oldText, newText);
+    this.charIds.splice(d.oldFrom, d.oldTo - d.oldFrom);
+    const insertLen = d.newTo - d.newFrom;
+    if (insertLen > 0) {
+      const baseIndex = this.chars.length;
+      const newIds = [];
+      const insertedText = newText.slice(d.newFrom, d.newTo);
+      let pos = 0;
+      for (const ch of insertedText) {
+        this.chars.push({
+          ch, timestamp: event.timestamp, keystrokeIndex: event.index,
+          originalPos: d.newFrom + pos,
+          rect: this._getRect(d.newFrom + pos, d.newFrom + pos + ch.length),
+        });
+        newIds.push(baseIndex + pos);
+        pos++;
+      }
+      this.charIds.splice(d.newFrom, 0, ...newIds);
+    }
+  }
+
+  _rebuildCharIds() {
+    this.charIds = [];
+    let charCounter = 0;
+    let prevText = '';
+    for (const event of this.events) {
+      const newText = event.textSnapshot;
+      if (event.type === 'insert' && event.data) {
+        const insertPos = event.cursorAfter - event.data.length;
+        const deletedLen = prevText.length + event.data.length - newText.length;
+        const newIds = [];
+        for (const ch of event.data) { newIds.push(charCounter++); }
+        this.charIds.splice(insertPos, deletedLen, ...newIds);
+      } else if (event.type === 'delete') {
+        this.charIds.splice(event.cursorAfter, event.data.length);
+      } else if (event.type === 'undo' || event.type === 'redo') {
+        const d = this._diffTexts(prevText, newText);
+        this.charIds.splice(d.oldFrom, d.oldTo - d.oldFrom);
+        const insertLen = d.newTo - d.newFrom;
+        if (insertLen > 0) {
+          const newIds = [];
+          for (let i = 0; i < insertLen; i++) newIds.push(charCounter++);
+          this.charIds.splice(d.newFrom, 0, ...newIds);
+        }
+      }
+      prevText = newText;
     }
   }
 
@@ -220,6 +317,7 @@ export class Monitor extends Emitter() {
         keystrokeIndex: lastEvent.index,
         timestamp: lastEvent.timestamp,
         rect: this._getRect(startPos, endPos),
+        charIndices: this.charIds.slice(startPos, endPos),
       };
       this.tokens.push(token);
       this.activeTokens.push(token);
@@ -232,15 +330,79 @@ export class Monitor extends Emitter() {
     return this.events[index].textSnapshot;
   }
 
-  // Query
-  getKeystrokeAt(index) { return this.events[index] || null; }
-  getTokenAt(index) { return this.tokens[index] || null; }
-  getActiveTokenAt(index) { return this.activeTokens[index] || null; }
-  getCharAt(index) { return this.chars[index] || null; }
-  getActiveCharAt(index) {
-    const ch = this.text[index];
-    return ch != null ? { ch, index } : null;
+  // Provenance queries
+  getCharCurrentPos(charIndex) {
+    return this.charIds.indexOf(charIndex);
   }
+
+  getCharOriginAt(docPos) {
+    if (docPos < 0 || docPos >= this.charIds.length) return null;
+    return this.chars[this.charIds[docPos]] || null;
+  }
+
+  getCurrentRect(docPos, length = 1) {
+    return this._getRect(docPos, docPos + length);
+  }
+
+  getTokenCurrentPos(token) {
+    if (!token.charIndices || token.charIndices.length === 0) return null;
+    const first = this.getCharCurrentPos(token.charIndices[0]);
+    const last = this.getCharCurrentPos(token.charIndices[token.charIndices.length - 1]);
+    if (first === -1 || last === -1) return null;
+    return { startPos: first, endPos: last + 1 };
+  }
+
+  // Query (enriched with current position data)
+  getKeystrokeAt(index) { return this.events[index] || null; }
+
+  getTokenAt(index) {
+    const token = this.tokens[index];
+    if (!token) return null;
+    const cur = this.getTokenCurrentPos(token);
+    return {
+      ...token,
+      currentStartPos: cur?.startPos ?? -1,
+      currentEndPos: cur?.endPos ?? -1,
+      alive: cur !== null,
+    };
+  }
+
+  getActiveTokenAt(index) {
+    const token = this.activeTokens[index];
+    if (!token) return null;
+    const cur = this.getTokenCurrentPos(token);
+    return {
+      ...token,
+      currentStartPos: cur?.startPos ?? -1,
+      currentEndPos: cur?.endPos ?? -1,
+      alive: cur !== null,
+    };
+  }
+
+  getCharAt(index) {
+    const char = this.chars[index];
+    if (!char) return null;
+    const currentPos = this.getCharCurrentPos(index);
+    return {
+      ...char,
+      charIndex: index,
+      currentPos,
+      alive: currentPos !== -1,
+    };
+  }
+
+  getActiveCharAt(index) {
+    if (index < 0 || index >= this.text.length) return null;
+    const charIndex = this.charIds[index];
+    const origin = charIndex != null ? this.chars[charIndex] : null;
+    return {
+      ch: this.text[index],
+      docPos: index,
+      charIndex,
+      origin,
+    };
+  }
+
   getKeystrokeCount() { return this.events.length; }
   getTokenCount() { return this.tokens.length; }
   getActiveTokenCount() { return this.activeTokens.length; }
@@ -256,10 +418,14 @@ export class Monitor extends Emitter() {
     this.events = data.events || [];
     this.tokens = data.tokens || [];
     this.chars = data.chars || [];
+    this.charIds = data.charIds || [];
     this.startTime = data.startTime || Date.now();
     const last = this.events[this.events.length - 1];
     this.text = last ? last.textSnapshot : '';
     this.activeTokens = this.tokens.filter(t => t.active !== false);
+    if (this.charIds.length === 0 && this.events.length > 0) {
+      this._rebuildCharIds();
+    }
   }
 
   export() {
@@ -267,6 +433,7 @@ export class Monitor extends Emitter() {
       events: this.events,
       tokens: this.tokens,
       chars: this.chars,
+      charIds: this.charIds,
       startTime: this.startTime,
     };
   }

@@ -1,7 +1,4 @@
 :root {
-  --background-color:   #e7e7e7;
-  --background-color-2:  #000000;
-  --editor-color: white;
 
   --highlight: #ffffff;
   --shadow-color: #e7e7e7;
@@ -14,8 +11,9 @@
   --font: Arial, sans-serif;
   --font-2: 'Garamond', 'EB Garamond', 'Adobe Garamond Pro', serif;
 
-  --text-color: rgba(255, 255, 255, 0);
+  --text-color: rgb(0, 0, 0);
   --text-color-2: #ffffff;
+  --text-color-faded: rgb(197, 144, 144);
 
   --highlight: rgba(255, 255, 255, 0.153);
 
@@ -34,6 +32,7 @@
 :root,
 :root[data-theme="dark"] {
   --background-color: #000000;
+  --editor-color: black;
   --text-color: #ffffff;
   --primary-color: #ffffff;
 }
@@ -41,19 +40,19 @@
 /* Light mode */
 :root[data-theme="light"] {
   --background-color: #ffffff;
+  --editor-color: white;
   --text-color: #000000;
   --primary-color: #000000;
 }
 
 body {
-/*Trykker */
-font-family: "Trykker","Garamond", "Times New Roman", Times, serif; 
-background-color: var(--background-color);
-margin: 0;
-padding: 0;
-min-height: 100vh;
-overflow-y: auto;
-overflow-x: hidden;
+  font-family: "Trykker","Garamond", "Times New Roman", Times, serif; 
+  background-color: var(--background-color);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 #editor-container {
@@ -74,16 +73,13 @@ overflow-x: hidden;
   min-height: 100%;
   box-sizing: border-box;
   background-color: var(--background-color);
-  /* color: transparent; */
-  color: rgba(255, 100, 255, 0.2);
+  color: transparent;
   font-family: var(--game-font);
   font-size: 16px;
   padding: calc(100% / 8.5);
   outline: none;
   overflow: auto;
 }
-
-
 
 #overlay {
   position: absolute;
@@ -139,10 +135,30 @@ overflow-x: hidden;
   width: var(--word-width);
   height: var(--word-height);
   font-size: 16px;
-  /* opacity:  */
-  /* text-decoration-color: var(--delete-color); */
-  /* color: var(--delete-color) !important; */
-  /* not selectable */
   user-select: none;
   -webkit-user-select: none;
+}
+
+.overlay-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.redact {
+  background-color: var(--text-color);
+  color: var(--text-color);
+}
+
+.faded {
+  background-color: var(--editor-color);
+  color: var(--text-color-faded);
+}
+
+.visible {
+  background-color: var(--editor-color);
+  color: var(--text-color) !important;
+  z-index: 9999;
 }

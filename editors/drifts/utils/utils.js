@@ -2,7 +2,6 @@ import { Document } from '/editors/drifts/Document.js'
 import { captureScreenshot } from './captureScreenshot.js';
 export { captureScreenshot };
 
-
 /**
  * Download a data URL as a file
  * @param {string} dataUrl - Data URL to download
