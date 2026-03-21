@@ -6,7 +6,8 @@
     "example": "example"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "server": "node server.js",
     "wordhoard-server": "python words/synonyms.py",
     "get-synonyms": "node words/synonyms-cli.js",
@@ -24,5 +25,9 @@
     "express": "^4.21.2",
     "serve-static": "^1.16.2",
     "wordpos": "^2.1.0"
+  },
+  "devDependencies": {
+    "jsdom": "^28.1.0",
+    "vitest": "^4.1.0"
   }
 }
