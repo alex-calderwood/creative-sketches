@@ -2,8 +2,10 @@
     "name": "Hyperpane",
     "description": "This fractured editor replaces words with their synonyms according to the WordNet ontology.",
     "notes": "",
-    "version": "5",
-    "series": ["hyper", "fracture"],
+    "tags": {
+        "hyper": {"version": "5"},
+        "fracture": {"version": "3"}
+    },
     "url": "hyperpane",
     "image": "hyper-5.png",
     "major": false,
