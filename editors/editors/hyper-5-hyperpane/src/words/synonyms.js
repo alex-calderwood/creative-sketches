@@ -3,7 +3,7 @@ const SYNONYM_SOURCE = 'wordhoard'; // values: wordnet, wordhoard
 
 const ENDPOINTS = {
   wordnet: '/editors/api/synonyms',
-  wordhoard: `${window.location.protocol}//${window.location.hostname}:3019/synonyms`
+  wordhoard: '/editors/api/wordhoard/synonyms'
 };
 
 export async function getSynonyms(word) {
