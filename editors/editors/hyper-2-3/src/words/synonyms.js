@@ -1,6 +1,6 @@
 const ENDPOINTS = {
   wordnet: '/editors/api/synonyms',
-  wordhoard: `${window.location.protocol}//${window.location.hostname}:3019/synonyms`
+  wordhoard: '/editors/api/wordhoard/synonyms'
 };
 
 class SynonymService {

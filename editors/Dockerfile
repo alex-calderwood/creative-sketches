@@ -1,12 +1,18 @@
-FROM node:18-alpine
+FROM node:18-slim
 
 WORKDIR /app
+
+# Install Python and pip (for wordhoard/nlp etc)
+RUN apt-get update && apt-get install -y python3 python3-pip && rm -rf /var/lib/apt/lists/*
 
 # Copy package files first for better caching
 COPY package.json package-lock.json ./
 
 # Install dependencies
 RUN npm install
+
+COPY words/requirements.txt ./words/requirements.txt
+RUN pip3 install --break-system-packages -r words/requirements.txt
 
 # Copy server script
 COPY index.html ./
@@ -25,4 +31,4 @@ RUN ls -la editors/
 
 EXPOSE 3008
 
-CMD ["node", "server.js"]
+CMD ["npx", "concurrently", "python3 words/synonyms.py", "node server.js"]

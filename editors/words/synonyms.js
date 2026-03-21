@@ -3,6 +3,7 @@
 // The pos parameter is optional; if omitted, looks up all POS.
 
 const express = require('express');
+const http = require('http');
 const WordPOS = require('wordpos'); // https://github.com/moos/wordpos?tab=readme-ov-file
 
 let stoplist = new Set([
@@ -28,6 +29,16 @@ async function getSynonyms(word, pos) {
 
   return synonyms;
 }
+
+router.use('/wordhoard', (req, res) => {
+  const url = `http://localhost:3019${req.url}`;
+  http.get(url, (proxyRes) => {
+    res.writeHead(proxyRes.statusCode, proxyRes.headers);
+    proxyRes.pipe(res);
+  }).on('error', () => {
+    res.status(502).json({ error: 'Wordhoard server unavailable' });
+  });
+});
 
 router.get('/synonyms', async (req, res) => {
   const { word, pos } = req.query;
