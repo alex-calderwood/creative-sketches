@@ -31,7 +31,7 @@ def get_synonyms(word):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
-    query = 'SELECT synonyms, status, error_message FROM words WHERE word = ?'
+    query = 'SELECT wordhoard_synonyms, wordhoard_status, wordhoard_error_message FROM words WHERE word = ?'
     params = (word.lower(),)
     print(f"Query: {query}")
     print(f"Params: {params}")
@@ -46,9 +46,9 @@ def get_synonyms(word):
         return None
     
     synonyms_str, status, error_message = result
-    print(f"  synonyms column: {repr(synonyms_str)}")
-    print(f"  status column: {repr(status)}")
-    print(f"  error_message column: {repr(error_message)}")
+    print(f"  wordhoard_synonyms column: {repr(synonyms_str)}")
+    print(f"  wordhoard_status column: {repr(status)}")
+    print(f"  wordhoard_error_message column: {repr(error_message)}")
     
     if status == 'completed':
         synonyms = synonyms_str.split(',') if synonyms_str else []
@@ -70,11 +70,11 @@ def show_stats():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
-    cursor.execute('SELECT COUNT(*) FROM words WHERE status = "pending"')
+    cursor.execute('SELECT COUNT(*) FROM words WHERE wordhoard_status = "pending"')
     pending = cursor.fetchone()[0]
-    cursor.execute('SELECT COUNT(*) FROM words WHERE status = "completed"')
+    cursor.execute('SELECT COUNT(*) FROM words WHERE wordhoard_status = "completed"')
     completed = cursor.fetchone()[0]
-    cursor.execute('SELECT COUNT(*) FROM words WHERE status = "error"')
+    cursor.execute('SELECT COUNT(*) FROM words WHERE wordhoard_status = "error"')
     errors = cursor.fetchone()[0]
     
     total = pending + completed + errors
@@ -86,7 +86,7 @@ def show_stats():
     print(f"  Errors:          {errors} ({100*errors/total:.1f}%)")
     
     # Show some examples
-    cursor.execute('SELECT word, synonyms FROM words WHERE status = "completed" LIMIT 5')
+    cursor.execute('SELECT word, wordhoard_synonyms FROM words WHERE wordhoard_status = "completed" LIMIT 5')
     examples = cursor.fetchall()
     
     if examples:
@@ -107,7 +107,7 @@ def show_random(count=10):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
-    cursor.execute('SELECT word, synonyms FROM words WHERE status = "completed" ORDER BY RANDOM() LIMIT ?', (count,))
+    cursor.execute('SELECT word, wordhoard_synonyms FROM words WHERE wordhoard_status = "completed" ORDER BY RANDOM() LIMIT ?', (count,))
     results = cursor.fetchall()
     conn.close()
     
@@ -144,7 +144,7 @@ def main():
         if synonyms is None:
             print(f"'{word}' not found in database")
         elif synonyms:
-            print(f"Synonyms for '{word}':")
+            print(f"\nSynonyms for '{word}':")
             print(f"  {', '.join(synonyms)}")
         else:
             print(f"No synonyms found for '{word}'")

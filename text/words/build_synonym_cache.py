@@ -4,7 +4,11 @@ Build synonym cache database from wordlist.
 This script downloads synonyms for all words in the scowl wordlist and stores them in a SQLite database.
 
 Usage:
-    python build_synonym_cache.py
+    python build_synonym_cache.py [--include-cloudflare] [--verbose]
+    
+Options:
+    --include-cloudflare    Include Cloudflare-protected sources (slower, more synonyms)
+    --verbose               Enable verbose logging from wordhoard
 
 The script can be stopped (Ctrl+C) and restarted - it will resume from where it left off.
 """
@@ -14,10 +18,9 @@ import sys
 import time
 import subprocess
 import logging
+import argparse
 from pathlib import Path
 from wordhoard import Synonyms
-
-# Enable verbose logging for wordhoard
 
 # Paths
 SCRIPT_DIR = Path(__file__).parent.parent
@@ -30,32 +33,27 @@ DB_PATH = SCRIPT_DIR / "synonym_cache.db"
 DELAY_BETWEEN_REQUESTS = 1.0  # seconds to avoid overwhelming the API
 PROGRESS_UPDATE_INTERVAL = 10  # show progress every N words
 
-LOG_WORDHOARD = False
-
-if LOG_WORDHOARD:
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    )
-
 
 def init_database():
     """Initialize the SQLite database with schema."""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
+    # Main words table with wordhoard-specific columns
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS words (
             word TEXT PRIMARY KEY,
-            synonyms TEXT,
-            status TEXT DEFAULT 'pending',
-            last_updated TIMESTAMP,
-            error_message TEXT
+            wordhoard_synonyms TEXT,
+            wordhoard_status TEXT DEFAULT 'pending',
+            wordhoard_last_updated TIMESTAMP,
+            wordhoard_error_message TEXT,
+            wordnet_synset_ids TEXT,
+            babelnet_synset_ids TEXT
         )
     ''')
     
     cursor.execute('''
-        CREATE INDEX IF NOT EXISTS idx_status ON words(status)
+        CREATE INDEX IF NOT EXISTS idx_wordhoard_status ON words(wordhoard_status)
     ''')
     
     conn.commit()
@@ -109,17 +107,17 @@ def populate_word_list(conn, words):
     
     print("Populating database with words...")
     cursor.executemany(
-        'INSERT OR IGNORE INTO words (word, status) VALUES (?, ?)',
+        'INSERT OR IGNORE INTO words (word, wordhoard_status) VALUES (?, ?)',
         [(word, 'pending') for word in words]
     )
     conn.commit()
     
     # Get statistics
-    cursor.execute('SELECT COUNT(*) FROM words WHERE status = "pending"')
+    cursor.execute('SELECT COUNT(*) FROM words WHERE wordhoard_status = "pending"')
     pending = cursor.fetchone()[0]
-    cursor.execute('SELECT COUNT(*) FROM words WHERE status = "completed"')
+    cursor.execute('SELECT COUNT(*) FROM words WHERE wordhoard_status = "completed"')
     completed = cursor.fetchone()[0]
-    cursor.execute('SELECT COUNT(*) FROM words WHERE status = "error"')
+    cursor.execute('SELECT COUNT(*) FROM words WHERE wordhoard_status = "error"')
     errors = cursor.fetchone()[0]
     
     print(f"\nDatabase status:")
@@ -131,21 +129,31 @@ def populate_word_list(conn, words):
     return pending, completed, errors
 
 
-def fetch_synonyms(word):
-    """Fetch synonyms for a word using wordhoard."""
+def fetch_synonyms(word, include_cloudflare=False):
+    """Fetch synonyms for a word using wordhoard.
+    
+    Returns a list of synonyms.
+    """
     try:
-        # Use sources that aren't blocked by Cloudflare
-        # Cloudflare blocks: 'collins', 'synonym.com'
-        # May work: 'merriam-webster', 'thesaurus.com', 'wordnet'
+        fetch_start = time.time()
+        
+        # Configure sources based on cloudflare flag
+        if include_cloudflare:
+            sources = ['collins', 'merriam-webster', 'synonym.com', 'thesaurus.com', 'wordnet']
+        else:
+            sources = ['merriam-webster', 'wordnet']
+        
         synonym_obj = Synonyms(
             search_string=word,
-            # sources=['merriam-webster', 'thesaurus.com', 'wordnet'],
-            max_number_of_requests=20,  # default is 30
-            rate_limit_timeout_period=60,  # default is 60 seconds
-            output_format='dictionary',
+            sources=sources,
+            output_format='list',
+            max_number_of_requests=100,
+            rate_limit_timeout_period=60
         )
         results = synonym_obj.find_synonyms()
-        print(f"Results: {results}")
+        fetch_time = time.time() - fetch_start
+        
+        print(f"    [API call took {fetch_time:.3f}s]")
         
         if results is None:
             return []
@@ -155,12 +163,12 @@ def fetch_synonyms(word):
         raise Exception(f"Lookup failed: {str(e)}")
 
 
-def process_words(conn):
+def process_words(conn, include_cloudflare=False):
     """Process all pending words, fetching their synonyms."""
     cursor = conn.cursor()
     
     # Get pending words
-    cursor.execute('SELECT word FROM words WHERE status = "pending" ORDER BY word')
+    cursor.execute('SELECT word FROM words WHERE wordhoard_status = "pending" ORDER BY word')
     pending_words = [row[0] for row in cursor.fetchall()]
     
     if not pending_words:
@@ -168,7 +176,8 @@ def process_words(conn):
         return
     
     total = len(pending_words)
-    print(f"\nProcessing {total} pending words...")
+    sources_used = "all sources (including Cloudflare)" if include_cloudflare else "merriam-webster, wordnet"
+    print(f"\nProcessing {total} pending words using {sources_used}...")
     print("Press Ctrl+C to stop (progress will be saved)\n")
     
     start_time = time.time()
@@ -178,15 +187,15 @@ def process_words(conn):
         for i, word in enumerate(pending_words, 1):
             try:
                 # Fetch synonyms
-                synonyms = fetch_synonyms(word)
+                synonyms = fetch_synonyms(word, include_cloudflare)
                 
                 # Store in database
                 cursor.execute('''
                     UPDATE words 
-                    SET synonyms = ?, 
-                        status = "completed",
-                        last_updated = CURRENT_TIMESTAMP,
-                        error_message = NULL
+                    SET wordhoard_synonyms = ?, 
+                        wordhoard_status = "completed",
+                        wordhoard_last_updated = CURRENT_TIMESTAMP,
+                        wordhoard_error_message = NULL
                     WHERE word = ?
                 ''', (','.join(synonyms), word))
                 
@@ -194,7 +203,7 @@ def process_words(conn):
                 processed += 1
                 
                 # Show word retrieval at every timestep with actual synonyms
-                synonyms_str = ','.join(synonyms) if synonyms else ''
+                synonyms_str = ','.join(synonyms) if synonyms else '(no synonyms)'
                 elapsed = time.time() - start_time
                 avg_time_per_word = elapsed / i if i > 0 else 0
                 remaining_words = total - i
@@ -216,9 +225,9 @@ def process_words(conn):
                 # Mark as error and continue
                 cursor.execute('''
                     UPDATE words 
-                    SET status = "error",
-                        last_updated = CURRENT_TIMESTAMP,
-                        error_message = ?
+                    SET wordhoard_status = "error",
+                        wordhoard_last_updated = CURRENT_TIMESTAMP,
+                        wordhoard_error_message = ?
                     WHERE word = ?
                 ''', (str(e), word))
                 conn.commit()
@@ -240,11 +249,11 @@ def show_stats(conn):
     """Display final statistics."""
     cursor = conn.cursor()
     
-    cursor.execute('SELECT COUNT(*) FROM words WHERE status = "pending"')
+    cursor.execute('SELECT COUNT(*) FROM words WHERE wordhoard_status = "pending"')
     pending = cursor.fetchone()[0]
-    cursor.execute('SELECT COUNT(*) FROM words WHERE status = "completed"')
+    cursor.execute('SELECT COUNT(*) FROM words WHERE wordhoard_status = "completed"')
     completed = cursor.fetchone()[0]
-    cursor.execute('SELECT COUNT(*) FROM words WHERE status = "error"')
+    cursor.execute('SELECT COUNT(*) FROM words WHERE wordhoard_status = "error"')
     errors = cursor.fetchone()[0]
     
     print("\n" + "="*50)
@@ -258,7 +267,28 @@ def show_stats(conn):
 
 def main():
     """Main entry point."""
+    parser = argparse.ArgumentParser(description='Build synonym cache from wordlist')
+    parser.add_argument('--include-cloudflare', action='store_true',
+                       help='Include Cloudflare-protected sources (slower, more synonyms)')
+    parser.add_argument('--verbose', action='store_true',
+                       help='Enable verbose logging from wordhoard')
+    args = parser.parse_args()
+    
+    # Configure logging
+    if args.verbose:
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        )
+    
     print("Synonym Cache Builder")
+    print("=" * 50)
+    if args.include_cloudflare:
+        print("Mode: Including Cloudflare-protected sources")
+        print("      (collins, merriam-webster, synonym.com, thesaurus.com, wordnet)")
+    else:
+        print("Mode: Cloudflare-protected sources excluded")
+        print("      (merriam-webster, wordnet only)")
     print("=" * 50)
     
     # Initialize database
@@ -271,7 +301,7 @@ def main():
     populate_word_list(conn, words)
     
     # Process words
-    process_words(conn)
+    process_words(conn, include_cloudflare=args.include_cloudflare)
     
     # Show final stats
     show_stats(conn)
