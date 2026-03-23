@@ -2,7 +2,9 @@ version: '3'
 
 services:
   editors-server:
-    build: .
+    build:
+      context: ..
+      dockerfile: editors/Dockerfile
     container_name: editors-server
     restart: unless-stopped
     ports:

@@ -5,3 +5,8 @@ passphrase.txt
 *.pem
 */.idea/
 .DS_Store
+*/node_modules/*
+
+
+synonym_cache/
+synonym_cache.db
