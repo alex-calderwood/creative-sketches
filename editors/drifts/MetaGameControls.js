@@ -340,13 +340,15 @@ export class MetaGameControls {
     settingDiv.appendChild(label);
 
     if (setting.type === 'boolean') {
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.checked = setting.value;
-      checkbox.addEventListener('change', () => {
-        this.game.performance.updateSetting(id, checkbox.checked);
+      const toggle = document.createElement('span');
+      toggle.className = 'setting-toggle' + (setting.value ? ' on' : '');
+      toggle.textContent = setting.value ? 'on' : 'off';
+      toggle.addEventListener('click', () => {
+        const isOn = toggle.classList.toggle('on');
+        toggle.textContent = isOn ? 'on' : 'off';
+        this.game.performance.updateSetting(id, isOn);
       });
-      settingDiv.appendChild(checkbox);
+      settingDiv.appendChild(toggle);
     } else if (setting.type === 'number') {
       const input = document.createElement('input');
       input.type = 'number';
@@ -361,8 +363,9 @@ export class MetaGameControls {
       select.className = 'setting-input';
       setting.options.forEach(option => {
         const optionEl = document.createElement('option');
-        optionEl.value = option;
-        optionEl.textContent = option;
+        const isObj = typeof option === 'object';
+        optionEl.value = isObj ? option.value : option;
+        optionEl.textContent = isObj ? option.label : option;
         select.appendChild(optionEl);
       });
       select.value = setting.value;

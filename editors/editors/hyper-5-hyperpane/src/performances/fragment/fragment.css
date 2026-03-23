@@ -1,7 +1,7 @@
 :root {
     --background-color: #000000;
     --background-color-2:  #000000;
-    --highlight: #ffffff;
+    --highlight: #333333;
     --shadow-color: #c0c0c0;
 
     --button-color: var(--text-color);
@@ -25,6 +25,19 @@
     --accent-light: rgba(255, 246, 115, 0.3);
   }
   
+  [data-theme="light"] {
+    --background-color: #ffffff;
+    --background-color-2: #ffffff;
+    --text-color: #000000;
+    --text-color-2: #ffffff;
+    --primary-color: #000000;
+    --accent-color: #000000;
+    --highlight: #cccccc;
+    --shadow-color: #404040;
+    --border-color: #ffffff;
+    --button-color: var(--text-color);
+  }
+
   /* Back link styling */
   .back-link {
     color: var(--primary-color);
@@ -163,7 +176,7 @@
   input, select, .dropdown {
     font-family: var(--font);
     background-color: transparent;
-    border: 2px solid var(--primary-color);
+    border: 1px solid var(--primary-color);
     color: var(--primary-color);
     padding: 6px 10px;
     font-size: 12px;
@@ -178,7 +191,7 @@
   
   input:focus, select:focus, .dropdown:focus {
     background-color: var(--primary-color);
-    color: var(--accent-color);
+    color: var(--background-color);
   }
   
   input option, select option, .dropdown option {
@@ -220,7 +233,7 @@
   .option select, .option input, .option .dropdown {
     font-family: var(--font);
     font-size: 10px;
-    padding: 2px 6px;
+    padding: 1px 6px;
     background-color: transparent;
     border: 1px solid var(--primary-color);
     color: var(--primary-color);
