@@ -22,12 +22,12 @@ import argparse
 from pathlib import Path
 from wordhoard import Synonyms
 
+from lookup import DEFAULT_DB_PATH as DB_PATH, TEXT_DIR
+
 # Paths
-SCRIPT_DIR = Path(__file__).parent.parent
-WORDLIST_DIR = SCRIPT_DIR / "wordlist"
+WORDLIST_DIR = TEXT_DIR / "wordlist"
 SCOWL_SCRIPT = WORDLIST_DIR / "scowl"
 SCOWL_DB = WORDLIST_DIR / "scowl.db"
-DB_PATH = SCRIPT_DIR / "synonym_cache.db"
 
 # Settings
 DELAY_BETWEEN_REQUESTS = 1.0  # seconds to avoid overwhelming the API

@@ -1,0 +1,4 @@
+# Synonym cache: build + CLI + Flask server
+wordhoard
+flask
+flask-cors

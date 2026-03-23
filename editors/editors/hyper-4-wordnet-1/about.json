@@ -1,12 +1,12 @@
 {
-    "name": "Hyperfracture Editor",
+    "name": "Hyperpane Wordnet Editor",
     "description": "Integrating fracture aesthetics. In this version, words are replaced by their 'synonyms' according to the WordNet ontology.",
     "notes": "",
     "tags": {
         "hyper": {"version": "4"},
         "fracture": {"version": "2"}
     },
-    "url": "hyper-4",
+    "url": "hyperpane-wordnet",
     "image": "hyper.png",
     "major": false
 }

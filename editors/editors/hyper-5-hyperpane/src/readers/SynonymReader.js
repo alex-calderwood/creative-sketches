@@ -1,5 +1,5 @@
 import { Token } from '../corpus/Token.js';
-import { getSynonyms } from '../words/synonyms.js';
+import { getSynonyms } from '/editors/vault/01-23-2026/src/words/synonyms.js';
 
 /**
  * 
@@ -20,7 +20,7 @@ export class SynonymReader {
 
   async updateWord(word) {
     this.word = word;
-    const data = await getSynonyms(word);
+    const data = await getSynonyms(word, { source: 'synonyms-cache' });
     let synonyms = data.synonyms.filter(synonym => this._synonymCriteria(word, synonym));
     this.synonyms = Array.from(new Set([word, ...synonyms]));
   }

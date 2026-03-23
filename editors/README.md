@@ -9,9 +9,13 @@ Start the Node.js server (port 3008):
 
     npm run server
 
-Start the Python synonyms server (port 3019):
+Start the Python synonyms-online server (port 3019):
 
-    npm run wordhoard-server
+    npm run synonyms-online
+
+Start the local synonyms-cache API (port 3020):
+
+    npm run synonyms-cache
 
 Start both servers at once:
 
@@ -23,7 +27,7 @@ Query both synonym servers from the command line:
 
     npm run get-synonyms
 
-This will prompt you for a word and optional part of speech, then query both the WordNet (Node.js) and Wordhoard (Python) servers and display the results.
+This will prompt you for a word and optional part of speech, then query both synonyms-wordnet (Node.js) and synonyms-online (Python) servers and display the results.
 
 ## Python setup
 
@@ -57,6 +61,7 @@ You can put `$PROJECT_NAME` anywhere in an editor's `index.html` (e.g. in the `<
 
 - `GET /editors/api/sentences` — returns the sentences list from `editors/larder/sentences.json`
 - `POST /editors/api/new-sentence` — adds a sentence to that list
-- `GET /editors/api/synonyms?word=<word>&pos=<noun|verb|adjective|adverb>` — WordNet synonyms via Node.js (port 3008)
-- `GET /synonyms?word=<word>&pos=<noun|verb|adjective|adverb>` — Wordhoard synonyms via Python (port 3019)
+- `GET /editors/api/synonyms-wordnet/synonyms?word=<word>&pos=<noun|verb|adjective|adverb>` — WordNet synonyms via Node.js (port 3008)
+- `GET /editors/api/synonyms-online/synonyms?word=<word>` — Live wordhoard lookup via Python (proxied to port 3019)
+- `GET /editors/api/synonyms-cache/synonyms?word=<word>` — SQLite synonym cache (proxied to port 3020)
 

@@ -1,0 +1,165 @@
+:root {
+
+  --highlight: #ffffff;
+  --shadow-color: #e7e7e7;
+
+  --button-color: var(--text-color);
+
+  /* --game-font: 'Goma'; */
+  --game-font: 'SquareAntiqua';
+
+  --font: Arial, sans-serif;
+  --font-2: 'Garamond', 'EB Garamond', 'Adobe Garamond Pro', serif;
+
+  --text-color: rgb(0, 0, 0);
+  --text-color-2: #ffffff;
+  --text-color-faded: rgb(197, 144, 144);
+
+  --highlight: rgba(255, 255, 255, 0.153);
+
+  --primary-color: #000000;
+  --accent-color: #ffffff;
+  --inline-color: #d09500;
+  --delete-color: #a8280e;
+  --border-color: #000000;
+  --modal-overlay-color: rgba(0, 0, 0, 0.5);
+  --primary-light: rgba(12, 11, 95, 0.05);
+  --accent-light: rgba(255, 246, 115, 0.3);
+  --primary-muted: color-mix(in srgb, var(--primary-color) 75%, transparent);
+}
+
+/* Dark mode (default) */
+:root,
+:root[data-theme="dark"] {
+  --background-color: #000000;
+  --editor-color: black;
+  --text-color: #ffffff;
+  --primary-color: #ffffff;
+}
+
+/* Light mode */
+:root[data-theme="light"] {
+  --background-color: #ffffff;
+  --editor-color: white;
+  --text-color: #000000;
+  --primary-color: #000000;
+}
+
+body {
+  font-family: "Trykker","Garamond", "Times New Roman", Times, serif; 
+  background-color: var(--background-color);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+#editor-container {
+  position: relative;
+  /* height: 100vh; */
+  height: var(--editor-height);
+  aspect-ratio: 8.5/11;
+  width: auto;
+  margin: 2rem auto;
+  border: 1.2px solid var(--primary-color);
+}
+
+#editor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100%;
+  box-sizing: border-box;
+  background-color: var(--background-color);
+  color: transparent;
+  caret-color: var(--text-color);
+  font-family: var(--game-font);
+  font-size: 16px;
+  padding: calc(100% / 8.5);
+  outline: none;
+  overflow: auto;
+}
+
+#overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 100;
+  box-sizing: border-box;
+  color: var(--text-color);
+}
+
+#game-banner {
+  width: 100%;
+  height: 4vh;
+  min-height: 12px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+  font-family: var(--font);
+  background-color: var(--background-color);
+  color: var(--text-color);
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+/* Override MetaGame default styles */
+.prompt-container {
+  top: 0;
+  left: 0;
+  width: 75vw;
+  height: 10vh;
+  margin: 0 auto;
+  width: 80vh;
+}
+
+#prompt-display {
+  text-align: left;
+  margin-top: 0px;
+  font-size: 14pt;
+  color: var(--text-color);
+}
+
+.move {
+  /* absolute means positioned to its nearest positioned ancestor */
+  position: absolute; 
+  font-family: var(--game-font);
+  pointer-events: none;
+  z-index: 1001;
+  width: var(--word-width);
+  height: var(--word-height);
+  font-size: 16px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.overlay-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.redact {
+  background-color: var(--text-color);
+  color: var(--text-color);
+}
+
+.faded {
+  background-color: var(--editor-color);
+  color: var(--text-color-faded);
+}
+
+.visible {
+  background-color: var(--editor-color);
+  color: var(--text-color) !important;
+  z-index: 9999;
+}
