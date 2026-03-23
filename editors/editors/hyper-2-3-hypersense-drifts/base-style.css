@@ -160,6 +160,7 @@ body {
   padding: calc(100% / 8.5);
   outline: none;
   overflow: hidden;
+  font-family: var(--game-font);
 }
 
 .prompt-container {

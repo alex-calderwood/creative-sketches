@@ -1,8 +1,12 @@
 import { SynonymSentenceReader } from '../../readers/SynonymSentenceReader.js';
+import { setSource } from '/editors/vault/01-23-2026/src/words/synonyms.js';
+import { Performance } from '/editors/vault/01-23-2026/src/performances/Performance.js';
 
-export class FragmentPerformance {
+export class FragmentPerformance extends Performance {
     constructor(params = {}) {
-        this.params = { 
+        super({
+            darkmode: true,
+            synonymSource: 'synonyms-cache',
             overlayCount: 8,
             innerPointCount: 1, // number of interior points (triangles are randomly assigned to one)
             centerJitter: 0, 
@@ -11,7 +15,21 @@ export class FragmentPerformance {
             fontSize: 16,
             fontFamily: 'SquareAntiqua',
             ...params 
-        };
+        });
+
+        this.settings = [
+            { id: 'darkmode', name: 'Dark Mode', type: 'boolean', default: true, description: 'Dark mode', inBar: true },
+            { id: 'synonymSource', name: 'Synonyms', type: 'select', description: 'Where are the synonyms pulled from? WordNet is historically the most used database for word relationships. Wordhoard uses various online dictionaries.', inBar: true, options: [
+                { value: 'synonyms-wordnet', label: 'WordNet' },
+                { value: 'synonyms-cache', label: 'Wordhoard' },
+                { value: 'synonyms-online', label: 'Wordhoard Online (Slow)' },
+            ] },
+            { id: 'overlayCount', name: 'Overlays', type: 'number', description: 'Number of overlay fragments', inBar: true },
+            { id: 'fontSize', name: 'Font Size', type: 'number', description: 'Font size (px)', inBar: true },
+            { id: 'fontFamily', name: 'Font', type: 'select', description: 'Font family', options: ['SquareAntiqua', 'Goma', 'Garamond, serif', 'Arial, sans-serif', 'Georgia, serif', 'Courier New, monospace'] },
+            { id: 'baseVelocity', name: 'Velocity', type: 'number', description: 'Base animation velocity' },
+            { id: 'cornerPauseMs', name: 'Corner Pause (ms)', type: 'number', description: 'How long points pause at corners (ms)' },
+        ];
         
         this.state = {
             // We shatter the surface using:
@@ -84,6 +102,7 @@ export class FragmentPerformance {
         this.buildOverlayStructure();
         
         // Initialize the synonym sentence reader
+        setSource(this.params.synonymSource);
         this.reader = new SynonymSentenceReader('');
 
         // Set up event listeners
@@ -346,6 +365,30 @@ export class FragmentPerformance {
         const bottomText = this.bottomLayer?.querySelector('.bottom-text');
         if (bottomText) {
             bottomText.textContent = this.reader.text;
+        }
+    }
+
+    saveState() {
+        if (!this.editor) return null;
+        return { text: this.editor.textContent || '' };
+    }
+
+    loadState(state) {
+        if (this.editor && state?.text) {
+            this.editor.textContent = state.text;
+            this.onEditorInput();
+        }
+    }
+
+    onSettingChanged(id, value) {
+        if (id === 'darkmode') {
+            document.documentElement.setAttribute('data-theme', value ? 'dark' : 'light');
+        } else if (id === 'synonymSource') {
+            setSource(value);
+            this.reader.synonymCache.clear();
+            this.reader.updateText(this.reader.text);
+        } else if (id === 'fontSize' || id === 'fontFamily') {
+            this.syncEditorStyles();
         }
     }
 }

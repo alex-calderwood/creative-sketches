@@ -181,18 +181,14 @@ export function createBlockAt(token, left, top, width, height, colorBy = "pos") 
 
     let additionalScaleMod = getScaleModifier(text);
 
-    requestAnimationFrame(() => { // make sure it has rendered before measuring
-        setTimeout(() => {
-        let rect = blockWordElement.getBoundingClientRect();
-        let scaleX = width / rect.width;
-        let scaleY = height / rect.height;
-
-        scaleX *= additionalScaleMod.x;
-        scaleY *= additionalScaleMod.y;
-        
-        blockWordElement.style.transform = `scaleX(${scaleX}) scaleY(${scaleY})`;
-        }, 1); // Just 1ms delay helps the calculation be correct
-    });
+    // getBoundingClientRect() forces synchronous layout — no requestAnimationFrame needed
+    // with it, the browser gets a chance to paint the unscaled block first
+    let measuredRect = blockWordElement.getBoundingClientRect();
+    let scaleX = measuredRect.width > 0 ? width / measuredRect.width : 1;
+    let scaleY = measuredRect.height > 0 ? height / measuredRect.height : 1;
+    scaleX *= additionalScaleMod.x;
+    scaleY *= additionalScaleMod.y;
+    blockWordElement.style.transform = `scaleX(${scaleX}) scaleY(${scaleY})`;
 
     // Set the colors
     let color = getColor(colorKey);

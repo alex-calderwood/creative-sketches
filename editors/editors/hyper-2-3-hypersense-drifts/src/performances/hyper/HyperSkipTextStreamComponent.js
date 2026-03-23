@@ -18,7 +18,6 @@ export class HyperSkipTextStreamComponent extends TextStreamComponent {
       blockWidth: 100,
       clipRect: null,   // bounding box { left, top, width, height } for clipping
       hideOverflow: true,
-      hidden: false,
       // Overwrite with passed in params
       ...params
     };
@@ -44,8 +43,6 @@ export class HyperSkipTextStreamComponent extends TextStreamComponent {
     this.container.style.height = `${rect.height}px`;
     this.container.style.overflow = this.params.hideOverflow ? 'hidden' : 'visible';
     this.game.overlay.appendChild(this.container);
-
-    this.setHidden(this.params.hidden);
   }
 
   /*
@@ -89,13 +86,6 @@ export class HyperSkipTextStreamComponent extends TextStreamComponent {
     this.render();
   }
 
-  setHidden(hidden) {
-    this.params.hidden = hidden;
-    if (this.container) {
-      this.container.style.opacity = hidden ? 0 : 1;
-    }
-  }
-  
   /**
    * Handle stream shift events
    * @param {Object} event - The event data
@@ -154,22 +144,19 @@ export class HyperSkipTextStreamComponent extends TextStreamComponent {
   }
 
   updateWord(word) {
-    // this.updateRect(rect);
-    // this.updateWidth(width);
-    
-    // Update the second token (index 1) with the new word
-    // const token = this.tokens[1];
-    // if (!token) return;
-    
-    // const block = this.tokensToBlocks[token.id];
-    // if (!block) return;
-    
-    // // Update the token text and re-create the block
-    // token.text = word;
-    // const { left, top } = block.style;
-    // this.deleteToken(token);
-    // this.blockFromToken(token, left, top);
-    // this.render();
+    const oldWord = this.tokens[1]?.text;
+    if (!oldWord) return;
+
+    this.tokens.forEach(token => {
+      if (token.text !== oldWord) return;
+      const block = this.tokensToBlocks[token.id];
+      if (!block) return;
+      token.text = word;
+      const { left, top } = block.style;
+      this.deleteToken(token);
+      this.blockFromToken(token, left, top);
+    });
+    this.render();
   }
 
   updateRect(rect) {
