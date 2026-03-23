@@ -1,4 +1,4 @@
-import { Reader } from './Reader.js';
+import { Reader } from '/editors/vault/01-23-2026/src/readers/Reader.js';
 import { TextCorpus } from '../corpus/TextCorpus.js';
 
 /**

@@ -1,5 +1,5 @@
 import { Token } from '../corpus/Token.js';
-import { getSynonyms } from '../words/synonyms.js';
+import { getSynonyms } from '/editors/vault/01-23-2026/src/words/synonyms.js';
 
 /**
  * A reader that maintains a full text and returns it with each word
@@ -91,7 +91,7 @@ export class SynonymSentenceReader {
     }
 
     async _fetchAndCacheSynonym(originalWord) {
-        const data = await getSynonyms(originalWord);
+        const data = await getSynonyms(originalWord, { source: 'synonyms-cache' });
         
         // Get all synonyms that pass criteria
         const validSynonyms = data.synonyms.filter(syn => this._synonymCriteria(originalWord, syn));

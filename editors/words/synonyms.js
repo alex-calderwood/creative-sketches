@@ -1,5 +1,5 @@
 // Synonyms API router — mounted by server.js at /editors/api
-// Usage: GET /editors/api/synonyms?word=<word>&pos=<noun|verb|adjective|adverb>
+// WordNet (Node): GET /editors/api/synonyms-wordnet/synonyms?word=<word>&pos=<noun|verb|adjective|adverb>
 // The pos parameter is optional; if omitted, looks up all POS.
 
 const express = require('express');
@@ -30,17 +30,28 @@ async function getSynonyms(word, pos) {
   return synonyms;
 }
 
-router.use('/wordhoard', (req, res) => {
+router.use('/synonyms-online', (req, res) => {
   const url = `http://localhost:3019${req.url}`;
   http.get(url, (proxyRes) => {
     res.writeHead(proxyRes.statusCode, proxyRes.headers);
     proxyRes.pipe(res);
   }).on('error', () => {
-    res.status(502).json({ error: 'Wordhoard server unavailable' });
+    res.status(502).json({ error: 'synonyms-online server unavailable' });
   });
 });
 
-router.get('/synonyms', async (req, res) => {
+// SQLite cache — npm run synonyms-cache
+router.use('/synonyms-cache', (req, res) => {
+  const url = `http://localhost:3020${req.url}`;
+  http.get(url, (proxyRes) => {
+    res.writeHead(proxyRes.statusCode, proxyRes.headers);
+    proxyRes.pipe(res);
+  }).on('error', () => {
+    res.status(502).json({ error: 'synonyms-cache server unavailable' });
+  });
+});
+
+router.get('/synonyms-wordnet/synonyms', async (req, res) => {
   const { word, pos } = req.query;
   if (!word) return res.status(400).json({ error: 'Missing word parameter' });
   

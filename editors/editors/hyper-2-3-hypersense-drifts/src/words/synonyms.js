@@ -1,10 +1,11 @@
 const ENDPOINTS = {
-  wordnet: '/editors/api/synonyms',
-  wordhoard: '/editors/api/wordhoard/synonyms'
+  'synonyms-wordnet': '/editors/api/synonyms-wordnet/synonyms',
+  'synonyms-cache': '/editors/api/synonyms-cache/synonyms',
+  'synonyms-online': '/editors/api/synonyms-online/synonyms',
 };
 
 class SynonymService {
-  constructor(source = 'wordhoard') {
+  constructor(source = 'synonyms-online') {
     this.source = source;
   }
 

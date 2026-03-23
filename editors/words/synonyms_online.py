@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-# Flask server for synonym lookup using wordhoard
-# Usage: python words/synonyms-server.py
-# Or: npm run synonyms-server
+# Live synonym lookup via wordhoard (online).
+# Usage: python words/synonyms_online.py
+# Or: npm run synonyms-online
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -36,6 +36,5 @@ def get_synonyms():
 
 if __name__ == '__main__':
     port = 3019  # Different port from Node server
-    print(f"Wordhoard synonyms server running at: http://localhost:{port}")
+    print(f"synonyms-online server at: http://localhost:{port}")
     app.run(port=port, debug=True)
-

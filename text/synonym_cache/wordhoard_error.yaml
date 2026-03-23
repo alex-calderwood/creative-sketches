@@ -17828,3 +17828,1228 @@
   File "/Users/alex/miniconda3/envs/nlp/lib/python3.10/site-packages/requests/adapters.py", line 677, in send
     raise ConnectionError(e, request=request)
 
+2026-03-21 16:37:34:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:34:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:37:34:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=a
+2026-03-21 16:37:34:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:34:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word a
+2026-03-21 16:37:35:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:35:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:37:35:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=aa
+2026-03-21 16:37:35:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:35:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:35:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:37:35:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:37:35:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/aa
+2026-03-21 16:37:35:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:35:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word aa
+2026-03-21 16:37:36:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:36:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:37:36:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=aaa
+2026-03-21 16:37:36:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:37:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:37:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:37:37:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:37:37:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/aaa
+2026-03-21 16:37:37:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:37:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word aaa
+2026-03-21 16:37:38:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:38:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:37:38:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=aachen
+2026-03-21 16:37:38:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:38:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:38:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:37:38:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:37:38:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/aachen
+2026-03-21 16:37:38:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:38:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word aachen
+2026-03-21 16:37:39:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:39:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:37:39:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=aah
+2026-03-21 16:37:39:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:39:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word aah
+2026-03-21 16:37:40:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:40:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:37:40:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=aaliyah
+2026-03-21 16:37:40:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:41:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:41:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:37:41:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:37:41:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/aaliyah
+2026-03-21 16:37:41:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:41:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word aaliyah
+2026-03-21 16:37:42:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:42:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:37:42:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=aardvark
+2026-03-21 16:37:42:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:42:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:42:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:37:42:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:37:42:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/aardvark
+2026-03-21 16:37:42:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:42:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word aardvark
+2026-03-21 16:37:43:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:43:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:37:43:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=aardvarks
+2026-03-21 16:37:43:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:44:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:44:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:37:44:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:37:44:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/aardvarks
+2026-03-21 16:37:44:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:44:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word aardvarks
+2026-03-21 16:37:45:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:45:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:37:45:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=aaron
+2026-03-21 16:37:45:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:45:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:45:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:37:45:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:37:45:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/aaron
+2026-03-21 16:37:45:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:37:45:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word aaron
+2026-03-21 16:38:04:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:38:04:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:38:04:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=ab
+2026-03-21 16:38:04:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:38:04:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:38:04:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:38:04:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:38:04:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/ab
+2026-03-21 16:38:04:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:38:04:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word ab
+2026-03-21 16:38:05:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:38:05:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:38:05:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=aba
+2026-03-21 16:38:05:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:38:05:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:38:05:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:38:05:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:38:05:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/aba
+2026-03-21 16:38:05:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:38:05:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word aba
+2026-03-21 16:38:07:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:38:07:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:38:07:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=aback
+2026-03-21 16:38:07:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:38:08:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:38:08:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:38:08:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abacus
+2026-03-21 16:38:08:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:38:08:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:38:08:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:38:08:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:38:08:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abacus
+2026-03-21 16:38:08:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:38:08:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abacus
+2026-03-21 16:38:09:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:38:09:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:38:09:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abacuses
+2026-03-21 16:38:09:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:38:09:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:38:09:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:38:09:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:38:09:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abacuses
+2026-03-21 16:38:09:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:38:09:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abacuses
+2026-03-21 16:39:20:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:20:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:20:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abacuses
+2026-03-21 16:39:20:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:20:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:20:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:39:20:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:39:20:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abacuses
+2026-03-21 16:39:20:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:20:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abacuses
+2026-03-21 16:39:21:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:21:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:21:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abaft
+2026-03-21 16:39:21:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:22:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:22:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:22:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abalone
+2026-03-21 16:39:22:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:23:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:23:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:39:23:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:39:23:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abalone
+2026-03-21 16:39:23:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:23:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abalone
+2026-03-21 16:39:24:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:24:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:24:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abalones
+2026-03-21 16:39:24:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:24:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:24:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:39:24:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:39:24:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abalones
+2026-03-21 16:39:24:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:24:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abalones
+2026-03-21 16:39:25:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:25:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:25:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abandon
+2026-03-21 16:39:25:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:27:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:27:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:27:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abandoned
+2026-03-21 16:39:27:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:28:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:28:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:28:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abandoning
+2026-03-21 16:39:28:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:29:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:29:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:29:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abandonment
+2026-03-21 16:39:29:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:31:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:31:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:31:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abandons
+2026-03-21 16:39:31:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:32:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:32:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:32:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abase
+2026-03-21 16:39:32:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:34:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:34:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:34:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abased
+2026-03-21 16:39:34:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:35:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abased
+2026-03-21 16:39:36:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:36:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:36:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abasement
+2026-03-21 16:39:36:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:36:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abasement
+2026-03-21 16:39:37:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:37:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:37:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abases
+2026-03-21 16:39:37:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:39:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:39:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:39:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abash
+2026-03-21 16:39:39:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:40:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:40:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:40:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abashed
+2026-03-21 16:39:40:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:40:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abashed
+2026-03-21 16:39:42:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:42:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:42:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abashedly
+2026-03-21 16:39:42:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:42:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:42:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:39:42:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:39:42:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abashedly
+2026-03-21 16:39:42:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:42:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abashedly
+2026-03-21 16:39:43:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:43:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:43:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abashes
+2026-03-21 16:39:43:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:44:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:44:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:44:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abashing
+2026-03-21 16:39:44:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:46:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:46:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:46:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abashment
+2026-03-21 16:39:46:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:47:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:47:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:47:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abasing
+2026-03-21 16:39:47:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:49:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:49:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:49:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abate
+2026-03-21 16:39:49:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:50:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:50:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:50:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abated
+2026-03-21 16:39:50:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:50:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abated
+2026-03-21 16:39:52:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:52:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:52:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abatement
+2026-03-21 16:39:52:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:53:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:53:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:53:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abates
+2026-03-21 16:39:53:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:55:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:55:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:55:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abating
+2026-03-21 16:39:55:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:55:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abating
+2026-03-21 16:39:56:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:56:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:56:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abattoir
+2026-03-21 16:39:56:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:56:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:56:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:39:56:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:39:56:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abattoir
+2026-03-21 16:39:56:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:56:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abattoir
+2026-03-21 16:39:58:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:58:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:58:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abattoirs
+2026-03-21 16:39:58:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:58:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:58:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:39:58:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:39:58:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abattoirs
+2026-03-21 16:39:58:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:58:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abattoirs
+2026-03-21 16:39:59:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:59:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:39:59:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abbas
+2026-03-21 16:39:59:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:59:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:59:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:39:59:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:39:59:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abbas
+2026-03-21 16:39:59:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:39:59:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abbas
+2026-03-21 16:42:56:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:42:56:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:42:56:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=a
+2026-03-21 16:42:56:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:42:56:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word a
+2026-03-21 16:42:57:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:42:57:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:42:57:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=aa
+2026-03-21 16:42:57:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:42:57:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:42:57:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:42:57:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:42:57:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/aa
+2026-03-21 16:42:57:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:42:57:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word aa
+2026-03-21 16:42:58:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:42:58:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:42:58:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=aaa
+2026-03-21 16:42:58:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:42:58:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:42:58:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:42:58:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:42:58:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/aaa
+2026-03-21 16:42:58:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:42:58:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word aaa
+2026-03-21 16:43:00:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:00:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:00:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=aachen
+2026-03-21 16:43:00:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:00:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:00:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:43:00:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:43:00:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/aachen
+2026-03-21 16:43:00:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:00:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word aachen
+2026-03-21 16:43:01:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:01:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:01:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=aah
+2026-03-21 16:43:01:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:01:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word aah
+2026-03-21 16:43:03:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:03:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:03:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=aaliyah
+2026-03-21 16:43:03:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:03:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:03:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:43:03:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:43:03:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/aaliyah
+2026-03-21 16:43:03:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:03:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word aaliyah
+2026-03-21 16:43:04:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:04:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:04:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=aardvark
+2026-03-21 16:43:04:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:04:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:04:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:43:04:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:43:04:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/aardvark
+2026-03-21 16:43:04:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:04:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word aardvark
+2026-03-21 16:43:05:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:05:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:05:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=aardvarks
+2026-03-21 16:43:05:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:05:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:05:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:43:05:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:43:05:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/aardvarks
+2026-03-21 16:43:05:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:05:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word aardvarks
+2026-03-21 16:43:06:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:06:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:06:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=aaron
+2026-03-21 16:43:06:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:07:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:07:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:43:07:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:43:07:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/aaron
+2026-03-21 16:43:07:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:07:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word aaron
+2026-03-21 16:43:08:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:08:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:08:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=ab
+2026-03-21 16:43:08:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:08:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:08:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:43:08:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:43:08:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/ab
+2026-03-21 16:43:08:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:08:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word ab
+2026-03-21 16:43:09:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:09:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:09:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=aba
+2026-03-21 16:43:09:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:09:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:09:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:43:09:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:43:09:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/aba
+2026-03-21 16:43:09:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:09:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word aba
+2026-03-21 16:43:10:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:10:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:10:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=aback
+2026-03-21 16:43:10:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:12:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:12:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:12:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abacus
+2026-03-21 16:43:12:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:12:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:12:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:43:12:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:43:12:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abacus
+2026-03-21 16:43:12:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:12:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abacus
+2026-03-21 16:43:13:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:13:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:13:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abacuses
+2026-03-21 16:43:13:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:13:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:13:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:43:13:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:43:13:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abacuses
+2026-03-21 16:43:13:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:13:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abacuses
+2026-03-21 16:43:14:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:14:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:14:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abaft
+2026-03-21 16:43:14:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:16:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:16:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:16:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abalone
+2026-03-21 16:43:16:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:16:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:16:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:43:16:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:43:16:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abalone
+2026-03-21 16:43:16:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:16:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abalone
+2026-03-21 16:43:17:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:17:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:17:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abalones
+2026-03-21 16:43:17:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:17:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:17:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:43:17:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:43:17:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abalones
+2026-03-21 16:43:17:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:17:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abalones
+2026-03-21 16:43:18:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:18:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:18:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abandon
+2026-03-21 16:43:18:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:20:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:20:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:20:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abandoned
+2026-03-21 16:43:20:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:21:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:21:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:21:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abandoning
+2026-03-21 16:43:21:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:23:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:23:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:23:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abandonment
+2026-03-21 16:43:23:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:24:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:24:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:24:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abandons
+2026-03-21 16:43:24:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:25:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:25:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:25:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abase
+2026-03-21 16:43:25:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:26:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:26:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:26:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abased
+2026-03-21 16:43:26:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:27:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abased
+2026-03-21 16:43:28:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:28:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:28:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abasement
+2026-03-21 16:43:28:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:28:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abasement
+2026-03-21 16:43:29:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:29:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:29:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abases
+2026-03-21 16:43:29:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:31:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:31:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:31:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abash
+2026-03-21 16:43:31:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:32:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abashed
+2026-03-21 16:43:32:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:32:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:32:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abashed
+2026-03-21 16:43:32:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:33:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:33:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:33:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abashedly
+2026-03-21 16:43:33:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:34:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:34:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:43:34:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:43:34:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abashedly
+2026-03-21 16:43:34:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:34:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abashedly
+2026-03-21 16:43:35:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:35:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:35:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abashes
+2026-03-21 16:43:35:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:36:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:36:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:36:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abashing
+2026-03-21 16:43:36:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:38:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:38:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:38:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abashment
+2026-03-21 16:43:38:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:39:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:39:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:39:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abasing
+2026-03-21 16:43:39:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:41:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:41:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:41:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abate
+2026-03-21 16:43:41:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:42:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abated
+2026-03-21 16:43:42:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:42:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:42:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abated
+2026-03-21 16:43:42:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:43:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:43:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:43:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abatement
+2026-03-21 16:43:43:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:45:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:45:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:45:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abates
+2026-03-21 16:43:45:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:46:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:46:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:46:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abating
+2026-03-21 16:43:46:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:46:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abating
+2026-03-21 16:43:47:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:47:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:47:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abattoir
+2026-03-21 16:43:47:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:48:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:48:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:43:48:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:43:48:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abattoir
+2026-03-21 16:43:48:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:48:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abattoir
+2026-03-21 16:43:49:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:49:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:49:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abattoirs
+2026-03-21 16:43:49:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:49:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:49:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:43:49:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:43:49:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abattoirs
+2026-03-21 16:43:49:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:49:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abattoirs
+2026-03-21 16:43:50:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:50:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:50:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abbas
+2026-03-21 16:43:50:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:50:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:50:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:43:50:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:43:50:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abbas
+2026-03-21 16:43:50:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:50:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abbas
+2026-03-21 16:43:52:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:52:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:52:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abbasid
+2026-03-21 16:43:52:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:52:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:52:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:43:52:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:43:52:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abbasid
+2026-03-21 16:43:52:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:52:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abbasid
+2026-03-21 16:43:53:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:53:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:53:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abbess
+2026-03-21 16:43:53:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:53:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abbess
+2026-03-21 16:43:54:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:54:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:54:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abbesses
+2026-03-21 16:43:54:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:54:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abbesses
+2026-03-21 16:43:56:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:56:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:56:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abbey
+2026-03-21 16:43:56:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:57:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:57:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:57:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abbeys
+2026-03-21 16:43:57:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:58:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:58:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:43:58:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abbot
+2026-03-21 16:43:58:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:43:59:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abbot
+2026-03-21 16:44:00:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:00:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:00:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abbots
+2026-03-21 16:44:00:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:00:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abbots
+2026-03-21 16:44:01:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:01:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:01:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abbott
+2026-03-21 16:44:01:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:01:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:01:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:44:01:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:44:01:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abbott
+2026-03-21 16:44:01:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:01:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abbott
+2026-03-21 16:44:03:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:03:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:03:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abbr
+2026-03-21 16:44:03:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:03:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:03:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:44:03:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:44:03:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abbr
+2026-03-21 16:44:03:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:03:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abbr
+2026-03-21 16:44:04:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:04:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:04:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abbrev
+2026-03-21 16:44:04:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:04:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:04:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:44:04:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:44:04:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abbrev
+2026-03-21 16:44:04:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:04:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abbrev
+2026-03-21 16:44:05:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:05:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:05:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abbreviate
+2026-03-21 16:44:05:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:07:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:07:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:07:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abbreviated
+2026-03-21 16:44:07:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:07:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abbreviated
+2026-03-21 16:44:08:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:08:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:08:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abbreviates
+2026-03-21 16:44:08:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:10:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:10:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:10:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abbreviating
+2026-03-21 16:44:10:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:11:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:11:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:11:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abbreviation
+2026-03-21 16:44:11:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:12:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:12:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:12:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abbreviations
+2026-03-21 16:44:12:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:14:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:14:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:14:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abbrevs
+2026-03-21 16:44:14:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:14:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:14:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:44:14:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:44:14:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abbrevs
+2026-03-21 16:44:14:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:14:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abbrevs
+2026-03-21 16:44:15:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:15:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:15:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abby
+2026-03-21 16:44:15:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:15:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:15:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:44:15:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:44:15:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abby
+2026-03-21 16:44:15:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:15:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abby
+2026-03-21 16:44:16:wordhoard.synonyms:ERROR: The word abbé was not in a valid format.
+2026-03-21 16:44:16:wordhoard.synonyms:ERROR: Please verify that the word abbé is spelled correctly.
+2026-03-21 16:44:17:wordhoard.synonyms:ERROR: The word abbés was not in a valid format.
+2026-03-21 16:44:17:wordhoard.synonyms:ERROR: Please verify that the word abbés is spelled correctly.
+2026-03-21 16:44:19:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:19:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:19:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abc
+2026-03-21 16:44:19:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:20:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:20:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:20:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abcs
+2026-03-21 16:44:20:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:22:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:22:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:22:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abdicate
+2026-03-21 16:44:22:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:23:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:23:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:23:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abdicated
+2026-03-21 16:44:23:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:25:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:25:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:25:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abdicates
+2026-03-21 16:44:25:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:26:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:26:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:26:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abdicating
+2026-03-21 16:44:26:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:28:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:28:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:28:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abdication
+2026-03-21 16:44:28:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:28:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abdication
+2026-03-21 16:44:29:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:29:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:29:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abdications
+2026-03-21 16:44:29:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:29:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abdications
+2026-03-21 16:44:31:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:31:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:31:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abdomen
+2026-03-21 16:44:31:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:32:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:32:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:32:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abdomens
+2026-03-21 16:44:32:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:34:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:34:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:34:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abdominal
+2026-03-21 16:44:34:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:35:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:35:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:35:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abduct
+2026-03-21 16:44:35:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:37:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:37:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:37:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abducted
+2026-03-21 16:44:37:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:37:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abducted
+2026-03-21 16:44:38:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:38:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:38:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abductee
+2026-03-21 16:44:38:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:38:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abductee
+2026-03-21 16:44:39:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:39:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:39:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abductees
+2026-03-21 16:44:39:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:40:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abductees
+2026-03-21 16:44:41:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:41:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:41:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abducting
+2026-03-21 16:44:41:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:42:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:42:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:42:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abduction
+2026-03-21 16:44:42:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:44:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:44:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:44:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abductions
+2026-03-21 16:44:44:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:45:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:45:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:45:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abductor
+2026-03-21 16:44:45:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:45:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abductor
+2026-03-21 16:44:47:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:47:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:47:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abductors
+2026-03-21 16:44:47:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:47:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abductors
+2026-03-21 16:44:48:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:48:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:48:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abducts
+2026-03-21 16:44:48:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:50:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:50:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:50:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abdul
+2026-03-21 16:44:50:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:50:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:50:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:44:50:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:44:50:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abdul
+2026-03-21 16:44:50:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:50:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abdul
+2026-03-21 16:44:51:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:51:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:51:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abe
+2026-03-21 16:44:51:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:51:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:51:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:44:51:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:44:51:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abe
+2026-03-21 16:44:51:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:51:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abe
+2026-03-21 16:44:52:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:52:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:52:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abeam
+2026-03-21 16:44:52:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:52:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:52:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:44:52:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:44:52:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abeam
+2026-03-21 16:44:52:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:52:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abeam
+2026-03-21 16:44:54:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:54:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:54:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abed
+2026-03-21 16:44:54:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:54:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:54:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:44:54:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:44:54:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abed
+2026-03-21 16:44:54:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:54:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abed
+2026-03-21 16:44:55:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:55:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:55:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abel
+2026-03-21 16:44:55:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:55:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:55:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:44:55:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:44:55:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abel
+2026-03-21 16:44:55:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:55:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abel
+2026-03-21 16:44:56:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:56:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:56:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abelard
+2026-03-21 16:44:56:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:56:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:56:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:44:56:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:44:56:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abelard
+2026-03-21 16:44:56:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:56:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abelard
+2026-03-21 16:44:58:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:58:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:58:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abelson
+2026-03-21 16:44:58:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:58:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:58:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:44:58:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:44:58:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abelson
+2026-03-21 16:44:58:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:58:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abelson
+2026-03-21 16:44:59:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:59:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:44:59:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=aberdeen
+2026-03-21 16:44:59:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:59:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:59:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:44:59:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:44:59:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/aberdeen
+2026-03-21 16:44:59:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:44:59:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word aberdeen
+2026-03-21 16:45:01:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:01:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:01:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abernathy
+2026-03-21 16:45:01:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:01:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:01:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:45:01:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:45:01:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abernathy
+2026-03-21 16:45:01:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:01:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abernathy
+2026-03-21 16:45:02:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:02:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:02:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=aberrant
+2026-03-21 16:45:02:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:04:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:04:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:04:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=aberration
+2026-03-21 16:45:04:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:05:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:05:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:05:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=aberrational
+2026-03-21 16:45:05:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:07:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:07:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:07:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=aberrations
+2026-03-21 16:45:07:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:08:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:08:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:08:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abet
+2026-03-21 16:45:08:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:10:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:10:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:10:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abets
+2026-03-21 16:45:10:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:11:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:11:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:11:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abetted
+2026-03-21 16:45:11:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:11:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abetted
+2026-03-21 16:45:13:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:13:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:13:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abetting
+2026-03-21 16:45:13:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:13:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abetting
+2026-03-21 16:45:14:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:14:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:14:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abettor
+2026-03-21 16:45:14:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:15:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:15:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:15:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abettors
+2026-03-21 16:45:15:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:17:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:17:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:17:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abeyance
+2026-03-21 16:45:17:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:18:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:18:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:18:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abhor
+2026-03-21 16:45:18:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:20:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:20:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:20:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abhorred
+2026-03-21 16:45:20:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:20:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abhorred
+2026-03-21 16:45:21:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:21:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:21:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abhorrence
+2026-03-21 16:45:21:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:23:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:23:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:23:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abhorrent
+2026-03-21 16:45:23:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:24:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:24:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:24:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abhorrently
+2026-03-21 16:45:24:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:26:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:26:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:26:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abhorring
+2026-03-21 16:45:26:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:27:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:27:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:27:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abhors
+2026-03-21 16:45:27:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:29:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:29:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:29:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abidance
+2026-03-21 16:45:29:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:30:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:30:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:30:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abide
+2026-03-21 16:45:30:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:32:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:32:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:32:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abides
+2026-03-21 16:45:32:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:33:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:33:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:33:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abiding
+2026-03-21 16:45:33:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:35:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:35:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:35:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abidingly
+2026-03-21 16:45:35:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:36:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:36:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:36:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abidjan
+2026-03-21 16:45:36:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:36:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:36:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:45:36:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:45:36:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abidjan
+2026-03-21 16:45:36:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:36:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abidjan
+2026-03-21 16:45:38:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:38:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:38:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abigail
+2026-03-21 16:45:38:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:38:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abigail
+2026-03-21 16:45:39:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:39:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:39:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abilene
+2026-03-21 16:45:39:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:39:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:39:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:45:39:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:45:39:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abilene
+2026-03-21 16:45:39:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:39:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abilene
+2026-03-21 16:45:40:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:40:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:40:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abilities
+2026-03-21 16:45:40:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:42:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:42:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:42:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=ability
+2026-03-21 16:45:42:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:43:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:43:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:43:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abject
+2026-03-21 16:45:43:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:45:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:45:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:45:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abjection
+2026-03-21 16:45:45:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:46:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:46:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:46:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abjectly
+2026-03-21 16:45:46:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:48:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:48:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:48:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abjectness
+2026-03-21 16:45:48:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:49:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:49:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:49:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abjuration
+2026-03-21 16:45:49:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:49:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:49:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:45:49:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:45:49:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abjuration
+2026-03-21 16:45:49:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:49:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abjuration
+2026-03-21 16:45:51:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:51:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:51:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abjurations
+2026-03-21 16:45:51:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:51:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:51:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:45:51:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:45:51:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abjurations
+2026-03-21 16:45:51:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:51:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abjurations
+2026-03-21 16:45:52:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:52:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:52:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abjuratory
+2026-03-21 16:45:52:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:52:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:52:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:45:52:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:45:52:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abjuratory
+2026-03-21 16:45:52:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:52:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abjuratory
+2026-03-21 16:45:53:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:53:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:53:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abjure
+2026-03-21 16:45:53:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:55:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:55:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:55:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abjured
+2026-03-21 16:45:55:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:56:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:56:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:56:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abjurer
+2026-03-21 16:45:56:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:58:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:58:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:58:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abjurers
+2026-03-21 16:45:58:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:59:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:45:59:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:45:59:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abjures
+2026-03-21 16:45:59:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:01:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:01:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:46:01:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abjuring
+2026-03-21 16:46:01:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:02:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:02:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:46:02:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=ablate
+2026-03-21 16:46:02:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:02:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:02:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:46:02:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:46:02:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/ablate
+2026-03-21 16:46:02:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:02:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word ablate
+2026-03-21 16:46:04:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:04:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:46:04:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=ablated
+2026-03-21 16:46:04:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:04:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:04:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:46:04:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:46:04:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/ablated
+2026-03-21 16:46:04:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:04:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word ablated
+2026-03-21 16:46:05:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:05:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:46:05:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=ablates
+2026-03-21 16:46:05:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:05:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:05:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:46:05:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:46:05:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/ablates
+2026-03-21 16:46:05:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:05:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word ablates
+2026-03-21 16:46:06:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:06:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:46:06:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=ablating
+2026-03-21 16:46:06:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:07:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:07:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:46:07:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:46:07:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/ablating
+2026-03-21 16:46:07:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:07:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word ablating
+2026-03-21 16:46:08:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:08:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:46:08:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=ablation
+2026-03-21 16:46:08:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:08:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:08:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:46:08:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:46:08:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/ablation
+2026-03-21 16:46:08:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:08:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word ablation
+2026-03-21 16:46:09:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:09:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:46:09:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=ablations
+2026-03-21 16:46:09:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:09:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:09:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:46:09:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:46:09:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/ablations
+2026-03-21 16:46:09:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:09:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word ablations
+2026-03-21 16:46:10:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:10:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:46:10:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=ablative
+2026-03-21 16:46:10:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:11:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:11:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:46:11:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:46:11:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/ablative
+2026-03-21 16:46:11:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:11:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word ablative
+2026-03-21 16:46:12:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:12:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:46:12:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=ablatives
+2026-03-21 16:46:12:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:12:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:12:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:46:12:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:46:12:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/ablatives
+2026-03-21 16:46:12:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:12:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word ablatives
+2026-03-21 16:46:13:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:13:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:46:13:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=ablaze
+2026-03-21 16:46:13:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:15:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:15:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:46:15:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=able
+2026-03-21 16:46:15:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:16:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:16:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:46:16:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abler
+2026-03-21 16:46:16:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:18:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:18:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:46:18:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=ablest
+2026-03-21 16:46:18:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:19:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:19:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:46:19:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abloom
+2026-03-21 16:46:19:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:19:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abloom
+2026-03-21 16:46:20:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:20:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:46:20:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=ablution
+2026-03-21 16:46:20:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:21:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:21:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:46:21:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:46:21:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/ablution
+2026-03-21 16:46:21:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:21:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word ablution
+2026-03-21 16:46:22:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:22:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:46:22:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=ablutions
+2026-03-21 16:46:22:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:22:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:22:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:46:22:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:46:22:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/ablutions
+2026-03-21 16:46:22:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:22:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word ablutions
+2026-03-21 16:46:23:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:23:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:46:23:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=ably
+2026-03-21 16:46:23:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:25:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:25:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:46:25:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abm
+2026-03-21 16:46:25:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:25:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:25:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:46:25:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:46:25:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abm
+2026-03-21 16:46:25:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:25:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abm
+2026-03-21 16:46:26:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:26:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:46:26:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abnegate
+2026-03-21 16:46:26:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:28:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:28:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:46:28:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abnegated
+2026-03-21 16:46:28:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:29:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:29:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:46:29:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abnegates
+2026-03-21 16:46:29:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:31:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:31:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:46:31:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abnegating
+2026-03-21 16:46:31:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:32:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:32:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:46:32:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abnegation
+2026-03-21 16:46:32:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:34:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:34:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:46:34:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abner
+2026-03-21 16:46:34:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:34:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:34:wordhoard.utilities.request_html:ERROR: Response Status Code: 404
+2026-03-21 16:46:34:wordhoard.utilities.request_html:INFO: The HTTP 404 Not Found status code means that the file or page that the was requested was not found on the server
+2026-03-21 16:46:34:wordhoard.utilities.request_html:INFO: Requested URL: https://www.merriam-webster.com/thesaurus/abner
+2026-03-21 16:46:34:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:34:wordhoard.synonyms:INFO: Merriam-webster.com had no synonym reference for the word abner
+2026-03-21 16:46:35:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:35:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:46:35:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abnormal
+2026-03-21 16:46:35:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:37:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------
+2026-03-21 16:46:37:wordhoard.utilities.request_html:INFO: The requested URL is protected by Cloudflare's DDoS mitigation service.
+2026-03-21 16:46:37:wordhoard.utilities.request_html:INFO: Requested URL: http://wordnetweb.princeton.edu/perl/webwn?s=abnormalities
+2026-03-21 16:46:37:wordhoard.utilities.request_html:INFO: --------------------------------------------------------------------------------

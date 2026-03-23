@@ -12,7 +12,7 @@ const PYTHON_PORT = 3019;
 async function getWordnetSynonyms(word, pos) {
   return new Promise((resolve) => {
     const posParam = pos ? `&pos=${encodeURIComponent(pos)}` : '';
-    const path = `/editors/api/synonyms?word=${encodeURIComponent(word)}${posParam}`;
+    const path = `/editors/api/synonyms-wordnet/synonyms?word=${encodeURIComponent(word)}${posParam}`;
     
     const options = {
       hostname: 'localhost',
@@ -33,13 +33,13 @@ async function getWordnetSynonyms(word, pos) {
         try {
           resolve({ 
             success: true, 
-            source: 'wordnet',
+            source: 'synonyms-wordnet',
             data: JSON.parse(data) 
           });
         } catch (e) {
           resolve({ 
             success: false, 
-            source: 'wordnet',
+            source: 'synonyms-wordnet',
             error: 'Invalid JSON response' 
           });
         }
@@ -77,7 +77,7 @@ async function getWordhoardSynonyms(word, pos) {
       port: PYTHON_PORT,
       path: path,
       method: 'GET',
-      timeout: 15000  // 15 seconds - wordhoard can be slow, especially first query
+      timeout: 15000  // 15 seconds - synonyms-online can be slow, especially first query
     };
     
     const req = http.request(options, (res) => {
@@ -91,13 +91,13 @@ async function getWordhoardSynonyms(word, pos) {
         try {
           resolve({ 
             success: true, 
-            source: 'wordhoard',
+            source: 'synonyms-online',
             data: JSON.parse(data) 
           });
         } catch (e) {
           resolve({ 
             success: false, 
-            source: 'wordhoard',
+            source: 'synonyms-online',
             error: 'Invalid JSON response' 
           });
         }
@@ -107,7 +107,7 @@ async function getWordhoardSynonyms(word, pos) {
     req.on('error', (e) => {
       resolve({ 
         success: false, 
-        source: 'wordhoard',
+        source: 'synonyms-online',
         error: 'Server not responding or not running' 
       });
     });
@@ -116,8 +116,8 @@ async function getWordhoardSynonyms(word, pos) {
       req.destroy();
       resolve({ 
         success: false, 
-        source: 'wordhoard',
-        error: 'Request timeout (wordhoard can be slow on first query)' 
+        source: 'synonyms-online',
+        error: 'Request timeout (synonyms-online can be slow on first query)' 
       });
     });
     
@@ -173,7 +173,7 @@ async function main() {
     
     console.log();
     
-    // Display wordhoard result
+    // Display synonyms-online result
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.log(`${pythonResult.source}:`);
     if (pythonResult.success) {

@@ -1,9 +1,10 @@
 // Global variable to choose synonym source
-const SYNONYM_SOURCE = 'wordhoard'; // values: wordnet, wordhoard
+const SYNONYM_SOURCE = 'synonyms-online'; // values: synonyms-wordnet, synonyms-cache, synonyms-online
 
 const ENDPOINTS = {
-  wordnet: '/editors/api/synonyms',
-  wordhoard: '/editors/api/wordhoard/synonyms'
+  'synonyms-wordnet': '/editors/api/synonyms-wordnet/synonyms',
+  'synonyms-cache': '/editors/api/synonyms-cache/synonyms',
+  'synonyms-online': '/editors/api/synonyms-online/synonyms',
 };
 
 // Strip leading/trailing punctuation, return { prefix, core, suffix }

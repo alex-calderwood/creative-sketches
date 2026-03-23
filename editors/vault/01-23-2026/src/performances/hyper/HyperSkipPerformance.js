@@ -27,7 +27,7 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
 
             textHidden: true,
             initialText: '',
-            synonymSource: 'wordnet',
+            synonymSource: 'synonyms-wordnet',
             ...BasicEditor.params,
             ...params 
         };
@@ -48,7 +48,7 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
             { name: 'slideRate', type: 'number', description: 'Time between each word popping (ms).'},
             { name: 'animationSpeed', type: 'number', description: 'Speed of the animation when a word pops'},
 
-            { name: 'synonymSource', type: 'select', description: 'Source for synonym lookup', options: ['wordhoard', 'wordnet']},
+            { name: 'synonymSource', type: 'select', description: 'Source for synonym lookup', options: ['synonyms-wordnet', 'synonyms-cache', 'synonyms-online']},
 
         ]
         this.state = {

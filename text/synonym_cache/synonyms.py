@@ -14,9 +14,9 @@ import sys
 import random
 from pathlib import Path
 
-# Path to the database
-SCRIPT_DIR = Path(__file__).parent.parent
-DB_PATH = SCRIPT_DIR / "synonym_cache.db"
+from lookup import DEFAULT_DB_PATH, fetch_word_record
+
+DB_PATH = DEFAULT_DB_PATH
 
 
 def get_synonyms(word):
@@ -25,35 +25,33 @@ def get_synonyms(word):
         print(f"Error: Database not found at {DB_PATH}")
         print("Run build_synonym_cache.py first.")
         return None
-    
+
     print(f"Database: {DB_PATH}")
-    
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    
-    query = 'SELECT wordhoard_synonyms, wordhoard_status, wordhoard_error_message FROM words WHERE word = ?'
+
+    query = (
+        "SELECT wordhoard_synonyms, wordhoard_status, wordhoard_error_message "
+        "FROM words WHERE word = ?"
+    )
     params = (word.lower(),)
     print(f"Query: {query}")
     print(f"Params: {params}")
-    
-    cursor.execute(query, params)
-    result = cursor.fetchone()
-    conn.close()
-    
+
+    result = fetch_word_record(word, DB_PATH)
+
     print(f"Raw result: {result}")
-    
+
     if result is None:
         return None
-    
+
     synonyms_str, status, error_message = result
     print(f"  wordhoard_synonyms column: {repr(synonyms_str)}")
     print(f"  wordhoard_status column: {repr(status)}")
     print(f"  wordhoard_error_message column: {repr(error_message)}")
-    
-    if status == 'completed':
-        synonyms = synonyms_str.split(',') if synonyms_str else []
+
+    if status == "completed":
+        synonyms = synonyms_str.split(",") if synonyms_str else []
         return synonyms
-    elif status == 'error':
+    elif status == "error":
         print(f"Error for '{word}': {error_message}")
         return []
     else:  # pending
@@ -66,35 +64,37 @@ def show_stats():
     if not DB_PATH.exists():
         print(f"Error: Database not found at {DB_PATH}")
         return
-    
+
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    
+
     cursor.execute('SELECT COUNT(*) FROM words WHERE wordhoard_status = "pending"')
     pending = cursor.fetchone()[0]
     cursor.execute('SELECT COUNT(*) FROM words WHERE wordhoard_status = "completed"')
     completed = cursor.fetchone()[0]
     cursor.execute('SELECT COUNT(*) FROM words WHERE wordhoard_status = "error"')
     errors = cursor.fetchone()[0]
-    
+
     total = pending + completed + errors
-    
+
     print("Database Statistics:")
     print(f"  Total words:     {total}")
     print(f"  Completed:       {completed} ({100*completed/total:.1f}%)")
     print(f"  Pending:         {pending} ({100*pending/total:.1f}%)")
     print(f"  Errors:          {errors} ({100*errors/total:.1f}%)")
-    
+
     # Show some examples
-    cursor.execute('SELECT word, wordhoard_synonyms FROM words WHERE wordhoard_status = "completed" LIMIT 5')
+    cursor.execute(
+        'SELECT word, wordhoard_synonyms FROM words WHERE wordhoard_status = "completed" LIMIT 5'
+    )
     examples = cursor.fetchall()
-    
+
     if examples:
         print("\nRecent examples:")
-        for word, synonyms_str in examples:
-            synonyms = synonyms_str.split(',') if synonyms_str else []
-            print(f"  '{word}': {', '.join(synonyms[:5])}" + (" ..." if len(synonyms) > 5 else ""))
-    
+        for w, synonyms_str in examples:
+            synonyms = synonyms_str.split(",") if synonyms_str else []
+            print(f"  '{w}': {', '.join(synonyms[:5])}" + (" ..." if len(synonyms) > 5 else ""))
+
     conn.close()
 
 
@@ -103,22 +103,26 @@ def show_random(count=10):
     if not DB_PATH.exists():
         print(f"Error: Database not found at {DB_PATH}")
         return
-    
+
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    
-    cursor.execute('SELECT word, wordhoard_synonyms FROM words WHERE wordhoard_status = "completed" ORDER BY RANDOM() LIMIT ?', (count,))
+
+    cursor.execute(
+        'SELECT word, wordhoard_synonyms FROM words WHERE wordhoard_status = "completed" '
+        "ORDER BY RANDOM() LIMIT ?",
+        (count,),
+    )
     results = cursor.fetchall()
     conn.close()
-    
+
     if not results:
         print("No completed entries yet.")
         return
-    
+
     print(f"Random {len(results)} completed entries:")
-    for word, synonyms_str in results:
-        synonyms = synonyms_str.split(',') if synonyms_str else []
-        print(f"  '{word}': {', '.join(synonyms)}")
+    for w, synonyms_str in results:
+        synonyms = synonyms_str.split(",") if synonyms_str else []
+        print(f"  '{w}': {', '.join(synonyms)}")
 
 
 def main():
@@ -129,26 +133,26 @@ def main():
         print("  python synonyms.py --stats       - Show database statistics")
         print("  python synonyms.py --random [N]  - Show N random entries (default 10)")
         sys.exit(1)
-    
+
     arg = sys.argv[1]
-    
-    if arg == '--stats':
+
+    if arg == "--stats":
         show_stats()
-    elif arg == '--random':
+    elif arg == "--random":
         count = int(sys.argv[2]) if len(sys.argv) > 2 else 10
         show_random(count)
     else:
-        word = arg
-        synonyms = get_synonyms(word)
-        
+        w = arg
+        synonyms = get_synonyms(w)
+
         if synonyms is None:
-            print(f"'{word}' not found in database")
+            print(f"'{w}' not found in database")
         elif synonyms:
-            print(f"\nSynonyms for '{word}':")
+            print(f"\nSynonyms for '{w}':")
             print(f"  {', '.join(synonyms)}")
         else:
-            print(f"No synonyms found for '{word}'")
+            print(f"No synonyms found for '{w}'")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
