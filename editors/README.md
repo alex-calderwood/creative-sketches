@@ -37,6 +37,12 @@ First time setup - install Python dependencies:
 
 # Production
 
+## Deploying synonym_cache.db
+
+`text/synonym_cache.db` is gitignored and must be copied to the server manually before building, placed at:
+
+    creative-sketches/text/synonym_cache.db
+
 ## Build
 
 docker build -t editors .

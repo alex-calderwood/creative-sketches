@@ -354,7 +354,7 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
                         continue;
                     }
                     // Tell the reader resonsible for producing more words that the word has changed
-                    reader.updateWord(tokenBox.text, pos);
+                    reader.updateWord(tokenBox.text, pos).then(() => this._afterSynonymsReady(stream, index));
                     // Tell the component responsible for rendering the words that the word has changed
                     stream.component.updateWord(tokenBox.text)
                 }
@@ -381,7 +381,6 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
             return;
         }
         const reader = new SynonymReader(tokenBox.text);
-        reader.updateWord(tokenBox.text, pos); // fetch synonyms with POS context
         const textStream = new TextStream(this.params.streamLength, reader);
 
         const component = new HyperSkipTextStreamComponent(this, {
@@ -394,6 +393,8 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
         const streamEntity = new TextStreamEntity(this, textStream, component);
         this.state.streams[i] = streamEntity;
 
+        reader.updateWord(tokenBox.text, pos).then(() => this._afterSynonymsReady(streamEntity, i));
+
         this.callPop(streamEntity, i);
         if (this.params.automaticSlide) {
             this.automaticSlide(streamEntity, i);
@@ -402,6 +403,16 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
 
     callPop(entity, i) {
         this._doPop(entity, i);
+    }
+
+    /** Run when async synonym fetch finishes so we are not stuck until the next long slide tick. */
+    _afterSynonymsReady(entity, index) {
+        if (!entity || this.state.streams[index] !== entity) return;
+        this._doPop(entity, index);
+        if (this.params.automaticSlide) {
+            clearTimeout(entity.component.popTimeoutId);
+            this.automaticSlide(entity, index);
+        }
     }
 
     automaticSlide(entity, i) {
