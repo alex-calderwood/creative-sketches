@@ -6,24 +6,27 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y python3 python3-pip && rm -rf /var/lib/apt/lists/*
 
 # Copy package files first for better caching
-COPY package.json package-lock.json ./
+COPY editors/package.json editors/package-lock.json ./
 
 # Install dependencies
 RUN npm install
 
-COPY words/requirements.txt ./words/requirements.txt
-RUN pip3 install --break-system-packages -r words/requirements.txt
+COPY editors/words/requirements.txt ./words/requirements.txt
+COPY text/synonym_cache/requirements.txt ./synonym_cache/requirements.txt
+RUN pip3 install --break-system-packages -r words/requirements.txt -r synonym_cache/requirements.txt
 
 # Copy server script
-COPY index.html ./
-COPY server.js ./
+COPY editors/index.html ./
+COPY editors/server.js ./
 
 # Copy the editors directory
-COPY editors/ ./editors/
-COPY assets/ ./assets/
-COPY words/ ./words/
-COPY drifts/ ./drifts/
-COPY vault/ ./vault/
+COPY editors/editors/ ./editors/
+COPY editors/assets/ ./assets/
+COPY editors/words/ ./words/
+COPY editors/drifts/ ./drifts/
+COPY editors/vault/ ./vault/
+COPY text/synonym_cache/ ./synonym_cache/
+COPY text/synonym_cache.db ./synonym_cache.db
 
 # Debug - list what's in the container
 RUN ls -la
@@ -31,4 +34,6 @@ RUN ls -la editors/
 
 EXPOSE 3008
 
-CMD ["npx", "concurrently", "python3 words/synonyms.py", "node server.js"]
+ENV SYNONYM_CACHE_DB=/app/synonym_cache.db
+CMD ["npx", "concurrently", "python3 words/synonyms_online.py", "python3 synonym_cache/synonyms_cache.py", "node server.js"]
+# CMD ["npm", "run", "servers"]
