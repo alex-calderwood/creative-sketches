@@ -128,6 +128,16 @@ export class MetaGameControls {
       fileInput.addEventListener('change', (e) => this.handleFileSelected(e));
     }
 
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenuClose = document.getElementById('mobile-menu-close');
+    const bannerContent = document.getElementById('banner-content');
+    if (mobileMenuBtn && bannerContent) {
+      mobileMenuBtn.addEventListener('click', () => bannerContent.classList.add('open'));
+    }
+    if (mobileMenuClose && bannerContent) {
+      mobileMenuClose.addEventListener('click', () => bannerContent.classList.remove('open'));
+    }
+
     if (settingsBtn) {
       settingsBtn.addEventListener('click', () => this.showSettings());
     }

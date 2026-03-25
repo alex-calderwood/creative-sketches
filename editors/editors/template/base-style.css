@@ -62,8 +62,15 @@ body {
   height: var(--editor-height);
   aspect-ratio: 8.5/11;
   width: auto;
-  margin: 2rem auto;
+  margin: 4rem auto;
   border: 1.2px solid var(--primary-color);
+}
+
+@media (max-width: 600px) {
+  #editor-container {
+    margin-top: 0;
+    border: none;
+  }
 }
 
 #editor {
@@ -81,6 +88,8 @@ body {
   outline: none;
   overflow: auto;
 }
+
+
 
 #overlay {
   position: absolute;

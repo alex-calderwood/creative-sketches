@@ -9,7 +9,7 @@ export class BasicEditor {
     static settings = [
         { name: 'fontSize', type: 'number', description: 'Font size for the editor text (px)'},
         { name: 'height', default: 100, type: 'select', description: 'Editor height percent modifier', options: [50, 75, 100, 125, 150, 175, 200]},
-        { name: 'darkmode', default: false, type: 'boolean', description: 'Dark mode for the editor'},
+        { id: 'darkmode', name: 'Dark Mode', default: false, type: 'boolean', description: 'Dark mode for the editor', inBar: true },
     ]
 
     static setColors(isDark) {

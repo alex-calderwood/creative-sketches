@@ -100,6 +100,15 @@ body {
   width: auto;
   margin: 4rem auto;
   box-sizing: border-box;
+  border: 1.2px solid var(--text-color);
+
+}
+
+@media (max-width: 600px) {
+  #editor-container {
+    margin-top: 0;
+    border: none;
+  }
 }
 
 /* 
@@ -115,7 +124,6 @@ which will determine the size of the streams
   box-sizing: border-box;
   background-color: var(--background-color);
   cursor: text;
-  border: 1.2px solid var(--text-color);
   padding: calc(100% / 8.5);
   outline: none;
   overflow: hidden;
