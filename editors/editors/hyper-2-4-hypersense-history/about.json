@@ -1,6 +1,6 @@
 {
     "name": "Hypersense Editor",
-    "description": "A drfiting of the Hypersense series, now using the history functions.",
+    "description": "A drfiting of the Hypersense series, now using the history functions. Also the settings bar is a lot cleaner.",
     "notes": "",
     "tags": {
         "hyper": {"version": "6"},
