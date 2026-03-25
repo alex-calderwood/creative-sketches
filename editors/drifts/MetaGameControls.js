@@ -323,6 +323,23 @@ export class MetaGameControls {
     await this.modal.create();
   }
 
+  showTooltip(el, text) {
+    if (!this._tooltip) {
+      this._tooltip = document.createElement('div');
+      this._tooltip.className = 'setting-tooltip';
+      document.body.appendChild(this._tooltip);
+    }
+    const rect = el.getBoundingClientRect();
+    this._tooltip.textContent = text;
+    this._tooltip.style.left = rect.left + 'px';
+    this._tooltip.style.top = (rect.bottom + 10) + 'px';
+    this._tooltip.style.display = 'block';
+  }
+
+  hideTooltip() {
+    if (this._tooltip) this._tooltip.style.display = 'none';
+  }
+
   createSettingElement(setting) {
     const id = setting.id || setting.name;
     const name = setting.name || setting.id;
@@ -331,7 +348,8 @@ export class MetaGameControls {
     settingDiv.className = 'setting-item';
 
     if (setting.description) {
-      settingDiv.setAttribute('data-tooltip', setting.description);
+      settingDiv.addEventListener('mouseenter', (e) => this.showTooltip(e.currentTarget, setting.description));
+      settingDiv.addEventListener('mouseleave', () => this.hideTooltip());
     }
 
     const label = document.createElement('label');

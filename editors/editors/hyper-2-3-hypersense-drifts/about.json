@@ -1,13 +1,13 @@
 {
-    "name": "Hypersense Editor",
+    "name": "Hypersense Editor (Pre-history)",
     "description": "A drfiting of the Hypersense series, with a progression logic.",
     "notes": "",
     "tags": {
         "hyper": {"version": "5"},
         "drifts": {"version": "6"}
     },
-    "url": "hypersense-drifts",
+        "url": "hypersense-drifts-pre-history",
     "image": "synonyms.png",
     "date": "2026-01-20",
-    "major": true
+    "major": false
 }

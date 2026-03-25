@@ -1,13 +1,39 @@
 <!-- Controls Section HTML/CSS -->
 <style>
 
+  @layer defaults {
+    :root {
+      --ui-font-size: 1em;
+      --small-radius: 4px;
+    }
+  }
+
   #game-banner {
     width: 100%;
-    height: 4vh;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     border-bottom: 1.5px solid var(--text-color);
+    padding: 0.5vh 1vw;
+    font-size: var(--ui-font-size);
+  }
+
+  .back-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: normal;
+    font-family: var(--font);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+
+  .back-link:hover {
+    border-bottom-color: var(--primary-color);
+  }
+
+  .nav-title {
+    font-size: var(--ui-font-size);
   }
 
   .subtitle {
@@ -25,11 +51,12 @@
     background-color: transparent;
     border: 1px solid var(--primary-color);
     color: var(--button-color);
-    font-size: 10px;
+    font-size: var(--ui-font-size);
     padding: 2px 4px;
     cursor: pointer;
     outline: none;
     transition: background-color 0.2s, color 0.2s;
+    border-radius: var(--small-radius);
   }
 
   .control-btn:hover {
@@ -87,11 +114,11 @@
 
   .document-list-item .doc-id {
     font-weight: bold;
-    font-size: 0.9em;
+    font-size: var(--ui-font-size);
   }
 
   .document-list-item .doc-created {
-    font-size: 0.8em;
+    font-size: var(--ui-font-size);
     opacity: 0.7;
     margin-top: 4px;
   }
@@ -101,42 +128,38 @@
     width: 100%;
   }
 
-
   .setting-item {
     margin-bottom: 15px;
-  }
-
-  .setting-item {
     position: relative;
   }
 
-  .setting-item[data-tooltip]:hover::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    left: 0;
-    top: 100%;
+  .setting-tooltip {
+    position: fixed;
     background-color: var(--background-color);
     color: var(--text-color);
     padding: 5px 10px;
-    font-size: 0.8em;
+    font-size: var(--ui-font-size);
     white-space: normal;
     max-width: 300px;
     z-index: 1001;
-    margin-top: 5px;
+    pointer-events: none;
+    display: none;
+    border: 1px solid var(--primary-color);
+    border-radius: var(--small-radius);
   }
 
   .setting-label {
-    font-weight: bold;
     cursor: help;
   }
 
   .setting-toggle {
     cursor: pointer;
-    font-size: 0.85em;
+    font-size: var(--ui-font-size);
     padding: 1px 6px;
     border: 1px solid var(--text-color);
     color: var(--text-color);
     opacity: 0.5;
+    border-radius: var(--small-radius);
   }
 
   .setting-toggle.on {
@@ -146,6 +169,12 @@
   .setting-input {
     width: 100%;
     padding: 4px;
+    border-radius: var(--small-radius);
+  }
+
+  .setting-input[type="number"] {
+    max-width: 40px;
+    text-align: center;
   }
 
   .setting-input:focus {
@@ -160,10 +189,15 @@
 
   .last-saved-info {
     opacity: 0.6;
-    font-size: 0.9em;
+    font-size: var(--ui-font-size);
     display: flex;
     flex-direction: row;
     gap: 4px;
+    flex-wrap: nowrap; /* Prevent wrapping to a new line */
+    overflow-x: auto; /* Enable horizontal scrolling if needed */
+    overflow-y: hidden;
+    white-space: nowrap;
+
   }
 
   .document-id {
@@ -171,7 +205,7 @@
   }
 
   .doc-info {
-    font-size: 0.85em;
+    font-size: var(--ui-font-size);
     opacity: 0.7;
   }
 
@@ -209,13 +243,17 @@
     width: 100%;
     display: none;
     flex-direction: row;
-    flex-wrap: wrap;
+    flex-wrap: nowrap; /* Prevent wrapping to a new line */
     align-items: center;
     gap: 12px;
     padding: 4px 8px;
     border-bottom: 1.5px solid var(--text-color);
-    font-size: 0.85em;
+    font-size: var(--ui-font-size);
     box-sizing: border-box;
+    overflow-x: auto; /* Enable horizontal scrolling if needed */
+    overflow-y: hidden;
+    white-space: nowrap;
+    color: var(--text-color);
   }
 
   #settings-bar .setting-item {
@@ -226,13 +264,13 @@
   }
 
   #settings-bar .setting-label {
-    font-size: 0.85em;
+    font-size: var(--ui-font-size);
   }
 
   #settings-bar .setting-input {
     width: auto;
     padding: 2px 4px;
-    font-size: 0.85em;
+    font-size: var(--ui-font-size);
   }
 
 </style>
@@ -241,7 +279,7 @@
 
 
 <div id="game-banner">
-  <div class="text">
+  <div class="nav-title text">
     <a href="/editors/" id="back-link" class="back-link">The Writer's Project</a>
     <span class="subtitle"></span>
   </div>
@@ -267,25 +305,3 @@
     <input type="file" id="file-input" accept=".json" style="display: none;">
   </div>
 </div>
-
-<!-- <div id="controls-template">
-  <div class="controls-wrapper">
-    <div class="last-saved-info">
-      <div id="last-saved" class="doc-info last-saved"></div>
-      <div id="document-id" class="doc-info document-id"></div>
-    </div>
-    <div class="controls-buttons">
-      <div class="button-pair">
-        <button id="load-btn" class="control-btn">Load</button>
-        <button id="upload-btn" class="control-btn">Upload</button>
-      </div>
-      <div class="button-pair">
-        <button id="save-btn" class="control-btn">Save</button>
-        <button id="download-btn" class="control-btn">Download</button>
-      </div>
-      <button id="new-game-btn" class="control-btn">New</button>
-      <button id="settings-btn" class="control-btn">Settings</button>
-    </div>
-    <input type="file" id="file-input" accept=".json" style="display: none;">
-  </div>
-</div> -->

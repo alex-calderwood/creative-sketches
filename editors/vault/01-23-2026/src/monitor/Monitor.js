@@ -169,15 +169,17 @@ export class Monitor extends Emitter() {
       const baseOffset = cursorAfter - event.data.length;
       const firstCharIndex = this.chars.length;
       const newIds = [];
-      let i = 0;
-      for (const ch of event.data) {
+      // One charIds entry per UTF-16 code unit (matches getEditableText / string.length). String
+      // iteration with for..of uses code points, which under-counts surrogate pairs and triggers
+      // charIds/text length mismatch warnings.
+      for (let i = 0; i < event.data.length; i++) {
+        const ch = event.data[i];
         this.chars.push({
           ch, timestamp: event.timestamp, keystrokeIndex: event.index,
           originalPos: baseOffset + i,
-          rect: this._getRect(baseOffset + i, baseOffset + i + ch.length),
+          rect: this._getRect(baseOffset + i, baseOffset + i + 1),
         });
         newIds.push(firstCharIndex + i);
-        i += ch.length;
       }
       const splicePos = this._selectionLength > 0 ? this._selStart : baseOffset;
       this.charIds.splice(splicePos, this._selectionLength, ...newIds);
@@ -230,15 +232,14 @@ export class Monitor extends Emitter() {
       const baseIndex = this.chars.length;
       const newIds = [];
       const insertedText = newText.slice(d.newFrom, d.newTo);
-      let pos = 0;
-      for (const ch of insertedText) {
+      for (let j = 0; j < insertedText.length; j++) {
+        const ch = insertedText[j];
         this.chars.push({
           ch, timestamp: event.timestamp, keystrokeIndex: event.index,
-          originalPos: d.newFrom + pos,
-          rect: this._getRect(d.newFrom + pos, d.newFrom + pos + ch.length),
+          originalPos: d.newFrom + j,
+          rect: this._getRect(d.newFrom + j, d.newFrom + j + 1),
         });
-        newIds.push(baseIndex + pos);
-        pos++;
+        newIds.push(baseIndex + j);
       }
       this.charIds.splice(d.newFrom, 0, ...newIds);
     }
@@ -254,7 +255,7 @@ export class Monitor extends Emitter() {
         const insertPos = event.cursorAfter - event.data.length;
         const deletedLen = prevText.length + event.data.length - newText.length;
         const newIds = [];
-        for (const ch of event.data) { newIds.push(charCounter++); }
+        for (let j = 0; j < event.data.length; j++) { newIds.push(charCounter++); }
         this.charIds.splice(insertPos, deletedLen, ...newIds);
       } else if (event.type === 'delete') {
         this.charIds.splice(event.cursorAfter, event.data.length);
