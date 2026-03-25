@@ -15,7 +15,7 @@ export class Game {
       initialState: null,
       continuousCheck: false,
       debug: false,
-      redact: false,
+      redact: true,
       tokens: false,
       ...params
     };

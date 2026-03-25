@@ -66,6 +66,13 @@ body {
   border: 1.2px solid var(--primary-color);
 }
 
+@media (max-width: 600px) {
+  #editor-container {
+    margin-top: 0;
+    border: none;
+  }
+}
+
 #editor {
   position: absolute;
   top: 0;

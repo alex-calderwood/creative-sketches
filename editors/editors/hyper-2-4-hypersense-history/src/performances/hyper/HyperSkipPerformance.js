@@ -26,7 +26,7 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
 
             automaticSlide: true,
             slideRate: 4,
-            animationSpeed: 500,
+            animationSpeedSec: 0.5,
             typingSlide: false,
 
             textMask: true,
@@ -44,11 +44,11 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
 
             { id: 'textMask', name: 'Play', type: 'boolean', description: 'Turning this off will show the text that you wrote, rather than the sliding text.', inBar: true },
 
-            { id: 'automaticSlide', name: 'Auto Slide', type: 'boolean', description: 'Automatically cycle through synonyms over time', inBar: true },
-            { id: 'slideRate', name: 'Slide Rate (s)', type: 'number', description: 'Seconds between synonym changes', inBar: true },
-            { id: 'animationSpeed', name: 'Animation Speed', type: 'number', description: 'Duration of word transition animation (ms)' },
+            { id: 'automaticSlide', name: 'Auto Slide', type: 'boolean', description: 'When true, automatically cycle through synonyms over time', inBar: true },
+            { id: 'slideRate', name: 'Slide Rate (s)', type: 'number', description: 'Seconds between synonym changes.', inBar: true },
+            { id: 'animationSpeedSec', name: 'Animation Speed (s)', type: 'number', description: 'Duration of synonym change animation.', inBar: true },
 
-            { id: 'typingSlide', name: 'Slide on Type', type: 'boolean', description: 'Slide streams when you type', inBar: true },
+            { id: 'typingSlide', name: 'Slide on Type', type: 'boolean', description: 'When active, each keystroke will make words slide. You may want to turn off automatic slide when this is enabled.', inBar: true },
             { id: 'typingSlideMode', name: 'Slide on Type Mode', type: 'select', description: 'When Slide on Type is active, this decides which words are chosen to slide.', options: ['random', 'sequential', 'proximate'], inBar: false },
             { id: 'numSlidesPerStroke', name: 'Slides per Keystroke', type: 'number', description: 'When Slide on Type is active, this controls how many words slide per keystroke.'},
 
@@ -484,7 +484,7 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
             clipRect: tokenBox.rect,
             blockWidth: tokenBox.rect.width,
             blockHeight: tokenBox.rect.height,
-            animationSpeed: this.params.animationSpeed,
+            animationSpeed: this.params.animationSpeedSec * 1000,
         });
 
         const streamEntity = new TextStreamEntity(this, textStream, component);
