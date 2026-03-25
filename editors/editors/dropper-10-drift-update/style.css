@@ -8,7 +8,7 @@
 :root {
   --mistake-color: #ff0000;
   --background-color: rgb(252, 255, 217);
-  --primary-color: rgb(252, 255, 217);
+  --primary-color:  var(--accent-color);
   --accent-color:  #4a48b2;
   --text-color: var(--accent-color);
   --secondary-color: #fdaa1b;
@@ -95,6 +95,8 @@
   --color-interlace-light:    #07a1de;
   --color-interlace-dark:     #07a1de;
   --color-interlace-darker:   #002635;
+
+  --small-radius: 0px;
 }
 
 body {
@@ -308,8 +310,6 @@ body {
   display: flex;
   flex-direction: column;
   position: absolute;
-  left: 20px;
-  top: 40px;
   width: fit-content;
   gap: 10px;
   background-color: inherit;
@@ -498,6 +498,22 @@ input[type="checkbox"] {
   color: var(--accent-color);
 }
 
+#submit {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+#submit-button {
+  z-index: 1000;
+  background-color: var(--accent-color) !important;
+  color: var(--background-color) !important;
+  border: 2px solid var(--primary-color) !important;
+  justify-content: center;
+  font-size: 22px !important;
+}
 
 #submit-button:not(.visible) {
   display: none !important;
@@ -505,22 +521,6 @@ input[type="checkbox"] {
 
 #submit-button.visible {
   display: flex !important;
-}
-
-#submit-button {
-  z-index: 1000;
-  background-color: var(--accent-color) !important;
-  color: var(--primary-color) !important;
-  border: 2px solid var(--primary-color) !important;
-  width: 10em;
-  /* center */
-  justify-content: center;
-}
-
-#submit-button:hover {
-  background-color: var(--primary-color) !important;
-  color: var(--accent-color) !important;
-  border: 2px solid var(--accent-color) !important;
 }
 
 /* Final poem styling */
