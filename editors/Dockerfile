@@ -34,6 +34,7 @@ RUN ls -la editors/
 
 # Only expose 3008
 # We proxy some other ports using server.py
+# and the actual servers are run from the config in package.json
 # i.e. 3019 3020 
 EXPOSE 3008
 
