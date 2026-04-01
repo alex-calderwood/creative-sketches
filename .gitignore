@@ -1,4 +1,4 @@
-*/__pycache__/*
+__pycache__/
 .vscode/
 */.vscode/
 passphrase.txt
@@ -6,6 +6,6 @@ passphrase.txt
 */.idea/
 .DS_Store
 */node_modules/*
-
+text/synonym_cache.db-journal
 
 synonym_cache.db

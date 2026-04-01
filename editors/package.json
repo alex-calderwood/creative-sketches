@@ -10,8 +10,7 @@
     "test:watch": "vitest",
     "server": "node server.js",
     "synonyms-online": "python3 words/synonyms_online.py",
-    "synonyms-cache": "python3 ../text/word_cache/word_cache.py",
-    "get-synonyms": "node words/synonyms-cli.js",
+    "word-cache": "python3 ../text/word_cache/word_cache.py",
     "servers": "concurrently \"python3 words/synonyms_online.py\" \"python3 ../text/word_cache/word_cache.py\" \"node server.js\"",
     "kill-servers": "lsof -ti:3008,3019,3020 | xargs kill -9 2>/dev/null || true"
   },

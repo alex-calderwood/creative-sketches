@@ -44,7 +44,8 @@ def create_app(db_path: str | Path | None = None) -> Flask:
         resolved = Path(env) if env else None
 
     @app.get("/synonyms")
-    def get_synonyms():
+    @app.get("/word")
+    def get_word():
         word = request.args.get("word")
         if not word:
             return jsonify({"error": "Missing word parameter"}), 400
@@ -56,8 +57,8 @@ def create_app(db_path: str | Path | None = None) -> Flask:
             word,
             db_path=resolved,
             wordhoard_only=_bool_param("wordhoard_only"),
-            include_lemmas=_bool_param("include_lemmas"),
-            include_inflections=_bool_param("include_inflections"),
+            lemmatize=_bool_param("lemmatize"),
+            inflect=_bool_param("inflect"),
             max_depth=max_depth,
         ))
 

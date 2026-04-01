@@ -36,13 +36,13 @@ def synonyms_api_response(
     word: str,
     db_path: Path | str | None = None,
     wordhoard_only: bool = False,
-    include_lemmas: bool = False,
-    include_inflections: bool = False,
+    lemmatize: bool = False,
+    inflect: bool = False,
     max_depth: int | None = None,
 ) -> dict:
     """
     JSON body: { "word": <str>, "pos": null, "synonyms": [<str>, ...] }
-    plus optional "lemmas" and "inflections" dicts.
+    plus optional "lemmatize" and "inflections" dicts.
 
     Uses all_words table
     """
@@ -79,13 +79,13 @@ def synonyms_api_response(
         else:
             result["synonyms"] = _split(rec.get("synonyms"))
 
-        if include_lemmas:
+        if lemmatize:
             result["lemmas"] = {
                 u: _split(rec.get(f"lemma_{u}")) for u in UPOS_COLS
                 if rec.get(f"lemma_{u}")
             }
 
-        if include_inflections:
+        if inflect:
             result["inflections"] = {
                 p: _split(rec.get(f"infl_{p}")) for p in PENN_COLS
                 if rec.get(f"infl_{p}")
