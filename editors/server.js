@@ -3,7 +3,7 @@ const serveStatic = require('serve-static');
 const history = require('connect-history-api-fallback');
 const path = require('path');
 const fs = require('fs');
-const synonymsRouter = require('./words/synonyms');
+const synonymsRouter = require('./words/synonym_routes');
 
 const app = express();
 const port = process.env.PORT || 3008;

@@ -1,4 +1,6 @@
 # Synonym cache: build + CLI + Flask server
+numpy<2
+lemminflect
 wordhoard
 flask
 flask-cors

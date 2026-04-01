@@ -1,5 +1,9 @@
 /**
  * Synonym lookup against the editors API.
+ * 
+ * It uses the 'proxy'-like setup in server.js which in turn creates local routes for the
+ * server that is run by text/word_cache/word_cache.py - this file runs a server at 
+ * http://127.0.0.1:3020 and run via docker (Dockerfile) as well as during `npm run servers`
  *
  * Three backends are available:
  *   'synonyms-wordnet'  — local WordNet via Node (supports POS)
