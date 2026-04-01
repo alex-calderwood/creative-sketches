@@ -8,5 +8,4 @@ passphrase.txt
 */node_modules/*
 
 
-synonym_cache/
 synonym_cache.db

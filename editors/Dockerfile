@@ -12,8 +12,8 @@ COPY editors/package.json editors/package-lock.json ./
 RUN npm install
 
 COPY editors/words/requirements.txt ./words/requirements.txt
-COPY text/synonym_cache/requirements.txt ./synonym_cache/requirements.txt
-RUN pip3 install --break-system-packages -r words/requirements.txt -r synonym_cache/requirements.txt
+COPY text/word_cache/requirements.txt ./word_cache/requirements.txt
+RUN pip3 install --break-system-packages -r words/requirements.txt -r word_cache/requirements.txt
 
 # Copy server script
 COPY editors/index.html ./
@@ -25,15 +25,18 @@ COPY editors/assets/ ./assets/
 COPY editors/words/ ./words/
 COPY editors/drifts/ ./drifts/
 COPY editors/vault/ ./vault/
-COPY text/synonym_cache/ ./synonym_cache/
+COPY text/word_cache/ ./word_cache/
 COPY text/synonym_cache.db ./synonym_cache.db
 
 # Debug - list what's in the container
 RUN ls -la
 RUN ls -la editors/
 
+# Only expose 3008
+# We proxy some other ports using server.py
+# i.e. 3019 3020 
 EXPOSE 3008
 
-ENV SYNONYM_CACHE_DB=/app/synonym_cache.db
-CMD ["npx", "concurrently", "python3 words/synonyms_online.py", "python3 synonym_cache/synonyms_cache.py", "node server.js"]
+ENV WORD_CACHE_DB=/app/synonym_cache.db
+CMD ["npx", "concurrently", "python3 words/synonyms_online.py", "python3 word_cache/word_cache.py", "node server.js"]
 # CMD ["npm", "run", "servers"]

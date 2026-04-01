@@ -6,6 +6,11 @@ const express = require('express');
 const http = require('http');
 const WordPOS = require('wordpos'); // https://github.com/moos/wordpos?tab=readme-ov-file
 
+const PROXIES = {
+  'synonyms-online': 'http://localhost:3019',
+  'synonyms-cache': 'http://localhost:3020',
+}
+
 let stoplist = new Set([
   "Hera"
 ]);
@@ -30,8 +35,9 @@ async function getSynonyms(word, pos) {
   return synonyms;
 }
 
+// Synonym Routes
 router.use('/synonyms-online', (req, res) => {
-  const url = `http://localhost:3019${req.url}`;
+  const url = `${PROXIES['synonyms-online']}${req.url}`;
   http.get(url, (proxyRes) => {
     res.writeHead(proxyRes.statusCode, proxyRes.headers);
     proxyRes.pipe(res);
@@ -40,9 +46,9 @@ router.use('/synonyms-online', (req, res) => {
   });
 });
 
-// SQLite cache — npm run synonyms-cache
+
 router.use('/synonyms-cache', (req, res) => {
-  const url = `http://localhost:3020${req.url}`;
+  const url = `${PROXIES['synonyms-cache']}${req.url}`;
   http.get(url, (proxyRes) => {
     res.writeHead(proxyRes.statusCode, proxyRes.headers);
     proxyRes.pipe(res);
@@ -50,6 +56,19 @@ router.use('/synonyms-cache', (req, res) => {
     res.status(502).json({ error: 'synonyms-cache server unavailable' });
   });
 });
+
+// TODO test replacing the above two with this:
+// for (const [key, value] of Object.entries(PROXIES)) {
+//   router.use(`/${key}`, (req, res) => {
+//     const url = `${value}${req.url}`;
+//     http.get(url, (proxyRes) => {
+//       res.writeHead(proxyRes.statusCode, proxyRes.headers);
+//       proxyRes.pipe(res);
+//     }).on('error', () => {
+//       res.status(502).json({ error: `${key} server unavailable` });
+//     });
+//   });
+// }
 
 router.get('/synonyms-wordnet/synonyms', async (req, res) => {
   const { word, pos } = req.query;

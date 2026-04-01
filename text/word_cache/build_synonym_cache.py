@@ -4,7 +4,7 @@ Build synonym cache database from wordlist.
 This script downloads synonyms for all words in the scowl wordlist and stores them in a SQLite database.
 
 Usage:
-    python build_synonym_cache.py [--include-cloudflare] [--verbose]
+    python build_word_cache.py [--include-cloudflare] [--verbose]
     
 Options:
     --include-cloudflare    Include Cloudflare-protected sources (slower, more synonyms)
@@ -39,9 +39,9 @@ def init_database():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
-    # Main words table with wordhoard-specific columns
+    # Main synonyms table with wordhoard-specific columns
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS words (
+        CREATE TABLE IF NOT EXISTS synonyms (
             word TEXT PRIMARY KEY,
             wordhoard_synonyms TEXT,
             wordhoard_status TEXT DEFAULT 'pending',
@@ -53,7 +53,7 @@ def init_database():
     ''')
     
     cursor.execute('''
-        CREATE INDEX IF NOT EXISTS idx_wordhoard_status ON words(wordhoard_status)
+        CREATE INDEX IF NOT EXISTS idx_wordhoard_status ON synonyms(wordhoard_status)
     ''')
     
     conn.commit()
@@ -107,17 +107,17 @@ def populate_word_list(conn, words):
     
     print("Populating database with words...")
     cursor.executemany(
-        'INSERT OR IGNORE INTO words (word, wordhoard_status) VALUES (?, ?)',
+        'INSERT OR IGNORE INTO synonyms (word, wordhoard_status) VALUES (?, ?)',
         [(word, 'pending') for word in words]
     )
     conn.commit()
     
     # Get statistics
-    cursor.execute('SELECT COUNT(*) FROM words WHERE wordhoard_status = "pending"')
+    cursor.execute('SELECT COUNT(*) FROM synonyms WHERE wordhoard_status = "pending"')
     pending = cursor.fetchone()[0]
-    cursor.execute('SELECT COUNT(*) FROM words WHERE wordhoard_status = "completed"')
+    cursor.execute('SELECT COUNT(*) FROM synonyms WHERE wordhoard_status = "completed"')
     completed = cursor.fetchone()[0]
-    cursor.execute('SELECT COUNT(*) FROM words WHERE wordhoard_status = "error"')
+    cursor.execute('SELECT COUNT(*) FROM synonyms WHERE wordhoard_status = "error"')
     errors = cursor.fetchone()[0]
     
     print(f"\nDatabase status:")
@@ -168,7 +168,7 @@ def process_words(conn, include_cloudflare=False):
     cursor = conn.cursor()
     
     # Get pending words
-    cursor.execute('SELECT word FROM words WHERE wordhoard_status = "pending" ORDER BY word')
+    cursor.execute('SELECT word FROM synonyms WHERE wordhoard_status = "pending" ORDER BY word')
     pending_words = [row[0] for row in cursor.fetchall()]
     
     if not pending_words:
@@ -191,7 +191,7 @@ def process_words(conn, include_cloudflare=False):
                 
                 # Store in database
                 cursor.execute('''
-                    UPDATE words 
+                    UPDATE synonyms 
                     SET wordhoard_synonyms = ?, 
                         wordhoard_status = "completed",
                         wordhoard_last_updated = CURRENT_TIMESTAMP,
@@ -224,7 +224,7 @@ def process_words(conn, include_cloudflare=False):
             except Exception as e:
                 # Mark as error and continue
                 cursor.execute('''
-                    UPDATE words 
+                    UPDATE synonyms 
                     SET wordhoard_status = "error",
                         wordhoard_last_updated = CURRENT_TIMESTAMP,
                         wordhoard_error_message = ?
@@ -249,11 +249,11 @@ def show_stats(conn):
     """Display final statistics."""
     cursor = conn.cursor()
     
-    cursor.execute('SELECT COUNT(*) FROM words WHERE wordhoard_status = "pending"')
+    cursor.execute('SELECT COUNT(*) FROM synonyms WHERE wordhoard_status = "pending"')
     pending = cursor.fetchone()[0]
-    cursor.execute('SELECT COUNT(*) FROM words WHERE wordhoard_status = "completed"')
+    cursor.execute('SELECT COUNT(*) FROM synonyms WHERE wordhoard_status = "completed"')
     completed = cursor.fetchone()[0]
-    cursor.execute('SELECT COUNT(*) FROM words WHERE wordhoard_status = "error"')
+    cursor.execute('SELECT COUNT(*) FROM synonyms WHERE wordhoard_status = "error"')
     errors = cursor.fetchone()[0]
     
     print("\n" + "="*50)
