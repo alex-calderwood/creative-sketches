@@ -25,7 +25,8 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
 
 
             automaticSlide: true,
-            slideRate: 12,
+            // slideRate: 40,
+            slideRate: 4,
             animationSpeedSec: 1,
             typingSlide: false,
 
@@ -161,7 +162,7 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
             this.updateWordBoxes();
         } else if (name === 'automaticSlide') {
             if (value && !oldValue) {
-                this.state.streams.forEach(stream => this.automaticSlide(stream, stream.index));
+                this.state.streams.forEach(stream => this.automaticSlide(stream));
             } else if (!value && oldValue) {
                 this.state.streams.forEach(stream => clearTimeout(stream.component.popTimeoutId));
             }
@@ -495,35 +496,41 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
 
         reader.updateWord(tokenBox.text, pos).then(() => this._afterSynonymsReady(streamEntity));
 
-        this.callPop(streamEntity, i);
-        if (this.params.automaticSlide) {
-            this.automaticSlide(streamEntity, i);
-        }
+        // this.callPop(streamEntity, i);
+        // if (this.params.automaticSlide) {
+        //     this.automaticSlide(streamEntity);
+        // }
     }
 
-    callPop(entity, i) {
+    callPop(entity) {
         this._doPop(entity);
     }
 
     /** Run when async synonym fetch finishes so we are not stuck until the next long slide tick. */
     _afterSynonymsReady(entity) {
         const key = entity?._streamKey;
-        if (!entity || this.state.streamEntitiesByKey.get(key) !== entity) return;
+        if (!entity || this.state.streamEntitiesByKey.get(key) !== entity) {
+            console.error('_afterSynonymsReady: entity not found', entity, key);
+            return;
+        }
         this._doPop(entity);
         if (this.params.automaticSlide) {
             clearTimeout(entity.component.popTimeoutId);
-            this.automaticSlide(entity, null);
+            this.automaticSlide(entity, true);
         }
     }
 
-    automaticSlide(entity, i) {
+    automaticSlide(entity, now = false) {
         let streamLen =  Math.min(10, entity?.textStream?.reader.getStreamLength() || 1);
-        
         let newRate = this.params.slideRate * 1000 / streamLen;
+
+        if (now) {
+            newRate = 1000
+        }
 
         entity.component.popTimeoutId = setTimeout(() => {
             this._doPop(entity);
-            this.automaticSlide(entity, i);
+            this.automaticSlide(entity);
         }, newRate);
     }
 

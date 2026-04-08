@@ -43,7 +43,9 @@ export class TextStream {
       console.error("TextStream.pop(): No tokens to pop");
       return null;
     }
+    console.log("popping", this.tokens.map(token => token.text));
     let token = this.tokens.shift();
+    console.log("popped", token);
     this.emitPop(token);
 
     this.fillStream(); // TODO should this be async?
@@ -69,6 +71,7 @@ export class TextStream {
   fillStream() {
     while (this.tokens.length < this.size) {
       let token = this.reader.read();
+      console.log("filling with", token);
       this.tokens.push(token);
       this.emitPush(token);
     }

@@ -1,9 +1,6 @@
 import { Token } from '../corpus/Token.js';
 import { getSynonyms } from '../words/synonyms.js';
 
-/**
- * 
- */
 export class SynonymReader {
   constructor(word, params={}) {
     this.word = word;
@@ -23,12 +20,15 @@ export class SynonymReader {
     this.isUpdating = true;
     try {
       this.word = word;
+      this.synonyms = [word];
+      this.index = 0;
       const data = await getSynonyms(word, pos);
+      console.log("updateWord", word, data);
       if (this.word !== word) return; // to prevent race condition errors if updateWord call is stale
       let synonyms = data.synonyms.filter(synonym => this._synonymCriteria(word, synonym));
       
       // Atomic update - replace synonyms all at once
-      this.synonyms = Array.from(new Set([word, ...synonyms]));
+      this.synonyms = Array.from(new Set([...synonyms, word]));
       this.index = 0; // Reset index after update
     } finally {
       this.isUpdating = false;
