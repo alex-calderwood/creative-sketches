@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>$PROJECT_NAME</title>
+  <link rel="preload" href="fonts/gomarice_goma_block.ttf" as="font" type="font/ttf" crossorigin>
+
+  <!-- <link rel="stylesheet" media="screen" href="https://fontlibrary.org//face/squareantiqua" type="text/css"/> -->
+  <link rel="stylesheet" href="base-style.css">
+  <link rel="stylesheet" href="src/performances/hyper/hyper.css">
+  <link rel="stylesheet" href="src/performances/hyper/hyper-block.css">
+
+</head>
+<body>
+
+  <div id="game-banner">
+    <div class="text">
+      <a href="/editors/" class="back-link">The Writer's Project</a>
+      <span class="subtitle">$PROJECT_NAME</span>
+    </div>
+
+    <div id="controls" class="controls">
+      <!-- Controls populated by controls.js -->
+    </div>
+  </div>
+
+  <script src="./lib/compromise.js"></script>
+  
+  <!-- Import as ES module -->
+  <script type="module">
+    import { Game } from './game.js';
+    import { MetaGame } from '/editors/drifts/MetaGame.js';
+    
+    const PROJECT_ID = '$PROJECT_ID';
+    const PROJECT_NAME = '$PROJECT_NAME';
+
+    if (PROJECT_ID.startsWith('$')) {
+      console.error('PROJECT_ID is not set');
+    }
+    
+    // Wait for DOM to be fully loaded before initializing
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Create game first
+      const game = new Game();
+      
+      // MetaGame loads save
+      const metaGame = new MetaGame(PROJECT_ID, PROJECT_NAME);
+      await metaGame.initialize(game);
+    });
+  </script>
+  
+  <div id="prompt-container" class="meta-game prompt-container">
+    <div id="prompt-display" class="meta-game"></div>
+  
+    <div id="submit" class="meta-game"></div>
+  </div>
+
+  <div id="editor-container">
+    <!-- <div id="editor" contenteditable="true"></div> -->
+     <!-- I am doing this to disallow fancy pasting, but eventually I could upgrade to a different (temporary div? hack to allow rich text but not the existing paste format) -->
+    <div id="editor" contenteditable="plaintext-only"></div>
+    <div id="overlay"></div>
+  </div>
+
+
+</body>
+</html>

@@ -12,11 +12,19 @@ import sys
 import time
 from pathlib import Path
 
+from tqdm import tqdm
+
 from lookup import DEFAULT_DB_PATH as DB_PATH
 
-BUILD_SYNONYMS   = False
-BUILD_LEMMAS     = True
-BUILD_JOIN       = True
+BUILD_SYNONYMS      = False
+BUILD_LEMMAS        = False
+BUILD_MISSPELLINGS  = False
+BUILD_JOIN          = True
+
+ALL_WORDS_TABLE = "all_words_2"
+LEMMAS_TABLE = "lemmas"
+    SYNONYMS_TABLE = "synonyms"
+MISSPELLINGS_TABLE = "misspellings"
 
 UPOS_COLS = ("ADJ", "ADV", "NOUN", "PROPN", "VERB", "AUX")
 PENN_COLS = (
@@ -76,17 +84,17 @@ def _compute_inflected_synonyms(word, lemma_cache, syn_cache):
             if not lemma_row:
                 continue
             for ptag in penn_tags:
-                infl_val = lemma_row.get(f"infl_{ptag}")
-                if infl_val and word in _split(infl_val):
+                infl_set = lemma_row.get(f"infl_{ptag}")
+                if infl_set and word in infl_set:
                     matching_tags.append((lemma, ptag))
 
         for lemma, ptag in matching_tags:
             for syn in syn_cache.get(lemma, []):
                 syn_row = lemma_cache.get(syn.strip().lower())
                 if syn_row:
-                    infl_val = syn_row.get(f"infl_{ptag}")
-                    if infl_val:
-                        inflected_syns.update(_split(infl_val))
+                    infl_set = syn_row.get(f"infl_{ptag}")
+                    if infl_set:
+                        inflected_syns.update(infl_set)
 
     inflected_syns.discard(word)
     return ",".join(sorted(inflected_syns)) if inflected_syns else None
@@ -97,15 +105,16 @@ def build_all_words():
     cur = conn.cursor()
     tables = {r[0] for r in cur.execute("SELECT name FROM sqlite_master WHERE type='table'")}
 
-    has_syn = "synonyms" in tables
-    has_lem = "lemmas" in tables
+    has_syn = SYNONYMS_TABLE in tables
+    has_lem = LEMMAS_TABLE in tables
+    has_mis = MISSPELLINGS_TABLE in tables
 
     if not has_syn and not has_lem:
-        print("No source tables found, skipping all_words")
+        print(f"No source tables found, skipping {ALL_WORDS_TABLE}")
         conn.close()
         return
 
-    cur.execute("DROP TABLE IF EXISTS all_words")
+    cur.execute(f"DROP TABLE IF EXISTS {ALL_WORDS_TABLE}")
 
     lemma_cols = (
         ["l.status as lemma_status", "l.depth", "l.origin"]
@@ -114,85 +123,107 @@ def build_all_words():
     )
     lemma_cols_sql = ", ".join(lemma_cols)
 
+    mis_select = ", m.misspellings" if has_mis else ""
+    mis_join = f"LEFT JOIN {MISSPELLINGS_TABLE} m USING (word)" if has_mis else ""
+    mis_union = f" UNION SELECT word FROM {MISSPELLINGS_TABLE}" if has_mis else ""
+
     if has_syn and has_lem:
         cur.execute(f"""
-            CREATE TABLE all_words AS
+            CREATE TABLE {ALL_WORDS_TABLE} AS
             SELECT w.word,
                    s.wordhoard_synonyms AS synonyms_wordhoard,
                    {lemma_cols_sql}
-            FROM (SELECT word FROM synonyms UNION SELECT word FROM lemmas) w
-            LEFT JOIN synonyms s USING (word)
-            LEFT JOIN lemmas l USING (word)
+                   {mis_select}
+            FROM (SELECT word FROM {SYNONYMS_TABLE} UNION SELECT word FROM {LEMMAS_TABLE}{mis_union}) w
+            LEFT JOIN {SYNONYMS_TABLE} s USING (word)
+            LEFT JOIN {LEMMAS_TABLE} l USING (word)
+            {mis_join}
         """)
     elif has_syn:
-        cur.execute("""
-            CREATE TABLE all_words AS
-            SELECT word, wordhoard_synonyms AS synonyms_wordhoard FROM synonyms
+        cur.execute(f"""
+            CREATE TABLE {ALL_WORDS_TABLE} AS
+            SELECT s.word, wordhoard_synonyms AS synonyms_wordhoard
+                   {mis_select}
+            FROM {SYNONYMS_TABLE} s
+            {mis_join}
         """)
     else:
         cur.execute(f"""
-            CREATE TABLE all_words AS
-            SELECT word, status as lemma_status, depth, origin,
+            CREATE TABLE {ALL_WORDS_TABLE} AS
+            SELECT l.word, status as lemma_status, depth, origin,
                    {", ".join(f"lemma_{u}" for u in UPOS_COLS)},
                    {", ".join(f"infl_{p}" for p in PENN_COLS)}
-            FROM lemmas
+                   {mis_select}
+            FROM {LEMMAS_TABLE} l
+            {mis_join}
         """)
 
-    count = cur.execute("SELECT COUNT(*) FROM all_words").fetchone()[0]
-    print(f"Created all_words table with {count} rows")
+    count = cur.execute(f"SELECT COUNT(*) FROM {ALL_WORDS_TABLE}").fetchone()[0]
+    print(f"Created {ALL_WORDS_TABLE} table with {count} rows")
 
     if not (has_syn and has_lem):
         conn.commit()
         conn.close()
         return
 
-    cur.execute("CREATE UNIQUE INDEX idx_all_words_word ON all_words(word)")
-    cur.execute("ALTER TABLE all_words ADD COLUMN synonyms_inflected TEXT")
-    cur.execute("ALTER TABLE all_words ADD COLUMN synonyms TEXT")
+    print(f"Creating index on {ALL_WORDS_TABLE}(word)…")
+    idx_word = f"idx_{ALL_WORDS_TABLE}_word"
+    cur.execute(f"DROP INDEX IF EXISTS {idx_word}")
+    cur.execute(f"CREATE UNIQUE INDEX {idx_word} ON {ALL_WORDS_TABLE}(word)")
+    print("Adding synonym columns…")
+    cur.execute(f"ALTER TABLE {ALL_WORDS_TABLE} ADD COLUMN synonyms_inflected TEXT")
+    cur.execute(f"ALTER TABLE {ALL_WORDS_TABLE} ADD COLUMN synonyms TEXT")
     conn.commit()
+    print("Loading synonym cache…")
 
     # Preload caches
     syn_cache = {}
     for w, syns in cur.execute(
-        "SELECT word, wordhoard_synonyms FROM synonyms "
+        f"SELECT word, wordhoard_synonyms FROM {SYNONYMS_TABLE} "
         "WHERE wordhoard_status='completed' AND wordhoard_synonyms IS NOT NULL"
     ):
         syn_cache[w] = _split(syns)
+    print(f"  {len(syn_cache)} synonym entries loaded")
 
     lemma_keys = [f"lemma_{u}" for u in UPOS_COLS] + [f"infl_{p}" for p in PENN_COLS]
+    infl_key_set = {f"infl_{p}" for p in PENN_COLS}
     lemma_cols_sql = ", ".join(["word"] + lemma_keys)
+    lemma_total = cur.execute(
+        f"SELECT COUNT(*) FROM {LEMMAS_TABLE} WHERE status='completed'"
+    ).fetchone()[0]
     lemma_cache = {}
-    for row in cur.execute(f"SELECT {lemma_cols_sql} FROM lemmas WHERE status='completed'"):
-        lemma_cache[row[0]] = dict(zip(lemma_keys, row[1:]))
+    rows = cur.execute(
+        f"SELECT {lemma_cols_sql} FROM {LEMMAS_TABLE} WHERE status='completed'"
+    )
+    for row in tqdm(rows, desc="Loading lemma cache", total=lemma_total, unit="w", colour="cyan"):
+        d = {}
+        for k, v in zip(lemma_keys, row[1:]):
+            if k in infl_key_set and v:
+                d[k] = frozenset(v.split(","))
+            else:
+                d[k] = v
+        lemma_cache[row[0]] = d
 
     words = sorted(lemma_cache.keys())
     total = len(words)
-    print(f"Computing inflected synonyms for {total} words…\n")
-    start = time.time()
 
     try:
-        for i, word in enumerate(words, 1):
-            infl_result = _compute_inflected_synonyms(word, lemma_cache, syn_cache)
-            wh_syns = set(syn_cache.get(word, []))
-            infl_syns = set(_split(infl_result)) if infl_result else set()
+        with tqdm(words, desc="Inflected synonyms", unit="w", colour="cyan") as pbar:
+            for i, word in enumerate(pbar, 1):
+                infl_result = _compute_inflected_synonyms(word, lemma_cache, syn_cache)
+                wh_syns = set(syn_cache.get(word, []))
+                infl_syns = set(_split(infl_result)) if infl_result else set()
 
-            combined = sorted(wh_syns | infl_syns)
-            combined_str = ",".join(combined) if combined else None
+                combined = sorted(wh_syns | infl_syns)
+                combined_str = ",".join(combined) if combined else None
 
-            cur.execute(
-                "UPDATE all_words SET synonyms_inflected = ?, synonyms = ? WHERE word = ?",
-                (infl_result, combined_str, word),
-            )
+                cur.execute(
+                    f"UPDATE {ALL_WORDS_TABLE} SET synonyms_inflected = ?, synonyms = ? WHERE word = ?",
+                    (infl_result, combined_str, word),
+                )
 
-            if i % PROGRESS_INTERVAL == 0 or i == total:
-                conn.commit()
-                elapsed = time.time() - start
-                rate = i / elapsed
-                eta = (total - i) / rate
-                pct = 100 * i / total
-                bar = "█" * int(pct // 5) + "░" * (20 - int(pct // 5))
-                m, s = divmod(int(eta), 60)
-                print(f"\r  {bar} {pct:5.1f}%  {rate:.0f}w/s  ETA {m}m{s:02d}s  [{word}]" + " " * 10, end="", flush=True)
+                if i % PROGRESS_INTERVAL == 0:
+                    conn.commit()
 
     except KeyboardInterrupt:
         conn.commit()
@@ -201,9 +232,10 @@ def build_all_words():
         return
 
     conn.commit()
-    elapsed = time.time() - start
-    n = cur.execute("SELECT COUNT(*) FROM all_words WHERE synonyms IS NOT NULL").fetchone()[0]
-    print(f"\n  Done — {total} words in {elapsed:.1f}s, {n} have synonyms")
+    n = cur.execute(
+        f"SELECT COUNT(*) FROM {ALL_WORDS_TABLE} WHERE synonyms IS NOT NULL"
+    ).fetchone()[0]
+    print(f"  {n} of {total} words have synonyms")
     conn.close()
 
 
@@ -214,9 +246,15 @@ def main():
     if BUILD_LEMMAS:
         run_script("build_lemma_cache.py")
 
+    if BUILD_MISSPELLINGS:
+        run_script("mispellings/build_mispellings_cache.py")
+
+    # TODO there is a problem using the inflectoins to create synonyms - we should only use the non rule based ones for that if they exist
+    # because sometimes there are two of the same inflectoin for a given word
+    
     if BUILD_JOIN:
         print(f"\n{'='*50}")
-        print("Building all_words join table + inflected synonyms")
+        print(f"Building {ALL_WORDS_TABLE} join table + inflected synonyms")
         print(f"{'='*50}\n")
         build_all_words()
 

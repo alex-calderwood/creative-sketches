@@ -59,6 +59,7 @@ def create_app(db_path: str | Path | None = None) -> Flask:
             wordhoard_only=_bool_param("wordhoard_only"),
             lemmatize=_bool_param("lemmatize"),
             inflect=_bool_param("inflect"),
+            misspellings=_bool_param("misspellings"),
             max_depth=max_depth,
         ))
 

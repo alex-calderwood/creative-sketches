@@ -55,6 +55,7 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
             { id: 'synonymSource', name: 'Synonyms', type: 'select', description: 'Where are the synonyms pulled from? WordNet is historically the most used database for word relationships. Wordhoard uses various online dictionaries.', inBar: true, options: [
                 { value: 'synonyms-wordnet', label: 'WordNet' },
                 { value: 'synonyms-cache', label: 'Wordhoard' },
+                { value: 'misspellings', label: 'Mispelling' },
                 { value: 'synonyms-online', label: 'Wordhoard Online (Slow)' },
             ] },
 

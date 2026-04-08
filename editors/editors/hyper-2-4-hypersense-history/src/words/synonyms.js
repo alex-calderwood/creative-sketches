@@ -2,11 +2,12 @@ const ENDPOINTS = {
   'synonyms-wordnet': '/editors/api/synonyms-wordnet/synonyms',
   'synonyms-cache': '/editors/api/synonyms-cache/synonyms',
   'synonyms-online': '/editors/api/synonyms-online/synonyms',
+  'misspellings': '/editors/api/synonyms-cache/synonyms',
 };
 
 class SynonymService {
-  constructor(source = 'synonyms-online') {
-    this.source = source;
+  constructor(source = 'synonyms-cache') {
+    this.setSource(source);
   }
 
   setSource(source) {
@@ -26,8 +27,15 @@ class SynonymService {
 
     let url = `${endpoint}?word=${encodeURIComponent(core)}`;
     if (pos) url += `&pos=${encodeURIComponent(pos)}`;
+    
+    if (this.source === 'misspellings') url += `&misspellings=y`;
+
     const response = await fetch(url);
     const data = await response.json();
+
+    if (this.source === 'misspellings') {
+      data.synonyms = data.misspellings || [];
+    }
 
     if (data.error || !data.synonyms) {
       return {
@@ -35,6 +43,7 @@ class SynonymService {
         synonyms: [],
       };
     }
+
 
     let synonyms = data.synonyms.map(s => prefix + clean(s) + suffix);
     return {
