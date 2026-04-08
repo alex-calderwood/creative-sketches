@@ -144,11 +144,7 @@ export class HyperSkipTextStreamComponent extends TextStreamComponent {
   }
 
   updateWord(word) {
-    const oldWord = this.tokens[1]?.text;
-    if (!oldWord) return;
-
     this.tokens.forEach(token => {
-      if (token.text !== oldWord) return;
       const block = this.tokensToBlocks[token.id];
       if (!block) return;
       token.text = word;
