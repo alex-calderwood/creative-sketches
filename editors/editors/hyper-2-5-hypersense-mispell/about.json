@@ -1,0 +1,14 @@
+{
+    "name": "Mispelling Editor",
+    "description": "A mispelling of the hypersense editor",
+    "notes": "",
+    "tags": {
+        "hyper": {"version": "7"},
+        "drifts": {"version": "8"},
+        "spellcheck": {"version": "8"}
+    },
+    "url": "hypersense-misspellings",
+    "image": "mispelling.png",
+    "date": "2026-04-01",
+    "major": true
+}

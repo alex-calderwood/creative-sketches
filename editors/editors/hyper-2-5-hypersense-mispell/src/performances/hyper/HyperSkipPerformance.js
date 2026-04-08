@@ -20,18 +20,18 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
             hideEditorText: true,  // whether to hide the editor text
             drawOutlines: false,
 
-            numSlidesPerStroke: 5,
+            numSlidesPerStroke: 3,
             typingSlideMode: 'proximate',
 
 
             automaticSlide: true,
-            slideRate: 4,
-            animationSpeedSec: 0.5,
+            slideRate: 12,
+            animationSpeedSec: 1,
             typingSlide: false,
 
             textMask: true,
             initialText: '',
-            synonymSource: 'synonyms-cache',
+            synonymSource: 'misspellings',
 
             fontSize: 24,
 

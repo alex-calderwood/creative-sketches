@@ -38,7 +38,8 @@ def synonyms_api_response(
     wordhoard_only: bool = False,
     lemmatize: bool = False,
     inflect: bool = False,
-    max_depth: int | None = None,
+    misspellings: bool = False,
+    max_depth: int | None = None
 ) -> dict:
     """
     JSON body: { "word": <str>, "pos": null, "synonyms": [<str>, ...] }
@@ -90,6 +91,9 @@ def synonyms_api_response(
                 p: _split(rec.get(f"infl_{p}")) for p in PENN_COLS
                 if rec.get(f"infl_{p}")
             }
+
+        if misspellings:
+            result["misspellings"] = _split(rec.get("misspellings")) or []
 
         return result
     finally:
