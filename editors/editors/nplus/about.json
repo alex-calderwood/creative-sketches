@@ -1,0 +1,11 @@
+{
+    "name": "N Plus",
+    "description": "This editor shows a copy of your text, keeping only every nth word. This would let you compose a kind of steganographic text within the original. I think of it as a playground where writing one text produces a second order text. The meaning of the second text can be played with, perhaps to alter the meaning of the original.",
+    "notes": "",
+    "tags": {
+        "n+": {"version": "1"}
+    },
+    "url": "nplus",
+    "image": "hall.png",
+    "date": "2026-04-28"
+}
