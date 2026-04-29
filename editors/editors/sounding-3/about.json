@@ -2,7 +2,9 @@
     "name": "Sounding",
     "description": "A very early experiment in weird text editors.",
     "image": null,
-    "version": "3",
+    "tags": {
+        "sound": {"version": "1"}
+    },
     "series": ["sound"]
 }
 

@@ -2,8 +2,11 @@
     "name": "Score Tracker",
     "description": "This one lets you play a word grid placement game using a MIDI keyboard. Unlike the previous experiment, this one uses a score tracker to determine the direction of the block placement. Direction is controlled by pitch changes.",
     "notes": "",
-    "version": "2",
-    "series": ["game", "instrument", "sound"],
+    "tags": {
+        "game": {"version": "2"},
+        "instrument": {"version": "2"},
+        "sound": {"version": "4"}
+    },
     "url": "instrument-2-score-tracker",
     "image": "instrument.png",
     "major": true

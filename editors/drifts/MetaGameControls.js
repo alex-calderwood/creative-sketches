@@ -401,6 +401,32 @@ export class MetaGameControls {
         this.game.performance.updateSetting(id, select.value);
       });
       settingDiv.appendChild(select);
+    } else if (setting.type === 'color') {
+      const input = document.createElement('input');
+      input.type = 'color';
+      input.value = setting.value || '#000000';
+      input.className = 'setting-input setting-color';
+      input.addEventListener('input', () => {
+        this.game.performance.updateSetting(id, input.value);
+      });
+      settingDiv.appendChild(input);
+    } else if (setting.type === 'range') {
+      const min = setting.min ?? 0;
+      const max = setting.max ?? 100;
+      const step = setting.step ?? 1;
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.min = min;
+      input.max = max;
+      input.step = step;
+      input.value = setting.value;
+      input.className = 'setting-input';
+      input.addEventListener('change', () => {
+        const val = Math.min(max, Math.max(min, parseFloat(input.value) || min));
+        input.value = val;
+        this.game.performance.updateSetting(id, val);
+      });
+      settingDiv.appendChild(input);
     } else {
       const input = document.createElement('input');
       input.type = 'text';

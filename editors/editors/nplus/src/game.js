@@ -15,15 +15,19 @@ export class Game {
       continuousCheck: false,
       everyN: 4,
       highlight: false,
+      highlightColor: '#fff172',
+      backgroundColor: '#e7e7e7',
       ...params
     };
 
     this.settings = [
       { id: 'fontSize', name: 'Font Size', type: 'number', description: 'Font size for the editor text (px)' },
-      { id: 'scale', name: 'Scale', default: 100, type: 'select', description: 'The editor scale (in percent)', options: [25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300] },
-      { id: 'darkmode', inBar: true, name: 'Dark Mode', default: false, type: 'boolean', description: 'Dark mode for the editor' },
       { id: 'everyN', name: 'N+', inBar:true, type: 'number', description: 'The mirror will display every nth word of the original text. This lets you compose a kind of hidden text within the original.' },
       { id: 'highlight', name: 'Highlight', inBar: true, type: 'boolean', description: 'Highlight every Nth word in the original editor' },
+      { id: 'highlightColor', name: 'Highlight Color', inBar: true, type: 'color', default: '#fff172', description: 'Color of the highlight on every Nth word' },
+      { id: 'backgroundColor', name: 'Background', inBar: false, type: 'color', default: '#e7e7e7', description: 'Background color of the editor' },
+      { id: 'darkmode', name: 'Dark Mode', inBar: true, default: false, type: 'boolean', description: 'Dark mode for the editor' },
+      { id: 'scale', name: 'Scale', inBar:true, default: 100, type: 'range', min: 1, max: 300, description: 'Page scale (% of default value)' },
     ]
 
     
@@ -82,6 +86,11 @@ export class Game {
       this.setScale(value);
     } else if (name === 'darkmode') {
       Game.setColors(value);
+    } else if (name === 'backgroundColor') {
+      document.documentElement.style.setProperty('--background-color', value);
+    } else if (name === 'highlightColor') {
+      document.documentElement.style.setProperty('--highlight', value + '60');
+      this.updateHighlights();
     } else if (name === 'highlight' || name === 'everyN') {
       this.updateHighlights();
     }
