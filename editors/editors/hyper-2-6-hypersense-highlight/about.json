@@ -1,0 +1,14 @@
+{
+    "name": "Hypersense Dictionary Editor",
+    "description": "Hover over words to change them",
+    "notes": "",
+    "tags": {
+        "hyper": {"version": "8"},
+        "drifts": {"version": "9"},
+        "spellcheck": {"version": "10"}
+    },
+    "url": "hypersense-misspellings-2",
+    "image": "mispelling.png",
+    "date": "2026-04-29",
+    "major": true
+}

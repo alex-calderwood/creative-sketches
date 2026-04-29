@@ -226,11 +226,30 @@
     width: 100%;
     padding: 4px;
     border-radius: var(--small-radius);
+    /* make the border color match */
+    border-color: var(--primary-color);
+    border-width: 1px;
   }
 
   .setting-input[type="number"] {
-    max-width: 40px;
+    max-width: 3em;
     text-align: center;
+  }
+
+  .setting-input[type="color"] {
+    padding: 0px !important;
+    height: 1.5em !important;
+    width: 1em;
+  }
+
+  .setting-input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0em;
+    width: 1em;
+  }
+
+  .setting-input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 0.125em;
   }
 
   .setting-input:focus {

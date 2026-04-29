@@ -138,9 +138,6 @@ function getProjects() {
 let projects = [];
 getProjects().then(projectList => {
   projects = projectList.filter(project => !project.hide);
-  // Set up static serving for each project directory
-  // First serve static files from the editors directory itself
-  app.use('/editors', serveStatic(path.join(__dirname, 'editors')));
 
   projects.forEach(project => {
     const projectPath = path.join(__dirname, 'editors', project.dir);
@@ -179,6 +176,30 @@ getProjects().then(projectList => {
   
   // Also serve assets from the editors/assets path for backward compatibility
   app.use('/editors/assets', serveStatic(path.join(__dirname, 'assets')));
+
+  // 404 handler - must be registered after project routers
+  app.use((req, res) => {
+    const notFoundPath = path.join(__dirname, '404.html');
+    if (req.path.startsWith('/editors/') && req.path !== '/editors/') {
+      const slug = req.path.replace('/editors/', '').replace(/\/$/, '');
+      const suggestions = findSimilarProjects(slug, projects);
+      fs.readFile(notFoundPath, 'utf8', (err, html) => {
+        if (err) return res.status(404).send('Not found');
+        const injected = html.replace(
+          'window.__404_DATA__ || { slug: \'\', suggestions: [] }',
+          JSON.stringify({ slug, suggestions })
+        );
+        res.status(404).type('html').send(injected);
+      });
+    } else {
+      res.status(404).sendFile(notFoundPath);
+    }
+  });
+
+  app.listen(port, () => {
+    console.log(`Available projects: ${projects.map(p => p.name).join(', ')}`);
+    console.log(`Running at: http://localhost:${port}/editors`);
+  });
 });
 
 // Project Directory
@@ -228,7 +249,6 @@ app.get('/editors/new-drift', (req, res) => {
 });
 
 
-
 app.use('/editors/vault', serveStatic(path.join(__dirname, 'vault')));
 
 app.use('/editors/api', synonymsRouter);
@@ -239,7 +259,7 @@ app.use('/assets', serveStatic(path.join(__dirname, 'assets')));
 app.use('/editors/assets', serveStatic(path.join(__dirname, 'assets')));
 
 
-
+// === === === Larder stuff Larder stuff Larder stuff Larder stuff === === === 
 const larderSentencesPath = path.join(__dirname, 'editors', 'larder', 'sentences.json');
 
 // Helper to read sentences.json
@@ -289,6 +309,7 @@ app.post('/editors/api/new-sentence', express.json(), (req, res) => {
   writeSentences(sentences);
   res.json(sentences);
 });
+// === === === End Larder stuff End Larder stuff End Larder stuff End Larder stuff === === === 
 
 // GET endpoint to fetch all projects
 app.get('/editors/api/projects', (req, res) => {
@@ -313,7 +334,38 @@ app.get('/api/tag-descriptions', (req, res) => {
   });
 });
 
-app.listen(port, () => {
-  console.log(`Available projects: ${projects.map(p => p.name).join(', ')}`);
-  console.log(`Running at: http://localhost:${port}/editors`);
-});
+function findSimilarProjects(slug, projects, maxResults = 3) {
+  const scored = projects.map(p => ({
+    ...p,
+    score: Math.max(similarity(slug, p.url), similarity(slug, p.name.toLowerCase()))
+  }));
+  return scored
+    .filter(p => p.score > 0.25)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, maxResults);
+}
+
+function similarity(a, b) {
+  if (a === b) return 1;
+  const longer = a.length > b.length ? a : b;
+  const shorter = a.length > b.length ? b : a;
+  if (longer.length === 0) return 1;
+  if (longer.includes(shorter) || shorter.includes(longer)) return 0.8;
+  const dist = levenshtein(a, b);
+  return (longer.length - dist) / longer.length;
+}
+
+function levenshtein(a, b) {
+  const m = a.length, n = b.length;
+  const dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
+  for (let i = 0; i <= m; i++) dp[i][0] = i;
+  for (let j = 0; j <= n; j++) dp[0][j] = j;
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      dp[i][j] = a[i-1] === b[j-1]
+        ? dp[i-1][j-1]
+        : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+    }
+  }
+  return dp[m][n];
+}

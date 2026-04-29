@@ -1,6 +1,6 @@
 {
     "name": "Template",
-    "description": "This is a template for new editors. Soon, this will be the open sourced, available to extend.",
+    "description": "This is a template for new editors. Soon, this will be open sourced, available to extend.",
     "tags": {
         "template": {"version": "1"}
     },

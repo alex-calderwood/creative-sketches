@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor Not Found</title>
+    <link rel="icon" type="image/svg+xml" href="/editors/assets/icons/1298512738.svg">
+    <link rel="preload" href="/editors/assets/fonts/Plus_Jakarta_Sans/PlusJakartaSans-VariableFont_wght.ttf" as="font" type="font/ttf">
+    <link rel="stylesheet" href="/editors/assets/css/index.css">
+</head>
+<body>
+    <div class="main-content">
+        <div class="header">
+            <h1>Editor not found</h1>
+            <div class="subtitle" id="not-found-subtitle"></div>
+        </div>
+        <div class="subheader" id="suggestions-label" style="display:none;">
+            <p>Did you mean:</p>
+        </div>
+        <div class="projects-grid" id="suggestions-grid"></div>
+        <div class="subheader">
+            <a href="/editors/" class="back-link">&larr; The Writer's Project</a>
+        </div>
+    </div>
+    <script type="module">
+        import { createProjectCard } from '/editors/assets/js/project-card.js';
+        const data = window.__404_DATA__ || { slug: '', suggestions: [] };
+        document.getElementById('not-found-subtitle').textContent = `No editor called "${data.slug}" exists.`;
+        if (data.suggestions.length > 0) {
+            document.getElementById('suggestions-label').style.display = '';
+            const grid = document.getElementById('suggestions-grid');
+            data.suggestions.forEach(p => {
+                grid.appendChild(createProjectCard(p));
+            });
+        }
+    </script>
+</body>
+</html>
