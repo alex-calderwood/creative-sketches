@@ -25,8 +25,8 @@ COPY editors/assets/ ./assets/
 COPY editors/words/ ./words/
 COPY editors/drifts/ ./drifts/
 COPY editors/vault/ ./vault/
-COPY text/word_cache/ ./word_cache/
-COPY text/synonym_cache.db ./synonym_cache.db
+# COPY text/word_cache/ ./word_cache/
+# COPY text/synonym_cache.db ./synonym_cache.db
 
 # Debug - list what's in the container
 RUN ls -la
