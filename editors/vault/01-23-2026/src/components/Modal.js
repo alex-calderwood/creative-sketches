@@ -4,10 +4,11 @@ export class Modal {
     static templateHTML = null;
     static stylesLoaded = false;
 
-    constructor(id, content = '', buttons = null) {
+    constructor(id, content = '', buttons = null, showCloseX = true) {
         this.id = id;
         this.content = content;
         this.buttons = buttons;
+        this.showCloseX = showCloseX;
         this.element = null;
 
         if (buttons === null) {
@@ -47,8 +48,13 @@ export class Modal {
             return `<button ${btnId} data-action="${btn.text.toLowerCase()}">${btn.text}</button>`
         }).join('');
         
+        const closeXHTML = this.showCloseX
+            ? `<button class="modal-close-x" aria-label="Close">&times;</button>`
+            : '';
+
         this.element.innerHTML = `
             <div class="content-container">
+                ${closeXHTML}
                 <div class="modal-content">
                     ${this.content}
                 </div>
@@ -59,7 +65,11 @@ export class Modal {
         // Attach to DOM
         document.body.appendChild(this.element);
         
-        // Add event listeners
+        const closeX = this.element.querySelector('.modal-close-x');
+        if (closeX) {
+            closeX.addEventListener('click', () => this.hide());
+        }
+
         this.buttons.forEach(btn => {
             const button = this.element.querySelector(`[data-action="${btn.text.toLowerCase()}"]`);
             if (button && btn.handler) {

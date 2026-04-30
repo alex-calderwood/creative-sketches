@@ -12,7 +12,26 @@
     align-items: center;
 }
 
+.modal-close-x {
+    position: absolute;
+    top: 0.5em;
+    right: 0.5em;
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 1.5em;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0.2em;
+    opacity: 0.6;
+}
+
+.modal-close-x:hover {
+    opacity: 1;
+}
+
 .content-container {
+    position: relative;
     color: var(--text-color);
     background-color: var(--background-color);
     border: 1px solid var(--text-color);

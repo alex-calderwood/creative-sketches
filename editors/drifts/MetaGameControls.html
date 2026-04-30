@@ -3,7 +3,8 @@
 
   @layer defaults {
     :root {
-      --ui-font-size: 1em;
+      --ui-font-size: 1.1em;
+      --ui-font-size-large: 1.4em;
       --small-radius: 4px;
     }
   }
@@ -189,6 +190,39 @@
     position: relative;
   }
 
+  #settings-modal .modal-content {
+    display: grid;
+    grid-template-columns: auto auto;
+    align-items: center;
+    gap: 0.4em 1em;
+    padding: 0 1em;
+  }
+
+  #settings-modal .modal-content h1 {
+    grid-column: 1 / -1;
+    font-family: var(--font);
+    font-size: var(--ui-font-size-large);
+    margin: 0;
+  }
+
+  #settings-modal .setting-item {
+    display: contents;
+    margin: 0;
+  }
+
+  #settings-modal .setting-label {
+    font-size: var(--ui-font-size);
+    font-weight: normal;
+  }
+
+  #settings-modal .setting-description {
+    grid-column: 1 / -1;
+    font-size: 0.85em;
+    opacity: 0.6;
+    margin-top: -0.2em;
+    margin-bottom: 0.3em;
+  }
+
   .setting-tooltip {
     position: fixed;
     background-color: var(--background-color);
@@ -204,7 +238,14 @@
     border-radius: var(--small-radius);
   }
 
+  .setting-description {
+    font-size: var(--ui-font-size);
+    opacity: 0.7;
+    margin-top: 4px;
+  }
+
   .setting-label {
+    font-size: var(--ui-font-size-large, --ui-font-size);
     cursor: help;
   }
 
@@ -223,7 +264,7 @@
   }
 
   .setting-input {
-    width: 100%;
+    /* width: 100%; */
     padding: 4px;
     border-radius: var(--small-radius);
     /* make the border color match */
@@ -320,9 +361,10 @@
     flex-direction: row;
     flex-wrap: nowrap; /* Prevent wrapping to a new line */
     align-items: center;
+    justify-content: center;
     gap: 12px;
     padding: 4px 8px;
-    border-bottom: 1.5px solid var(--text-color);
+    border-bottom: 1px solid var(--text-color);
     font-size: var(--ui-font-size);
     box-sizing: border-box;
     overflow-x: auto; /* Enable horizontal scrolling if needed */
@@ -343,7 +385,7 @@
   }
 
   #settings-bar .setting-input {
-    width: auto;
+    field-sizing: content;
     padding: 2px 4px;
     font-size: var(--ui-font-size);
   }

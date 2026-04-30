@@ -1,5 +1,5 @@
-import { iterateContentEditableWords, newWords } from './textIterator.js';
 import { Modal } from '/editors/vault/01-23-2026/src/components/Modal.js';
+import { Monitor } from '/editors/vault/01-23-2026/src/monitor/Monitor.js';
 
 export class Game {
   constructor() {
@@ -8,7 +8,7 @@ export class Game {
 
   async initialize(params = {}) {
     this.params = {
-      fontSize: 16,
+      fontSize: 22,
       scale: 100,
       darkmode: false,
       initialState: null,
@@ -19,7 +19,7 @@ export class Game {
     this.settings = [
       { id: 'fontSize', inBar: true, name: 'Font Size', type: 'number', description: 'Font size for the editor text (px)' },
       { id: 'scale', inBar: true, name: 'Scale', default: 100, type: 'select', description: 'The editor scale (in percent)', options: [25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300] },
-      { id: 'darkmode', inBar: true, name: 'Dark Mode', default: false, type: 'boolean', description: 'Dark mode for the editor' },
+      { id: 'darkmode', inBar: false, name: 'Dark Mode', default: false, type: 'boolean', description: 'Dark mode for the editor' },
     ]
 
     
@@ -39,13 +39,17 @@ export class Game {
       this.loadState(this.params.initialState);
     }
     
-    this.editor.removeEventListener('input', this.handleInput.bind(this));
-    this.editor.addEventListener('input', this.handleInput.bind(this));
+    this.monitor = new Monitor(this.editor);
 
     // Set the overlay css to match most of the values of the editor
     this.syncOverlay();
 
-    this.modal = new Modal('confirm');
+    this.monitor.on('token', (token) => this.onNewTokens([token]));
+
+    this.modal = new Modal('confirm', '', [
+      { text: 'No', handler: () => { this.modal.hide(); if (this.modal._resolve) this.modal._resolve(false); } },
+      { text: 'Yes', class: 'continue-button', handler: () => { this.modal.hide(); if (this.modal._resolve) this.modal._resolve(true); } }
+    ]);
     this.modal.create();
 
     // To support backward's compatability, MetaGame expects game to have a .performance property
@@ -55,6 +59,7 @@ export class Game {
 
   loadState(state) {
     this.editor.textContent = state.text;
+    if (state.monitor) this.monitor.import(state.monitor);
   }
 
   static setColors(isDark) {
@@ -104,7 +109,8 @@ export class Game {
   saveState() {
     if (!this.editor) return null;
     return {
-      text: this.editor.textContent || ''
+      text: this.editor.textContent || '',
+      monitor: this.monitor.export(),
     };
   }
 
@@ -131,21 +137,6 @@ export class Game {
     }
   }
 
-  handleInput(event) {
-    if (event.inputType === 'insertText' && event.data.length > 0) {
-      // if a space is inserted, we need to check the word before and after
-      const isSpace = event.data === ' ';
-      if (isSpace) {
-
-        this.getTokens().then(tokens => {
-          const newTokens = newWords(this.previousTokens, tokens);
-          this.onNewTokens(newTokens);
-          this.previousTokens = tokens;
-        });
-      }
-    }
-  }
-
   onNewTokens(newTokens) {
     if (!newTokens || newTokens.length === 0) return;
 
@@ -164,26 +155,27 @@ export class Game {
 
 
     this.modal.show(content).then(confirmed => {
-      if (confirmed) {
-        // do nothing
-      } else {
-        this.editor.textContent = this.editor.textContent.replace(newWords, '');
+      if (!confirmed) {
+        this.editor.textContent = this.editor.textContent.replace(newText, '');
+        // if it ends in a space remove the last one
+        let lastChar = this.editor.textContent.slice(-1);
+        if (lastChar === ' ' || lastChar === '\u00A0' || lastChar === '\u200B') {
+          this.editor.textContent = this.editor.textContent.slice(0, -1);
+        }
       }
 
-
-      // set the focus back
+      // restore cursor to end
       setTimeout(() => {
         this.editor.focus();
+        const range = document.createRange();
+        const sel = window.getSelection();
+        range.selectNodeContents(this.editor);
+        range.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(range);
       }, 0);
       
     });
-  }
-
-  // Perform the actual spell check (returns a promise)
-  async getTokens() {
-    if (!this.editor) return;
-    let tokens = iterateContentEditableWords(this.editor);
-    return tokens;
   }
 
   animateWord(word, dX, dY, scale, speed=500) {
