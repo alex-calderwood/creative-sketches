@@ -116,11 +116,6 @@ export class HyperSkipTextStreamComponent extends TextStreamComponent {
   }
 
   empty() {
-    // Clear any pending timeout
-    if (this.popTimeoutId) {
-      clearTimeout(this.popTimeoutId);
-      this.popTimeoutId = null;
-    }
     for (let token of this.tokens) {
       let block = this.tokensToBlocks[token.id];
       block.remove();
@@ -157,6 +152,13 @@ export class HyperSkipTextStreamComponent extends TextStreamComponent {
   }
 
   updateRect(rect) {
+    const pr = this.params.clipRect;
+    if (pr && rect
+        && Math.abs(pr.left - rect.left) < 0.5 && Math.abs(pr.top - rect.top) < 0.5
+        && Math.abs(pr.width - rect.width) < 0.5 && Math.abs(pr.height - rect.height) < 0.5) {
+      return;
+    }
+
     this.params.blockHeight = rect.height;
     this.params.blockWidth = rect.width;
     this.params.clipRect = rect;
@@ -169,7 +171,6 @@ export class HyperSkipTextStreamComponent extends TextStreamComponent {
       this.container.style.left = `${rect.left}px`;
       this.container.style.top = `${rect.top}px`;
     }
-
   }
 
   updateHeight(height) {

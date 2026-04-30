@@ -12,6 +12,7 @@ export class TextStreamEntity {
     this.game = game;
     this.textStream = stream;
     this.component = component;
+    this.popTimeoutId = null;
     
     // Link the component to this stream by setting its streamId
     this.component.streamId = this.textStream.id;
@@ -46,9 +47,9 @@ export class TextStreamEntity {
   }
 
   clear() {
+    clearTimeout(this.popTimeoutId);
+    this.popTimeoutId = null;
     this.component.empty();
-    // TextStream doesn't have a clear method either, so we'll skip it
-    // this.textStream.clear();
   }
 
   tokenToComponent(token) {
