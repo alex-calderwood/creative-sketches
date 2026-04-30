@@ -1,0 +1,119 @@
+import { InputMapper } from './InputMapper.js';
+import { MidiInterface } from '../MIDI.js';
+
+/**
+ * MIDI-specific input mapper
+ * Maps MIDI notes to game actions
+ */
+
+
+export class FourDirectionScoreFollowerMapper extends InputMapper {
+  static name = 'Tracking';
+  static description = 'Tracks note changes. Higher/lower notes trigger right/left. Sharp/flat notes trigger up/down.';
+  static options = [
+    { id: 'noteRange', label: 'Note Range', type: 'range', min: 0, max: 127, defaults: [0, 127] }
+  ];
+
+  constructor(options = {}) {
+    super();
+    this.midiInterface = new MidiInterface(true, options);
+    
+    // Define default mappings for directional controls
+    // Map from MIDI note numbers to game actions
+    this.mappings = {
+      'Left': {
+        filter: (midiData) => 
+          this.isNoteOn(midiData) && 
+          midiData.isLower &&
+          !this.isNoteFlat(midiData)
+      },
+      'Right': {
+        filter: (midiData) => 
+          this.isNoteOn(midiData) && 
+          midiData.isHigher &&
+          !this.isNoteFlat(midiData)
+      },
+      'Up': {
+        filter: (midiData) => 
+          this.isNoteOn(midiData) && 
+          midiData.isLower &&
+          this.isNoteFlat(midiData)
+      },
+      'Down': {
+        filter: (midiData) => 
+          this.isNoteOn(midiData) && 
+          midiData.isHigher &&
+          this.isNoteFlat(midiData)
+      },
+      'Drop': {
+        filter: (midiData) => 
+          this.isNoteOn(midiData)
+        && (midiData.note === 40 // kick pad 
+         || midiData.isSame) 
+      }
+    };
+  }
+
+  /**
+   * Initialize the MIDI event listeners 
+   */
+  async initialize() {
+    const initialized = await this.midiInterface.initialize();
+    
+    if (initialized) {
+      this.midiInterface.setMessageCallback((midiData) => {
+        // Process the MIDI data through our mappings
+        for (const [action, mapping] of Object.entries(this.mappings)) {
+          if (mapping.filter(midiData)) {
+            this.handleInput(action, { midiData: midiData });
+          }
+        }
+      });
+    }
+    
+    return this;
+  }
+
+  /**
+   * Check if a MIDI message is a note-on event
+   * @param {Object} midiData - Processed MIDI data
+   * @returns {boolean} - Whether it's a note-on event
+   */
+  isNoteOn(midiData) {
+    return midiData.eventType === 9;
+  }
+
+  /**
+   * Check if a MIDI message is a note-off event
+   * @param {Object} midiData - Processed MIDI data
+   * @returns {boolean} - Whether it's a note-off event
+   */
+  isNoteOff(midiData) {
+    return midiData.eventType === 8 || (midiData.eventType === 9 && midiData.velocity === 0);
+  }
+
+  isNoteFlat(midiData) {
+    let majorScale = [0, 2, 4, 5, 7, 9, 11];
+    return !majorScale.includes(midiData.normalizedNote % 12);
+  }
+
+  /**
+   * Check if a MIDI message is a control change event
+   * @param {Object} midiData - Processed MIDI data
+   * @returns {boolean} - Whether it's a control change event
+   */
+  isControlChange(midiData) {
+    return midiData.eventType === 11;
+  }
+
+  /**
+   * Check if a MIDI note is within a specific range
+   * @param {Object} midiData - Processed MIDI data
+   * @param {number} min - Minimum note value (inclusive)
+   * @param {number} max - Maximum note value (inclusive)
+   * @returns {boolean} - Whether the note is in range
+   */
+  isNoteInRange(midiData, min, max) {
+    return midiData.normalizedNote >= min && midiData.normalizedNote <= max;
+  }
+}
