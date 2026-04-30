@@ -99,6 +99,28 @@ export class TextStream {
   }
 
   /**
+   * Resize the stream to a new size, truncating or filling as needed.
+   * @param {number} newSize - The new size
+   */
+  resize(newSize) {
+    this.size = newSize;
+    while (this.tokens.length > this.size) {
+      const token = this.tokens.shift();
+      this.emitPop(token);
+    }
+    this.fillStream();
+  }
+
+  /**
+   * Expand the stream to at least newSize, filling if needed but never truncating.
+   * @param {number} newSize - The minimum size
+   */
+  expand(newSize) {
+    this.size = newSize;
+    this.fillStream();
+  }
+
+  /**
    * Updates the reader used by this stream
    * @param {Reader} reader - The new reader to use
    */

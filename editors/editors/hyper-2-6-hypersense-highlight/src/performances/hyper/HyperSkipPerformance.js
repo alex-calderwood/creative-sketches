@@ -235,7 +235,7 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
             if (value && !oldValue) {
                 this.state.streams.forEach(stream => this.automaticSlide(stream));
             } else if (!value && oldValue) {
-                this.state.streams.forEach(stream => clearTimeout(stream.component.popTimeoutId));
+                this.state.streams.forEach(stream => clearTimeout(stream.popTimeoutId));
             }
         } else if (name === 'synonymSource') {
             setSource(value);
@@ -257,7 +257,7 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
 
     clearAllStreams() {
         this.state.streamEntitiesByKey.forEach(stream => {
-            clearTimeout(stream.component.popTimeoutId);
+            clearTimeout(stream.popTimeoutId);
             stream.clear();
         });
         this.state.streamEntitiesByKey.clear();
@@ -508,12 +508,7 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
             let stream = this.state.streamEntitiesByKey.get(streamKey);
 
             if (stream) {
-                const pr = stream.component.params.clipRect;
-                const r = tokenBox.rect;
-                if (!pr || !r || Math.abs(pr.left - r.left) >= 0.5 || Math.abs(pr.top - r.top) >= 0.5
-                    || Math.abs(pr.width - r.width) >= 0.5 || Math.abs(pr.height - r.height) >= 0.5) {
-                    stream.component.updateRect(r);
-                }
+                stream.component.updateRect(tokenBox.rect);
                 
                 // Update reader's word if it changed (skip if paused/selected)
                 const reader = stream.textStream.reader;
@@ -535,7 +530,7 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
 
         for (const [key, ent] of [...this.state.streamEntitiesByKey.entries()]) {
             if (!usedKeys.has(key)) {
-                clearTimeout(ent.component.popTimeoutId);
+                clearTimeout(ent.popTimeoutId);
                 ent.clear();
                 this.state.streamEntitiesByKey.delete(key);
             }
@@ -566,11 +561,6 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
         this.state.streams[i] = streamEntity;
 
         reader.updateWord(tokenBox.text, pos).then(() => this._afterSynonymsReady(streamEntity));
-
-        // this.callPop(streamEntity, i);
-        // if (this.params.automaticSlide) {
-        //     this.automaticSlide(streamEntity);
-        // }
     }
 
     callPop(entity) {
@@ -586,7 +576,7 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
         }
         this._doPop(entity);
         if (this.params.automaticSlide) {
-            clearTimeout(entity.component.popTimeoutId);
+            clearTimeout(entity.popTimeoutId);
             this.automaticSlide(entity, true);
         }
     }
@@ -599,7 +589,7 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
             newRate = 1000
         }
 
-        entity.component.popTimeoutId = setTimeout(() => {
+        entity.popTimeoutId = setTimeout(() => {
             this._doPop(entity);
             this.automaticSlide(entity);
         }, newRate);
@@ -631,10 +621,9 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
         const entity = this._findEntityByContainer(container);
         if (!entity) return;
         this._hoveredEntity = entity;
-        clearTimeout(entity.component.popTimeoutId);
+        clearTimeout(entity.popTimeoutId);
         const count = entity.textStream.reader.getStreamLength();
-        entity.textStream.size = count;
-        entity.textStream.fillStream();
+        entity.textStream.expand(count);
         entity.component.render();
     }
 
@@ -643,11 +632,7 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
         if (!entity) return;
         this._hoveredEntity = null;
         if (entity._paused) return;
-        entity.textStream.size = this.params.streamLength;
-        while (entity.textStream.tokens.length > entity.textStream.size) {
-            const token = entity.textStream.tokens.shift();
-            entity.textStream.emitPop(token);
-        }
+        entity.textStream.resize(this.params.streamLength);
         entity.component.render();
         if (this.params.automaticSlide) {
             this.automaticSlide(entity);
@@ -655,15 +640,11 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
     }
 
     _selectWord(entity, word) {
-        clearTimeout(entity.component.popTimeoutId);
+        clearTimeout(entity.popTimeoutId);
         entity._paused = true;
         entity.component.updateWord(word);
         entity.textStream.reader.word = word;
-        entity.textStream.size = this.params.streamLength;
-        while (entity.textStream.tokens.length > entity.textStream.size) {
-            const token = entity.textStream.tokens.shift();
-            entity.textStream.emitPop(token);
-        }
+        entity.textStream.resize(this.params.streamLength);
         entity.component.render();
     }
 
