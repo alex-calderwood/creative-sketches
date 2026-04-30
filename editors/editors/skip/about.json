@@ -6,7 +6,7 @@
         "n+": {"version": "1"},
         "mirror": {"version": "2"}
     },
-    "url": "nplus",
+    "url": "skip-n",
     "image": "nplus.png",
     "date": "2026-04-28"
 }

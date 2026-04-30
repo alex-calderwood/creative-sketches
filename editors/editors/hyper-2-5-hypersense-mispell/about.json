@@ -1,5 +1,5 @@
 {
-    "name": "Mispelling Editor",
+    "name": "Mispellings",
     "description": "A mispelling of the hypersense editor",
     "notes": "",
     "tags": {
@@ -7,7 +7,7 @@
         "drifts": {"version": "8"},
         "spellcheck": {"version": "8"}
     },
-    "url": "hypersense-misspellings",
+    "url": "mispellings",
     "image": "mispelling.png",
     "date": "2026-04-01",
     "major": true

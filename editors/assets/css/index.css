@@ -9,6 +9,9 @@
     --header-font-weight: 300;
     --thick-font-weight: 600;
 
+    --font-2: 'Garamond', 'EB Garamond', 'Adobe Garamond Pro', serif;
+
+
     --subtitle-font-size: 1rem;
 
     /* for drifts */
@@ -205,19 +208,20 @@ body {
     font-size: var(--project-font-size);
     color: var(--text-color, #18191a);
     transition: all 0.3s ease;
-    font-family: 'Georgia', serif;
-    font-weight: 600;
+    font-family: var(--header-font);
+    font-weight: var(--header-font-weight);
+    font-size: var(--project-font-size-lg);
 }
 .project-description {
     padding: 0 0.6rem 0.6rem;
     font-size: var(--project-font-size);
     color: var(--text-color, #050505);
     transition: all 0.3s ease;
-    font-family: 'Georgia', serif;
+    font-family: var(--font-2);
 }
 .project-metadata {
     padding: 0 0.6rem 0.6rem;
-    font-family: 'Georgia', serif;
+    font-family: var(--font-2);
     font-size: var(--font-size-xs);
     color: var(--text-color, #888);
     line-height: 1.4;

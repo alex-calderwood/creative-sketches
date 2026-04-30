@@ -1,5 +1,5 @@
-import { iterateContentEditableWords, getMatchingToken } from './textIterator.js';
-import { Monitor } from './Monitor.js';
+import { iterateContentEditableWords, getMatchingToken } from '/editors/vault/01-23-2026/src/document/textIterator.js';
+import { Monitor } from '/editors/vault/01-23-2026/src/monitor/Monitor.js';
 
 export class Game {
   constructor() {
@@ -51,8 +51,6 @@ export class Game {
       this.loadState(this.params.initialState);
     }
     
-    this.monitor.on('token', (token) => this.onNewToken(token));
-
     this.monitor.on('keystroke', (keystroke) => this.onNewKeystroke(keystroke));
 
     this.syncStyles();
@@ -181,15 +179,6 @@ export class Game {
       mirror.style.letterSpacing = computedStyle.letterSpacing;
       mirror.style.wordSpacing = computedStyle.wordSpacing;
     }
-  }
-
-  onNewToken(token) {
-    const words = iterateContentEditableWords(this.editor);
-    const match = getMatchingToken(words, token);
-    console.log("token", token, match);
-    // if (match) {
-    //   this.animateWord(match, 0, -10, 1, 3000);
-    // }
   }
 
   getNthWords() {
