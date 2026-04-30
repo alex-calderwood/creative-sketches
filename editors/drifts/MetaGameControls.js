@@ -18,7 +18,6 @@ export class MetaGameControls {
     this.modal = null;
     this.settingsBarLoaded = false;
     this.useSettingsBar = params.useSettingsBar !== false;
-  
   }
 
   async loadTemplate() {
@@ -350,9 +349,16 @@ export class MetaGameControls {
     if (this._tooltip) this._tooltip.style.display = 'none';
   }
 
-  createSettingElement(setting) {
+
+  // Supported setting types: 
+  //   boolean, number, select, color
+  //   range
+  //   text (default fall back)
+  //   select: options[] of string | { value, label }
+  //   range:  min, max, step (all optional, default 0/100/1)
+  createSettingElement(setting, expanded = false) {
     const id = setting.id || setting.name;
-    const name = setting.name || setting.id;
+    const name = (expanded ? setting.name : setting.short) || setting.name || setting.id;
 
     const settingDiv = document.createElement('div');
     settingDiv.className = 'setting-item';
@@ -438,6 +444,13 @@ export class MetaGameControls {
       settingDiv.appendChild(input);
     }
 
+    if (expanded && setting.description) {
+      const desc = document.createElement('div');
+      desc.className = 'setting-description';
+      desc.textContent = setting.description;
+      settingDiv.appendChild(desc);
+    }
+
     return settingDiv;
   }
 
@@ -460,41 +473,29 @@ export class MetaGameControls {
     this.settingsBarLoaded = true;
   }
 
-  showSettings() {
+  async showSettings() {
     if (!this.game?.performance) return;
 
     const settings = this.game.performance.getAllSettings();
     const allSettings = Object.values(settings);
     if (allSettings.length === 0) return;
-    
 
-    const modal = document.createElement('div');
-    modal.className = 'document-selector-modal';
+    const modal = new Modal('settings-modal', '<h1>Settings</h1>', [
+      { text: 'Close', handler: () => modal.hide() }
+    ]);
+    await modal.create();
 
-    const content = document.createElement('div');
-    content.className = 'document-selector-content';
-
-    const title = document.createElement('div');
-    title.className = 'settings-title';
-    title.textContent = 'Settings';
-    content.appendChild(title);
+    const contentEl = modal.element.querySelector('.modal-content');
 
     // sort to show the ones that don't occur in the bar first
     allSettings.sort((a, b) => {
       return a.inBar ? 1 : -1;
     });
-    
+
     allSettings.forEach(setting => {
-      content.appendChild(this.createSettingElement(setting));
+      contentEl.appendChild(this.createSettingElement(setting, true));
     });
 
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'control-btn cancel-btn';
-    closeBtn.textContent = 'Close';
-    closeBtn.addEventListener('click', () => modal.remove());
-    content.appendChild(closeBtn);
-
-    modal.appendChild(content);
-    document.body.appendChild(modal);
+    modal.show();
   }
 }

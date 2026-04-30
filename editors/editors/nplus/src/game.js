@@ -8,28 +8,31 @@ export class Game {
 
   async initialize(params = {}) {
     this.params = {
-      fontSize: 16,
+      fontSize: 25,
       scale: 100,
       darkmode: false,
       initialState: null,
       continuousCheck: false,
-      everyN: 4,
+      skipN: 4,
       highlight: false,
       highlightColor: '#fff172',
-      backgroundColor: '#e7e7e7',
+      backgroundColor: '#49F4DD',
+      fontColor: '#000000',
+      fillerWord: '___',
       ...params
     };
 
     this.settings = [
-      { id: 'fontSize', name: 'Font Size', type: 'number', description: 'Font size for the editor text (px)' },
-      { id: 'everyN', name: 'N+', inBar:true, type: 'number', description: 'The mirror will display every nth word of the original text. This lets you compose a kind of hidden text within the original.' },
-      { id: 'highlight', name: 'Highlight', inBar: true, type: 'boolean', description: 'Highlight every Nth word in the original editor' },
-      { id: 'highlightColor', name: 'Highlight Color', inBar: true, type: 'color', default: '#fff172', description: 'Color of the highlight on every Nth word' },
-      { id: 'backgroundColor', name: 'Background', inBar: false, type: 'color', default: '#e7e7e7', description: 'Background color of the editor' },
-      { id: 'darkmode', name: 'Dark Mode', inBar: true, default: false, type: 'boolean', description: 'Dark mode for the editor' },
-      { id: 'scale', name: 'Scale', inBar:true, default: 100, type: 'range', min: 1, max: 300, description: 'Page scale (% of default value)' },
+      { id: 'skipN', name: 'N', inBar: true, type: 'range', min: 1, max: 1000000, description: 'The mirror will display every Nth word of the original text. For instance, setting N=4 will display every 4th word on the right hand editor. This lets you compose a kind of hidden text within the original.' },
+      { id: 'highlight', name: 'Highlight', inBar: true, type: 'boolean', description: 'Highlight every Nth word in the original editor?' },
+      { id: 'highlightColor', short: " ", name: 'Highlight', inBar: true, type: 'color', default:  this.params.highlightColor, description: 'Highlight Color' },
+      { id: 'backgroundColor', short: " ", name: 'Background', inBar: true, type: 'color', default:  this.params.backgroundColor, description: 'Background Color' },
+      { id: 'fontColor', short: " ", name: 'Font', inBar: true, type: 'color', default:  this.params.fontColor, description: 'Font Color' },
+      { id: 'darkmode', name: 'Dark Mode', inBar: true, default: this.params.darkmode, type: 'boolean', description: 'Dark Mode' },
+      { id: 'fontSize', name: ' ', inBar: true, type: 'number', description: 'Font Size (px)' },
+      { id: 'scale', name: 'Scale', inBar: true, default: this.params.scale, type: 'range', min: 1, max: 300, description: 'Page Scale (% of default value)' },
+      { id: 'fillerWord', name: 'Placeholder Word', inBar: true, type: 'text', description: 'If you type in the right hand editor, this word will be used to fill in any gaps.' },
     ]
-
     
     // Initialize basic text editor
     this.editor = document.getElementById('editor');
@@ -52,6 +55,7 @@ export class Game {
 
     this.monitor.on('keystroke', (keystroke) => this.onNewKeystroke(keystroke));
 
+    this.syncStyles();
     this._initMirrorEditing();
 
     // To support backward's compatability, MetaGame expects game to have a .performance property
@@ -79,19 +83,25 @@ export class Game {
     document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
   }
 
-  onSettingChanged(name, value, oldValue) {
-    if (name === 'fontSize') {
+  onSettingChanged(id, value, oldValue) {
+    if (id === 'fontSize') {
       this.editor.style.fontSize = `${value}px`;
-    } else if (name === 'scale') {
+      this.syncStyles();
+    } else if (id === 'scale') {
       this.setScale(value);
-    } else if (name === 'darkmode') {
+    } else if (id === 'darkmode') {
       Game.setColors(value);
-    } else if (name === 'backgroundColor') {
+    } else if (id === 'backgroundColor') {
       document.documentElement.style.setProperty('--background-color', value);
-    } else if (name === 'highlightColor') {
+    } else if (id === 'fontColor') {
+      document.documentElement.style.setProperty('--text-color', value);
+    } else if (id === 'highlightColor') {
       document.documentElement.style.setProperty('--highlight', value + '60');
       this.updateHighlights();
-    } else if (name === 'highlight' || name === 'everyN') {
+    } else if (id === 'highlight') {
+      this.updateHighlights();
+    } else if (id === 'skipN') {
+      this.applyEditorToMirror();
       this.updateHighlights();
     }
   }
@@ -100,6 +110,9 @@ export class Game {
     this.onSettingChanged('scale', this.params.scale, null);
     this.onSettingChanged('fontSize', this.params.fontSize, null);
     this.onSettingChanged('darkmode', this.params.darkmode, null);
+    this.onSettingChanged('backgroundColor', this.params.backgroundColor, null);
+    this.onSettingChanged('fontColor', this.params.fontColor, null);
+    this.onSettingChanged('highlightColor', this.params.highlightColor, null);
   }
 
   // This should return the height that defines "100%", the
@@ -125,6 +138,11 @@ export class Game {
     }
   }
 
+  syncStyles() {
+    this.syncOverlayStyle();
+    this.syncMirrorStyle();
+  }
+
   syncOverlayStyle() {
     const overlay = document.getElementById('overlay');
     if (overlay && this.editor) {
@@ -148,6 +166,23 @@ export class Game {
     }
   }
 
+  syncMirrorStyle() {
+    // sync the style of the mirror to match the RHS editor
+    const mirror = document.getElementById('editor-mirror');
+    if (mirror && this.editor) {
+      const computedStyle = window.getComputedStyle(this.editor);
+      mirror.style.fontFamily = computedStyle.fontFamily;
+      mirror.style.fontSize = computedStyle.fontSize;
+      mirror.style.lineHeight = computedStyle.lineHeight;
+      mirror.style.padding = computedStyle.padding;
+      mirror.style.border = computedStyle.border;
+      mirror.style.boxSizing = computedStyle.boxSizing;
+      mirror.style.textAlign = computedStyle.textAlign;
+      mirror.style.letterSpacing = computedStyle.letterSpacing;
+      mirror.style.wordSpacing = computedStyle.wordSpacing;
+    }
+  }
+
   onNewToken(token) {
     const words = iterateContentEditableWords(this.editor);
     const match = getMatchingToken(words, token);
@@ -158,18 +193,26 @@ export class Game {
   }
 
   getNthWords() {
-    const everyN = this.params.everyN;
+    const skipN = this.params.skipN;
     const words = iterateContentEditableWords(this.editor);
-    return words.filter((_, index) => index % everyN === 0);
+    return words.filter((_, index) => index % skipN === 0);
   }
 
   getMirrorText() {
     return this.getNthWords().map(w => w.text).join(' ');
   }
 
+  // if the user types in the mirror side, we want to transfer that back over
   applyMirrorToEditor(mirrorText) {
-    const nthWords = this.getNthWords();
+    let nthWords = this.getNthWords();
     const mirrorWords = mirrorText.split(/\s+/).filter(w => w.length > 0);
+
+    if (mirrorWords.length > nthWords.length) {
+      const extra = mirrorWords.length - nthWords.length;
+      const filler = Array(extra * this.params.skipN).fill(this.params.fillerWord).join(' ');
+      this.editor.textContent += ' ' + filler;
+      nthWords = this.getNthWords();
+    }
 
     // Walk the text nodes and replace each Nth word at its exact position
     for (let i = nthWords.length - 1; i >= 0; i--) {
@@ -188,12 +231,16 @@ export class Game {
     }
   }
 
-  onNewKeystroke(keystroke) {
-    if (this._mirrorEditing) return;
+  applyEditorToMirror() {
     const mirror = document.getElementById('editor-mirror');
     if (mirror) {
       mirror.textContent = this.getMirrorText();
     }
+  }
+
+  onNewKeystroke(keystroke) {
+    if (this._mirrorEditing) return;
+    this.applyEditorToMirror();
     this.updateHighlights();
   }
 

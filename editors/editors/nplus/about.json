@@ -1,11 +1,12 @@
 {
-    "name": "N Plus",
-    "description": "This editor shows a copy of your text, keeping only every nth word. This would let you compose a kind of steganographic text within the original. I think of it as a playground where writing one text produces a second order text. The meaning of the second text can be played with, perhaps to alter the meaning of the original.",
+    "name": "Skip-Steganography",
+    "description": "A text editor with a mirror that shows only every Nth word of what you write. A bit of an homage to the Oulipo. You can write a surface text while simultaneously composing a steganographic message visible only in the mirror. The constraint/challenge is to make both texts readable — the full original and the hidden one woven through it at regular intervals.",
     "notes": "",
     "tags": {
-        "n+": {"version": "1"}
+        "n+": {"version": "1"},
+        "mirror": {"version": "2"}
     },
     "url": "nplus",
-    "image": "hall.png",
+    "image": "nplus.png",
     "date": "2026-04-28"
 }
