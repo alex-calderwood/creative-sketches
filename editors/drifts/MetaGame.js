@@ -14,6 +14,7 @@ export class MetaGame {
   constructor(projectId, projectName, params = {}) {
     this.projectId = projectId;
     this.projectName = projectName;
+    this.description = params.description || null;
     this.options = params;
     this.backLink = null;
     this.templateLoaded = false;
@@ -159,6 +160,7 @@ export class MetaGame {
     this.controls = new MetaGameControls({
       projectId: this.projectId,
       projectName: this.projectName || this.projectId,
+      description: this.description,
       game: this.game,
       save: this.save,
       documentId: this.documentId,

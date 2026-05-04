@@ -6,6 +6,7 @@ export class MetaGameControls {
   constructor(params = {}) {
     this.projectId = params.projectId || null;
     this.projectName = params.projectName || null;
+    this.description = params.description || null;
     this.backLink = params.backLink || null;
     this.game = params.game || null;
     this.save = params.save || null;
@@ -67,6 +68,9 @@ export class MetaGameControls {
       let subtitle = document.querySelector('.subtitle');
       if (subtitle) {
         subtitle.textContent = this.projectName;
+        if (this.description) {
+          subtitle.setAttribute('data-tooltip', this.description);
+        }
       }
       let backLink = document.getElementById('back-link');
       if (backLink) {

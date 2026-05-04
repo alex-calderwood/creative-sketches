@@ -95,6 +95,22 @@
 
   .subtitle {
     font-style: italic;
+    position: relative;
+  }
+
+  .subtitle[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    width: max-content;
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 1001;
+    margin-top: 5px;
+    font-style: normal;
+    pointer-events: none;
+    white-space: normal;
+    padding: 1.5em;
+    font-size: var(--ui-font-size);
   }
 
   .controls-wrapper {
