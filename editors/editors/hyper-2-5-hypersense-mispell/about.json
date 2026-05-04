@@ -1,6 +1,6 @@
 {
     "name": "Mispellings",
-    "description": "A mispelling of the hypersense editor",
+    "description": "This editor mispells your text in a performative way.",
     "notes": "",
     "tags": {
         "hyper": {"version": "7"},

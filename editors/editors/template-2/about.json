@@ -1,0 +1,11 @@
+{
+    "name": "Template 2",
+    "description": "This is a template for new editors. Soon, this will be open sourced, available to extend.",
+    "tags": {
+        "template": {"version": "1"}
+    },
+    "image": "template.png",
+    "url": "template-2",
+    "date": "2026-03-30",
+    "major": false
+}

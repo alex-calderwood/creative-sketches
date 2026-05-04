@@ -1,6 +1,6 @@
 {
-    "name": "Alternates Editor (Green)",
-    "description": "Hover over words to change them.",
+    "name": "Alternates Editor",
+    "description": "A continuation of the hypersense experiments; this text editor shows synonyms for every word you type as you hover over them.",
     "notes": "",
     "tags": {
         "hyper": {"version": "8"},

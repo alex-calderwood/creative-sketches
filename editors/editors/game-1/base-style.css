@@ -1,0 +1,296 @@
+:root {
+
+    --highlight: #ffffff;
+    --shadow-color: #e7e7e7;
+
+    --default-primary-color: #000000;
+    --default-primary-color: #000000;
+    --default-background-color: #ffffff;
+    --default-page-color: #ffffff;
+
+    --background-color: var(--default-background-color);
+    --page-color: var(--default-page-color);
+    --primary-color: var(--default-primary-color);
+
+    --correct-color: rgb(116, 235, 158);
+    --incorrect-color: rgb(235, 221, 116);
+  
+    /* --game-font: 'Goma'; */
+    --game-font: 'SquareAntiqua';
+  
+    --font: Arial, sans-serif;
+    --font-2: 'Garamond', 'EB Garamond', 'Adobe Garamond Pro', serif;
+    --editor-font-size: 16px;
+
+
+    --text-color: var(--default-text-color);
+    --text-color-2: #ffffff;
+
+    --button-color: var(--text-color);
+  
+    --highlight: rgba(255, 255, 255, 0.153);
+  
+    --accent-color: #ffffff;
+    --inline-color: #d09500;
+    --delete-color: #a8280e;
+    --border-color: #000000;
+    --modal-overlay-color: rgba(0, 0, 0, 0.5);
+    --primary-light: rgba(12, 11, 95, 0.05);
+    --accent-light: rgba(255, 246, 115, 0.3);
+    --primary-muted: color-mix(in srgb, var(--primary-color) 75%, transparent);
+}
+
+/* Light mode (default) */
+:root,
+:root[data-theme="light"] {
+    --background-color: #ffffff;
+    --text-color: var(--default-text-color);
+    --page-color: var(--default-page-color);
+    --primary-color: var(--default-primary-color);
+}
+
+/* Dark mode */
+:root[data-theme="dark"] {
+    --background-color: #000000;
+    --text-color: #ffffff;
+    --page-color: #594545;
+    --primary-color: #ffffff;
+}
+
+/* Default input and dropdown styles */
+input, select, .dropdown {
+  font-family: var(--font);
+  background-color: transparent;
+  border: 1px solid var(--primary-color);
+  color: var(--text-color);
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+input:hover, select:hover, .dropdown:hover {
+  background-color: var(--primary-light);
+}
+
+input:focus, select:focus, .dropdown:focus {
+  background-color: var(--background-color);
+  color: var(--accent-color);
+}
+
+input option, select option, .dropdown option {
+  background-color: var(--accent-color);
+  color: var(--background-color);
+}
+
+label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+}
+
+body {
+  font-family: var(--font);
+  background-color: var(--background-color);
+  background-size: 100% 30%;
+  background-position: center top;
+  background-attachment: scroll;
+  background-repeat: repeat-y;
+  margin: 0px;
+  min-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Subtitle styling */
+.subtitle {
+  margin-left: 15px;
+
+  color: var(--primary-muted);
+  font-style: italic;
+  
+  font-size: var(--ui-font-size);
+  font-weight: normal;
+  font-family: var(--font);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.subtitle[data-tooltip]:hover::after {
+  background-color: var(--background-color);
+  color: var(--primary-color);
+  padding: 5px 10px;
+  font-size: 0.8em;
+  max-width: 300px;
+  border: 1px solid var(--background-color);
+  border-radius: var(--small-radius);
+}
+
+/* Control Icons */
+.control-icons {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5em;
+  z-index: 1500;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.control-icons.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.control-icon-row {
+  display: flex;
+  gap: 0.5em;
+  justify-content: center;
+}
+
+.control-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: var(--highlight);
+  border-radius: 0.375em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  color: var(--accent-color);
+}
+
+.control-icon svg {
+  stroke: var(--accent-color);
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.control-icon.spacebar {
+  width: 9rem;
+}
+
+.control-icon span {
+  font-family: var(--font-2);
+  font-size: var(--ui-font-size);
+  margin-top: 0.125em;
+}
+
+#editor-container {
+  position: relative;
+  height: 100vh;
+  aspect-ratio: 8.5/11;
+  width: auto;
+  margin: 4rem auto;
+  box-sizing: border-box;
+  border: 1.2px solid var(--text-color);
+}
+
+@media (max-width: 600px) {
+  #editor-container {
+    margin-top: 0;
+    border: none;
+  }
+}
+
+#editor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100%;
+  box-sizing: border-box;
+  background-color: var(--page-color);
+  color: var(--primary-color);
+  font-family: var(--game-font);
+  font-size: var(--editor-font-size);
+  padding: calc(100% / 8.5);
+  outline: none;
+  overflow: auto;
+}
+
+
+
+#overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 100;
+  /* padding: calc(100% / 8.5); */
+  box-sizing: border-box;
+}
+  
+#game-banner {
+  width: 100%;
+  height: 4vh;
+  min-height: 12px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+  font-family: var(--font);
+  background-color: var(--background-color);
+  color: var(--primary-color);
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+/* Override MetaGame default styles */
+.subtitle[data-tooltip]:hover::after {
+  background-color: var(--background-color);
+  color: var(--primary-color);
+  padding: 5px 10px;
+  font-size: 0.8em;
+  max-width: 300px;
+  border: 1px solid var(--primary-color);
+  border-radius: var(--small-radius);
+}
+
+/* Override MetaGame default styles */
+.prompt-container {
+  top: 0;
+  left: 0;
+  width: 75vw;
+  height: 10vh;
+  margin: 3vh auto;
+  width: 80vh;
+}
+
+#prompt-display {
+  text-align: left;
+  margin-top: 0px;
+  font-size: var(--ui-font-size);
+  color: var(--primary-color);
+}
+
+.move {
+  /* absolute means positioned to its nearest positioned ancestor */
+  position: absolute; 
+  font-family: var(--game-font);
+  pointer-events: none;
+  z-index: 1001;
+  width: var(--word-width);
+  height: var(--word-height);
+  font-size: var(--editor-font-size);
+  user-select: none;
+  -webkit-user-select: none;
+  color: var(--text-color);
+}

@@ -37,7 +37,7 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
             fontSize: 24,
 
 
-            hoverColor: 'rgb(207, 255, 179)',
+            hoverColor: 'rgb(174, 241, 136)',
             backgroundColor: '#FFFFFF',
 
             ...params 
