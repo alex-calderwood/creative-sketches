@@ -26,8 +26,8 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
 
             automaticSlide: true,
             // slideRate: 40,
-            slideRate: 4,
-            animationSpeedSec: 1,
+            slideRate: 10,
+            animationSpeedSec: 0.24,
             typingSlide: false,
 
             textMask: true,
@@ -35,6 +35,10 @@ export class HyperSkipPerformance extends SettingsMixin(class {}) {
             synonymSource: 'misspellings',
 
             fontSize: 24,
+
+
+            hoverColor: 'rgb(255, 236, 179)',
+            backgroundColor: '#FFFFFF',
 
             ...params 
         };
