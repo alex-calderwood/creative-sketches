@@ -24,7 +24,8 @@ function injectProjectInfoIntoHtml(html, project) {
   console.log('project', project);
   const replacements = {
     '$PROJECT_NAME': project.name,
-    '$PROJECT_ID': project.url
+    '$PROJECT_ID': project.url,
+    '$DESCRIPTION': project.description || ''
   };
   
   let result = html;
