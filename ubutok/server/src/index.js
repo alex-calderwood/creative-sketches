@@ -11,10 +11,10 @@ const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 
-// In production, serve built client under /avantok
+// In production, serve built client under /ubutok
 if (process.env.NODE_ENV === 'production') {
   const clientDist = path.join(__dirname, '../../client/dist');
-  app.use('/avantok', express.static(clientDist));
+  app.use('/ubutok', express.static(clientDist));
 }
 
 app.get('/api/next', async (req, res) => {
@@ -59,7 +59,7 @@ app.get('/api/categories', (_, res) => {
 });
 
 if (process.env.NODE_ENV === 'production') {
-  app.get('/avantok/*', (_, res) => {
+  app.get('/ubutok/*', (_, res) => {
     res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
   });
 }
