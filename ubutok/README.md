@@ -15,7 +15,7 @@ npm run install:all
 npm run dev
 ```
 
-Open **http://localhost:5173/avantok**
+Open **http://localhost:5173/ubutok**
 
 | Command | Description |
 |---|---|
@@ -31,7 +31,7 @@ ubutok/
   server/     Express scraper API (port 3001)
 ```
 
-The client proxies `/api` requests to the server. In development, Vite handles this. In production, Express serves the built client at `/avantok` and handles all routes itself.
+The client proxies `/api` requests to the server. In development, Vite handles this. In production, Express serves the built client at `/ubutok` and handles all routes itself.
 
 ## How it works
 
@@ -78,7 +78,7 @@ npm run dev:debug
 
 With `DEBUG=true`, failed scrapes surface as visible "failed" cards in the feed instead of being silently retried. Each card shows the category, reason for failure, and the list of URLs that were tried.
 
-A diagnostic page is available at **/avantok/debug** — pick a category, run a scrape, and inspect the step-by-step log.
+A diagnostic page is available at **/ubutok/debug** — pick a category, run a scrape, and inspect the step-by-step log.
 
 ## Production build
 
@@ -87,4 +87,4 @@ cd client && npm run build
 cd ../server && NODE_ENV=production node src/index.js
 ```
 
-The server will serve the built client at `/avantok`.
+The server will serve the built client at `/ubutok`.

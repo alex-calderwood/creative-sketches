@@ -6,7 +6,7 @@ import './App.css';
 
 export default function App() {
   return (
-    <BrowserRouter basename="/avantok">
+    <BrowserRouter basename="/ubutok">
       <Routes>
         <Route path="/" element={<FeedLayout />} />
         <Route path="/settings" element={<SettingsPage />} />
