@@ -10,3 +10,6 @@ services:
     volumes:
       - ../text/synonym_cache.db:/app/synonym_cache.db
       - ../text/word_cache:/app/word_cache
+
+  #     volumes:
+  # - /mnt/cache/appdata/creative-sketches/text:/app/text
