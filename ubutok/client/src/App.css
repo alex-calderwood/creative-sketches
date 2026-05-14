@@ -149,24 +149,10 @@
   gap: 24px;
 }
 
-.audio-waveform {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  height: 80px;
-}
-
-.audio-bar {
-  width: 4px;
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 2px;
-  animation: wave 1.2s ease-in-out infinite alternate;
-  height: 20%;
-}
-
-@keyframes wave {
-  0%   { height: 10%; opacity: 0.4; }
-  100% { height: 90%; opacity: 1; }
+.audio-spiral {
+  width: 280px;
+  height: 280px;
+  display: block;
 }
 
 .audio-track-title {
@@ -302,16 +288,26 @@
   max-width: 62ch;
 }
 
-.text-page-footer {
+.card-footer {
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 12px;
   padding: 12px 24px;
   border-top: 1px solid rgba(255,255,255,0.08);
+  position: relative;
+  z-index: 10;
 }
 
-.text-page-btn {
+.card-footer-nav {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.card-footer-btn {
   background: none;
   border: none;
   color: #fff;
@@ -322,23 +318,22 @@
   transition: opacity 0.15s;
 }
 
-.text-page-btn:disabled { opacity: 0.2; cursor: default; }
-.text-page-btn:not(:disabled):hover { opacity: 0.7; }
+.card-footer-btn:disabled { opacity: 0.2; cursor: default; }
+.card-footer-btn:not(:disabled):hover { opacity: 0.7; }
 
-.text-page-count {
+.card-footer-count {
   font-size: 0.75rem;
   color: rgba(255,255,255,0.4);
   font-variant-numeric: tabular-nums;
 }
 
-.text-page-source {
-  margin-left: auto;
+.card-footer-link {
   font-size: 0.75rem;
   color: rgba(255,255,255,0.3);
   text-decoration: none;
   transition: color 0.15s;
 }
-.text-page-source:hover { color: rgba(255,255,255,0.7); }
+.card-footer-link:hover { color: rgba(255,255,255,0.7); }
 
 /* PDF card */
 .pdf-card {
@@ -380,10 +375,9 @@
   height: 100%;
   scroll-snap-align: start;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
   background: #222;
 }
 
@@ -392,84 +386,6 @@
   max-width: 100%;
 }
 
-.pdf-footer {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 24px;
-  border-top: 1px solid rgba(255,255,255,0.08);
-}
-
-/* Debug failure card */
-.debug-fail-card {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 80px 24px 32px;
-  overflow-y: auto;
-  font-family: 'Menlo', 'Monaco', monospace;
-}
-
-.debug-fail-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.debug-fail-badge {
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  background: rgba(255,80,80,0.2);
-  border: 1px solid rgba(255,80,80,0.4);
-  color: #f88;
-  border-radius: 3px;
-  padding: 2px 7px;
-}
-
-.debug-fail-type {
-  font-size: 0.72rem;
-  color: rgba(255,255,255,0.3);
-}
-
-.debug-fail-reason {
-  font-size: 0.9rem;
-  color: #f88;
-}
-
-.debug-fail-index {
-  font-size: 0.72rem;
-  color: rgba(255,255,255,0.4);
-  word-break: break-all;
-  text-decoration: none;
-}
-.debug-fail-index:hover { color: #fff; }
-
-.debug-fail-tried-label {
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: rgba(255,255,255,0.3);
-  margin-top: 8px;
-}
-
-.debug-fail-tried {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.debug-fail-tried a {
-  font-size: 0.72rem;
-  color: rgba(255,255,255,0.5);
-  text-decoration: none;
-}
-.debug-fail-tried a:hover { color: #fff; }
 
 /* Image */
 .image-card {
@@ -577,7 +493,6 @@
   font-size: 0.8rem;
   line-height: 1.5;
   color: rgba(255,255,255,0.75);
-  white-space: pre-wrap;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -590,12 +505,19 @@
   display: block;
   overflow: visible;
   -webkit-line-clamp: unset;
-  white-space: pre-wrap;
 }
+
+.card-description a {
+  color: rgba(255,255,255,0.7);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.card-description a:hover { color: #fff; }
 
 .card-description-more {
   color: rgba(255,255,255,0.5);
   font-style: italic;
+  cursor: pointer;
 }
 
 .card-source-link {

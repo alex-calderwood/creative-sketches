@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import Hls from 'hls.js';
+import { getGetLost } from '../storage.js';
 
 export default function VideoCard({ item, isActive }) {
   const videoRef = useRef(null);
@@ -18,6 +19,15 @@ export default function VideoCard({ item, isActive }) {
       hls.attachMedia(video);
     } else {
       video.src = item.mediaUrl;
+    }
+
+    if (getGetLost()) {
+      const onMeta = () => {
+        if (video.duration && isFinite(video.duration)) {
+          video.currentTime = Math.random() * video.duration * 0.9;
+        }
+      };
+      video.addEventListener('loadedmetadata', onMeta, { once: true });
     }
 
     return () => {

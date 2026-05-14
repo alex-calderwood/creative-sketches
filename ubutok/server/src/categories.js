@@ -25,7 +25,7 @@ export const CATEGORIES = [
     label: 'Contemporary',
     base: 'https://ubuweb.com/contemp/',
     index: 'https://ubuweb.com/contemp/index.html',
-    mediaType: 'video',
+    mediaType: null,  // mixed: pdf, html, video
   },
   {
     key: 'vp',
