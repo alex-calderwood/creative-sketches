@@ -1,8 +1,11 @@
-import { useState, useRef, useEffect } from 'react';
+import { useRef } from 'react';
+import { useHorizontalPageNav } from '../hooks/useHorizontalPageNav.js';
+import { useVerticalWheelForward } from '../hooks/useVerticalWheelForward.js';
+import CardFooter from './CardFooter.jsx';
 
 const CHARS_PER_PAGE = 700;
 
-function paginate(title, text) {
+function paginate(text) {
   const paragraphs = text.split(/\n+/).map(p => p.trim()).filter(Boolean);
   const pages = [];
   let current = [];
@@ -18,44 +21,15 @@ function paginate(title, text) {
     }
   }
   if (current.length) pages.push(current);
-
-  // Put title on the first page
   return pages.length ? pages : [[]];
 }
 
 export default function TextCard({ item, isActive }) {
-  const pages = paginate(item.title, item.text || '');
-  const [pageIdx, setPageIdx] = useState(0);
+  const pages = paginate(item.text || '');
   const containerRef = useRef(null);
+  const { pageIdx, setPageIdx, onScroll } = useHorizontalPageNav(containerRef, pages.length, isActive, item.sourceUrl);
 
-  // Scroll to page when pageIdx changes
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    el.scrollTo({ left: pageIdx * el.clientWidth, behavior: 'smooth' });
-  }, [pageIdx]);
-
-  // Sync pageIdx from scroll (swipe / drag)
-  function onScroll() {
-    const el = containerRef.current;
-    if (!el) return;
-    const idx = Math.round(el.scrollLeft / el.clientWidth);
-    setPageIdx(idx);
-  }
-
-  // Keyboard nav when active
-  useEffect(() => {
-    if (!isActive) return;
-    function onKey(e) {
-      if (e.key === 'ArrowRight') setPageIdx(i => Math.min(i + 1, pages.length - 1));
-      if (e.key === 'ArrowLeft')  setPageIdx(i => Math.max(i - 1, 0));
-    }
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [isActive, pages.length]);
-
-  // Reset to page 0 when item changes
-  useEffect(() => { setPageIdx(0); }, [item.sourceUrl]);
+  useVerticalWheelForward(containerRef);
 
   return (
     <div className="text-card">
@@ -67,26 +41,13 @@ export default function TextCard({ item, isActive }) {
           </div>
         ))}
       </div>
-
-      <div className="text-page-footer">
-        <button
-          className="text-page-btn"
-          onClick={() => setPageIdx(i => Math.max(i - 1, 0))}
-          disabled={pageIdx === 0}
-        >←</button>
-        <span className="text-page-count">{pageIdx + 1} / {pages.length}</span>
-        <button
-          className="text-page-btn"
-          onClick={() => setPageIdx(i => Math.min(i + 1, pages.length - 1))}
-          disabled={pageIdx === pages.length - 1}
-        >→</button>
-        <a
-          href={item.sourceUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-page-source"
-        >UbuWeb ↗</a>
-      </div>
+      <CardFooter
+        pageIdx={pageIdx}
+        numPages={pages.length}
+        onPrev={() => setPageIdx(i => Math.max(i - 1, 0))}
+        onNext={() => setPageIdx(i => Math.min(i + 1, pages.length - 1))}
+        sourceUrl={item.sourceUrl}
+      />
     </div>
   );
 }

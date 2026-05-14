@@ -4,6 +4,7 @@
 const KEYS = {
   history: 'ubutok_history',
   enabledCategories: 'ubutok_enabled_categories',
+  getLost: 'ubutok_get_lost',
 };
 
 const MAX_HISTORY = 100;
@@ -47,4 +48,12 @@ export function getEnabledCategories() {
 
 export function setEnabledCategories(keys) {
   localStorage.setItem(KEYS.enabledCategories, JSON.stringify(keys));
+}
+
+export function getGetLost() {
+  return localStorage.getItem(KEYS.getLost) === 'true';
+}
+
+export function setGetLost(val) {
+  localStorage.setItem(KEYS.getLost, String(val));
 }

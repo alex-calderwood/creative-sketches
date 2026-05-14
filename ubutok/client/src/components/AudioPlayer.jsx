@@ -7,7 +7,7 @@ function formatTime(secs) {
   return `${m}:${String(s).padStart(2, '0')}`;
 }
 
-export default function AudioPlayer({ src, isActive }) {
+export default function AudioPlayer({ src, isActive, onMount, getLost }) {
   const audioRef = useRef(null);
   const [playing, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -33,12 +33,18 @@ export default function AudioPlayer({ src, isActive }) {
     const onTimeUpdate = () => { if (!dragging) setCurrentTime(audio.currentTime); };
     const onDurationChange = () => setDuration(audio.duration);
     const onEnded = () => setPlaying(false);
+    const onMeta = () => {
+      if (getLost && audio.duration && isFinite(audio.duration)) {
+        audio.currentTime = Math.random() * audio.duration * 0.9;
+      }
+    };
 
     audio.addEventListener('play', onPlay);
     audio.addEventListener('pause', onPause);
     audio.addEventListener('timeupdate', onTimeUpdate);
     audio.addEventListener('durationchange', onDurationChange);
     audio.addEventListener('ended', onEnded);
+    audio.addEventListener('loadedmetadata', onMeta, { once: true });
 
     return () => {
       audio.removeEventListener('play', onPlay);
@@ -80,7 +86,12 @@ export default function AudioPlayer({ src, isActive }) {
 
   return (
     <div className="audio-player-custom">
-      <audio ref={audioRef} src={src} preload="metadata" />
+      <audio
+        ref={el => { audioRef.current = el; onMount?.(el); }}
+        src={src}
+        crossOrigin="anonymous"
+        preload="metadata"
+      />
 
       <button className="ap-play" onClick={toggle} aria-label={playing ? 'Pause' : 'Play'}>
         {playing ? (

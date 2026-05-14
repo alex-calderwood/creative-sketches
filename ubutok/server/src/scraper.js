@@ -35,11 +35,12 @@ function resolveUrl(href, base) {
 
 function extractPageLinks(html, base) {
   const $ = cheerio.load(html);
+  const rootIndex = base.endsWith('/') ? base + 'index.html' : base + '/index.html';
   const links = new Set();
   $('a[href$=".html"]').each((_, el) => {
     const href = $(el).attr('href');
     const url = resolveUrl(href, base);
-    if (url && url.startsWith(base) && !url.includes('index.html')) {
+    if (url && url.startsWith(base) && url !== rootIndex) {
       links.add(url);
     }
   });
@@ -47,7 +48,8 @@ function extractPageLinks(html, base) {
 }
 
 function cleanTitle(raw) {
-  const s = raw.trim();
+  // Normalize spaced letters: "U B U W E B" → "UbuWeb"
+  const s = raw.trim().replace(/U\s+B\s+U\s+W\s+E\s+B/gi, 'UbuWeb');
   if (!s.toLowerCase().startsWith('ubuweb')) return s;
   const colonIdx = s.indexOf(': ');
   if (colonIdx !== -1) return s.slice(colonIdx + 2).trim();
@@ -58,6 +60,9 @@ function cleanTitle(raw) {
 
 function preserveLineBreaks($) {
   $('br').replaceWith('\n');
+  $('p, h1, h2, h3, h4, h5, h6, li, dt, dd, blockquote').each((_, el) => {
+    $(el).prepend('\n\n');
+  });
 }
 
 function normalizeWhitespace(text) {
@@ -67,20 +72,48 @@ function normalizeWhitespace(text) {
     .trim();
 }
 
-function extractDescription($) {
-  preserveLineBreaks($);
+function absolutifyLinks($el, sourceUrl, $) {
+  $el.find('a[href]').each((_, a) => {
+    const href = $(a).attr('href');
+    if (!href || href.startsWith('javascript:') || href === '#') {
+      $(a).replaceWith($(a).html() || '');
+      return;
+    }
+    const abs = resolveUrl(href, sourceUrl);
+    if (abs === sourceUrl) {
+      // Self-referential link — strip the anchor, keep text
+      $(a).replaceWith($(a).text() || '');
+      return;
+    }
+    if (abs) {
+      $(a).attr('href', abs);
+      $(a).attr('target', '_blank');
+      $(a).attr('rel', 'noopener noreferrer');
+    }
+  });
+}
 
+function extractDescription($, sourceUrl) {
   // Newer film pages use #ubudesc
-  const ubudesc = $('#ubudesc').text().trim();
-  if (ubudesc.length > 80) return normalizeWhitespace(ubudesc).slice(0, 3000);
+  const ubudesc = $('#ubudesc');
+  if (ubudesc.length && ubudesc.text().trim().length > 80) {
+    ubudesc.find('script, style, img').remove();
+    absolutifyLinks(ubudesc, sourceUrl, $);
+    return (ubudesc.html() || '').trim().slice(0, 5000);
+  }
 
   // Older pages: pick the td with the most text
-  let best = '';
+  let bestEl = null, bestLen = 0;
   $('td').each((_, el) => {
     const text = $(el).text().trim();
-    if (text.length > best.length) best = text;
+    if (text.length > bestLen) { bestLen = text.length; bestEl = el; }
   });
-  return normalizeWhitespace(best).slice(0, 3000);
+  if (!bestEl || bestLen < 80) return '';
+
+  const $el = $(bestEl);
+  $el.find('script, style, img, form').remove();
+  absolutifyLinks($el, sourceUrl, $);
+  return ($el.html() || '').trim().slice(0, 5000);
 }
 
 function extractVideo($, sourceUrl) {
@@ -96,21 +129,26 @@ function extractVideo($, sourceUrl) {
   return {
     type: 'video',
     title: cleanTitle($('title').text()),
-    description: extractDescription($),
+    description: extractDescription($, sourceUrl),
     mediaUrl: videoSrc.startsWith('http') ? videoSrc : 'https://ubuweb.com' + videoSrc,
     mp4Url,
     sourceUrl,
   };
 }
 
-function extractAudioDescription($) {
-  preserveLineBreaks($);
-  const bodyText = $('body').text();
-  const notesIdx = bodyText.search(/\bNOTES\b/);
-  if (notesIdx !== -1) {
-    return normalizeWhitespace(bodyText.slice(notesIdx + 5)).slice(0, 3000);
+function extractAudioDescription($, sourceUrl) {
+  // Find element containing NOTES section if present
+  let notesEl = null;
+  $('td, div').each((_, el) => {
+    if (/\bNOTES\b/.test($(el).text())) { notesEl = el; return false; }
+  });
+  if (notesEl) {
+    const $el = $(notesEl);
+    $el.find('script, style, img').remove();
+    absolutifyLinks($el, sourceUrl, $);
+    return ($el.html() || '').trim().slice(0, 5000);
   }
-  return extractDescription($);
+  return extractDescription($, sourceUrl);
 }
 
 function extractAudio($, sourceUrl) {
@@ -130,7 +168,7 @@ function extractAudio($, sourceUrl) {
     type: 'audio',
     title: cleanTitle($('title').text()),
     trackTitle: track.label,
-    description: extractAudioDescription($),
+    description: extractAudioDescription($, sourceUrl),
     mediaUrl: track.url,
     sourceUrl,
   };
@@ -150,7 +188,7 @@ function extractPdf($, sourceUrl) {
   return {
     type: 'pdf',
     title: cleanTitle($('title').text()),
-    description: extractDescription($),
+    description: extractDescription($, sourceUrl),
     pdfUrl: pdf.url,
     pdfLabel: pdf.label,
     allPdfs: links.map(l => ({ url: l.url, label: l.label })),
@@ -175,7 +213,10 @@ function extractText($, sourceUrl) {
   if (bestLen < 100) return null;
 
   const raw = $(bestEl).text();
-  const text = normalizeWhitespace(raw).slice(0, 8000);
+  const text = normalizeWhitespace(raw)
+    .replace(/U\s+B\s+U\s+W\s+E\s+B\s*(?:::[^\n]*)?\n*/gi, '')
+    .trim()
+    .slice(0, 8000);
 
   return {
     type: 'text',
@@ -205,7 +246,7 @@ function extractImage($, sourceUrl) {
   return {
     type: 'image',
     title: cleanTitle($('title').text()),
-    description: extractDescription($),
+    description: extractDescription($, sourceUrl),
     mediaUrl: imgs[0].url,
     allImages: imgs.slice(0, 12).map(i => i.url),
     sourceUrl,
@@ -219,45 +260,78 @@ async function tryExtractMedia(url, mediaType) {
     if (mediaType === 'video') return extractVideo($, url);
     if (mediaType === 'audio') return extractAudio($, url);
     if (mediaType === 'image') return extractImage($, url);
-    if (mediaType === 'text')  return extractText($, url);
+    if (mediaType === 'text')  return extractPdf($, url) || extractText($, url);
     if (mediaType === 'pdf')   return extractPdf($, url);
+    // 'rich': auto-detect but skip text/image — used for index pages
+    if (mediaType === 'rich')  return extractVideo($, url) || extractAudio($, url) || extractPdf($, url);
+    // null: full auto-detect
     return extractVideo($, url) || extractAudio($, url) || extractPdf($, url) || extractImage($, url) || extractText($, url);
-  } catch {
+  } catch (err) {
+    dbg(`  fetch failed for ${url}: ${err.message}`);
     return null;
   }
 }
 
 const DEBUG = process.env.DEBUG === 'true';
 
+function dbg(...args) {
+  if (DEBUG) console.log('[scraper]', ...args);
+}
+
 async function fetchFromCategory(category) {
   const { base, index, mediaType, key, label } = category;
   const tried = [];
 
+  dbg(`[${key}] fetching index ${index}`);
   const indexHtml = await fetchHtml(index);
   const artistPages = shuffle(extractPageLinks(indexHtml, base));
+  dbg(`[${key}] index has ${artistPages.length} artist pages`);
 
   // Flat index (e.g. cc): PDFs linked directly from the index page itself
   if (artistPages.length === 0) {
     tried.push(index);
+    dbg(`[${key}] flat index — trying direct extract`);
     const direct = await tryExtractMedia(index, mediaType);
+    dbg(`[${key}] direct extract: ${direct ? `FOUND ${direct.type}` : 'null'}`);
     if (direct) return { ...direct, category: key, categoryLabel: label };
   }
 
   for (const artistUrl of artistPages.slice(0, 10)) {
     tried.push(artistUrl);
-    const direct = await tryExtractMedia(artistUrl, mediaType);
-    if (direct) return { ...direct, category: key, categoryLabel: label };
+    dbg(`[${key}] trying artist page ${artistUrl}`);
 
-    const artistHtml = await fetchHtml(artistUrl).catch(() => null);
+    const isIndex = artistUrl.endsWith('/index.html');
+    // On index pages: try rich media (video/audio/pdf) but never text/image —
+    // index pages like johnson/index.html have text but we want their sub-pages instead.
+    const directType = isIndex && mediaType === null ? 'rich' : mediaType;
+
+    const direct = await tryExtractMedia(artistUrl, directType);
+    if (direct) {
+      dbg(`[${key}] FOUND ${direct.type} at artist page`);
+      return { ...direct, category: key, categoryLabel: label };
+    }
+
+    const artistHtml = await fetchHtml(artistUrl).catch(err => {
+      dbg(`[${key}] skipping ${artistUrl}: ${err.message}`);
+      return null;
+    });
     if (!artistHtml) continue;
 
     const workPages = shuffle(extractPageLinks(artistHtml, base));
+    dbg(`[${key}] artist has ${workPages.length} work pages`);
     for (const workUrl of workPages.slice(0, 5)) {
       tried.push(workUrl);
+      dbg(`[${key}]   trying work page ${workUrl}`);
       const result = await tryExtractMedia(workUrl, mediaType);
-      if (result) return { ...result, category: key, categoryLabel: label };
+      if (result) {
+        dbg(`[${key}] FOUND ${result.type} at work page`);
+        return { ...result, category: key, categoryLabel: label };
+      }
     }
+    dbg(`[${key}] no media in artist ${artistUrl}`);
   }
+
+  dbg(`[${key}] FAILED — no ${mediaType} in ${tried.length} pages`);
 
   if (DEBUG) {
     return {
@@ -301,72 +375,4 @@ export async function fetchRandomContent(categoryKey) {
   }
 
   throw new Error('Could not find media content after multiple attempts');
-}
-
-export async function debugScrape(categoryKey) {
-  const log = [];
-
-  const category = CATEGORIES.find(c => c.key === categoryKey);
-  if (!category) return { success: false, log: [{ step: 'error', msg: `Unknown category: ${categoryKey}` }] };
-
-  log.push({ step: 'category', key: category.key, label: category.label, mediaType: category.mediaType, index: category.index });
-
-  let indexPages;
-  try {
-    const indexHtml = await fetchHtml(category.index);
-    indexPages = extractPageLinks(indexHtml, category.base);
-    log.push({ step: 'index', url: category.index, pagesFound: indexPages.length, sample: indexPages.slice(0, 8) });
-  } catch (err) {
-    log.push({ step: 'error', msg: `Failed to fetch index: ${err.message}` });
-    return { success: false, log };
-  }
-
-  const sampled = shuffle([...indexPages]).slice(0, 6);
-
-  for (const pageUrl of sampled) {
-    const pageEntry = { step: 'page', url: pageUrl };
-    try {
-      const html = await fetchHtml(pageUrl);
-      const $ = cheerio.load(html);
-
-      const videoSrc = $('video source').first().attr('src') || null;
-      const mp3Count = $('a[href$=".mp3"]').length;
-      const pdfLinks = [];
-      $('a[href$=".pdf"]').each((_, el) => pdfLinks.push($(el).attr('href')));
-      const imgCount = $('img').length;
-      const subPages = extractPageLinks(html, category.base);
-
-      pageEntry.title = $('title').text().trim();
-      pageEntry.found = { video: !!videoSrc, videoSrc, mp3s: mp3Count, pdfs: pdfLinks.slice(0, 4), images: imgCount };
-      pageEntry.subPages = subPages.slice(0, 6);
-
-      const media = await tryExtractMedia(pageUrl, category.mediaType);
-      if (media) {
-        pageEntry.extracted = { type: media.type, mediaUrl: media.mediaUrl };
-        log.push(pageEntry);
-        log.push({ step: 'success', result: { ...media, category: category.key, categoryLabel: category.label } });
-        return { success: true, result: { ...media, category: category.key, categoryLabel: category.label }, log };
-      }
-
-      // Try sub-pages
-      for (const subUrl of subPages.slice(0, 3)) {
-        const subMedia = await tryExtractMedia(subUrl, category.mediaType);
-        if (subMedia) {
-          pageEntry.extractedFrom = subUrl;
-          pageEntry.extracted = { type: subMedia.type, mediaUrl: subMedia.mediaUrl };
-          log.push(pageEntry);
-          log.push({ step: 'success', result: { ...subMedia, category: category.key, categoryLabel: category.label } });
-          return { success: true, result: { ...subMedia, category: category.key, categoryLabel: category.label }, log };
-        }
-      }
-
-      pageEntry.extracted = null;
-    } catch (err) {
-      pageEntry.error = err.message;
-    }
-    log.push(pageEntry);
-  }
-
-  log.push({ step: 'failed', msg: `No ${category.mediaType} media found in ${sampled.length} sampled pages` });
-  return { success: false, log };
 }
