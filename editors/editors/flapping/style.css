@@ -1,5 +1,7 @@
 #shader-area {
   position: relative;
+  height: calc(100vh - 4vh);
+  overflow: hidden;
 }
 
 #editor-container {
