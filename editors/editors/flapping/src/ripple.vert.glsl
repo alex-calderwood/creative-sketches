@@ -9,6 +9,8 @@ const float RIPPLE_SPEED       = 2.1;   // animation speed — lower = lazier br
 const float WARP_FOLD_STRENGTH = 0.9;   // how much the second warp layer folds into the first
 const float WARP2_TIME_SCALE   = 0.6;   // time scale for the second warp pass
 const float WARP2_INPUT_BLEND  = 0.4;   // how much warp1 feeds into warp2's input
+const float FLAP_WAVE_SPEED    = 0.45;  // speed of the main forward/back oscillation
+const float FLAP_WAVE_STRENGTH = 1.2;   // how much the main wave contributes vs domain warp
 
 vec2 domainWarp(vec2 pos, float t) {
   vec2 offset = vec2(
@@ -28,7 +30,9 @@ void main() {
   vec2 warp1 = domainWarp(pos.xy, uTime);
   vec2 warp2 = domainWarp(pos.xy + warp1 * WARP2_INPUT_BLEND, uTime * WARP2_TIME_SCALE);
 
-  float displacement = (warp1.x + warp2.y) * RIPPLE_STRENGTH;
+  // Main wave guarantees bidirectional oscillation; domain warp adds organic ripple on top.
+  float mainWave = sin(uTime * FLAP_WAVE_SPEED) * RIPPLE_STRENGTH * FLAP_WAVE_STRENGTH;
+  float displacement = mainWave + (warp1.x + warp2.y) * RIPPLE_STRENGTH * 0.4;
 
   // Left flaps freely, right is pinned — scale linearly across the page.
   // pos.x ranges -1..1; remap to 1..0 so left = full flap, right = none.
