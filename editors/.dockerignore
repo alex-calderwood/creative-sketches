@@ -1,7 +1,0 @@
-synonym_cache.db
-*.db
-node_modules
-npm-debug.log
-Dockerfile
-.dockerignore
-.git

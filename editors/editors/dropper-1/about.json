@@ -1,9 +1,0 @@
-{
-    "name": "Tetris Poetry",
-    "description": "This is my fisrt attempt at \"A tetris-like pass at creating a game that uses the detritus of language as a material.\" I don't think it is currently working",
-    "notes": ".",
-    "version": "1",
-    "series": ["game", "poetris"],
-    "url": "tetris-poetry",
-    "image": "poetris og.png"
-}

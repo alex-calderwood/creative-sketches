@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Watchlist Compare — Letterboxd</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-mark">◆</span>
+        <span class="logo-text">Watchlist Compare</span>
+      </div>
+      <span class="logo-byline">for Letterboxd</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="hero-eyebrow">The films you're both waiting to see</p>
+      <h1 class="hero-title">Who else<br><em>wants to watch it?</em></h1>
+      <p class="hero-body">
+        Enter two to four Letterboxd usernames and discover every film you're all waiting to see —
+        the ones you share, the ones you don't, and everything in between.
+      </p>
+    </section>
+
+    <section class="input-section">
+      <div class="user-inputs" id="userInputs"></div>
+      <div class="input-actions">
+        <button class="btn-add" id="addUser" type="button">+ Add user</button>
+        <button class="btn-compare" id="compareBtn" type="button">Compare</button>
+      </div>
+    </section>
+
+    <section class="results" id="results" aria-live="polite"></section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Pulls from public Letterboxd RSS feeds. Data belongs to Letterboxd and its users.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

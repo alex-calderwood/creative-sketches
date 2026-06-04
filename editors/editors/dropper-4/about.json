@@ -1,9 +1,0 @@
-{
-    "name": "Poetris Constrained",
-    "description": "A tetris-like pass at creating a game that uses the detritus of language as a material. This version considers a line complete when it satisfies all of the given constraints. The player must drop their own constraints, which are parts of speech.",
-    "notes": "",
-    "version": "4",
-    "series": ["game", "poetris"],
-    "url": "poetris-constrained",
-    "image": "poetris pos.png"
-}

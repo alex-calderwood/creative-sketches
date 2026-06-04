@@ -1,0 +1,14 @@
+{
+  "name": "letterboxd-compare",
+  "version": "1.0.0",
+  "description": "Compare Letterboxd watchlists across multiple users",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "rss-parser": "^3.13.0"
+  }
+}

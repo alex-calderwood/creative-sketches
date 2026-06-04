@@ -1,9 +1,0 @@
-{
-    "name": "Poetris",
-    "description": "A tetris-like pass at creating a game that uses the detritus of language as a material.",
-    "notes": "Added up arrow and changed the colors, made focused default, added instructions.",
-    "version": "3",
-    "series": ["game", "poetris"],
-    "url": "poetris",
-    "image": "poetris.png"
-}

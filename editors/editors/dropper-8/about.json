@@ -1,9 +1,0 @@
-{
-    "name": "Poetris Vertical",
-    "description": "A vertical orientation",
-    "notes": "",
-    "version": "8",
-    "series": ["game", "poetris"],
-    "url": "poetris-vertical-2",
-    "image": "dropper-7-eis.png"
-}

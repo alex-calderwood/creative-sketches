@@ -1,4 +1,0 @@
-
-class SmartReader extends Reader {
-   
-}

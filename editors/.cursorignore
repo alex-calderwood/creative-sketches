@@ -1,8 +1,0 @@
-# Add directories or file patterns to ignore during indexing (e.g. foo/ or *.csv)
-editors/geyser/
-editors/hyper.*
-editors/dropper.*
-editors/clock.*
-editors/refactor.*
-assets/corpora.*
-tag-descriptions.json

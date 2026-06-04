@@ -1,9 +1,0 @@
-{
-    "name": "Poetris EIS-Age Demo",
-    "description": "The version I presented to my lab group. Source texts include some EIS related texts",
-    "notes": "",
-    "version": "7",
-    "series": ["game", "poetris"],
-    "url": "poetris-eis-demo",
-    "major": false
-}
