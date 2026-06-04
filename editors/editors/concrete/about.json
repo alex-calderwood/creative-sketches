@@ -1,0 +1,7 @@
+{
+    "name": "Concrete Editor",
+    "description": "A very simple text editor for creating concrete poetry on a grid.",
+    "series": ["concrete"],
+    "version": "4",
+    "image": "thing.png"
+}

@@ -1,0 +1,10 @@
+{
+    "name": "Field",
+    "description": "A 2D grid branch of poetris",
+    "notes": "",
+    "version": "1",
+    "series": ["game", "field"],
+    "url": "field-1",
+    "image": "field/field-1.png",
+    "major": false
+}

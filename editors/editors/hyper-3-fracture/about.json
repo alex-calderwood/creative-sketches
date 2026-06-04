@@ -1,0 +1,13 @@
+{
+    "name": "Prism Fracture Editor",
+    "description": "View multiple versions of your text through a prism.",
+    "notes": "",
+    "tags": {
+        "hyper": {"version": "3"},
+        "fracture": {"version": "1"}
+    },
+    "url": "prism-fracture",
+    "image": "hyper.png",
+    "major": false,
+    "date": "2025-12-22"
+}

@@ -1,0 +1,10 @@
+{
+    "name": "Midi Experiment",
+    "description": "This one lets you play a word grid placement game using a MIDI keyboard. It's the first experiment where I try to come up with a sensical control scheme with a MIDI controller. I also added a wikipedia reader; the player can type in a wikipedia URL and the game will read the text from the page.",
+    "notes": "",
+    "version": "1",
+    "series": ["game", "instrument", "sound"],
+    "url": "instrument-1-nonsynth-revival",
+    "image": "instrument.png",
+    "major": true
+}

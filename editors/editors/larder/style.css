@@ -1,0 +1,298 @@
+body {
+  font-family: "Times New Roman", Times, serif;
+  background-color: #7b8eb5;
+  margin: 0px;
+}
+
+.prompt-container {
+  position:relative;
+  width: 100%;
+  top: 0px;
+  left: 0px;
+}
+
+.prompt.word {
+  width: 100%;
+  text-align: left;  /* MS Word 95 headers were typically left-aligned */
+  margin-top: 0px;
+  font-size: 12pt;
+  /* font-weight: bold; */
+  background-color: #c0c0c0;
+  color: #222;
+}
+
+.word {
+  box-sizing: border-box; /* compute border inside of box */
+  font-family: "Microsoft Sans Serif", "Segoe UI", "Arial", sans-serif;
+  background-color: #c0c0c0;  /* Classic Win95 gray */
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff; /* Classic Win95 beveled edge */
+  box-shadow: 1px 1px 0 0 #11045a;
+  color: #0c0b5f;
+  text-align: center;
+  align-content: center;
+}
+
+#editor-container {
+  position: relative;
+  border: 1px solid #8f8f8f;
+  background-color: white;
+  height: 60vh;
+  width: 90%;
+  margin: 5vh auto;
+  overflow: hidden;
+}
+
+#editor {
+  width: 100%;
+  height: 100%;
+  padding: 60px 60px;
+  box-sizing: border-box;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 12pt;
+  line-height: 24px;
+  outline: none;
+  overflow-y: auto;
+  background-color: transparent;
+  caret-color: black;
+  display: inline-block;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  box-shadow: 1px 1px 0 0 #11045a;
+  color: black;
+}
+
+#new-sentence-container {
+  width: 90%;
+  margin: 0 auto 5vh;
+  background-color: white;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  box-shadow: 1px 1px 0 0 #11045a;
+  box-sizing: border-box;
+  padding-top: 0;
+  position: relative;
+}
+
+#new-sentence-container #prompt {
+  background-color: #c0c0c0;
+  color: #222;
+  font-family: "Microsoft Sans Serif", "Segoe UI", "Arial", sans-serif;
+  font-weight: bold;
+  width: calc(100% + 4px);
+  display: block;
+  margin: -2px -2px 12px -2px; /* overlap container border */
+  padding: 12px 16px 10px 16px;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  box-shadow: 1px 1px 0 0 #11045a;
+  border-radius: 4px 4px 0 0;
+  text-align: left;
+  position: relative;
+  z-index: 1;
+}
+
+#new-sentence {
+  margin: 15px;
+}
+
+#new-sentence-input {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 12pt;
+}
+
+#new-sentence-input::placeholder {
+  color: #888;
+  font-size: 11pt;
+  font-style: normal;
+  font-family: "Microsoft Sans Serif", "Segoe UI", "Arial", sans-serif;
+  opacity: 1; /* for Firefox */
+}
+
+#new-sentence-button {
+  background-color: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  padding: 5px 15px;
+  font-family: "Microsoft Sans Serif", "Segoe UI", "Arial", sans-serif;
+  cursor: pointer;
+}
+
+#new-sentence-button:hover {
+  background-color: #0c0b5f;
+  color: white;
+}
+
+/* a bit of a violent shake */
+.shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-40px); }
+  20%, 40%, 60%, 80% { transform: translateX(40px); }
+}
+
+.spell-error {
+  text-decoration: wavy underline;
+  text-decoration-color: red;
+}
+
+.overlay {
+  position: absolute;
+  pointer-events: none;
+  z-index: 100;
+  top: 0;
+  left: 0;
+}
+
+.overlay-word {
+  position: absolute;
+  color: red;
+}
+
+#editor-container.complete .editor {
+  color: transparent;
+}
+
+.editor-container.complete .overlay-word {
+  color: transparent;
+}
+
+.correct-overlay-word {
+  position: absolute;
+  color: black;
+}
+
+.spell-error-mark {
+  position: absolute;
+  height: 6px;
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 4" height="4" width="20"><path d="M 0 3.5 Q 5 0.5, 10 3.5, 15 0.5, 20 3.5" stroke="red" fill="none"/></svg>');
+  background-repeat: repeat-x;
+}
+
+/* For browsers that don't support wavy text-decoration */
+@supports not (text-decoration-style: wavy) {
+  .spell-error {
+    background: linear-gradient(to bottom, transparent 60%, red 60%, red 65%, transparent 65%);
+    background-size: 6px 4px;
+    background-repeat: repeat-x;
+    background-position: bottom;
+  }
+}
+
+/* Styles for the misspellings counter - 90's style */
+#mistakes-container {
+  position: fixed;
+  bottom: 2.5%;
+  height: 5%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  margin: 0 auto;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.count {
+  width: 25%;
+  /* display: inline-block;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 5px 15px;
+  border: 2px solid #000;
+  background: #c0c0c0;
+  box-shadow: 3px 3px 0px #000;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #000; */
+}
+
+.word.emphasize {
+  color: red;
+}
+
+#editor-container.complete {
+  animation: take 6s ease-out forwards;
+}
+
+@keyframes take {
+  0% {
+    transform: translateY(0);
+  }
+  20% { /*2 s*/
+    transform: translateY(120%);
+  }
+  80% { /*2 s*/
+    transform: translateY(120%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* not necessary for things to work - don't allow pasting rich text */
+[contenteditable] {
+  -webkit-user-modify: read-write-plaintext-only;
+}
+
+#submit {
+  display: none;
+}
+
+#submit.complete {
+  display: block;
+}
+
+#submit:hover {
+  background-color: #0c0b5f;
+  cursor: pointer;
+  color: white;
+}
+
+.virtual-cursor {
+  color: #2176ff;
+  font-weight: 900;
+  background: #e0eaff;
+  border-radius: 3px;
+  border: 2px solid #2176ff;
+  animation: blink-cursor 1s steps(1) infinite;
+}
+
+@keyframes blink-cursor {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.preview-sentence {
+  /* No special color or background, just normal text */
+}
+
+.arrow-btn {
+  background-color: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  padding: 5px 15px;
+  font-family: "Microsoft Sans Serif", "Segoe UI", "Arial", sans-serif;
+  cursor: pointer;
+  margin-right: 2px;
+}
+
+.arrow-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.arrow-btn:hover:enabled {
+  background-color: #0c0b5f;
+  color: white;
+}

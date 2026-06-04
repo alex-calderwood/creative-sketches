@@ -1,0 +1,69 @@
+:root {
+    --background-color:   #e7e7e7;
+    --background-color-2:  #000000;
+    --highlight: #ffffff;
+    --shadow-color: #e7e7e7;
+  
+    --button-color: var(--text-color-1);
+  
+    /* --game-font: 'Goma'; */
+    --game-font: 'SquareAntiqua';
+  
+    --font: Arial, sans-serif;
+    --font-2: 'Garamond', 'EB Garamond', 'Adobe Garamond Pro', serif;
+  
+    --text-color-1: #000000;
+    --text-color-2: #ffffff;
+  
+    --highlight: rgba(255, 255, 255, 0.153);
+  
+    --primary-color: #000000;
+    --accent-color: #ffffff;
+    --inline-color: #d09500;
+    --delete-color: #a8280e;
+    --border-color: #000000;
+    --modal-overlay-color: rgba(0, 0, 0, 0.5);
+    --primary-light: rgba(12, 11, 95, 0.05);
+    --accent-light: rgba(255, 246, 115, 0.3);
+  }
+  
+/* Back link styling */
+.back-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: normal;
+    font-family: var(--font);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+}
+
+.back-link:hover {
+    border-bottom-color: var(--primary-color);
+}
+
+/* Text container styling */
+.text {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+/* Subtitle styling */
+.subtitle {
+    margin-left: 15px;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    font-family: var(--game-font);
+    /* text-shadow: 1px 1px 0px #fff; */
+}
+
+
+#editor-container {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}

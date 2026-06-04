@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spellchecker</title>
+  <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+
+  <div id="game-banner">
+    <div class="text">
+      <a href="/editors/" class="back-link">The Writer's Project</a>
+    </div>
+
+    <div class="option">
+      <select id="dictionary-select" class="dropdown">
+        <option value="scowl">English</option>
+        <option value="finnegan">Finnegan's Wake</option>
+      </select>
+      <label>
+        <input type="checkbox" id="reverse-checkbox">
+        <span>Anti-Dictionary</span>
+      </label>
+    </div>
+  </div>
+
+  <div id="mistake-list">
+    <!-- <div class="header">
+      Errors
+    </div> -->
+  </div>
+
+
+  <div class="prompt-container">
+    <!-- HEADER -->
+    <!-- <div id="prompt" class="prompt word">
+      Write a poem about a mistake you're glad you made.
+    </div> -->
+    <!-- END HEADER -->
+
+    <div id="editor-container" class="editor-container">
+      <div id="editor" class="editor" spellcheck="false" contenteditable="true"></div>
+      <div id="overlay" class="overlay"></div>
+    </div>
+</div>
+
+  <!-- <div id="mistakes-container">
+    <div id="mistakes" class="word count"></div>
+    <div id="word-count" class="word count"></div>
+    <div id="submit" class="word"><buttom onclick="onComplete()">Submit</buttom></div>
+  </div> -->
+  
+  <script src="textIterator.js"></script>
+  <script src="events.js"></script>
+  <script src="spellcheck.js"></script>
+  
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+    "name": "Hypersense Editor 2.2",
+    "description": "Using a different synonym source for hyperense (wordhoard). I also added saving and font changing to this version.",
+    "notes": "",
+    "tags": {
+        "hyper": {"version": "4"},
+        "drifts": {"version": "6"}
+    },
+    "url": "hyper-sense-3",
+    "image": "hyper.png",    
+    "date": "2025-12-22",
+    "major": false
+}

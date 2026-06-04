@@ -1,0 +1,16 @@
+
+.block {
+    font-family: var(--game-font);
+    color: var(--data-color);
+    text-align: center;
+    box-sizing: border-box;
+    position: relative;
+    font-variant-ligatures: none;
+    display: grid;
+    place-items: center;
+  }
+
+  .block-word {
+    width: fit-content;
+    transform-origin: center center; /* This will keep it centered when scaling */
+  }

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drifts</title>
+    <link rel="icon" href="/editors/assets/icons/pentip.png">
+    <link rel="preload" href="/editors/assets/fonts/Plus_Jakarta_Sans/PlusJakartaSans-VariableFont_wght.ttf" as="font" type="font/ttf">
+
+    <link rel="stylesheet" href="/editors/assets/css/index.css">
+    <script type="module" src="/editors/drifts/landing.js"></script>
+</head>
+<body>
+    <div class="landing-header">
+        <h1>Drifts</h1>
+    </div>
+
+    <div class="landing-container">
+        <!-- New Game Section -->
+        <div class="landing-section">
+            <button onclick="showNewGameModal()" class="primary-btn">New Game</button>
+        </div>
+
+        <!-- Existing Saves -->
+        <div class="landing-section" >
+                <h2>Continue Game</h2>
+                <div id="savesSection" style="display: none;">
+                <div id="saveInfo"></div>
+                <div class="button-group">
+                    <button onclick="continueGame()">Continue</button>
+                    <button onclick="downloadSave()">Download Save File</button>
+                </div>
+            </div>
+
+            <div id="loadSection">
+                <div id="saveInfo"></div>
+                <div class="button-group">
+                    <button onclick="loadSaveFile()">Load From Save File</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Button -->
+        <div class="landing-section">
+            <button onclick="showAbout()">About</button>
+        </div>
+    </div>
+
+    <!-- New Game Warning Modal -->
+    <div id="new-game-warning-modal" class="options-modal" style="display: none;">
+        <div class="options-content">
+            <h2>New Game</h2>
+            <p style="margin: 20px 0; font-size: 1.1em;">This will delete all progress. Would you like to download a backup before proceeding?</p>
+            <div class="warning-buttons">
+                <button onclick="proceedWithBackup()" class="backup-btn">Yes - download a backup and start a new game</button>
+                <button onclick="proceedWithoutBackup()" class="warning-btn">No - I will lose all progress</button>
+                <button onclick="closeNewGameWarning()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Drift Selection Modal -->
+    <div id="drift-selection-modal" class="options-modal" style="display: none;">
+        <div class="options-content">
+            <h2>Choose a Drift</h2>
+            <div class="new-game-section">
+                <div id="driftsOptions"></div>
+            </div>
+            <button onclick="closeDriftSelection()" class="close-options-btn">Cancel</button>
+        </div>
+    </div>
+
+    <!-- About Modal -->
+    <div id="about-modal" class="options-modal" style="display: none;">
+        <div class="options-content">
+            <h2>About Drifts</h2>
+            <p>Drifts is a creative writing game.</p>
+
+            <p>You can choose how to interpret the prompts it will provide to you. It works best when you come to it with a poetic disposition.</p>
+                
+            <p>It's your choice to approach the prompts however you like. Your writing may be altered by the various text editors that you encounter. The game works best when you 'write for' the changing medium and allow it to shape the drift you pursue.</p>
+                
+            <h2>Credits</h2>
+            <p><b>Created by</b> Alex Calderwood</p>
+            <p><b>Advised by</b> Noah Wardrip-Fruin and Michael Mateas.</p>
+            <p><b>Special Thanks</b> to members of The Expressive Intelligence Studio and the ongoing advice and feedback from Nate Laffan, Henry Zhou, Jack Kelly, Allen Riley, Samantha Gorman, Kyle Gonzolez, Mimi Rapoport, Celine Lafosse, Shi Johnson-Bey, Annika Berry, and Rachel Firpo.</p>
+            <button onclick="closeAbout()" class="close-options-btn">Close</button>
+        </div>
+    </div>
+
+    <!-- Hidden file input for loading saves -->
+    <input type="file" id="fileInput" accept=".json" style="display: none;">
+</body>
+</html>

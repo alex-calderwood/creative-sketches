@@ -1,0 +1,9 @@
+{
+    "name": "Poetris",
+    "description": "This version updated the options bar and might have changed the constraint strategy.",
+    "notes": "",
+    "version": "5",
+    "series": ["game", "poetris"],
+    "url": "poetris-3",
+    "image": "poetris 2.png"
+}

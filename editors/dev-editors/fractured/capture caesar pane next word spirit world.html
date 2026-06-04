@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: #f5f5f5;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .slider-group {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slider-group label {
+            min-width: 140px;
+        }
+
+        input[type="range"] {
+            width: 200px;
+        }
+
+        .text-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .text-layer {
+            position: absolute;
+            padding: 5%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .text-input {
+            background: none;
+            border: none;
+            font-family: monospace;
+            font-size: 20px;
+            font-weight: bold;
+            /* text-align: center; */
+            resize: none;
+            width: 80%;
+            height: 100%;
+            margin: 0;
+            padding: 10px;
+            outline: none;
+        }
+
+        .top-text {
+            /* color: #dc2626; */
+            color: #1a365d;
+        }
+
+        .bottom-text {
+            color: #1a365d;
+        }
+
+        /* Glass effect overlay */
+        .glass-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(1.5px);
+            background: rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+            outline: #1a365d;
+        }
+
+        /* Ensure the glass effect only applies to the top layer */
+        #topLayer {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <div class="slider-group">
+            <label>Left Top Point: </label>
+            <input type="range" id="leftTopX" min="0" max="100" value="8">
+            <span id="leftTopXValue">8%</span>
+        </div>
+        <div class="slider-group">
+            <label>Right Top Point: </label>
+            <input type="range" id="rightTopX" min="0" max="100" value="49">
+            <span id="rightTopXValue">49%</span>
+        </div>
+        <div class="slider-group">
+            <label>Bottom Point: </label>
+            <input type="range" id="bottomX" min="0" max="100" value="92">
+            <span id="bottomXValue">92%</span>
+        </div>
+    </div>
+
+    <div class="text-wrapper">
+        <div class="text-layer pane" id="topLayer">
+            <textarea class="text-input top-text"></textarea>
+            <div class="glass-overlay"></div>
+        </div>
+        <div class="text-layer" id="bottomLayer">
+            <textarea class="text-input bottom-text"></textarea>
+        </div>
+    </div>
+    <script>
+        const topText = document.querySelector('.top-text');
+        const bottomText = document.querySelector('.bottom-text');
+        const circleXSlider = document.getElementById('circleX');
+        const circleYSlider = document.getElementById('circleY');
+        const circleRadiusSlider = document.getElementById('circleRadius');
+        const circleXValue = document.getElementById('circleXValue');
+        const circleYValue = document.getElementById('circleYValue');
+        const circleRadiusValue = document.getElementById('circleRadiusValue');
+        const topLayer = document.getElementById('topLayer');
+        const bottomLayer = document.getElementById('bottomLayer');
+
+        let lastBottomValue = bottomText.value;
+        const wordHistory = {};
+        const wordMappings = {};
+
+        function updateCircle() {
+            const x = circleXSlider.value;
+            const y = circleYSlider.value;
+            const radius = circleRadiusSlider.value;
+
+            circleXValue.textContent = `${x}%`;
+            circleYValue.textContent = `${y}%`;
+            circleRadiusValue.textContent = `${radius}%`;
+
+            // Set clip-path for both layers
+            topLayer.style.clipPath = `circle(${radius}% at ${x}% ${y}%)`;
+            bottomLayer.style.clipPath = `circle(${radius}% at ${x}% ${y}%) invert`;
+        }
+
+        function checkForChanges() {
+            const currentBottomValue = bottomText.value;
+            if (currentBottomValue !== lastBottomValue) {
+                const currentWords = currentBottomValue.endsWith(' ') 
+                    ? currentBottomValue.split(/\s+/).filter(word => word.length > 0)
+                    : currentBottomValue.split(/\s+/).slice(0, -1).filter(word => word.length > 0)
+                 
+                currentWords.forEach(word => {
+                    const len = word.length;
+                    if (!wordHistory[len]) {
+                        wordHistory[len] = [];
+                    }
+                    
+                    if (!wordHistory[len].includes(word)) {
+                        wordHistory[len].push(word);
+                        if (!wordMappings[word]) {
+                            const historyLength = wordHistory[len].length;
+                            if (historyLength > 1) {
+                                const prevWord = wordHistory[len][historyLength - 2];
+                                wordMappings[word] = prevWord;
+                            } else {
+                                wordMappings[word] = word;
+                            }
+                        }
+                    }
+                });
+
+                const topWords = currentWords.map(word => {
+                    return wordMappings[word] || word;
+                });
+
+                topText.value = topWords.join(' ');
+                lastBottomValue = currentBottomValue;
+            }
+        }
+
+        setInterval(checkForChanges, 50);
+
+        circleXSlider.addEventListener('input', updateCircle);
+        circleYSlider.addEventListener('input', updateCircle);
+        circleRadiusSlider.addEventListener('input', updateCircle);
+
+        // Initial update
+        updateCircle();
+    </script> 
+</body>
+</html>

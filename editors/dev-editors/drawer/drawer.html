@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drawer Navigation</title>
+    <link rel="stylesheet" href="drawer.css">
+</head>
+<body>
+    <div class="drawer-layout">
+        <!-- Top Drawer -->
+        <div class="drawer top-drawer">
+            Top Drawer Content
+        </div>
+
+        <!-- Left Drawer -->
+        <div class="drawer left-drawer">
+            Left Drawer Content
+        </div>
+
+        <!-- Right Drawer -->
+        <div class="drawer right-drawer">
+            Right Drawer Content
+        </div>
+
+        <!-- Bottom Drawer -->
+        <div class="drawer bottom-drawer">
+            Bottom Drawer Content
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="drawer-content">
+            <button onclick="toggleDrawer('top')">Top</button>
+            <button onclick="toggleDrawer('left')">Left</button>
+            <button onclick="toggleDrawer('right')">Right</button>
+            <button onclick="toggleDrawer('bottom')">Bottom</button>
+            <div>
+                Main Content Area
+            </div>
+        </div>
+    </div>
+
+    <script src="drawer.js"></script>
+</body>
+</html>

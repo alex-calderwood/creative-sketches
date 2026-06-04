@@ -1,0 +1,11 @@
+{
+    "name": "Wall Reproduction Editor",
+    "description": "A very simple text editor for creating concrete poetry on a grid. Updated to use the directions narrativization.",
+    "tags": {
+        "concrete": {"version": "6"},
+        "directions": {"version": "3"}
+    },
+    "image": "reproduction.png",
+    "url": "concrete-wall",
+    "date": "2026-01-20"
+}
