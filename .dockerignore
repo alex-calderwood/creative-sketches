@@ -1,0 +1,31 @@
+# Build context for the editors image is this repo root (compose `context: ..`).
+# Docker only reads the .dockerignore at the context root, so it lives here (NOT
+# in editors/). Keep the context tiny: only editors/ and the word_cache
+# requirements file are actually COPYd by editors/Dockerfile.
+
+.git
+**/node_modules
+**/*.db
+npm-debug.log
+
+# Unrelated top-level projects — not part of the editors image.
+p5
+poems
+regression
+misc
+web-data
+letterboxd-compare
+instrument
+taper
+membr
+monads
+
+# Dev-only editor sandboxes (the Dockerfile copies editors/editors/, not this).
+editors/dev-editors
+
+# Large committed text data. The Dockerfile only needs word_cache/requirements.txt;
+# synonym_cache.db + word_cache are mounted as volumes at runtime, not built in.
+text/*
+!text/word_cache
+text/word_cache/*
+!text/word_cache/requirements.txt

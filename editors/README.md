@@ -37,6 +37,15 @@ First time setup - install Python dependencies:
 
 # Production
 
+## Deploy (push to the server)
+
+Push the `server` branch to the box's git remote (`luigigigi`):
+
+    git push luigigigi server
+
+Then on the server, rebuild and restart the Docker container (see Build / Run below).
+Note: there is no `production` branch — the deploy branch is `server`.
+
 ## Deploying synonym_cache.db
 
 `text/synonym_cache.db` is gitignored and must be copied to the server manually before building, placed at:

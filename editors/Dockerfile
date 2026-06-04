@@ -8,8 +8,8 @@ RUN apt-get update && apt-get install -y python3 python3-pip && rm -rf /var/lib/
 # Copy package files first for better caching
 COPY editors/package.json editors/package-lock.json ./
 
-# Install dependencies
-RUN npm install
+# Install production dependencies only (skip vite/vitest/jsdom dev tools)
+RUN npm install --omit=dev
 
 COPY editors/words/requirements.txt ./words/requirements.txt
 COPY text/word_cache/requirements.txt ./word_cache/requirements.txt
@@ -18,6 +18,7 @@ RUN pip3 install --break-system-packages -r words/requirements.txt -r word_cache
 # Copy server script
 COPY editors/index.html ./
 COPY editors/server.js ./
+COPY editors/config/ ./config/
 
 # Copy the editors directory
 COPY editors/editors/ ./editors/
