@@ -51,8 +51,8 @@ docker build -t editors .
 
 docker run -d --name editors-container -p 3008:3008 --restart unless-stopped editors
 
-- 3001 (first number) = The port on your host machine (your computer)
-- 3001 (second number) = The port inside the Docker container
+- 3008 (first number) = The port on your host machine (your computer)
+- 3008 (second number) = The port inside the Docker container
 
 
 # URL base path

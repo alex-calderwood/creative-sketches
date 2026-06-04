@@ -6,7 +6,7 @@ save/load/progression system
 > for the metadata/document layout, channels, and the `getText`/`putText` API.
 >
 > **Admin / inspector** (with `npm run server`, port 3008):
-> `/editors/drifts/admin.html` — inspect the save (metadata, documents, all
+> `/writers-project/drifts/admin.html` (old `/editors/...` redirects here) — inspect the save (metadata, documents, all
 > fields) and edit it (unlock levels, delete docs, clear save).
 
 ## Table of Contents

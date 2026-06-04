@@ -39,11 +39,14 @@ app.use((req, res, next) => {
 // the INTERNAL_BASE prefix in their import specifiers) resolve correctly.
 function finalizeHtml(req, html) {
   const base = req.publicBase || CANONICAL_BASE;
-  let out = html.split(INTERNAL_BASE + '/').join(base + '/');
+  // Inject the runtime base + an import map. The import map remaps every
+  // `${INTERNAL_BASE}/` module specifier to the public base, so ES module imports
+  // (and JS using window.BASE_PATH) resolve correctly without rewriting the HTML.
+  // Any remaining absolute INTERNAL_BASE links (<link>/<script src>) ride the 301.
   const inject =
     `\n  <script>window.BASE_PATH=${JSON.stringify(base)};</script>` +
     `\n  <script type="importmap">{"imports":{"${INTERNAL_BASE}/":"${base}/"}}</script>\n`;
-  return out.replace(/<head([^>]*)>/i, (m) => m + inject);
+  return html.replace(/<head([^>]*)>/i, (m) => m + inject);
 }
 
 // Re-point a single stored absolute path (e.g. an image URL) onto the public base.
@@ -304,44 +307,34 @@ app.get('/editors', (req, res) => {
   });
 });
 
-// ELO Submission / cohesive narrative
-// admin.html is otherwise only reachable via the static mount below, so it would
-// skip finalizeHtml — give it an explicit handler like drifts-menu / landing.
-app.get('/editors/drifts/admin.html', (req, res) => {
-  const adminPath = path.join(__dirname, 'drifts', 'admin.html');
-  fs.readFile(adminPath, 'utf8', (err, data) => {
+// ELO Submission / cohesive narrative.
+// Drifts HTML *pages* must run through finalizeHtml (base rewrite + window.BASE_PATH
+// + import map), so serve them explicitly BEFORE the static mount. They're reachable
+// both by an extensionless route and by their .html filename (navigation uses both).
+// The static mount below then only covers non-page assets (Document.js, drifts.json,
+// the fetch-injected MetaGame*.html fragments, etc).
+function sendHtml(req, res, relPath) {
+  fs.readFile(path.join(__dirname, relPath), 'utf8', (err, data) => {
     if (err) {
-      console.error('Error reading admin page', err);
-      return res.status(500).send('Error loading admin page');
+      console.error('Error reading', relPath, err);
+      return res.status(500).send('Error loading page');
     }
     res.send(finalizeHtml(req, data));
   });
-});
+}
+
+const driftsPages = {
+  '/editors/drifts': 'drifts/drifts-menu.html',
+  '/editors/drifts/drifts-menu.html': 'drifts/drifts-menu.html',
+  '/editors/new-drift': 'drifts/landing.html',
+  '/editors/drifts/landing.html': 'drifts/landing.html',
+  '/editors/drifts/admin.html': 'drifts/admin.html',
+};
+for (const [route, file] of Object.entries(driftsPages)) {
+  app.get(route, (req, res) => sendHtml(req, res, file));
+}
 
 app.use('/editors/drifts', serveStatic(path.join(__dirname, 'drifts')));
-
-app.get('/editors/drifts', (req, res) => {
-  const driftsPath = path.join(__dirname, 'drifts', 'drifts-menu.html');
-  fs.readFile(driftsPath, 'utf8', (err, data) => {
-    if (err) {
-      console.error('Error reading drift landing page', err);
-      return res.status(500).send('Error loading drifts page');
-    }
-    res.send(finalizeHtml(req, data));
-  });
-});
-
-app.get('/editors/new-drift', (req, res) => {
-  const landingPath = path.join(__dirname, 'drifts', 'landing.html');
-  fs.readFile(landingPath, 'utf8', (err, data) => {
-    if (err) {
-      console.error('Error reading landing page', err);
-      return res.status(500).send('Error loading landing page');
-    }
-    res.send(finalizeHtml(req, data));
-  });
-});
-
 
 app.use('/editors/vault', serveStatic(path.join(__dirname, 'vault')));
 

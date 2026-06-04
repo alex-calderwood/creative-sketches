@@ -76,7 +76,7 @@ drifts.json declares queries inline, e.g. a prompt that quotes prior work:
 
 ## Admin / inspector (run `npm run server`, port 3008)
 
-`http://localhost:3008/editors/drifts/admin.html`
+`http://localhost:3008/writers-project/drifts/admin.html`  (the old `/editors/...` URL still works — it redirects here)
 
 One page, both jobs:
 - **Inspect** — metadata, every document grouped by drift → level (chosen marked),
