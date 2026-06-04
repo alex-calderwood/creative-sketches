@@ -29,15 +29,9 @@ export class Game {
     // Setup grid click handler
     this.attachGridClickHandler();
     
-    // Load content from save if available
-    if (this.save && this.documentId) {
-      const document = this.save.getDocument(this.documentId);
-      if (document) {
-        const content = document.getField('content');
-        if (content) {
-          this.loadState(content);
-        }
-      }
+    // MetaGame passes the saved document state (or level seed) as initialState.
+    if (options.initialState) {
+      this.loadState(options.initialState);
     }
     
     this.initialized = true;
@@ -115,11 +109,10 @@ export class Game {
    * Load state into the editor
    * @param {string} stateJson - JSON string of saved state
    */
-  loadState(stateJson) {
-    if (!this.grid) return;
-    
+  loadState(state) {
+    if (!this.grid || !state) return;
+
     try {
-      const state = JSON.parse(stateJson);
       const elementsData = state.elements;
       
       if (!elementsData) {

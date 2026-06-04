@@ -58,7 +58,35 @@ export class MetaGameControls {
     await this.loadInstructions();
 
     this.attachEventListeners();
+    this.setupEditableTitle();
     this.updateLastSavedDisplay();
+  }
+
+  // Make the document name in the banner click-to-edit.
+  setupEditableTitle() {
+    const el = document.getElementById('document-id');
+    if (!el || el.dataset.editableBound) return;
+    el.dataset.editableBound = '1';
+    el.contentEditable = 'true';
+    el.setAttribute('title', 'Click to rename');
+    el.style.cursor = 'text';
+
+    const commit = () => {
+      if (!this.save || !this.documentId) return;
+      const doc = this.save.getDocument(this.documentId);
+      if (!doc) return;
+      const newTitle = el.textContent.trim() || 'Untitled';
+      doc.setField('title', newTitle);
+      this.save.setMetadata('dateModified', new Date().toISOString());
+      this.save.saveToLocalStorage();
+      this.updateLastSavedDisplay();
+    };
+
+    el.addEventListener('blur', commit);
+    el.addEventListener('keydown', (e) => {
+      e.stopPropagation(); // don't let the editor's shortcuts swallow typing
+      if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
+    });
   }
 
   render() {
@@ -153,6 +181,16 @@ export class MetaGameControls {
   async handleSave() {
     if (!this.game || !this.save || !this.documentId) return;
 
+    // Ask for a name the first time an untitled document is saved.
+    const doc = this.save.getDocument(this.documentId);
+    const currentTitle = doc?.getField('title');
+    if (doc && (!currentTitle || currentTitle === 'Untitled')) {
+      const name = await this.promptDocumentName();
+      if (name) {
+        doc.setField('title', name);
+      }
+    }
+
     const state = this.game.saveState();
     if (!state) return;
 
@@ -163,6 +201,32 @@ export class MetaGameControls {
     if (this.onSave) {
       this.onSave();
     }
+  }
+
+  // Modal prompt for a document name. Resolves to the entered name, or null
+  // if cancelled / left blank.
+  promptDocumentName(defaultName = '') {
+    return new Promise(async (resolve) => {
+      const modal = new Modal(
+        'name-modal',
+        '<h1>Name this document</h1><input id="doc-name-input" type="text" class="setting-input" placeholder="Untitled" />',
+        [
+          { text: 'Skip', handler: () => { modal.destroy(); resolve(null); } },
+          { text: 'Save', class: 'continue-button', handler: () => {
+              const input = modal.element.querySelector('#doc-name-input');
+              const value = input ? input.value.trim() : '';
+              modal.destroy();
+              resolve(value || null);
+          } },
+        ],
+        false, // no close X — use Skip/Save
+      );
+      await modal.create();
+      const input = modal.element.querySelector('#doc-name-input');
+      if (input) input.value = defaultName;
+      modal.show();
+      if (input) input.focus();
+    });
   }
 
   handleDownloadSave() {
@@ -201,11 +265,13 @@ export class MetaGameControls {
     e.target.value = '';
   }
 
-  showDocumentSelector(loadedSave) {
-    const documents = loadedSave.getAllDocuments();
-    
+  async showDocumentSelector(loadedSave) {
+    // Only show documents that belong to the current editor.
+    const documents = loadedSave.getAllDocuments()
+      .filter(doc => doc.getField('sourceEditor') === this.projectId);
+
     if (documents.length === 0) {
-      alert('No documents found in save file');
+      alert('No documents for this editor in the save');
       return;
     }
 
@@ -216,56 +282,47 @@ export class MetaGameControls {
       return new Date(bTime) - new Date(aTime);
     });
 
-    // Create modal
-    const modal = document.createElement('div');
-    modal.className = 'document-selector-modal';
-    
-    const content = document.createElement('div');
-    content.className = 'document-selector-content';
-    
-    const title = document.createElement('div');
-    title.textContent = 'Select a document';
-    content.appendChild(title);
-    
+    const modal = new Modal('document-selector', '<h1>Select a document</h1>', [
+      { text: 'Cancel', handler: () => modal.destroy() },
+    ]);
+    await modal.create();
+
+    // Close X removes the modal entirely (not just hide) so re-opening is clean.
+    const closeX = modal.element.querySelector('.modal-close-x');
+    if (closeX) closeX.addEventListener('click', () => modal.destroy());
+
+    const contentEl = modal.element.querySelector('.modal-content');
     documents.forEach(doc => {
       const item = document.createElement('div');
       item.className = 'document-list-item';
-      
-      const docId = document.createElement('div');
-      docId.className = 'doc-id';
-      docId.textContent = doc.id;
-      
+
+      const docTitle = document.createElement('div');
+      docTitle.className = 'doc-id';
+      docTitle.textContent = doc.getField('title') || doc.id;
+
       const docCreated = document.createElement('div');
       docCreated.className = 'doc-created';
-      const createdAt = doc.getField('createdAt');
-      if (createdAt) {
-        docCreated.textContent = `Created: ${new Date(createdAt).toLocaleString()}`;
-      }
-      
-      item.appendChild(docId);
+      const when = doc.getField('lastModified') || doc.getField('createdAt');
+      if (when) docCreated.textContent = `Modified: ${new Date(when).toLocaleString()}`;
+
+      item.appendChild(docTitle);
       item.appendChild(docCreated);
       item.addEventListener('click', () => {
         this.loadSaveWithDocument(loadedSave, doc.id);
-        modal.remove();
+        modal.destroy();
       });
-      
-      content.appendChild(item);
+      contentEl.appendChild(item);
     });
-    
-    const cancelBtn = document.createElement('button');
-    cancelBtn.className = 'control-btn cancel-btn';
-    cancelBtn.textContent = 'Cancel';
-    cancelBtn.addEventListener('click', () => modal.remove());
-    content.appendChild(cancelBtn);
-    
-    modal.appendChild(content);
-    document.body.appendChild(modal);
+
+    modal.show();
   }
 
   loadSaveWithDocument(save, documentId) {
+    // Select the chosen document so MetaGame loads it on refresh.
+    save.setMetadata('selectedDocumentId', documentId);
     save.setMetadata('dateModified', new Date().toISOString());
     save.saveToLocalStorage();
-    
+
     // Refresh to load the selected document
     window.location.reload();
   }

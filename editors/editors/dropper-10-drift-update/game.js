@@ -1,4 +1,5 @@
 import { DropperPerformance } from './DropperPerformance.js';
+import { getText, joinText } from '/editors/drifts/ContentQuery.js';
 // import { CustomTextCorpus } from '/editors/vault/corpus/CustomTextCorpus.js'
 
 export class Game {
@@ -13,35 +14,32 @@ export class Game {
     this.level = options?.level;
     this.driftName = options?.driftName;
 
-    let initialState = null;
-    if (options.documentId) {
-      let doc = this.save.getDocument(this.documentId);
-      let content = doc?.getField('content');
-      initialState = content ? JSON.parse(content) : null;
-    }
+    // MetaGame passes the saved document state (or level seed) as initialState.
+    const initialState = options.initialState ?? null;
 
-    let getEdits = () => {
-      let edits = this.save?.getEdits({driftName: this.driftName});
-      if (!edits) {
-        return null;
-      }
-
-      return edits.map(edit => edit.text).join(' ');
-    }
-
+    // Drift sources (interlace + the drift's edits) only apply when we're
+    // actually in a drift level. Standalone/mismatched editor → leave
+    // sourceTexts null so DropperPerformance falls back to corpusFile/default.
     let sourceTexts = null;
-    let edits = this.save != null ? getEdits() : [];
-    if (edits.length) {
-      sourceTexts = [
-        {
-          name: 'interlace',
-          text: this?.level?.sourceText,
-        },
-        {
-          name: 'mistake',
-          text: edits,
-        },
-      ]
+    if (this.level) {
+      // All edits made across this drift, falling back to the level's
+      // editsBackup when none exist (sandbox, or no spellcheck level played yet).
+      const editEntries = await getText(this.save, {
+        type: 'edits',
+        scope: 'drift',
+        filter: 'all',
+        fallback: this.level.editsBackup,
+      }, {
+        driftName: this.driftName,
+        progression: options?.progression || [],
+      });
+
+      // Only include sources that actually carry text.
+      const sources = [];
+      if (this.level.sourceText) sources.push({ name: 'interlace', text: this.level.sourceText });
+      const editsText = joinText(editEntries, ' ');
+      if (editsText) sources.push({ name: 'mistake', text: editsText });
+      if (sources.length) sourceTexts = sources;
     }
 
     this.performance = new DropperPerformance();

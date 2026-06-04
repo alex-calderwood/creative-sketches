@@ -254,33 +254,34 @@ export class DropperPerformance extends SettingsMixin(class {}) {
   }
 
   async initializeCorpora() {
-    let corpora = [];
-    
-    if (this.params.corpusOverride) {
-      let corpus = new CustomTextCorpus().setCustomText(this.params.corpusOverride);
-      corpora.push(corpus);
-      this.colorBy = 'pos';
-    } else if (this.params.sourceTexts) {
-      for (let sourceText of this.params.sourceTexts) {
-        console.log('sourceText', sourceText);
-        let corpus = sourceText.kind === 'corpusFile' ?
-          await new CustomTextCorpus().setTextFromFile(sourceText.text) :
-          new CustomTextCorpus().setCustomText(sourceText.text, sourceText.name);
-        if (corpus) { corpora.push(corpus); }
+    // Multiple named sources (e.g. interlace + mistake): one corpus each,
+    // colored by source (keep the 'source' default — don't set colorBy).
+    // corpusOverride still takes precedence if both are set.
+    if (this.params.sourceTexts && !this.params.corpusOverride) {
+      const corpora = [];
+      for (const src of this.params.sourceTexts) {
+        if (!src.text) continue; // skip empty sources — setCustomText(undefined) throws
+        const corpus = new CustomTextCorpus();
+        if (src.kind === 'corpusFile') await corpus.setTextFromFile(src.text);
+        else corpus.setCustomText(src.text, src.name);
+        corpora.push(corpus);
       }
+      if (corpora.length) return corpora;
+      // all sources were empty → fall through to the single-corpus default
+    }
+
+    // Single corpus, colored by part of speech.
+    const corpus = new CustomTextCorpus();
+    if (this.params.corpusOverride) {
+      corpus.setCustomText(this.params.corpusOverride);
     } else if (this.params.corpusFile) {
-      let corpus = new CustomTextCorpus();
       await corpus.setTextFromFile(this.params.corpusFile);
-      corpora.push(corpus);
-      this.colorBy = 'pos';
     } else {
-      let corpus = new CustomTextCorpus();
       await corpus.loadTextsFromJSON();
       await corpus.loadRandomText();
-      corpora.push(corpus);
-      this.colorBy = 'pos';
     }
-    return corpora;
+    this.colorBy = 'pos';
+    return [corpus];
   }
 
   onSettingChanged(name, value, oldValue) {

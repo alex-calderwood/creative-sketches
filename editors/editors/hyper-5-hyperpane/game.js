@@ -17,6 +17,11 @@ export class Game {
 
     this.performance = new FragmentPerformance(this.params);
     this.performance.initialize();
+
+    // MetaGame passes the saved document state (or level seed) as initialState.
+    if (this.params.initialState) {
+      this.loadState(this.params.initialState);
+    }
   }
 
   saveState() {

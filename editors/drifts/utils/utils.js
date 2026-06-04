@@ -1,4 +1,3 @@
-import { Document } from '/editors/drifts/Document.js'
 import { captureScreenshot } from './captureScreenshot.js';
 export { captureScreenshot };
 
@@ -111,48 +110,7 @@ export function getChosenDocumentForLevel(save, levelId) {
   return save.getDocument(chosenDocId);
 }
 
-export function getTextFromDocument(document) {
-  let text = Document.getDefaultContentTextField(document);
-  return text;
-}
-
-
-export function retrieveTextFromDrift(save, textQuery) {
-  if(!textQuery) {
-    console.error("Could not get text from query", textQuery)
-    return;
-  }
-
-  let isSString = typeof textQuery === "string" || textQuery instanceof String;
-  if (isSString) {
-    return textQuery;
-  }
-
-  if (!textQuery?.queryType) {
-    console.error("Could not retrieve text from query. No queryType:", textQuery);
-    return null;
-  }
-  
-  if (textQuery?.queryType == 'levelText') {
-    let fromLevel = textQuery?.fromLevel;
-    if (!fromLevel) {
-      console.error(`Retrieve from drift: fromLevel ${fromLevel} not found:`, textQuery)
-      return null;
-    }
-
-    let referenceDoc = getChosenDocumentForLevel(save, fromLevel);        
-    if (referenceDoc) {
-      let documentText = getTextFromDocument(referenceDoc);
-      let preface = textQuery?.preface != null ? textQuery?.preface + "" : "";
-      let suffix  = textQuery?.suffix != null  ? " " + textQuery?.suffix : "";
-      let text = `${preface}${documentText}${suffix}`
-      return text;
-    } else {
-      console.warn("Retrieve from drift: No reference document found for level", fromLevel, textQuery)
-      return;
-    }
-  }
-
-  console.error("Text query Type not supported:", textQuery.type, textQuery);
-  return null;
-}
+// retrieveTextFromDrift() and getTextFromDocument() were removed — text
+// retrieval now goes through ContentQuery.getText(). The legacy
+// { queryType: 'levelText', fromLevel } shape was migrated in drifts.json to
+// { type: 'content', scope: 'level', filter: 'chosen', target } queries.
