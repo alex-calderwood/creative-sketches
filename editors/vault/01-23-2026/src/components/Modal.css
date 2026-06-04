@@ -67,6 +67,28 @@
 
 }
 
+.modal-name-prompt {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+.modal-name-prompt label {
+    font-size: 0.9em;
+    opacity: 0.7;
+}
+
+.modal-name-prompt input {
+    background: var(--background-color);
+    border: 1px solid var(--text-color);
+    padding: 0.5em;
+    border-radius: 0.25em;
+    color: var(--text-color);
+    font-family: var(--font);
+    font-size: 16px;
+    outline: none;
+}
+
 .modal-buttons {
     display: flex;
     justify-content: flex-end;

@@ -68,7 +68,7 @@ export class MetaGameControls {
     if (!el || el.dataset.editableBound) return;
     el.dataset.editableBound = '1';
     el.contentEditable = 'true';
-    el.setAttribute('title', 'Click to rename');
+    el.setAttribute('data-tooltip', 'Document name — click to rename');
     el.style.cursor = 'text';
 
     const commit = () => {
@@ -103,7 +103,9 @@ export class MetaGameControls {
       let backLink = document.getElementById('back-link');
       if (backLink) {
         backLink.href = this.backLink.href;
-        backLink.textContent = this.backLink.text;
+        // Icon stays in the markup; the link's text becomes its hover tooltip.
+        backLink.setAttribute('data-tooltip', this.backLink.text);
+        backLink.setAttribute('aria-label', this.backLink.text);
       }
 
       if(this.save) {
@@ -209,7 +211,7 @@ export class MetaGameControls {
     return new Promise(async (resolve) => {
       const modal = new Modal(
         'name-modal',
-        '<h1>Name this document</h1><input id="doc-name-input" type="text" class="setting-input" placeholder="Untitled" />',
+        '<div class="modal-name-prompt"><label for="doc-name-input">File name</label><input id="doc-name-input" type="text" placeholder="Untitled" /></div>',
         [
           { text: 'Skip', handler: () => { modal.destroy(); resolve(null); } },
           { text: 'Save', class: 'continue-button', handler: () => {
@@ -348,7 +350,7 @@ export class MetaGameControls {
     if (documentIdElement && this.documentId) {
       const doc = this.save.getDocument(this.documentId);
       const title = doc?.getField('title') || this.documentId;
-      documentIdElement.textContent = ` ${title}`;
+      documentIdElement.textContent = title;
     }
   }
 

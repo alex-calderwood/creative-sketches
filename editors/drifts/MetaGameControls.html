@@ -81,16 +81,21 @@
     cursor: pointer;
     font-weight: normal;
     font-family: var(--font);
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.2s;
+    font-size: var(--ui-font-size-large);
+    line-height: 1;
+    opacity: 0.7;
+    transition: opacity 0.2s;
   }
 
   .back-link:hover {
-    border-bottom-color: var(--primary-color);
+    opacity: 1;
   }
 
   .nav-title {
     font-size: var(--ui-font-size);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
   }
 
   .subtitle {
@@ -111,6 +116,32 @@
     white-space: normal;
     padding: 1.5em;
     font-size: var(--ui-font-size);
+  }
+
+  #back-link[data-tooltip],
+  #document-id[data-tooltip] {
+    position: relative;
+  }
+
+  #back-link[data-tooltip]:hover::after,
+  #document-id[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    width: max-content;
+    max-width: 300px;
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 1001;
+    margin-top: 5px;
+    font-style: normal;
+    font-weight: normal;
+    pointer-events: none;
+    white-space: normal;
+    padding: 0.4em 0.6em;
+    font-size: 0.8em;
+    background-color: var(--background-color);
+    border: 1px solid var(--primary-color);
+    border-radius: var(--small-radius);
   }
 
   .controls-wrapper {
@@ -173,27 +204,29 @@
   }
 
   .document-list-item {
-    padding: 10px;
-    margin: 5px 0;
-    border: 1px solid var(--primary-color);
+    padding: 8px 10px;
+    border-radius: var(--small-radius);
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background-color 0.15s;
+  }
+
+  .document-list-item + .document-list-item {
+    border-top: 1px solid color-mix(in srgb, var(--text-color) 12%, transparent);
   }
 
   .document-list-item:hover {
-    background-color: var(--primary-color);
-    color: var(--button-color, white);
+    background-color: color-mix(in srgb, var(--primary-color) 12%, transparent);
   }
 
   .document-list-item .doc-id {
-    font-weight: bold;
+    font-weight: 600;
     font-size: var(--ui-font-size);
   }
 
   .document-list-item .doc-created {
-    font-size: var(--ui-font-size);
-    opacity: 0.7;
-    margin-top: 4px;
+    font-size: 0.8em;
+    opacity: 0.55;
+    margin-top: 2px;
   }
 
   .cancel-btn {
@@ -332,8 +365,23 @@
 
   }
 
-  .document-id {
+  .last-saved {
     display: none;
+  }
+
+  .controls-wrapper:hover .last-saved {
+    display: block;
+  }
+
+  .document-id {
+    font-weight: 500;
+  }
+
+  .document-id:not(:empty)::before {
+    content: "/";
+    opacity: 0.4;
+    font-weight: normal;
+    margin-right: 8px;
   }
 
   .doc-info {
@@ -366,7 +414,6 @@
     border-right: none;
   }
 
-  .controls-wrapper:hover .document-id,
   .controls-wrapper:hover .controls-buttons {
     display: flex;
   }
@@ -416,13 +463,13 @@
   <div id="banner-content">
     <button id="mobile-menu-close" class="control-btn">✕</button>
     <div class="nav-title text">
-      <a href="/editors/" id="back-link" class="back-link">The Writer's Project</a>
+      <a href="/editors/" id="back-link" class="back-link" title="The Writer's Project" aria-label="The Writer's Project">←</a>
       <span class="subtitle"></span>
+      <span id="document-id" class="doc-info document-id" data-tooltip="Document name"></span>
     </div>
     <div class="controls-wrapper">
     <div class="last-saved-info">
       <div id="last-saved" class="doc-info last-saved"></div>
-      <div id="document-id" class="doc-info document-id"></div>
     </div>
     <div class="controls-buttons">
       <button id="instructions-btn" class="control-btn">Instructions</button>
