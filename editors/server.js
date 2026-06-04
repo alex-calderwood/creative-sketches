@@ -89,8 +89,6 @@ function printStartupBanner(port, projectCount) {
   lines.push(`  ${gray('Drifts'.padEnd(8) + url('localhost') + '/new-drift')}`);
   lines.push(`  ${gray(`legacy ${LEGACY_BASES.join(', ')}  →  301  →  ${CANONICAL_BASE}`)}`);
   lines.push('');
-  lines.push(`  ${gray('· dev servers — not for production ·')}`);
-  lines.push('');
   console.log(lines.join('\n'));
 }
 
