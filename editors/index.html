@@ -53,40 +53,54 @@
         
         // State for selected tags
         const selectedTags = new Set();
-        
+
+        // Count how many editors (projects) carry each tag
+        const getEditorCountForTag = (tag) => {
+            return projects.filter(project => projectHasTag(project, tag)).length;
+        };
+
+        // For each tag, find the newest editor date among projects carrying it
+        const getNewestDateForTag = (tag) => {
+            let newest = null;
+            projects.forEach(project => {
+                if (!project.date || !projectHasTag(project, tag)) return;
+                const time = new Date(project.date).getTime();
+                if (isNaN(time)) return;
+                if (newest === null || time > newest) newest = time;
+            });
+            return newest;
+        };
+
+        // Sort tags so the tag with the newest editor shows first.
+        // Tags whose editors have no date fall back to alphabetical order, after dated tags.
+        const sortTagsByNewestEditor = (tags) => {
+            return Array.from(tags).sort((a, b) => {
+                const aDate = getNewestDateForTag(a);
+                const bDate = getNewestDateForTag(b);
+                if (aDate !== null && bDate !== null) return bDate - aDate;
+                if (aDate !== null) return -1;
+                if (bDate !== null) return 1;
+                return a.localeCompare(b);
+            });
+        };
+
         // Fetch tag descriptions and initialize
         let tagDescriptions = {};
         let sortedTags = [];
-        
+
         fetch('/api/tag-descriptions')
             .then(response => response.json())
             .then(descriptions => {
                 tagDescriptions = descriptions;
-                
-                // Sort tags: first by order in descriptions JSON, then alphabetically
-                const descriptionOrder = Object.keys(tagDescriptions);
-                sortedTags = Array.from(allTags).sort((a, b) => {
-                    const aIndex = descriptionOrder.indexOf(a);
-                    const bIndex = descriptionOrder.indexOf(b);
-                    
-                    // If both are in descriptions, use that order
-                    if (aIndex !== -1 && bIndex !== -1) {
-                        return aIndex - bIndex;
-                    }
-                    // If only one is in descriptions, it comes first
-                    if (aIndex !== -1) return -1;
-                    if (bIndex !== -1) return 1;
-                    // If neither is in descriptions, sort alphabetically
-                    return a.localeCompare(b);
-                });
-                
+                sortedTags = sortTagsByNewestEditor(allTags);
+
                 // Now create the tag filters
                 createTagFilters();
             })
             .catch(err => {
                 console.error('Error fetching tag descriptions:', err);
-                // Fallback to alphabetical sorting
-                sortedTags = Array.from(allTags).sort();
+                // Fallback to sorting by newest editor
+                sortedTags = sortTagsByNewestEditor(allTags);
                 createTagFilters();
             });
         
@@ -122,7 +136,7 @@
                     });
                     
                     const tagName = document.createElement('span');
-                    tagName.textContent = tag;
+                    tagName.textContent = `${tag} (${getEditorCountForTag(tag)})`;
                     
                     label.appendChild(checkbox);
                     label.appendChild(tagName);
