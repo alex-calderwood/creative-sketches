@@ -94,7 +94,7 @@ class Corpus {
 
     async setCorpusFromFile(filename) {
       this.source = filename;
-      const assetsFolder = '/editors/assets';
+      const assetsFolder = window.BASE_PATH + '/assets';
       try {
         const filePath = `${assetsFolder}/${filename}`;
         console.log('Loading corpus from:', filePath);

@@ -45,7 +45,7 @@ class SpellChecker {
     }
 
     fromSwerveOfShore() {
-      let finnegan = fetch("/editors/assets/corpora/finnegans_wake_raw_cleaned.txt")
+      let finnegan = fetch(window.BASE_PATH + "/assets/corpora/finnegans_wake_raw_cleaned.txt")
         .then(response => response.text())
         .then(text => this.updateVocabFromText(text));
       return finnegan;

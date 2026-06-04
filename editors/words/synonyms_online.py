@@ -35,6 +35,10 @@ def get_synonyms():
         return jsonify({'error': 'Lookup failed', 'message': str(e)}), 500
 
 if __name__ == '__main__':
+    import logging
+    import flask.cli
+    logging.getLogger('werkzeug').setLevel(logging.ERROR)  # hide request log + dev-server warning
+    flask.cli.show_server_banner = lambda *a, **k: None     # hide "Serving Flask app" banner
     port = 3019  # Different port from Node server
-    print(f"synonyms-online server at: http://localhost:{port}")
-    app.run(port=port, debug=True)
+    print(f"synonyms-online   http://localhost:{port}", flush=True)
+    app.run(port=port, debug=False)

@@ -140,7 +140,7 @@ async function loadLevels() {
             otherEditorsHTML = '<hr style="margin: 20px 0;">' + 
                 '<div style="opacity: 0.6; margin: 10px 20px;">Other Editors:</div>' +
                 otherProjects.map(project => 
-                    `<div class="project-nav"><a href="/editors/${project.url}/">${project.name}</a></div>`
+                    `<div class="project-nav"><a href=window.BASE_PATH + "/${project.url}/">${project.name}</a></div>`
                 ).join('');
         }
     }
@@ -159,7 +159,7 @@ async function getProgressionState(selectedDrift) {
     
     // Load drifts to map levels to editors
     try {
-        const driftsData = await Drifts.fromFile('/editors/drifts/drifts.json');
+        const driftsData = await Drifts.fromFile(window.BASE_PATH + '/drifts/drifts.json');
         const levelsInOrder = [];
         
         // Only process the selected drift
@@ -606,7 +606,7 @@ window.editDocument = function(documentId, editorUrl) {
 
     console.log('Edit document:', documentId, 'in editor:', editorUrl);
 
-    window.location.href = `/editors/${editorUrl}/`;
+    window.location.href = window.BASE_PATH + `/${editorUrl}/`;
 };
 
 /**
@@ -621,7 +621,7 @@ window.newDocumentForLevel = function(levelId, editorId, editorUrl) {
         save.setMetadata('dateModified', new Date().toISOString());
         save.saveToLocalStorage();
     }
-    window.location.href = `/editors/${editorUrl}/`;
+    window.location.href = window.BASE_PATH + `/${editorUrl}/`;
 };
 
 window.deleteDocument = function(documentId) {
@@ -705,7 +705,7 @@ window.closeOptionsMenu = function() {
 window.goToNewGame = function() {
 
     // Redirect to landing page to select a new drift
-    window.location.href = '/editors/drifts/landing.html';
+    window.location.href = window.BASE_PATH + '/drifts/landing.html';
 };
 
 window.clearStorage = function() {
@@ -716,7 +716,7 @@ window.clearStorage = function() {
     localStorage.removeItem('gameplaySave');
     
     // Redirect to landing page
-    window.location.href = '/editors/drifts/landing.html';
+    window.location.href = window.BASE_PATH + '/drifts/landing.html';
 };
 
 window.saveState = function() {
@@ -749,7 +749,7 @@ async function initialize() {
             updateStateDisplay();
         } else {
             // No save found, redirect to landing page without confirmation
-            window.location.href = '/editors/drifts/landing.html';
+            window.location.href = window.BASE_PATH + '/drifts/landing.html';
             return;
         }
         

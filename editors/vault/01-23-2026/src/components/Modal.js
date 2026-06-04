@@ -1,4 +1,4 @@
-const CSS_PATH = '/editors/vault/01-23-2026/src/components/Modal.css';
+const CSS_PATH = window.BASE_PATH + '/vault/01-23-2026/src/components/Modal.css';
 export class Modal {
     
     static templateHTML = null;

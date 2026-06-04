@@ -8,7 +8,7 @@
 export class ProjectsHelper {
   static async getProjects() {
     try {
-      const response = await fetch('/editors/api/projects');
+      const response = await fetch(window.BASE_PATH + '/api/projects');
       if (!response.ok) {
         throw new Error(`Failed to fetch projects: ${response.statusText}`);
       }
@@ -33,7 +33,7 @@ export class ProjectsHelper {
    */
   static async getProjectUrl(dirName) {
     const project = await this.getProjectByDir(dirName);
-    return project ? `/editors/${project.url}/` : null;
+    return project ? window.BASE_PATH + `/${project.url}/` : null;
   }
 
   /**

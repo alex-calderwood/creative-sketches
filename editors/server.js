@@ -3,12 +3,95 @@ const serveStatic = require('serve-static');
 const history = require('connect-history-api-fallback');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 const synonymsRouter = require('./words/synonym_routes');
+const { INTERNAL_BASE, CANONICAL_BASE, LEGACY_BASES, matchBase } = require('./config/paths');
 
 const app = express();
 const port = process.env.PORT || 3008;
 
-const IMAGE_URL_PATH = '/editors/assets/editor-images/'
+// --- Path-prefix handling (see config/paths.js) ------------------------------
+// The proxy forwards the full public path. For every request we:
+//   1. 301-redirect legacy prefixes to the canonical one (preserving subpath).
+//   2. Rewrite the canonical prefix down to INTERNAL_BASE so the existing
+//      `/editors/...` routes keep matching, and remember the public base on
+//      req.publicBase for use when serving HTML / building the import map.
+app.use((req, res, next) => {
+  const match = matchBase(req.path);
+  if (!match) {
+    // No recognized public prefix (e.g. "/", root "/assets"). Serve as-is;
+    // default the public base to canonical for any HTML we might emit.
+    req.publicBase = CANONICAL_BASE;
+    return next();
+  }
+  if (match.isLegacy && match.prefix !== CANONICAL_BASE) {
+    const rest = req.originalUrl.slice(match.prefix.length); // subpath + query
+    return res.redirect(301, CANONICAL_BASE + rest);
+  }
+  req.publicBase = match.prefix;
+  // Re-point routing at the stable internal base.
+  req.url = INTERNAL_BASE + req.url.slice(match.prefix.length);
+  next();
+});
+
+// Re-point internal absolute paths to the request's public base, and inject the
+// runtime base + an import map so externally-served ES modules (which still use
+// the INTERNAL_BASE prefix in their import specifiers) resolve correctly.
+function finalizeHtml(req, html) {
+  const base = req.publicBase || CANONICAL_BASE;
+  let out = html.split(INTERNAL_BASE + '/').join(base + '/');
+  const inject =
+    `\n  <script>window.BASE_PATH=${JSON.stringify(base)};</script>` +
+    `\n  <script type="importmap">{"imports":{"${INTERNAL_BASE}/":"${base}/"}}</script>\n`;
+  return out.replace(/<head([^>]*)>/i, (m) => m + inject);
+}
+
+// Re-point a single stored absolute path (e.g. an image URL) onto the public base.
+function rebase(req, p) {
+  const base = req.publicBase || CANONICAL_BASE;
+  return typeof p === 'string' && p.startsWith(INTERNAL_BASE + '/')
+    ? base + p.slice(INTERNAL_BASE.length)
+    : p;
+}
+
+// Find the machine's LAN IPv4 so the banner can print a phone-reachable URL.
+function lanAddress() {
+  for (const iface of Object.values(os.networkInterfaces())) {
+    for (const net of iface || []) {
+      if (net.family === 'IPv4' && !net.internal) return net.address;
+    }
+  }
+  return null;
+}
+
+// Pretty, scannable startup output: the obvious click-to-open dev URL first,
+// then the LAN URL for phone testing, then the API / drifts entry points.
+function printStartupBanner(port, projectCount) {
+  const bold = s => `\x1b[1m${s}\x1b[0m`;
+  const gray = s => `\x1b[38;5;250m${s}\x1b[0m`;
+  const cyan = s => `\x1b[36m${s}\x1b[0m`;
+  const url = host => `http://${host}:${port}${CANONICAL_BASE}`;
+  const lan = lanAddress();
+  const row = (label, value) => `  ${bold(label.padEnd(8))}${cyan(value)}`;
+
+  const lines = [
+    '',
+    `  ${bold("The Writer's Project")}   ${gray(`${projectCount} editors`)}`,
+    '',
+    row('Local', url('localhost')),
+  ];
+  if (lan) lines.push(row('Network', url(lan)));
+  lines.push('');
+  lines.push(`  ${gray('API'.padEnd(8) + url('localhost') + '/api')}`);
+  lines.push(`  ${gray('Drifts'.padEnd(8) + url('localhost') + '/new-drift')}`);
+  lines.push(`  ${gray(`legacy ${LEGACY_BASES.join(', ')}  →  301  →  ${CANONICAL_BASE}`)}`);
+  lines.push('');
+  lines.push(`  ${gray('· dev servers — not for production ·')}`);
+  lines.push('');
+  console.log(lines.join('\n'));
+}
+
+const IMAGE_URL_PATH = INTERNAL_BASE + '/assets/editor-images/'
 const IMAGE_FS_PATH = path.join(__dirname, 'assets/editor-images/')
 
 function escapeHtml(text) {
@@ -21,7 +104,6 @@ function escapeHtml(text) {
 }
 
 function injectProjectInfoIntoHtml(html, project) {
-  console.log('project', project);
   const replacements = {
     '$PROJECT_NAME': project.name,
     '$PROJECT_ID': project.url,
@@ -159,7 +241,7 @@ getProjects().then(projectList => {
           console.error('Error reading index.html:', err);
           return next();
         }
-        res.type('html').send(injectProjectInfoIntoHtml(html, project));
+        res.type('html').send(finalizeHtml(req, injectProjectInfoIntoHtml(html, project)));
       });
     });
     
@@ -181,25 +263,23 @@ getProjects().then(projectList => {
   // 404 handler - must be registered after project routers
   app.use((req, res) => {
     const notFoundPath = path.join(__dirname, '404.html');
-    if (req.path.startsWith('/editors/') && req.path !== '/editors/') {
-      const slug = req.path.replace('/editors/', '').replace(/\/$/, '');
-      const suggestions = findSimilarProjects(slug, projects);
-      fs.readFile(notFoundPath, 'utf8', (err, html) => {
-        if (err) return res.status(404).send('Not found');
-        const injected = html.replace(
-          'window.__404_DATA__ || { slug: \'\', suggestions: [] }',
-          JSON.stringify({ slug, suggestions })
-        );
-        res.status(404).type('html').send(injected);
-      });
-    } else {
-      res.status(404).sendFile(notFoundPath);
-    }
+    const underBase = req.path.startsWith(INTERNAL_BASE + '/') && req.path !== INTERNAL_BASE + '/';
+    const slug = underBase
+      ? req.path.slice((INTERNAL_BASE + '/').length).replace(/\/$/, '')
+      : '';
+    const suggestions = underBase ? findSimilarProjects(slug, projects) : [];
+    fs.readFile(notFoundPath, 'utf8', (err, html) => {
+      if (err) return res.status(404).send('Not found');
+      const injected = html.replace(
+        'window.__404_DATA__ || { slug: \'\', suggestions: [] }',
+        JSON.stringify({ slug, suggestions })
+      );
+      res.status(404).type('html').send(finalizeHtml(req, injected));
+    });
   });
 
-  app.listen(port, () => {
-    console.log(`Available projects: ${projects.map(p => p.name).join(', ')}`);
-    console.log(`Running at: http://localhost:${port}/editors`);
+  app.listen(port, '0.0.0.0', () => {
+    printStartupBanner(port, projects.length);
   });
 });
 
@@ -219,12 +299,25 @@ app.get('/editors', (req, res) => {
       'const projects = [];',
       `const projects = ${JSON.stringify(projects)};`
     );
-    
-    res.send(updatedHtml);
+
+    res.send(finalizeHtml(req, updatedHtml));
   });
 });
 
 // ELO Submission / cohesive narrative
+// admin.html is otherwise only reachable via the static mount below, so it would
+// skip finalizeHtml — give it an explicit handler like drifts-menu / landing.
+app.get('/editors/drifts/admin.html', (req, res) => {
+  const adminPath = path.join(__dirname, 'drifts', 'admin.html');
+  fs.readFile(adminPath, 'utf8', (err, data) => {
+    if (err) {
+      console.error('Error reading admin page', err);
+      return res.status(500).send('Error loading admin page');
+    }
+    res.send(finalizeHtml(req, data));
+  });
+});
+
 app.use('/editors/drifts', serveStatic(path.join(__dirname, 'drifts')));
 
 app.get('/editors/drifts', (req, res) => {
@@ -234,7 +327,7 @@ app.get('/editors/drifts', (req, res) => {
       console.error('Error reading drift landing page', err);
       return res.status(500).send('Error loading drifts page');
     }
-    res.send(data);
+    res.send(finalizeHtml(req, data));
   });
 });
 
@@ -245,7 +338,7 @@ app.get('/editors/new-drift', (req, res) => {
       console.error('Error reading landing page', err);
       return res.status(500).send('Error loading landing page');
     }
-    res.send(data);
+    res.send(finalizeHtml(req, data));
   });
 });
 
@@ -314,7 +407,7 @@ app.post('/editors/api/new-sentence', express.json(), (req, res) => {
 
 // GET endpoint to fetch all projects
 app.get('/editors/api/projects', (req, res) => {
-  res.json(projects);
+  res.json(projects.map(p => ({ ...p, image: rebase(req, p.image) })));
 });
 
 // GET endpoint to fetch tag descriptions

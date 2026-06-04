@@ -1,5 +1,5 @@
 export async function getSynonyms(word) {
-  const response = await fetch(`/editors/api/synonyms-wordnet/synonyms?word=${encodeURIComponent(word)}`);
+  const response = await fetch(window.BASE_PATH + `/api/synonyms-wordnet/synonyms?word=${encodeURIComponent(word)}`);
   const data = await response.json();
 
   if (data.error || !data.synonyms) {

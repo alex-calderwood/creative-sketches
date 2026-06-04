@@ -25,7 +25,7 @@ export class MetaGameControls {
     if (this.templateLoaded) return;
     
     try {
-      const response = await fetch('/editors/drifts/MetaGameControls.html');
+      const response = await fetch(window.BASE_PATH + '/drifts/MetaGameControls.html');
       const html = await response.text();
       
       // Parse the HTML

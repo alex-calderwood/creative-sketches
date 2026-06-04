@@ -1246,7 +1246,7 @@ function getNewCorpus() {
 }
 
 async function getNewCorpusText(filename) {
-  const assetsFolder = '/editors/assets';
+  const assetsFolder = window.BASE_PATH + '/assets';
   const filePath = `${assetsFolder}/${filename}`;
   const response = await fetch(filePath);
   return response.text();

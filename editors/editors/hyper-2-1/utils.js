@@ -1,6 +1,6 @@
 import { getScaleModifier } from './block.js';
 
-const assetsFolder = '/editors/assets/rain';
+const assetsFolder = window.BASE_PATH + '/assets/rain';
 const audioSamples = [];
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 

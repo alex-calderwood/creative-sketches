@@ -1,8 +1,8 @@
 const ENDPOINTS = {
-  'synonyms-wordnet': '/editors/api/synonyms-wordnet/synonyms',
-  'synonyms-cache': '/editors/api/synonyms-cache/synonyms',
-  'synonyms-online': '/editors/api/synonyms-online/synonyms',
-  'misspellings': '/editors/api/synonyms-cache/synonyms',
+  'synonyms-wordnet': window.BASE_PATH + '/api/synonyms-wordnet/synonyms',
+  'synonyms-cache': window.BASE_PATH + '/api/synonyms-cache/synonyms',
+  'synonyms-online': window.BASE_PATH + '/api/synonyms-online/synonyms',
+  'misspellings': window.BASE_PATH + '/api/synonyms-cache/synonyms',
 };
 
 class SynonymService {

@@ -2,9 +2,9 @@
 const SYNONYM_SOURCE = 'synonyms-online'; // values: synonyms-wordnet, synonyms-cache, synonyms-online
 
 const ENDPOINTS = {
-  'synonyms-wordnet': '/editors/api/synonyms-wordnet/synonyms',
-  'synonyms-cache': '/editors/api/synonyms-cache/synonyms',
-  'synonyms-online': '/editors/api/synonyms-online/synonyms',
+  'synonyms-wordnet': window.BASE_PATH + '/api/synonyms-wordnet/synonyms',
+  'synonyms-cache': window.BASE_PATH + '/api/synonyms-cache/synonyms',
+  'synonyms-online': window.BASE_PATH + '/api/synonyms-online/synonyms',
 };
 
 // Strip leading/trailing punctuation, return { prefix, core, suffix }

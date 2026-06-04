@@ -8,7 +8,7 @@ function stripPunctuation(word) {
 export async function getSynonyms(word, pos = null) {
   const { prefix, core, suffix } = stripPunctuation(word);
   
-  let url = `/editors/api/synonyms-wordnet/synonyms?word=${encodeURIComponent(core)}`;
+  let url = window.BASE_PATH + `/api/synonyms-wordnet/synonyms?word=${encodeURIComponent(core)}`;
   if (pos) url += `&pos=${encodeURIComponent(pos)}`;
   const response = await fetch(url);
   const data = await response.json();

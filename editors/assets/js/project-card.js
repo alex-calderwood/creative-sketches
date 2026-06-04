@@ -75,7 +75,7 @@ export function getDominantColor(img) {
 
 export function createProjectCard(project) {
     const card = document.createElement('a');
-    card.href = `/editors/${project.url}/`;
+    card.href = window.BASE_PATH + `/${project.url}/`;
     card.className = 'page';
 
     const contentDiv = document.createElement('div');

@@ -20,7 +20,7 @@ class SoundManager {
     }
 
     try {
-      const assetsFolder = '/editors/assets';
+      const assetsFolder = window.BASE_PATH + '/assets';
       const filePath = `${assetsFolder}/${soundName}.wav`;
       console.log('Loading sound from:', filePath);
       

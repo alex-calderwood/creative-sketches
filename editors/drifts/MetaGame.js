@@ -68,7 +68,7 @@ export class MetaGame {
     }
     
     // Load drifts to get initial state
-    const drifts = await Drifts.fromFile('/editors/drifts/drifts.json');
+    const drifts = await Drifts.fromFile(window.BASE_PATH + '/drifts/drifts.json');
 
     // Get levelId - either from selected document or from save metadata
     let levelId = null;
@@ -164,12 +164,12 @@ export class MetaGame {
 
     if(this.level) {
       this.backLink = {
-        href: '/editors/new-drift',
+        href: window.BASE_PATH + '/new-drift',
         text: "Drifts"
       };
     } else {
       this.backLink = {
-        href: '/editors/',
+        href: window.BASE_PATH + '/',
         text: 'The Writer\'s Project'
       };
     }
@@ -338,7 +338,7 @@ export class MetaGame {
     if (this.templateLoaded) return;
     
     try {
-      const response = await fetch('/editors/drifts/MetaGame.html');
+      const response = await fetch(window.BASE_PATH + '/drifts/MetaGame.html');
       const html = await response.text();
       
       // Parse the HTML
@@ -484,7 +484,7 @@ export class MetaGame {
     }
 
     // In a drift level → back to the drift; otherwise → the editors list.
-    window.location.href = this.level ? '/editors/drifts/' : '/editors/';
+    window.location.href = this.level ? window.BASE_PATH + '/drifts/' : window.BASE_PATH + '/';
   }
 
   findNextEditor() {

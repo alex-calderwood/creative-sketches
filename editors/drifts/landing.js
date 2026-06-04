@@ -9,7 +9,7 @@ let landingDrifts = null;
 // Load and display drifts
 async function loadDrifts() {
     try {
-        landingDrifts = await Drifts.fromFile('/editors/drifts/drifts.json');
+        landingDrifts = await Drifts.fromFile(window.BASE_PATH + '/drifts/drifts.json');
         displayDrifts();
     } catch (error) {
         console.error('Error loading drifts:', error);
@@ -134,13 +134,13 @@ window.createNewGame = function(driftName) {
     newSave.setMetadata('selectedDrift', driftName);
     newSave.saveToLocalStorage();
     
-    window.location.href = '/editors/drifts/drifts-menu.html';
+    window.location.href = window.BASE_PATH + '/drifts/drifts-menu.html';
 };
 
 // Continue existing game
 window.continueGame = function() {
     if (!GameplaySave.hasLocalStorage()) return;
-    window.location.href = '/editors/drifts/drifts-menu.html';
+    window.location.href = window.BASE_PATH + '/drifts/drifts-menu.html';
 };
 
 // Load save file - reuses GameplaySave.loadFromFile

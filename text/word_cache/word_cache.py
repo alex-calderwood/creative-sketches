@@ -67,7 +67,10 @@ def create_app(db_path: str | Path | None = None) -> Flask:
 
 
 if __name__ == "__main__":
+    import logging
+    import flask.cli
+    logging.getLogger("werkzeug").setLevel(logging.ERROR)  # hide request log + dev-server warning
+    flask.cli.show_server_banner = lambda *a, **k: None     # hide "Serving Flask app" banner
     port = int(os.environ.get("WORD_CACHE_PORT", "3020"))
-    print(f"synonyms-cache API at http://127.0.0.1:{port}/synonyms")
-    print(f"Database: {DEFAULT_DB_PATH}")
+    print(f"synonyms-cache    http://127.0.0.1:{port}/synonyms", flush=True)
     create_app().run(host="127.0.0.1", port=port, debug=False)

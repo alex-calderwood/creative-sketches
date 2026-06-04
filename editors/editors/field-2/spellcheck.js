@@ -56,7 +56,7 @@ class SpellChecker {
     }
 
     fromSwerveOfShore() { // load Finnegan's Wake
-      let finnegan = fetch("/editors/assets/corpora/finnegans_wake_raw_cleaned.txt")
+      let finnegan = fetch(window.BASE_PATH + "/assets/corpora/finnegans_wake_raw_cleaned.txt")
         .then(response => response.text())
         .then(text => this.updateVocabFromText(text));
       return finnegan;
@@ -68,7 +68,7 @@ class SpellChecker {
 
       try {
         // You'd need to host a SCOWL word list file
-        const response = await fetch(`/editors/assets/corpora/scowl/scowl-wl-${size}.txt`);
+        const response = await fetch(window.BASE_PATH + `/assets/corpora/scowl/scowl-wl-${size}.txt`);
         const text = await response.text();
         const words = text.split('\n').map(word => word.toLowerCase().trim()).filter(word => word);
         this.updateVocabulary(words);

@@ -19,7 +19,7 @@ export class TextCorpus {
 
       async setTextFromFile(filename) {
         this.source = filename;
-        const assetsFolder = '/editors/assets';
+        const assetsFolder = window.BASE_PATH + '/assets';
         try {
           const filePath = `${assetsFolder}/${filename}`;
           console.log('TextCorpus Loading corpus from:', filePath);

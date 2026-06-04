@@ -4,7 +4,7 @@ const wordCount = document.getElementById('word-count');
 // TODO DO JUST SHOW A LIST OF THE MISTAKES
 
 // Rain functionality from concrete-6
-const assetsFolder = '/editors/assets/rain';
+const assetsFolder = window.BASE_PATH + '/assets/rain';
 const audioSamples = [];
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 

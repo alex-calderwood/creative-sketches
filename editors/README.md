@@ -49,15 +49,23 @@ docker build -t editors .
 
 ## Run
 
-docker run -d --name editors-container -p 3000:3000 --restart unless-stopped editors
+docker run -d --name editors-container -p 3008:3008 --restart unless-stopped editors
 
 - 3001 (first number) = The port on your host machine (your computer)
 - 3001 (second number) = The port inside the Docker container
 
 
+# URL base path
+
+The public site lives under a single base path — currently **`/writers-project/`**.
+
+- To rename it, change `CANONICAL_BASE` in [`config/paths.js`](config/paths.js) (and add a matching custom location in the nginx proxy). That's the only code change.
+- Old prefixes in `LEGACY_BASES` (e.g. `/editors`) **301-redirect** to the current base, so old links keep working.
+- Internally the code + assets are written against the stable `/editors` prefix. The server rewrites it to the public base when serving HTML, plus injects `window.BASE_PATH` and an import map so JS and module imports resolve. So you never hardcode the public name anywhere but `config/paths.js`.
+
 # Notes on server.js
 
-The server automatically finds all project folders inside `./editors/` and serves each one at `/editors/<folder-name>/`. It reads `about.json` from each project to get metadata like the display name.
+The server automatically finds all project folders inside `./editors/` and serves each one under the base path (e.g. `/writers-project/<folder-name>/`). It reads `about.json` from each project to get metadata like the display name.
 
 ## Project name replacement with $PROJECT_NAME
 
