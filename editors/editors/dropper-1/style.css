@@ -1,0 +1,550 @@
+body {
+  font-family: "Times New Roman", Times, serif;
+  background-color: #6a9cff;
+  margin: 0px;
+  height: 90vh;
+}
+
+#game-banner {
+  width: 100%;
+  background: white;
+
+  height: 4vh;
+  min-height: 12px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  box-sizing: border-box; /* compute border inside of box */
+  font-family: "Microsoft Sans Serif", "Segoe UI", "Arial", sans-serif;
+  background-color: #c0c0c0;  /* Classic Win95 gray */
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff; /* Classic Win95 beveled edge */
+  box-shadow: 1px 1px 0 0 #11045a;
+  color: #0c0b5f;
+
+  padding-left: 3px;
+  padding-right: 3px;
+
+  z-index: 1000;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.control-btn {
+  font-family: "Microsoft Sans Serif", "Segoe UI", "Arial", sans-serif;
+  background-color: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  box-shadow: 1px 1px 0 0 #11045a;
+  color: #0c0b5f;
+  padding: 4px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.control-btn:hover {
+  background-color: #d4d4d4;
+}
+
+.control-btn:active {
+  border-color: #808080 #ffffff #ffffff #808080;
+  box-shadow: inset 1px 1px 0 0 #11045a;
+}
+
+/* Back link styling */
+.back-link {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.back-link:hover {
+  color: #000080;
+  text-decoration: underline;
+}
+
+.object {
+  position: absolute;
+  background-color: #c0c0c0;
+}
+
+.mistake-list .header {
+  position: relative;
+  top: 10px;
+  left: 0px;
+}
+
+.prompt-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 75vw;
+  height: 90vh;
+  margin-top: 5vh;
+  margin-left: 20vw;
+}
+.mistake {
+  color: #000000;
+  text-align: center;
+  text-decoration: underline wavy #ff0000;
+  background-color: #ff0000;
+  box-sizing: border-box;
+  border-radius: 0;
+  border: 3px solid;
+  box-shadow: 1px 1px 0 0 #11045a;
+  position: relative;
+}
+
+/* Add 3D effect with pseudo-elements for depth */
+.mistake::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.3) 0%, 
+    rgba(255, 255, 255, 0.1) 30%, 
+    transparent 50%, 
+    rgba(0, 0, 0, 0.2) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.mistake::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, 
+    rgba(255, 255, 255, 0.4) 0%, 
+    transparent 20%, 
+    transparent 80%, 
+    rgba(0, 0, 0, 0.3) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.word {
+  color: black;
+  text-align: center;
+  text-decoration: none;
+  background-color: white;
+  box-sizing: border-box;
+  border-radius: 10px;
+}
+
+.inline-word {
+  background-color: transparent;
+  display: inline-block;
+}
+
+.completed-container {
+  display: inline-block;
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  width: 80vw;
+  gap: 10px;
+  background-color: transparent;
+}
+
+.delete {
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff; /* Classic Win95 beveled edge */
+  text-decoration: none;
+  background-color: #c0c0c0; /* Classic Win95 gray */
+  border-radius: 3px; /* Smaller radius for more button-like appearance */
+  padding: 8px 12px; /* Add padding for button-like feel */
+  font-family: "Microsoft Sans Serif", "Segoe UI", "Arial", sans-serif;
+  font-size: 10px;
+  font-weight: bold;
+  color: #0c0b5f; /* Match other Win95 elements */
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 1px 1px 0 0 #11045a; /* Match other Win95 elements */
+  min-width: 40px; /* Ensure minimum width for button appearance */
+  display: inline-block;
+}
+
+#editor-container {
+  position: absolute;
+  border: 1px solid #8f8f8f;
+  background-color: white;
+  height: 100%;
+  width: 100%;
+}
+
+#editor {
+  width: 100%;
+  height: 100%;
+  padding: 60px 60px;
+  box-sizing: border-box;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 12pt;
+  line-height: 24px;
+  outline: none;
+  overflow: auto;
+  background-color: transparent;
+  caret-color: black;
+  display:inline-block;
+
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff; /* Classic Win95 beveled edge */
+  box-shadow: 1px 1px 0 0 #11045a;
+  color: black;
+  /* color: transparent; */
+}
+
+.overlay {
+  position: absolute;
+  pointer-events: none;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+
+/* a bit of a violent shake */
+.shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-40px); }
+  20%, 40%, 60%, 80% { transform: translateX(40px); }
+}
+
+.spell-error {
+  text-decoration: wavy underline;
+  text-decoration-color: red;
+  color: rgba(255, 0, 0, 0.01);
+}
+
+/* incorrect words in the overlay */
+.overlay-word {
+  position: absolute;
+  /* color: red; */
+  /* color: rgba(255, 0, 0); */
+  color: transparent;
+}
+
+#editor-container.complete .editor {
+  color: transparent;
+}
+
+.editor-container.complete .overlay-word {
+  color: transparent;
+}
+
+.correct-overlay-word {
+  position: absolute;
+  /* color: black; */
+  color: transparent;
+}
+
+.spell-error-mark {
+  position: absolute;
+  height: 6px;
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 4" height="4" width="20"><path d="M 0 3.5 Q 5 0.5, 10 3.5, 15 0.5, 20 3.5" stroke="red" fill="none"/></svg>');
+  background-repeat: repeat-x;
+  color: rgba(255, 0, 0);
+
+}
+
+/* For browsers that don't support wavy text-decoration */
+@supports not (text-decoration-style: wavy) {
+  .spell-error {
+    background: linear-gradient(to bottom, transparent 60%, red 60%, red 65%, transparent 65%);
+    background-size: 6px 4px;
+    background-repeat: repeat-x;
+    background-position: bottom;
+  }
+}
+
+/* Styles for the misspellings counter - 90's style */
+#mistakes-container {
+  position: fixed;
+  bottom: 2.5%;
+  height: 5%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  margin: 0 auto;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.count {
+  width: 25%;
+  /* display: inline-block;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 5px 15px;
+  border: 2px solid #000;
+  background: #c0c0c0;
+  box-shadow: 3px 3px 0px #000;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #000; */
+}
+
+
+#editor-container.complete {
+  animation: take 6s ease-out forwards;
+}
+
+@keyframes take {
+  0% {
+    transform: translateY(0);
+  }
+  20% { /*2 s*/
+    transform: translateY(120%);
+  }
+  80% { /*2 s*/
+    transform: translateY(120%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* not necessary for things to work - don't allow pasting rich text */
+[contenteditable] {
+  -webkit-user-modify: read-write-plaintext-only;
+}
+
+#submit {
+  display: none;
+}
+
+#submit.complete {
+  display: block;
+}
+
+#submit:hover {
+  background-color: #0c0b5f;
+  cursor: pointer;
+  color: white;
+}
+
+.move {
+  position: absolute;
+  font-family: "Times New Roman", Times, serif;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+
+@keyframes move {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  30% { /* Equivalent to 1.5s when total duration is 5s */
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(var(--dX)) translateY(var(--dY)) scale(var(--S)) ;
+    opacity: 1
+  }
+}
+
+/* Rain animation styles */
+.rain {
+  --hold-time: 1.5s; /* Hold time before falling - keyframe at calc(1.5s / 5s * 100%) = 30% */
+  position: absolute;
+  font-family: "Times New Roman", Times, serif;
+  pointer-events: none;
+  z-index: 1000;
+  animation: fall var(--duration) linear forwards;
+  text-decoration-color: red;
+  color: red;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  30% { /* Equivalent to 1.5s when total duration is 5s */
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(var(--distance));
+    opacity: 1
+  }
+}
+
+/* Default input and dropdown styles */
+input, select, .dropdown {
+  font-family: "Microsoft Sans Serif", "Segoe UI", "Arial", sans-serif;
+  background-color: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  box-shadow: 1px 1px 0 0 #11045a;
+  color: #0c0b5f;
+  padding: 4px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  outline: none;
+}
+
+input:hover, select:hover, .dropdown:hover {
+  background-color: #d4d4d4;
+}
+
+input:focus, select:focus, .dropdown:focus {
+  border-color: #000080 #ffffff #ffffff #000080;
+}
+
+input option, select option, .dropdown option {
+  background-color: #c0c0c0;
+  color: #0c0b5f;
+}
+
+/* Default label and checkbox styling */
+label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+}
+
+/* Make dropdown and checkbox appear on same line */
+.option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0.7;
+}
+
+.option select, .option input, .option .dropdown {
+  font-size: 10px;
+  padding: 2px 6px;
+  opacity: 0.8;
+}
+
+.option .checkbox-label {
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+/* Modal styles */
+.modal {
+  position: fixed;
+  z-index: 2000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  box-shadow: 2px 2px 0 0 #11045a;
+  width: 80%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow: auto;
+}
+
+.modal-header {
+  background-color: #000080;
+  color: white;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #808080;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover {
+  background-color: #ff0000;
+}
+
+.modal-body {
+  padding: 15px;
+}
+
+.modal-body label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #0c0b5f;
+}
+
+.modal-body textarea {
+  width: 100%;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  background-color: white;
+  color: black;
+  padding: 8px;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+.modal-footer {
+  padding: 12px 15px;
+  border-top: 1px solid #808080;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}

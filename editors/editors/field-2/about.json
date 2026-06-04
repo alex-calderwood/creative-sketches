@@ -1,0 +1,10 @@
+{
+    "name": "Crystal Field",
+    "description": "Words come at you and you place them into a growing crystal/grid/poem.",
+    "notes": "",
+    "version": "2",
+    "series": ["game", "field", "concrete"],
+    "url": "field-2",
+    "image": "field/age.png",
+    "major": true
+}

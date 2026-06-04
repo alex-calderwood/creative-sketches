@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Browser</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: rgb(10, 10, 10);
+            color: #f1eaea;
+            font-family: monospace;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            display: flex;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        button {
+            background: rgb(10, 10, 10);
+            border: 1px solid rgba(255, 255, 255, 0.37);
+            color: white; 
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: monospace;
+            font-weight: 500;
+        }
+
+        button:hover:not(:disabled) {
+            background: rgba(35, 35, 35, 0.9);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .select-btn {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .file-list {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.01);
+            padding: 20px;
+            border-radius: 8px;
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            border: 1px solid rgba(255, 255, 255, 0.37);
+            max-width: 300px;
+        }
+
+        .content-viewer {
+            flex: 2;
+            background: rgba(255, 255, 255, 0.01);
+            padding: 20px;
+            border-radius: 8px;
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            border: 1px solid rgba(255, 255, 255, 0.37);
+            min-height: 500px;
+        }
+
+        .breadcrumb {
+            margin-bottom: 20px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .file-item {
+            padding: 8px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .file-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .file-item.directory {
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .file-icon {
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #fileContent {
+            white-space: pre-wrap;
+            overflow-x: auto;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #f1eaea;
+        }
+
+        #contentTitle {
+            color: #f1eaea;
+            font-weight: normal;
+            margin-bottom: 20px;
+        }
+
+        .error {
+            color: #ff6b6b;
+            padding: 10px;
+            background: rgba(255, 0, 0, 0.1);
+            border-radius: 4px;
+            border: 1px solid rgba(255, 0, 0, 0.2);
+        }
+
+        .processing-options {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .processing-options label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: rgba(241, 234, 234, 0.7);
+            cursor: pointer;
+        }
+
+        .processing-options input[type="checkbox"] {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="file-list">
+            <div class="breadcrumb" id="currentPath"></div>
+            <div id="fileList"></div>
+            <div class="selection-controls">
+                <button id="selectButton" class="select-btn" disabled>Select Document</button>
+                <div class="selected-doc" id="selectedDocument"></div>
+            </div>
+            <div class="processing-options">
+                <label><input type="checkbox" id="markdownOpt"> Process as Markdown (hide title)</label>
+                <label><input type="checkbox" id="htmlOpt"> Process as HTML (inner content only)</label>
+                <label><input type="checkbox" id="linebreakOpt">Remove duplicate line breaks</label>
+                <label><input type="checkbox" id="allLinebreakOpt">Normalize spaces</label>
+            </div>
+        </div>
+        <div class="content-viewer">
+            <h2 id="contentTitle"></h2>
+            <div id="fileContent"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentPath = '';
+        let currentContent = null;
+        let selectedContent = null;
+
+        async function fetchFiles(path) {
+            // Normalize the path first
+            path = path.replace(/\/+/g, '/');
+            const encodedPath = path.split('/').map(part => encodeURIComponent(part)).join('/');
+            const response = await fetch('/files' + encodedPath);
+            if (!response.ok) throw new Error('Failed to fetch');
+            return response.json();
+        }
+
+        function processContent(content) {
+            const markdownOpt = document.getElementById('markdownOpt').checked;
+            const htmlOpt = document.getElementById('htmlOpt').checked;
+            const linebreakOpt = document.getElementById('linebreakOpt').checked;
+            const allLinebreakOpt = document.getElementById('allLinebreakOpt').checked;
+
+            let processed = content;
+
+            if (markdownOpt) {
+                processed = processed.replace(/^#\s[^\n]*\n/, '');
+            }
+
+            if (htmlOpt) {
+                const match = processed.match(/<body[^>]*>([\s\S]*)<\/body>/i);
+                if (match) processed = match[1];
+            }
+
+            if (linebreakOpt) {
+                processed = processed.replace(/\n\n+/g, '\n');
+            }
+
+            if (allLinebreakOpt) {
+                processed = processed.replace(/\s+/g, ' ');
+            }
+
+            return processed;
+        }
+
+        async function handleFileNavigation(path) {
+            try {
+                const data = await fetchFiles(path);
+                
+                if (data.type === 'directory') {
+                    currentPath = path;
+                    displayFileList(data);
+                    updateBreadcrumb();
+                } else {
+                    const currentContent = processContent(data.content);
+                    displayFileContent(data.path, currentContent);
+                }
+            } catch (error) {
+                showError('Error: ' + error.message);
+            }
+        } 
+
+        function displayFileList(data) {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+
+            if (currentPath !== '/') {
+                const upDir = document.createElement('div');
+                upDir.className = 'file-item directory';
+                upDir.innerHTML = `
+                    <span class="file-icon">📁</span>
+                    <span>..</span>
+                `;
+                upDir.onclick = () => {
+                    const parts = currentPath.split('/').filter(Boolean);
+                    parts.pop();
+                    const parentPath = parts.length ? '/' + parts.join('/') : '/';
+                    handleFileNavigation(parentPath);
+                };
+                fileList.appendChild(upDir);
+            }
+
+            data.contents.forEach(file => {
+                const item = document.createElement('div');
+                item.className = `file-item ${file.isDirectory ? 'directory' : ''}`;
+                item.innerHTML = `
+                    <span class="file-icon">${file.isDirectory ? '📁' : '📄'}</span>
+                    <span>${file.name}</span>
+                `;
+                
+                let fullPath;
+                if (currentPath === '/') {
+                    fullPath = '/' + file.name;
+                } else {
+                    fullPath = currentPath + '/' + file.name;
+                }
+                item.onclick = () => handleFileNavigation(fullPath);
+                
+                fileList.appendChild(item);
+            });
+        }
+
+        function displayFileContent(path, content) {
+            const contentTitle = document.getElementById('contentTitle');
+            const fileContent = document.getElementById('fileContent');
+            
+            contentTitle.textContent = path.split('/').pop();
+            fileContent.textContent = content;
+            const selectButton = document.getElementById('selectButton');
+            selectButton.disabled = false;
+            selectButton.onclick = () => {
+                document.getElementById('selectedDocument').textContent = path;
+                selectedContent = currentContent;
+            }; 
+
+            // Store the original content for reprocessing
+            fileContent.dataset.originalContent = content;
+
+            // Add listeners to processing options
+            ['markdownOpt', 'htmlOpt', 'linebreakOpt', 'allLinebreakOpt'].forEach(id => {
+                document.getElementById(id).onchange = () => {
+                    currentContent = processContent(fileContent.dataset.originalContent);
+                    fileContent.textContent = currentContent;
+                };
+            }); 
+        }
+
+        function updateBreadcrumb() {
+            document.getElementById('currentPath').textContent = `${currentPath}`;
+        }
+
+        function showError(message) {
+            const fileContent = document.getElementById('fileContent');
+            fileContent.innerHTML = `<div class="error">${message}</div>`;
+        }
+
+        // Initial load
+        handleFileNavigation('/');
+    </script>
+</body>
+</html>

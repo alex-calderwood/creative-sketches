@@ -1,0 +1,9 @@
+{
+    "name": "Speech of Parts",
+    "description": "A tetris-like pass at creating a game that uses the detritus of language as a material. This version has a new way of ending the line - based on part of speech.",
+    "notes": "",
+    "version": "4",
+    "series": ["game", "poetris"],
+    "url": "poetris-2",
+    "image": "poetris pos.png"
+}

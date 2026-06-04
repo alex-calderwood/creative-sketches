@@ -1,0 +1,8 @@
+{
+    "name": "Drips Correct (Finnegan)",
+    "description": "Work in progress",
+    "version": "2",
+    "url": "finnegan-check",
+    "series": ["spellcheck"],
+    "image": "spellcheck.png"
+}

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: #f5f5f5;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .slider-group {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slider-group label {
+            min-width: 140px;
+        }
+
+        input[type="range"] {
+            width: 200px;
+        }
+
+        .text-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .text-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .text-input {
+            background: none;
+            border: none;
+            font-family: monospace;
+            font-size: 20px;
+            font-weight: bold;
+            resize: none;
+            width: 80%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            outline: none;
+        }
+
+        .top-text {
+            color: #1a365d;
+        }
+
+        .bottom-text {
+            color: #1a365d;
+        }
+
+        .glass-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(1.5px);
+            background: rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+        }
+
+        .circle-boundary {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <div class="slider-group">
+            <label>Circle X Position: </label>
+            <input type="range" id="circleX" min="0" max="100" value="50">
+            <span id="circleXValue">50%</span>
+        </div>
+        <div class="slider-group">
+            <label>Circle Y Position: </label>
+            <input type="range" id="circleY" min="0" max="100" value="50">
+            <span id="circleYValue">50%</span>
+        </div>
+        <div class="slider-group">
+            <label>Circle Radius: </label>
+            <input type="range" id="radius" min="5" max="40" value="20">
+            <span id="radiusValue">20%</span>
+        </div>
+    </div>
+
+    <div class="text-wrapper">
+        <div class="text-layer" id="topLayer">
+            <textarea class="text-input top-text" rows="1"></textarea>
+            <div class="glass-overlay"></div>
+        </div>
+        <div class="text-layer" id="bottomLayer">
+            <textarea class="text-input bottom-text" rows="1"></textarea>
+        </div>
+        <svg class="circle-boundary">
+            <circle id="boundaryCircle" fill="none" stroke="#2563eb" stroke-width="2"/>
+        </svg>
+    </div>
+
+    <script>
+        const topText = document.querySelector('.top-text');
+        const bottomText = document.querySelector('.bottom-text');
+        const circleXSlider = document.getElementById('circleX');
+        const circleYSlider = document.getElementById('circleY');
+        const radiusSlider = document.getElementById('radius');
+        const circleXValue = document.getElementById('circleXValue');
+        const circleYValue = document.getElementById('circleYValue');
+        const radiusValue = document.getElementById('radiusValue');
+        const topLayer = document.getElementById('topLayer');
+        const bottomLayer = document.getElementById('bottomLayer');
+        const boundaryCircle = document.getElementById('boundaryCircle');
+        const circleBoundary = document.querySelector('.circle-boundary');
+
+        let lastBottomValue = bottomText.value;
+        const wordHistory = {};
+        const wordMappings = {};
+
+        function updateCircle() {
+            const x = circleXSlider.value;
+            const y = circleYSlider.value;
+            const radius = radiusSlider.value;
+
+            circleXValue.textContent = `${x}%`;
+            circleYValue.textContent = `${y}%`;
+            radiusValue.textContent = `${radius}%`;
+
+            // Get container dimensions for aspect ratio
+            const container = circleBoundary.getBoundingClientRect();
+            const aspectRatio = container.width / container.height;
+
+            // Update clip paths
+            topLayer.style.clipPath = `circle(${radius}% at ${x}% ${y}%)`;
+            bottomLayer.style.clipPath = `circle(${radius}% at ${x}% ${y}%) invert`;
+
+            // Set viewBox to match container aspect ratio
+            circleBoundary.setAttribute('viewBox', `0 0 ${100 * aspectRatio} 100`);
+            circleBoundary.style.width = '100%';
+            circleBoundary.style.height = '100%';
+            
+            // Adjust x coordinate for aspect ratio
+            const adjustedX = x * aspectRatio / 100;
+            
+            // Use scaled coordinates for the circle
+            boundaryCircle.setAttribute('cx', adjustedX);
+            boundaryCircle.setAttribute('cy', y);
+            boundaryCircle.setAttribute('r', radius);
+        }
+
+        function checkForChanges() {
+            const currentBottomValue = bottomText.value;
+            if (currentBottomValue !== lastBottomValue) {
+                // Split into words but exclude the last one if it doesn't end with a space
+                const currentWords = currentBottomValue.endsWith(' ') 
+                    ? currentBottomValue.split(/\s+/).filter(word => word.length > 0)
+                    : currentBottomValue.split(/\s+/).slice(0, -1).filter(word => word.length > 0)
+                
+                currentWords.forEach(word => {
+                    const len = word.length;
+                    
+                    if (!wordHistory[len]) {
+                        wordHistory[len] = [];
+                    }
+                    
+                    if (!wordHistory[len].includes(word)) {
+                        wordHistory[len].push(word);
+                        
+                        if (!wordMappings[word]) {
+                            const historyLength = wordHistory[len].length;
+                            if (historyLength > 1) {
+                                const prevWord = wordHistory[len][historyLength - 2];
+                                wordMappings[word] = prevWord;
+                            } else {
+                                wordMappings[word] = word;
+                            }
+                        }
+                    }
+                });
+
+                const topWords = currentWords.map(word => {
+                    return wordMappings[word] || word;
+                });
+
+                topText.value = topWords.join(' ');
+                lastBottomValue = currentBottomValue;
+            }
+        }
+
+        // Add resize observer to update circle when container size changes
+        const resizeObserver = new ResizeObserver(updateCircle);
+        resizeObserver.observe(document.querySelector('.text-wrapper'));
+
+        setInterval(checkForChanges, 50);
+
+        circleXSlider.addEventListener('input', updateCircle);
+        circleYSlider.addEventListener('input', updateCircle);
+        radiusSlider.addEventListener('input', updateCircle);
+
+        // Initial update
+        updateCircle();
+    </script>
+</body>
+</html>

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Writer's Project</title>
+    <style>
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        body {
+            background-image: url('/editors/assets/wood.jpg');
+            background-color: #000000;
+            background-size: 100% 30%;
+            background-position: center top;
+            background-attachment: scroll;
+            background-repeat: repeat-y;
+            margin: 0px;
+            height: 90vh;
+        }
+        .header-paper {
+            /* Aged paper background with subtle variations */
+            background: 
+                /* Paper grain texture */
+                radial-gradient(circle at 20% 80%, rgba(0,0,0,0.02) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0,0,0,0.02) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(0,0,0,0.01) 0%, transparent 50%),
+                radial-gradient(circle at 60% 70%, rgba(0,0,0,0.015) 0%, transparent 50%),
+                /* Base aged paper color */
+                linear-gradient(135deg, 
+                    #fefdf8 0%,   /* Warm white */
+                    #fdfcf5 25%,  /* Slight cream */
+                    #fefdf8 50%,
+                    #fcfbf2 75%,  /* Aged paper tone */
+                    #fefdf8 100%
+                );
+            width: 20rem;
+            margin: 0 auto 2rem auto;
+            padding: 2rem;
+            /* Realistic paper shadows with depth */
+            box-shadow: 
+                /* Main shadow */
+                0 3px 8px rgba(0,0,0,0.12),
+                0 1px 3px rgba(0,0,0,0.08),
+                /* Inner shadow for depth */
+                inset 0 0 0 1px rgba(0,0,0,0.03),
+                /* Subtle edge lighting */
+                inset 0 1px 0 rgba(255,255,255,0.8),
+                inset 0 -1px 0 rgba(0,0,0,0.02);
+            /* Slightly irregular corners */
+            border-radius: 2px 1px 3px 2px;
+            /* Slightly imperfect edges */
+            clip-path: polygon(
+                0% 0%, 99.5% 0%, 100% 1%, 100% 99%, 99% 100%, 
+                1% 100%, 0% 99.5%, 0% 1%
+            );
+            transform: rotate(-1deg);
+        }
+        
+        h1 {
+            text-align: center;
+            font-weight: 600;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #18191a;
+            font-family: 'Georgia', serif;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .subtitle {
+            text-align: center;
+            font-weight: 300;
+            font-size: 0.8rem;
+            margin-bottom: 0;
+            color: #666;
+            font-family: 'Georgia', serif;
+            font-style: italic;
+        }
+        .projects-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+            perspective: 2000px;
+        }
+        .page {
+            background-color: white;
+            width: 12rem;
+            height: 19.32rem;
+            /* Realistic paper shadows with depth */
+            box-shadow: 
+                /* Main shadow */
+                0 3px 8px rgba(0,0,0,0.12),
+                0 1px 3px rgba(0,0,0,0.08),
+                /* Inner shadow for depth */
+                inset 0 0 0 1px rgba(0,0,0,0.03),
+                /* Subtle edge lighting */
+                inset 0 1px 0 rgba(255,255,255,0.8),
+                inset 0 -1px 0 rgba(0,0,0,0.02);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            position: relative;
+            /* Slightly irregular corners */
+            border-radius: 2px 1px 3px 2px;
+            /* Slightly imperfect edges */
+            clip-path: polygon(
+                0% 0%, 99.5% 0%, 100% 1%, 100% 99%, 99% 100%, 
+                1% 100%, 0% 99.5%, 0% 1%
+            );
+            transform-origin: center center;
+            padding: 0.5rem 1rem;
+        }
+
+        .page a {
+            text-decoration: underline;
+            color: rgb(45, 44, 44);
+        }
+        .page:hover {
+            z-index: 100;
+            transform: scale(1.1) rotate(0deg);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+
+        .project-name {
+            padding: 0.6rem;
+            font-size: 0.6rem;
+            color: #18191a;
+            transition: all 0.3s ease;
+            font-family: 'Georgia', serif;
+            font-weight: 600;
+        }
+        .project-description {
+            padding: 0 0.6rem 0.6rem;
+            font-size: 0.5rem;
+            color: #050505;
+            transition: all 0.3s ease;
+            font-family: 'Georgia', serif;
+        }
+        .project-metadata {
+            padding: 0 0.6rem 0.6rem;
+            font-family: 'Georgia', serif;
+            font-size: 0.45rem;
+            color: #888;
+            line-height: 1.4;
+            transition: all 0.3s ease;
+            font-style: italic;
+        }
+        .project-metadata div {
+            margin-bottom: 0.1rem;
+        }
+        .project-image {
+            position: absolute;
+            width: calc(100% - 2rem);
+            height: calc(100% - 1rem);
+            object-fit: contain;
+            opacity: 1.0;
+            z-index: 0;
+            top: 0.5rem;
+            left: 1rem;
+        }
+        .project-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            order: 1;
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+        
+        .tag-header {
+            width: 0;
+            height: 0;
+            overflow: visible;
+            position: relative;
+        }
+        
+        .tag-header + .page {
+            position: relative;
+        }
+        
+        .tag-header + .page::before {
+            content: attr(data-tag);
+            box-sizing: border-box;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-style: italic;
+            font-family: 'Georgia', serif;
+            font-size: 1.5rem;
+            color: #020116;
+            font-weight: 600;
+            /* Sticky note / label background with texture */
+            background: 
+                /* Paper texture overlay */
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(255,255,255,0.1) 2px,
+                    rgba(255,255,255,0.1) 4px
+                ),
+                /* Subtle grain */
+                radial-gradient(circle at 30% 40%, rgba(255,255,255,0.2) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(0,0,0,0.03) 0%, transparent 50%),
+                /* Rich yellow gradient */
+                linear-gradient(135deg, 
+                    #ffe66d 0%,
+                    #ffd93d 25%,
+                    #ffe156 50%,
+                    #ffd829 75%,
+                    #ffe156 100%
+                );
+            height: 3rem;
+            width: 12rem;
+            padding: 0.5rem 1rem;
+            z-index: 50;
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            /* Deep shadow with curl effect */
+            box-shadow: 
+                /* Bottom right curl shadow */
+                8px 8px 12px rgba(0,0,0,0.25),
+                /* Main shadow */
+                0 6px 20px rgba(0,0,0,0.2),
+                0 3px 6px rgba(0,0,0,0.15),
+                /* Edge definition */
+                inset 0 0 0 1px rgba(255,255,255,0.3),
+                inset 1px 1px 0 rgba(255,255,255,0.5),
+                /* Top lighting */
+                inset 0 2px 4px rgba(255,255,255,0.4),
+                /* Bottom shadow */
+                inset 0 -1px 2px rgba(0,0,0,0.1);
+            /* Slightly irregular corners */
+            border-radius: 3px 2px 4px 1px;
+            /* More interesting imperfect edges */
+            clip-path: polygon(
+                0.5% 1%, 2% 0.3%, 98% 0%, 99.5% 0.5%, 
+                100% 2%, 100% 97%, 99% 99.5%, 98% 100%, 
+                2% 100%, 0.5% 99%, 0% 97%, 0% 2%
+            );
+            transform: translate(0px, 16rem) rotate(-3deg);
+            transition: all 0.3s ease;
+            }
+    </style>
+</head>
+<body>
+    <div class="header-paper">
+        <h1>The Writer's Project</h1>
+        <div class="subtitle">(Work in Progress)</div>
+    </div>
+    
+    <div class="projects-grid" id="projects-container">
+        <!-- Project cards will be inserted here by JavaScript -->
+    </div>
+
+    <script>
+        // This will be replaced with the actual projects array by the server
+        const projects = [];
+        
+        // Group projects by tags
+        const projectsByTag = {};
+        const untaggedProjects = [];
+        
+        projects.forEach(project => {
+            if (project.series) {
+                const tags = Array.isArray(project.series) ? project.series : [project.series];
+                tags.forEach(tag => {
+                    if (!projectsByTag[tag]) {
+                        projectsByTag[tag] = [];
+                    }
+                    projectsByTag[tag].push(project);
+                });
+            } else {
+                untaggedProjects.push(project);
+            }
+        });
+        
+        // Sort projects within each tag by version (most recent first)
+        Object.keys(projectsByTag).forEach(tag => {
+            projectsByTag[tag].sort((a, b) => {
+                if (a.version && b.version) {
+                    return b.version.localeCompare(a.version); // Most recent first
+                }
+                if (a.version && !b.version) return -1;
+                if (!a.version && b.version) return 1;
+                return a.name.localeCompare(b.name);
+            });
+        });
+        
+        // Sort untagged projects by version (most recent first)
+        untaggedProjects.sort((a, b) => {
+            if (a.version && b.version) {
+                return b.version.localeCompare(a.version); // Most recent first
+            }
+            if (a.version && !b.version) return -1;
+            if (!a.version && b.version) return 1;
+            return a.name.localeCompare(b.name);
+        });
+        
+        // Sort tags first alphabeetically
+        let sortedTags = Object.keys(projectsByTag).sort();
+        // Then, sort by our custom list (if not in the list, put at the end)
+        const customTagOrder = ['instrument','poetris', 'field', 'spellcheck', 'concrete', 'EIS'];
+        sortedTags = sortedTags.sort((a, b) => {
+            const aIndex = customTagOrder.indexOf(a);
+            const bIndex = customTagOrder.indexOf(b);
+            return (aIndex === -1 ? Infinity : aIndex) - (bIndex === -1 ? Infinity : bIndex);
+        });
+        // Generate project cards grouped by tags
+        const container = document.getElementById('projects-container');
+        
+        // Function to create a project card
+        const createProjectCard = (project) => {
+            let url = project.url;
+            let name = project.name;
+            const card = document.createElement('a');
+            card.href = `/editors/${url}/`;
+            card.className = 'page';
+            
+            // Add random rotation and offset
+            const rotation = (Math.random() - 0.5) * 4;
+            const offsetX = (Math.random() - 0.5) * 10; 
+            const offsetY = (Math.random() - 0.5) * 10; 
+            card.style.transform = `rotate(${rotation}deg) translate(${offsetX}px, ${offsetY}px)`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'project-content';
+            
+            
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'project-name';
+            nameDiv.textContent = name;
+            
+            const descriptionDiv = document.createElement('div');
+            descriptionDiv.className = 'project-description';
+            descriptionDiv.innerHTML = project.description || '';
+            
+            contentDiv.appendChild(nameDiv);
+            contentDiv.appendChild(descriptionDiv);
+            
+            // Add additional fields from about.json in simple typewriter style
+            const metadataDiv = document.createElement('div');
+            metadataDiv.className = 'project-metadata';
+            
+            const metadataLines = [];
+            
+            // Add version if it exists
+            if (project.version) {
+                metadataLines.push(`v${project.version}`);
+            }
+            
+            // Add series if it exists (with em dash for elegance)
+            if (project.series) {
+                if (Array.isArray(project.series)) {
+                    // If series is an array, join with commas
+                    metadataLines.push(`#${project.series.join(' #')}`);
+                } else {
+                    // If series is a string, display as before
+                    metadataLines.push(`#${project.series}`);
+                }
+            }
+            
+            // Add any other custom fields (excluding standard ones)
+            const excludeFields = ['name', 'notes', 'description', 'version', 'series', 'url', 'image', 'dir', 'hide', 'major'];
+            Object.entries(project).forEach(([key, value]) => {
+                if (!excludeFields.includes(key) && value !== null && value !== undefined && value !== '') {
+                    metadataLines.push(`${key}: ${value}`);
+                }
+            });
+            
+            if (metadataLines.length > 0) {
+                metadataDiv.innerHTML = metadataLines.map(line => `<div>${line}</div>`).join('');
+                contentDiv.appendChild(metadataDiv);
+            }
+            
+            card.appendChild(contentDiv);
+            
+            if (project.image) {
+                const image = document.createElement('img');
+                image.className = 'project-image';
+                image.src = project.image;
+                card.appendChild(image);
+            }
+            return card;
+        };
+        
+        // Create tag headers and render projects
+        sortedTags.forEach(tag => {
+            // Create tag header (invisible spacer)
+            const tagHeader = document.createElement('div');
+            tagHeader.className = 'tag-header';
+            container.appendChild(tagHeader);
+            
+            // Create projects for this tag
+            projectsByTag[tag].forEach((project, index) => {
+                const card = createProjectCard(project);
+                if (index === 0) {
+                    card.setAttribute('data-tag', tag);
+                }
+                container.appendChild(card);
+            });
+        });
+        
+        // Add untagged projects at the end
+        if (untaggedProjects.length > 0) {
+            const untaggedHeader = document.createElement('div');
+            untaggedHeader.className = 'tag-header';
+            container.appendChild(untaggedHeader);
+            
+            untaggedProjects.forEach((project, index) => {
+                const card = createProjectCard(project);
+                if (index === 0) {
+                    card.setAttribute('data-tag', 'other');
+                }
+                container.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>

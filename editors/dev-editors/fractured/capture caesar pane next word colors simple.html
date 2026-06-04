@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: #f5f5f5;
+            gap: 20px;
+            padding: 20px;
+            background-color: rgb(10, 10, 10);
+        }
+
+        .controls {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(10, 10, 10, 0.8);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            color: #f1eaea;
+            font-size: 12px;
+            z-index: 1000;
+        }
+
+        .slider-group {
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .slider-group label {
+            min-width: 100px;
+            font-size: 11px;
+        }
+
+        input[type="range"] {
+            width: 100px;
+            -webkit-appearance: none;
+            background: transparent;
+        }
+
+        /* Slider track styles */
+        input[type="range"]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.451);
+            border: none;
+        }
+
+        input[type="range"]::-moz-range-track {
+            width: 100%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.451);
+            border: none;
+        }
+
+        /* Slider thumb styles */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            border: 1px solid rgba(255, 255, 255, 0.451);
+            height: 12px;
+            width: 12px;
+            border-radius: 50%;
+            background: rgb(10, 10, 10);
+            margin-top: -5px;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            border: 1px solid rgba(255, 255, 255, 0.451);
+            height: 12px;
+            width: 12px;
+            border-radius: 50%;
+            background: rgb(10, 10, 10);
+            cursor: pointer;
+        }
+
+        /* Remove focus styles */
+        input[type="range"]:focus {
+            outline: none;
+        }
+
+        input[type="range"]:focus::-webkit-slider-runnable-track {
+            background: rgba(255, 255, 255, 0.451);
+        }
+
+        .text-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background: rgb(10, 10, 10);
+            overflow: hidden;
+            border-width: 1px;
+            border-style: solid;
+            border-color: rgba(255, 255, 255, 0.451);
+            margin: 10%;
+        }
+
+        .text-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .text-input {
+            background: none;
+            border: none;
+            font-family: monospace;
+            font-size: 25px;
+            /* resize: none; */
+            box-sizing: border-box; /*  the padding count towards the total height rather than adding to it. */ 
+            width: 100%;
+            top: 0;
+            height: 100%;
+            padding: 5%;
+            outline: none;
+        }
+
+        .top-text {
+            color: white;
+        }
+
+        .bottom-text {
+            color: white;
+        }
+
+        /* https://css.glass/ */
+        .glass-overlay { 
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: rgba(255, 255, 255, 0.01);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            border: 1px solid rgba(255, 255, 255, 0.37);
+        }
+
+        #topLayer {
+            position: relative;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="controls">
+        <div class="slider-group">
+            <label>Left Top: </label>
+            <span id="leftTopXValue">8</span>
+            <input type="range" id="leftTopX" min="0" max="100" value="8" step="1">
+        </div>
+        <div class="slider-group">
+            <label>Right Top: </label>
+            <span id="rightTopXValue">49</span>
+            <input type="range" id="rightTopX" min="0" max="100" value="49" step="1">
+        </div>
+        <div class="slider-group">
+            <label>Bottom: </label>
+            <span id="bottomXValue">92</span>
+            <input type="range" id="bottomX" min="0" max="100" value="92" step="1">
+        </div>
+        <div class="slider-group">
+            <label>Blur: </label>
+            <span id="blurValue">2</span>
+            <input type="range" id="blurAmount" min="0" max="10" value="2" step="0.25">
+        </div>
+    </div>
+
+    <div class="text-wrapper">
+        <div class="text-layer pane" id="topLayer">
+            <svg width="100%" height="100%" style="position: absolute; top: 0; left: 0; pointer-events: none;">
+                <path id="clipPath" fill="none" stroke="rgba(255, 255, 255, 0.3)" stroke-width="1"/>
+            </svg>
+            <textarea class="text-input top-text"></textarea>
+            <div class="glass-overlay"></div>
+        </div>
+        <div class="text-layer" id="bottomLayer">
+            <textarea class="text-input bottom-text"></textarea>
+        </div>
+    </div>
+    
+    <script>
+        const topText = document.querySelector('.top-text');
+        const bottomText = document.querySelector('.bottom-text');
+        const leftTopXSlider = document.getElementById('leftTopX');
+        const rightTopXSlider = document.getElementById('rightTopX');
+        const bottomXSlider = document.getElementById('bottomX');
+        const blurSlider = document.getElementById('blurAmount');
+        const leftTopXValue = document.getElementById('leftTopXValue');
+        const rightTopXValue = document.getElementById('rightTopXValue');
+        const bottomXValue = document.getElementById('bottomXValue');
+        const blurValue = document.getElementById('blurValue');
+        const topLayer = document.getElementById('topLayer');
+        const bottomLayer = document.getElementById('bottomLayer');
+        const glassOverlay = document.querySelector('.glass-overlay');
+
+        function updateClipPaths() {
+            const leftX = leftTopXSlider.value;
+            const rightX = rightTopXSlider.value;
+            const bottomX = bottomXSlider.value;
+
+            leftTopXValue.textContent = leftX;
+            rightTopXValue.textContent = rightX;
+            bottomXValue.textContent = bottomX;
+            
+            // Get actual dimensions
+            const width = topLayer.offsetWidth;
+            const height = topLayer.offsetHeight;
+            
+            // Convert percentages to actual coordinates
+            const pathData = `M 0 0 L ${width} 0 L ${width} 0 L ${width * rightX/100} 0 L ${width * bottomX/100} ${height} L ${width * leftX/100} 0 L 0 0`;
+            document.getElementById('clipPath').setAttribute('d', pathData);
+            
+            const clipPath = `polygon(0% 0%, 100% 0%, 100% 0%, ${rightX}% 0%, ${bottomX}% 100%, ${leftX}% 0%, 0% 0%)`;
+            topLayer.style.clipPath = clipPath;
+            glassOverlay.style.clipPath = clipPath;
+            bottomLayer.style.clipPath = `polygon(0% 0%, ${leftX}% 0%, ${bottomX}% 100%, ${rightX}% 0%, 100% 0%, 100% 100%, 0% 100%)`;
+        } 
+
+        function updateBlur() {
+            const blur = blurSlider.value;
+            blurValue.textContent = blur;
+            glassOverlay.style.backdropFilter = `blur(${blur}px)`;
+        }
+
+        // Mirror bottom text to top text
+        bottomText.addEventListener('input', () => {
+            topText.value = bottomText.value;
+        });
+
+        leftTopXSlider.addEventListener('input', updateClipPaths);
+        rightTopXSlider.addEventListener('input', updateClipPaths);
+        bottomXSlider.addEventListener('input', updateClipPaths);
+        blurSlider.addEventListener('input', updateBlur);
+
+        // Initial updates
+        updateClipPaths();
+        updateBlur();
+    </script>
+</body>
+</html>

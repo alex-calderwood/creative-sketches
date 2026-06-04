@@ -1,0 +1,8 @@
+{
+    "name": "Gry Glish (Anti-English Spellchecker)",
+    "description": "nah thiss dun 'llow crect spellz buttt, itt cooo noh? getss gry wen glish iss ritn dun",
+    "version": "4",
+    "series": ["spellcheck", "drips"],
+    "url": "antienglish-checker",
+    "image": "spellcheck.png"
+}

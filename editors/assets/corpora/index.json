@@ -1,0 +1,111 @@
+{
+  "texts": [
+    {
+      "id": "finnegans-museyroom",
+      "title": "Finnegans Wake - This the Way to the Museyroom",
+      "author": "James Joyce",
+      "filename": "corpora/short/chapters/this_the_way_to_the_museyroom_finnegans_wake.txt",
+      "tags": ["chapter", "modernist"],
+      "url": ""
+    },
+    {
+      "id": "tikal",
+      "title": "At Tikal",
+      "author": "William Bronk",
+      "filename": "corpora/short/time.txt",
+      "tags": ["short"],
+      "url": ""
+    },
+    {
+      "id": "art",
+      "title": "Art",
+      "author": "",
+      "filename": "corpora/short/art.txt",
+      "tags": ["short"],
+      "url": ""
+    },
+    {
+      "id": "tale-two-cities-small",
+      "title": "A Tale of Two Cities",
+      "author": "Charles Dickens",
+      "filename": "corpora/books/tale_of_two_cities_small.txt",
+      "tags": ["book", "classic"],
+      "url": ""
+    }
+  ],
+
+  "unused": [
+    {
+      "id": "sacred-emily",
+      "title": "Sacred Emily",
+      "author": "Gertrude Stein",
+      "filename": "corpora/short/sacred_emily.txt",
+      "tags": ["poem", "modernist"],
+      "url": ""
+    },
+    {
+      "id": "love-breton",
+      "title": "Love",
+      "author": "André Breton",
+      "filename": "corpora/short/love_breton.txt",
+      "tags": ["short", "surrealist"],
+      "url": ""
+    },
+    {
+      "id": "less-time",
+      "title": "Less Time",
+      "author": "",
+      "filename": "corpora/short/less_time.txt",
+      "tags": ["short"],
+      "url": ""
+    },
+    {
+      "id": "eis",
+      "title": "EIS",
+      "author": "",
+      "filename": "corpora/short/eis.txt",
+      "tags": ["short"],
+      "url": ""
+    },
+    {
+      "id": "tale-two-cities-full",
+      "title": "A Tale of Two Cities (Full)",
+      "author": "Charles Dickens",
+      "filename": "corpora/books/tale_of_two_cities.txt",
+      "tags": ["book", "classic"],
+      "url": ""
+    },
+    {
+      "id": "eis-wiki",
+      "title": "EIS Wiki",
+      "author": "",
+      "filename": "corpora/short/eis_wiki.txt",
+      "tags": ["short"],
+      "url": ""
+    },
+    {
+      "id": "here",
+      "title": "Here",
+      "author": "",
+      "filename": "corpora/short/here.txt",
+      "tags": ["short"],
+      "url": ""
+    },
+    {
+      "id": "nadja",
+      "title": "Nadja",
+      "author": "André Breton",
+      "filename": "corpora/books/nadja.txt",
+      "tags": ["book", "surrealist"],
+      "url": ""
+    },
+    {
+      "id": "harry-potter-ch1",
+      "title": "Harry Potter - Chapter 1",
+      "author": "J.K. Rowling",
+      "filename": "corpora/short/harry_potter_ch1.txt",
+      "tags": ["chapter"],
+      "url": ""
+    }
+  ]
+}
