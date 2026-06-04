@@ -8,16 +8,8 @@ export class Game {
   }
 
   async initialize(options = {}) {
-    if (options.save) {
-      this.save = options.save;
-    }
-    let initialText = null;
-    if (options.documentId) {
-      this.documentId = options.documentId;
-      let doc = this.save.getDocument(this.documentId);
-      let content = doc?.getField('content');
-      initialText = content ? JSON.parse(content).text : '';
-    }
+    // MetaGame passes the saved document state (or level seed) as initialState.
+    const initialText = options.initialState?.text ?? '';
 
     this.performance = new HyperSkipPerformance({ initialText });
     this.performance.initialize();

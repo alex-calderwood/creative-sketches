@@ -8,7 +8,8 @@ import { GameplaySave } from '/editors/drifts/GameplaySave.js';
 import { Drifts } from '/editors/drifts/Drifts.js';
 import { Document } from '/editors/drifts/Document.js'
 import { Modal } from '/editors/vault/01-23-2026/src/components/Modal.js';
-import { saveStateWithImage, retrieveTextFromDrift, setChosenDocumentForLevel, getChosenDocumentForLevel} from '/editors/drifts/utils/utils.js';
+import { saveStateWithImage, setChosenDocumentForLevel, getChosenDocumentForLevel} from '/editors/drifts/utils/utils.js';
+import { getText, joinText, putText } from '/editors/drifts/ContentQuery.js';
 
 export class MetaGame {
   constructor(projectId, projectName, params = {}) {
@@ -52,6 +53,13 @@ export class MetaGame {
     
     this.game = game;
     this.save = this.loadSave();
+
+    // Ensure a save always exists so save/load/documents work outside drifts
+    // too (standalone editors), not just inside a drift progression.
+    if (!this.save) {
+      this.save = new GameplaySave();
+      console.log('MetaGame.initialize() no existing save — created a new empty save (standalone mode)');
+    }
 
     this.driftName = this?.save?.getSelectedDrift();
 
@@ -107,24 +115,44 @@ export class MetaGame {
       this.progression = null;
     }
 
-    // Get initial content from level and convert to state format
-    let initialState = null;
+    const queryContext = {
+      driftName: this.driftName,
+      levelId: this.levelId,
+      progression: this.progression || [],
+    };
+
+    // The level's seed state (drifts.json initialState). For a new document
+    // this gets baked into the document content at creation.
+    let levelSeed = null;
     if (this.level?.['initialState']) {
-      // Convert initialState to proper state object format
       const stateObj = this.level['initialState'];
-      if (stateObj?.text?.queryType != null) {
-        stateObj.text = retrieveTextFromDrift(this.save, stateObj?.text);
+      // A query object (vs a literal string) is resolved through getText.
+      if (stateObj?.text != null && typeof stateObj.text === 'object') {
+        stateObj.text = joinText(await getText(this.save, stateObj.text, queryContext));
       }
-      initialState = stateObj;
-    } else if (this.level == null) {
-      console.log("no initial state or level", this.level, this.save);
+      levelSeed = stateObj;
     }
-    
+
     if (!this.documentId && this.save) {
-      this.documentId = this.createNewDocument(this.save, initialState);
-      console.log('MetaGame.initialize() no selected document id, created new document', this.documentId);
+      if (!this.level) {
+        // Standalone editor (no drift level): reuse this editor's most recent
+        // document instead of creating a fresh empty one on every visit, and
+        // remember it as selected.
+        this.documentId = this.findLatestDocumentForEditor()
+          || this.createNewDocument(this.save, levelSeed);
+        this.save.setMetadata('selectedDocumentId', this.documentId);
+      } else {
+        this.documentId = this.createNewDocument(this.save, levelSeed);
+      }
+      console.log('MetaGame.initialize() document id', this.documentId);
       this.save.saveToLocalStorage();
     }
+
+    // The state handed to the editor: the document's saved content (which holds
+    // the seed for new docs and the latest text for resumed ones), falling back
+    // to the level seed. Editors just consume options.initialState — they don't
+    // need to read the save/document themselves.
+    const initialState = this.loadDocumentState() ?? levelSeed;
 
     // Load progression prompts
     await this.loadTemplate();
@@ -200,12 +228,29 @@ export class MetaGame {
       createdAt: new Date().toISOString(),
       content: initialContent,
       sourceEditor: this.projectId,
+      driftName: this.driftName,  // Store the drift so drift-scoped queries resolve
       levelId: this.levelId,  // Store the level key in the document
       title: 'Untitled'
     });
     save.addDocument(document);
     save.setMetadata('dateModified', new Date().toISOString());
     return documentId;
+  }
+
+  // Parse the current document's saved content into a state object. This is
+  // the single place document content is read — editors receive the result as
+  // options.initialState and should not read the save/document themselves.
+  loadDocumentState() {
+    if (!this.save || !this.documentId) return null;
+    const doc = this.save.getDocument(this.documentId);
+    const content = doc?.getField('content');
+    if (!content) return null;
+    try {
+      return JSON.parse(content);
+    } catch (e) {
+      console.error('MetaGame.loadDocumentState() could not parse content', e);
+      return null;
+    }
   }
 
   getLevelForKey(driftName, levelId, drifts) {
@@ -284,13 +329,9 @@ export class MetaGame {
     const state = this.game.saveState();
     if (!state) return;
     
-    const document = this.save.getDocument(this.documentId);
-    if (document) {
-      document.setField('content', JSON.stringify(state));
-      document.setField('lastModified', new Date().toISOString());
-      this.save.setMetadata('dateModified', new Date().toISOString());
-      this.save.saveToLocalStorage();
-    }
+    // Single write path: putText sets the content channel, bumps timestamps,
+    // and persists.
+    putText(this.save, { type: 'content', documentId: this.documentId }, state);
   }
 
   async loadTemplate() {
@@ -318,21 +359,25 @@ export class MetaGame {
 
   async loadAndDisplayPrompts(save, level) {
     try {
-      let prompt = this.getPromptFromLevel(save, level);
-      
+      let prompt = await this.getPromptFromLevel(save, level);
+
       if (prompt) {
         this.populatePromptDisplay(prompt);
       }
-      
+
       return;
     } catch (error) {
       console.error('Error loading prompts:', error);
     }
   }
 
-  getPromptFromLevel(save, level) {
-    let prompt = retrieveTextFromDrift(save, level?.prompt);
-    return prompt;
+  async getPromptFromLevel(save, level) {
+    const entries = await getText(save, level?.prompt, {
+      driftName: this.driftName,
+      levelId: this.levelId,
+      progression: this.progression || [],
+    });
+    return joinText(entries);
   }
 
 
@@ -417,8 +462,10 @@ export class MetaGame {
   async handleModalContinue() {
     // Save the current state with image (this is the actual submission)
     if (this.game && this.save && this.documentId) {
-      // set the current document as the level's current 
-      setChosenDocumentForLevel(this.save, this.levelId, this.documentId);
+      // set the current document as the level's chosen one (drift levels only)
+      if (this.levelId) {
+        setChosenDocumentForLevel(this.save, this.levelId, this.documentId);
+      }
 
       const state = await this.game.saveState();
       if (state) {
@@ -435,9 +482,9 @@ export class MetaGame {
         this.save.saveToLocalStorage();
       }
     }
-    
-    // Navigate to landing page
-    window.location.href = '/editors/drifts/';
+
+    // In a drift level → back to the drift; otherwise → the editors list.
+    window.location.href = this.level ? '/editors/drifts/' : '/editors/';
   }
 
   findNextEditor() {

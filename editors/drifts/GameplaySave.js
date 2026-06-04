@@ -1,4 +1,9 @@
+// Save file structure, channels, and the text-query API are documented in
+// ./SAVE_FORMAT.md. Inspect a live save at /editors/drifts/admin.html.
 import { Document } from './Document.js';
+
+// Bump when the on-disk save shape changes; migrate() upgrades older saves.
+export const SAVE_VERSION = 2;
 
 export class GameplaySave {
     constructor() {
@@ -54,36 +59,26 @@ export class GameplaySave {
         return this?.metadata?.selectedDocumentId || null;
     }
 
-    addEdit(edit) {
-        if (this.metadata.edits) {
-            this.metadata.edits.push(edit);
-        } else {
-            this.metadata.edits = [edit];
-        }
-    }
+    // NOTE: the old metadata.edits API (addEdit/getEdits/deleteEdits) has been
+    // removed. Edits now live on the document that produced them and are read
+    // through ContentQuery.getText({ type: 'edits', ... }). Legacy saves keep
+    // their metadata.edits array (shown in admin/inspector) but it is inert.
 
-    getEdits(query={}) {
-        if (!query.driftName && !query.levelId && !query.editorId) {
-            console.error("getEdits() no query");
-            return [];
+    // Upgrade an older save in place. Idempotent.
+    migrate() {
+        // v2: stamp driftName onto documents that predate it, inferred from the
+        // save's selected drift, so drift-scoped queries resolve.
+        const selectedDrift = this.metadata.selectedDrift;
+        if (selectedDrift) {
+            for (const doc of this.documents.values()) {
+                // Only stamp docs that belong to a drift level. Level-less docs
+                // are standalone/sandbox sessions and don't belong to a drift.
+                if (doc.getField('driftName') == null && doc.getField('levelId') != null) {
+                    doc.setField('driftName', selectedDrift);
+                }
+            }
         }
-        if (!this.metadata.edits) {
-            console.error("getEdits() no edits");
-            return [];
-        }
-        return this.metadata.edits.filter(
-            edit => edit.levelId === query.levelId || edit.editorId === query.editorId || edit.driftName === query.driftName
-        );
-    }
-
-    deleteEdits(query={}) {
-        if(!this.metadata.edits) {
-            this.metadata.edits = [];
-            return;
-        }
-        this.metadata.edits = this.metadata.edits.filter(
-            edit => edit.levelId !== query.levelId && edit.editorId !== query.editorId && edit.driftName !== query.driftName
-        );
+        this.metadata.version = SAVE_VERSION;
     }
 
     // Serialize to JSON string
@@ -107,6 +102,8 @@ export class GameplaySave {
                 this.documents.set(document.id, document);
             });
         }
+
+        this.migrate();
     }
 
     // Create a new GameplaySave from JSON string

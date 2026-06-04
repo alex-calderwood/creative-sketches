@@ -77,17 +77,25 @@ export class Modal {
             }
         });
         
-        // Add keyboard event listener for modal
+        // Add keyboard event listener for modal. Block game shortcuts from
+        // leaking through, but let typing reach form fields inside the modal.
         this.keydownHandler = (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            
-            if (e.key === 'Enter') {
-                // Find and click the Continue button
-                const continueButton = this.element.querySelector('[data-action="continue"]');
+            const tag = (e.target?.tagName || '').toLowerCase();
+            const isField = tag === 'input' || tag === 'textarea' || tag === 'select';
+
+            // Enter submits (except in a textarea, where it inserts a newline).
+            if (e.key === 'Enter' && tag !== 'textarea') {
+                const continueButton = this.element.querySelector('.continue-button, [data-action="continue"]');
                 if (continueButton) {
+                    e.preventDefault();
                     continueButton.click();
+                    return;
                 }
+            }
+
+            if (!isField) {
+                e.stopPropagation();
+                e.preventDefault();
             }
         };
     }

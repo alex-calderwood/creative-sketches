@@ -46,7 +46,9 @@ export class Game {
     this.setInitialSettings();
 
     this.monitor = new Monitor(this.editor);
-    
+
+    // MetaGame hands us the saved document state (or level seed) as
+    // initialState — no need to read the save/document here.
     if (this.params.initialState) {
       this.loadState(this.params.initialState);
     }

@@ -9,10 +9,6 @@
         "name": "Gathering Waste",
         "editor": "spellcheck-drifts",
         "prompt": "Xin Liu writes:\n\"The figure of the (bio)degradable for Derrida sheds light on the strange kinship between waste, which is dissolved, assimilated, circulated and whose identity is broken open and apart, and the masterpiece, which precisely resists the process of assimilation and decomposition. Interestingly, the use of the text – its contribution to the culture/memory/tradition that also conditions its intelligibility and significance – necessitates its dissolvement and assimilation.\nCan you write something wasteful? (Bio)degradable?",
-        "promptTODO": {
-          "queryType": "levelText",
-          "fromLevel": "waste"
-        },
         "settings": {
           "reverse": true
         }
@@ -30,10 +26,12 @@
         "name": "Intention",
         "editor": "spellcheck-drifts",
         "prompt": {
-          "queryType": "levelText",
+          "type": "content",
+          "scope": "level",
+          "filter": "chosen",
+          "target": "playing",
           "preface": "You wrote:\n",
-          "suffix": "\n Reflect on this poem. How does it make itself (bio)available to you?",
-          "fromLevel": "playing"
+          "suffix": "\n Reflect on this poem. How does it make itself (bio)available to you?"
         },
         "settings": {
           "reverse": false
@@ -55,8 +53,10 @@
         "prompt": "Edit your last poem. Will you free it of waste? Or add more?",
         "initialState": {
           "text": {
-            "queryType": "levelText",
-            "fromLevel": "second-poetris"
+            "type": "content",
+            "scope": "level",
+            "filter": "chosen",
+            "target": "second-poetris"
           }
         }
       }
@@ -72,11 +72,8 @@
         "name": "First experiment",
         "editor": "hyper-sense-drifts",
         "prompt":
-          "This editor will replace your writing with synonyms (according to the commonly used WordNet ontology). What can you produce? Perhaps now you choose a topic, or freewrite, and allow what emerges to guide you through the next editors. You attention to what words are selected (\"That's not my meaning\"!).",
-        "initialStateOLD": {
-          "text": "ANDALUSIA CITY (AP) 8:08am \n\n\n"
-        }
-      }, 
+          "This editor will replace your writing with synonyms (according to the commonly used WordNet ontology). What can you produce? Perhaps now you choose a topic, or freewrite, and allow what emerges to guide you through the next editors. You attention to what words are selected (\"That's not my meaning\"!)."
+      },
       {
         "id": "concrete",
         "name": "Wall Text",

@@ -2,6 +2,13 @@
 
 save/load/progression system
 
+> **Save file structure & text queries:** see [`SAVE_FORMAT.md`](./SAVE_FORMAT.md)
+> for the metadata/document layout, channels, and the `getText`/`putText` API.
+>
+> **Admin / inspector** (with `npm run server`, port 3008):
+> `/editors/drifts/admin.html` — inspect the save (metadata, documents, all
+> fields) and edit it (unlock levels, delete docs, clear save).
+
 ## Table of Contents
 
 - [Overview](#overview)
@@ -103,21 +110,13 @@ export class Game {
    * @param {string} options.documentId - Current document ID
    */
   async initialize(options = {}) {
-    this.save = options.save || null;
-    this.documentId = options.documentId || null;
-    
-    // Load content from save if available
-    if (this.save && this.documentId) {
-      const document = this.save.getDocument(this.documentId);
-      if (document) {
-        const content = document.getField('content');
-        if (content) {
-          // Load content into your editor
-          document.getElementById('editor').innerText = content;
-        }
-      }
+    // MetaGame hands you the saved document state (or the level's seed) as
+    // options.initialState — already parsed. Do NOT read the save/document
+    // yourself; just load the state.
+    if (options.initialState) {
+      this.loadState(options.initialState);
     }
-    
+
     // Initialize your editor here
   }
 
@@ -152,25 +151,24 @@ export class Game {
 Called when the game starts or when a document is loaded.
 
 **Parameters:**
-- `options.save` (GameplaySave): The save instance containing all documents
-- `options.documentId` (string): ID of the current document to load
+- `options.initialState` (object): The saved document state to restore (already
+  parsed). For a new document this is the level's `initialState` seed; for a
+  resumed document it's the last saved state. The shape is whatever your
+  `saveState()` returns.
+- `options.save` (GameplaySave) / `options.documentId` (string): provided for
+  editors that need them (e.g. writing extra channels), but most editors should
+  **not** read content from the save directly — use `options.initialState`.
 
 **Responsibilities:**
-- Store save and documentId references
-- Load content from `save.getDocument(documentId).getField('content')`
+- Restore from `options.initialState` (don't read `save.getDocument(...)` yourself)
 - Set up your editor's initial state
 - Attach event listeners
 
 **Example:**
 ```javascript
 async initialize(options = {}) {
-  this.save = options.save || null;
-  this.documentId = options.documentId || null;
-  
-  if (this.save && this.documentId) {
-    const doc = this.save.getDocument(this.documentId);
-    const content = doc.getField('content');
-    this.loadContent(content);
+  if (options.initialState) {
+    this.loadState(options.initialState);
   }
 }
 ```
@@ -255,15 +253,26 @@ When a save exists and the editor is configured in drifts.json:
 - Submit button appears in `#submit`
 - New documents start with `initialState.text`
 
-## Behavior Without Save
+## Save Always Exists
 
-If no save exists in localStorage (e.g., after clicking "Clear"):
-- MetaGame initializes the game without save/document parameters
-- No controls UI appears
-- No progression elements appear
-- Game runs standalone
+MetaGame **always** provides a save. If none is found in localStorage, it
+creates a fresh empty `GameplaySave` (logged as "standalone mode"). This means:
 
-This allows editors to work independently without the MetaGame system.
+- `options.save` and `options.documentId` are always passed to `game.initialize()`
+- Save/Load/Download controls are always available — you can save and load
+  documents even outside a drift
+- A standalone editor reuses its most recent document instead of creating a new
+  one on every visit
+
+**Progression elements** (prompt, submit) still only appear when the editor is
+running a drift level (i.e. the save's selected level maps to this editor).
+Outside a drift:
+- No prompt is shown
+- Submit (if the editor renders a `#submit` element) navigates back to the
+  editors list rather than the drifts menu
+
+> Earlier versions ran the game with no save/document when localStorage was
+> empty. That no longer happens — a save is always present.
 
 ## CSS Variables
 
