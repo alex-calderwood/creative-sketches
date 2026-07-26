@@ -16,12 +16,23 @@ Example:
 """
 
 import os
+import sys
 from pathlib import Path
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 from lookup import DEFAULT_DB_PATH, synonyms_api_response
+
+# phonetics lives in a sub-folder; make its lookup module importable.
+sys.path.insert(0, str(Path(__file__).resolve().parent / "phonetics"))
+from phonetic_lookup import (  # noqa: E402
+    homophones,
+    near_rhymes,
+    phonetics_api_response,
+    pronunciations,
+    rhymes,
+)
 
 
 def _bool_param(name: str, default: bool = False) -> bool:
@@ -59,9 +70,49 @@ def create_app(db_path: str | Path | None = None) -> Flask:
             wordhoard_only=_bool_param("wordhoard_only"),
             lemmatize=_bool_param("lemmatize"),
             inflect=_bool_param("inflect"),
+            dict_only=_bool_param("dict_only"),
             misspellings=_bool_param("misspellings"),
             max_depth=max_depth,
         ))
+
+    def _word_arg() -> str | None:
+        return request.args.get("word")
+
+    @app.get("/homophones")
+    def get_homophones():
+        word = _word_arg()
+        if not word:
+            return jsonify({"error": "Missing word parameter"}), 400
+        return jsonify({"word": word, "homophones": homophones(word, db_path=resolved)})
+
+    @app.get("/rhymes")
+    def get_rhymes():
+        word = _word_arg()
+        if not word:
+            return jsonify({"error": "Missing word parameter"}), 400
+        return jsonify({"word": word, "rhymes": rhymes(word, db_path=resolved)})
+
+    @app.get("/near-rhymes")
+    @app.get("/near_rhymes")
+    def get_near_rhymes():
+        word = _word_arg()
+        if not word:
+            return jsonify({"error": "Missing word parameter"}), 400
+        return jsonify({"word": word, "near_rhymes": near_rhymes(word, db_path=resolved)})
+
+    @app.get("/pronounce")
+    def get_pronounce():
+        word = _word_arg()
+        if not word:
+            return jsonify({"error": "Missing word parameter"}), 400
+        return jsonify({"word": word, "pronunciations": pronunciations(word, db_path=resolved)})
+
+    @app.get("/phonetics")
+    def get_phonetics():
+        word = _word_arg()
+        if not word:
+            return jsonify({"error": "Missing word parameter"}), 400
+        return jsonify(phonetics_api_response(word, db_path=resolved))
 
     return app
 

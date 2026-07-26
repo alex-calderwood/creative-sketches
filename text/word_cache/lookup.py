@@ -39,11 +39,17 @@ def synonyms_api_response(
     lemmatize: bool = False,
     inflect: bool = False,
     misspellings: bool = False,
-    max_depth: int | None = None
+    max_depth: int | None = None,
+    dict_only: bool = False,
 ) -> dict:
     """
     JSON body: { "word": <str>, "pos": null, "synonyms": [<str>, ...] }
     plus optional "lemmatize" and "inflections" dicts.
+
+    dict_only drops rule-derived inflections: the build (EXPAND_WITH_RULES in
+    build_lemma_cache.py) lets OOV rule output fill only the Penn tags the
+    LemmInflect dictionary had no forms for, so keeping just the tags the
+    dictionary answers for recovers the pure dictionary set.
 
     Uses all_words table
     """
@@ -87,10 +93,15 @@ def synonyms_api_response(
             }
 
         if inflect:
-            result["inflections"] = {
+            inflections = {
                 p: _split(rec.get(f"infl_{p}")) for p in PENN_COLS
                 if rec.get(f"infl_{p}")
             }
+            if dict_only:
+                from lemminflect import getAllInflections
+                dict_tags = set(getAllInflections(w))
+                inflections = {p: v for p, v in inflections.items() if p in dict_tags}
+            result["inflections"] = inflections
 
         if misspellings:
             result["misspellings"] = _split(rec.get("misspellings")) or []
